@@ -1,0 +1,43 @@
+D1_pcr_fear_long n 1306
+
+-- symbol
+  US.AAPL            n=   91 hit= 58.2% mean= +36.6bp
+  US.AMD             n=   91 hit= 61.5% mean= +62.1bp
+  US.AMZN            n=   98 hit= 57.1% mean= +29.6bp
+  US.AVGO            n=   84 hit= 47.6% mean=  +4.7bp
+  US.GOOGL           n=   93 hit= 62.4% mean= +15.8bp
+  US.INTC            n=   99 hit= 62.6% mean= +41.5bp
+  US.IWM             n=   96 hit= 56.2% mean= +11.9bp
+  US.META            n=   88 hit= 58.0% mean= +35.3bp
+  US.MSFT            n=   80 hit= 62.5% mean= +16.1bp
+  US.MU              n=  100 hit= 45.0% mean= -24.3bp
+  US.NVDA            n=   92 hit= 66.3% mean=+102.2bp
+  US.QQQ             n=   86 hit= 61.6% mean= +28.0bp
+  US.SNDK            n=   15 hit= 53.3% mean= +34.9bp
+  US.SPY             n=   86 hit= 67.4% mean= +23.4bp
+  US.TSLA            n=  107 hit= 54.2% mean= +37.7bp
+
+-- half-year
+  2023H2             n=  293 hit= 60.4% mean= +25.0bp
+  2024H1             n=  300 hit= 59.3% mean= +24.7bp
+  2024H2             n=  344 hit= 54.4% mean= +16.3bp
+  2025H1             n=  369 hit= 59.9% mean= +51.5bp
+
+-- condition
+  cvol_ratio < 1     n=  972 hit= 58.1% mean= +18.6bp
+  cvol_ratio >= 1    n=  324 hit= 59.6% mean= +61.8bp
+  gap < 0            n=  629 hit= 61.0% mean= +40.1bp
+  gap >= 0           n=  677 hit= 56.0% mean= +20.8bp
+  mkt_pcr_z < 0      n=  387 hit= 61.5% mean= +26.3bp
+  mkt_pcr_z >= 0     n=  919 hit= 57.1% mean= +31.7bp
+  own r1 < 0         n=  809 hit= 57.1% mean= +35.0bp
+  own r1 >= 0        n=  497 hit= 60.6% mean= +22.2bp
+  pvol_ratio < 1     n=  497 hit= 57.7% mean= +14.4bp
+  pvol_ratio >= 1    n=  799 hit= 58.9% mean= +38.7bp
+  spy r1 < 0         n=  771 hit= 56.9% mean= +34.3bp
+  spy r1 >= 0        n=  535 hit= 60.6% mean= +24.1bp
+
+-- breadth
+  signals that day 1 n=  104 hit= 55.8% mean= +37.7bp
+  signals that day 2-3 n=  337 hit= 59.3% mean= +10.1bp
+  signals that day 4+ n=  865 hit= 58.4% mean= +37.0bp

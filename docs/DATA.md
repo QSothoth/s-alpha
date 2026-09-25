@@ -223,3 +223,36 @@ cd data && sha256sum -c watch-hk1m-train-v1.zip.sha256 && unzip watch-hk1m-train
 ```
 
 全部为只读行情；1m K 线只拉了 30 天内已扣费的标的，没有消耗新的历史 K 线额度。
+
+
+## 附录：开盘方向预判研究数据（非 custody Release）
+
+`studies/us_preopen_bias/`（T 日开盘时判断各标的开盘 → 收盘方向，给 0DTE 上游选边）的数据。全部来自本机 OpenD、一次性拉取，
+不需要逐日采集；历史 K 线只拉 30 天内已扣费的标的（S10 新标的的日 K 走订阅接口）。只用技术面 / 交易数据，不含财报、宏观日历。
+**不接入 `custody check` / `evaluate`**；同样不可变，变化发新 tag。每个 zip 内有 `manifest.json`（来源、窗口、行数、字段说明）和 `CHECKSUMS.sha256`。
+
+| tag | 角色 | 内容 | zip SHA256 | CHECKSUMS.sha256 的 SHA256 |
+|---|---|---|---|---|
+| `preopen-us-train-v1` | 选择段 | 16 只：日 K（2022-06 起）、单标的期权成交量 / Put/Call / 持仓与 IV / HV（2023-06 起）、每日卖空量（2022-05 起）、全市场期权统计，全部截止 2025-06-30 | `5cb028da09d597f2cf5301a59496c7dfbc06a25760b4fed9fa40440eda0934e8` | `dca1d6241507d48a1bf917af483acee6ca130afac72895f1c319955458d5f3bb` |
+| `preopen-us-valid-v1` | 验证段（S1–S5 已用过一次，之后只作选择） | 同样的表 2025-07-01 → 2026-09-23，另含日级资金流（只有 2025-09-24 起）；特征热身需与训练 Release 一起加载 | `851a3efa588226e3228409c4a79d1b45040fee767abc5099987e0c4d17203bbc` | `6be1052129e17dfdb94e6a6a93e67b7035d4b1315f11ae511e90a278b271fbf4` |
+| `preopen-us-holdout-2016-v1` | 日 K 留出段 | 14 只日 K 2015-06-01 → 2022-05-31（2020-02 → 2023-07 已被 S9 留出段用过一次；2016-01 → 2020-01 未用） | `86be1b66851c522f2af9c3ab7fbc3cc11eaf9a761d60e8018e21c37599a757d0` | `64383dc75c60e3bf8eef6c87b96a319e86b67e32d61849f9e82d4742225912d7` |
+| `preopen-us-ext30-select-v1` | 选择段 | 16 只延长时段 30 分钟 K 线（只含盘前 ≤ 09:30、盘后 > 16:00，time_key 为 K 线收盘，美东），2023-06-01 → 2026-09-23 | `f36b7985cc37b9dad17bf877b2edb723a93aae070c0e4b1390b300852ef792ba` | `2360ff1584010aeede834a8d011a72944e129338190803fef0738fbb27b63df7` |
+| `preopen-s21-select-v1` | 每日多空名单选择段（S21 / S22） | 34 只热门中小盘（AI / 创新药 / 资源，规则见 `notes/universe_smallmid.json`）：日 K、期权统计、IV / HV、卖空量、资金流、盘前盘后 30 分钟 K、不复权日 K，2025-01-01 之前；日收盘与 Yahoo / 腾讯交叉核对一致 | `762850fb79ec7b95f10cb87be99452b624d45d01e5b3df8acf22bac915fe85ff` | `9fd9ece38757cfe115512b7c94d78ee7da2930ef3cdbf1448072484587e7f1a0` |
+| `preopen-s21-valid-v1` | 每日多空名单验证段（S22 已用一次） | 同样的表 2025-01-01 → 2026-09-24 | `f200246fb99bbc729f9b12b16c3990c471d86e89592fe10b09d90f215c097d74` | `42b8a0b53c69cac1152696de25e61660ff79f036b4e1534b343ec2b88c55e677` |
+| `preopen-s23-select-v1` | 全市场名单选择段（S23） | 期权成交量排行前 120 中的 114 个（剔除杠杆 / 反向 ETF 与 VXX）：日 K（前复权与不复权，订阅接口、不扣历史 K 线额度）、期权统计、IV / HV，2025-01-01 之前；与 Yahoo（部分含腾讯）核对，NOK、SPCX 不达标、评测时剔除 | `b10c7e73d51c0b266d05518b8c2a84720bd67e2965aec4fe1f5e3c25ef741138` | `49fb68958ce4bd72d025dd624308c9ac62ddb4435d215d80877ff84c1a59098c` |
+| `preopen-s23-valid-v1` | 全市场名单验证段（未用） | 同样的表 2025-01-01 → 2026-09-24 | `0477edd1ac22c86befe9cbe2813057e6d63c7a45ae5927e1d1b35c72bde260c8` | `397771322a5b3c2d901b3c2313d4165e86548cd5e7e4f2132cb971672fb263cd` |
+| `preopen-s24-select-v1` | 个股多空 Top N 选择段（S24–S26） | 期权成交量排行前 300 只股价 ≥ 3 美元的个股：日 K（前复权与不复权，订阅接口分批、不扣历史 K 线额度）、期权统计、IV / HV，2025-01-01 之前；与 Yahoo 核对，BRK、SPCX、B 剔除 | `f1f0244a63e3e28990d5ee8254b0f9991bd6f7a6bd9a613a8943e9010c3ed1ed` | `79a7a4830c9aa924ac7dacb4ce39b2a2461eeda1e70c2bb0271c00716ef9b2bf` |
+| `preopen-s24-valid-v1` | 个股多空 Top N 验证段（S26 已用一次） | 同样的表 2025-01-01 → 2026-09-24 | `8de2e76dddd3fc966b1761e85d409825074f1521d55e726dd56225ad97ab3b10` | `1ee2292985bce9d407203d151126b0015c38dc0c380fd57666224670897191c3` |
+| `preopen-s27-holdout-v1` | 个股多空 Top N 截面留出（S27 已用一次） | 同一排名日紧接前 300 只之后的第 301–600 名个股：同样的表，2022-09 → 2026-09-24 不切段；与 Yahoo 核对 300 只全部通过；历史 K 线额度前后 216 / 84 | `0a709367405828d48ba4c2a142f0e36f189bae412b58953dd910eb5dd5cb9817` | `4cfaa0ca3f19599a8eb08e34e5ddb80a9d20de72989b6e8dc382eed97ee4e4f6` |
+| `preopen-us-xsec-v1` | 截面新检验（S10 已用一次） | 2026-09-23 期权成交量排行里原 16 只以外的前 40 只：日 K 最近 1000 根（`get_cur_kline` 订阅接口，不扣历史 K 线额度，订阅随后释放）+ 资金流 2025-09-24 → 2026-09-23 | `cb4a0dfc0e7cd09ed9f28d790e0223898c506ddbb266cae3f44366d2293b6495` | `0584d9361b77b9870cb78ffb10de73264407ddf3358931fa46b73635b106691f` |
+| `preopen-us-ext30-holdout-v1` | 留出段（S9 已用一次） | 14 只同样的 K 线，2019-12-02 → 2023-07-31（盘前成交量 2020-01 起才有） | `badfb8d2e1972a69b09b061d3f06d6efafaf1f6566bb240294490018d69eb21a` | `990ce3293d24dda71eb9ea82668c39f5aa4fa071445e2846cdf6b57d6450ce2c` |
+
+**已删除的 Release（2026-09-25，用户决定）**：`preopen-us-k5-select-v1`（`e096594f…6e38`）、`preopen-us-k5-valid-v1`（`dfa2f591…7f24`）、
+`preopen-us-k1-o4-select-v1`（`6bfc744e…ab9d`）、`preopen-us-k5-2019-holdout-v1`（`f2a28315…316a`）、`preopen-s20-select-v1`（`98e3d658…e8f6`）、
+`preopen-s20-valid-v1`（`60b1d55b…2230`）（括号内为 zip SHA256 首尾）。这是已撤掉的日内规则（S11–S20）的 5 分钟 / 1 分钟 K；S28 / S29 用过其中 k5 与 s20 四个，
+**这两轮结果不能再从 Release 复现**，只有本机 `data/` 的副本（可按上面的哈希核对）。
+
+```bash
+gh release download preopen-us-train-v1 --repo QSothoth/s-alpha --dir data
+cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train-v1.zip
+```

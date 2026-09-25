@@ -1,0 +1,6 @@
+rows 12306  days 879  symbols 14  2020-02-03 -> 2023-07-31
+ref_always_long              n=12306 days= 879 /day=14.00 hit= 51.7 [ 49.5, 54.0] base= 51.7 exc= +0.0 [ -2.2, +2.2]   +5.9bp L 12306: 51.7 S    0:  -   idx 2637: 53.7 stk 9669: 51.2 halves 6174: 52.1 / 6132: 51.4
+ref_always_short             n=12306 days= 879 /day=14.00 hit= 48.1 [ 45.9, 50.3] base= 48.1 exc= +0.0 [ -2.3, +2.2]   -5.9bp L    0:  -   S 12306: 48.1 idx 2637: 46.2 stk 9669: 48.7 halves 6174: 47.7 / 6132: 48.5
+Q1_ah_attention_short        n=  293 days= 153 /day=0.33 hit= 54.3 [ 46.8, 61.5] base= 48.7 exc= +5.6 [ -1.8,+12.9]  +24.1bp L    0:  -   S  293: 54.3 idx    0:  -   stk  293: 54.3 halves 157: 56.7 / 136: 51.5  lo90=48.0  hit>=53=Y lo90>50=n excess>0=Y  => FAILS
+Q2_ah_attention_short_strong n=  117 days=  85 /day=0.13 hit= 60.7 [ 50.4, 70.5] base= 48.8 exc=+11.9 [ +1.6,+21.8]  +44.7bp L    0:  -   S  117: 60.7 idx    0:  -   stk  117: 60.7 halves 51: 70.6 / 66: 53.0  lo90=51.8  hit>=53=Y lo90>50=Y excess>0=Y  => HOLDS
+Q3_ah_attention_short_all    n=  341 days= 159 /day=0.39 hit= 52.8 [ 45.4, 60.2] base= 48.3 exc= +4.5 [ -2.9,+11.8]  +20.1bp L    0:  -   S  341: 52.8 idx   48: 43.8 stk  293: 54.3 halves 190: 53.7 / 151: 51.7  lo90=46.6  hit>=53=n lo90>50=n excess>0=Y  => FAILS

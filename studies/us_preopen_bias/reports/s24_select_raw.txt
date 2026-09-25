@@ -1,0 +1,11 @@
+days 358, mean active pool 211.0 (unusual=None)
+X1_reversal_1d             n= 2148 days=358 win= 46.9% payoff 0.89 exp  -28.5bp [ -45.3, -10.8] PF 0.78 | L 1074: 47.2%:-19.6 S 1074: 46.6%:-37.5 | spread>0 days  41.6% | halves 1134:-16.2 / 1014:-42.3
+      gates n>=300=Y exp>0=n ci95>0=n pf>=1.2=n halves>0=n win>=53|payoff>=1.3=n  => fail
+X2_intraday_momentum       n= 2148 days=358 win= 49.8% payoff 0.95 exp   -6.0bp [ -20.4,  +8.1] PF 0.94 | L 1074: 50.8%:-1.9 S 1074: 48.8%:-10.0 | spread>0 days  48.0% | halves 1134:-6.4 / 1014:-5.6
+      gates n>=300=Y exp>0=n ci95>0=n pf>=1.2=n halves>0=n win>=53|payoff>=1.3=n  => fail
+X3_intraday_vs_overnight   n= 2148 days=358 win= 48.0% payoff 0.95 exp  -11.9bp [ -26.5,  +1.9] PF 0.87 | L 1074: 47.8%:-11.2 S 1074: 48.1%:-12.6 | spread>0 days  48.0% | halves 1134:+0.7 / 1014:-26.0
+      gates n>=300=Y exp>0=n ci95>0=n pf>=1.2=n halves>0=n win>=53|payoff>=1.3=n  => fail
+X4_gap_fade                n= 2148 days=358 win= 47.8% payoff 0.93 exp  -23.0bp [ -44.9,  -0.7] PF 0.85 | L 1074: 48.4%:-23.2 S 1074: 47.1%:-22.8 | spread>0 days  42.5% | halves 1134:-8.6 / 1014:-39.1
+      gates n>=300=Y exp>0=n ci95>0=n pf>=1.2=n halves>0=n win>=53|payoff>=1.3=n  => fail
+X5_put_call_contrarian     n= 2148 days=358 win= 48.6% payoff 1.12 exp   +4.8bp [  -7.4, +17.4] PF 1.05 | L 1074: 46.4%:-5.8 S 1074: 50.8%:+15.3 | spread>0 days  52.8% | halves 1134:+0.7 / 1014:+9.3
+      gates n>=300=Y exp>0=Y ci95>0=n pf>=1.2=n halves>0=Y win>=53|payoff>=1.3=n  => fail

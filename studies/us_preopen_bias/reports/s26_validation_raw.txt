@@ -1,0 +1,13 @@
+== S26 validation 2025-01-02..2026-09-24, W5 only (one shot)
+days 433, mean active pool 257.1 (S26)
+W5_composite_top5          n= 4330 days=433 win= 48.5% payoff 1.05 exp   -1.6bp [ -15.6, +12.8] PF 0.99 | L 2165: 47.1%:+1.0 S 2165: 49.9%:-4.2 | spread>0 days  51.7% | halves 2090:-4.3 / 2240:+0.9
+      gates exp>0=n lo90>0=n pf>=1.1=n  => fail
+                           basket days=433 spread  +16.8bp gross [ -11.2, +45.7] (net of 20bp   -3.2) win(days spread>0) 54.0% payoff 0.98 halves +11.4 / +21.8
+      basket gates net>0=n lo90-cost>0=n  => fail
+
+== same, without the 13 large names seen in S1-S5
+days 433, mean active pool 245.2 (S26)
+W5_composite_top5          n= 4330 days=433 win= 48.3% payoff 1.05 exp   -2.1bp [ -16.4, +12.7] PF 0.99 | L 2165: 47.0%:+0.2 S 2165: 49.7%:-4.4 | spread>0 days  51.7% | halves 2090:-7.4 / 2240:+2.9
+      gates exp>0=n lo90>0=n pf>=1.1=n  => fail
+                           basket days=433 spread  +15.8bp gross [ -12.7, +45.3] (net of 20bp   -4.2) win(days spread>0) 53.8% payoff 0.98 halves +5.2 / +25.7
+      basket gates net>0=n lo90-cost>0=n  => fail

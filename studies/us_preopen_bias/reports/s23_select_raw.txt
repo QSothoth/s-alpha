@@ -1,0 +1,11 @@
+days 358, mean pool 52.7, superset rows 36478
+B1_gap_size          n=2148 days=358 names= 76 payoff-proxy 1.10x [1.06, 1.15] lo90 1.06 (picks 0.61 vs pool 0.56, >1: 18%) move 1.08x (|oc| 1.66%) liquidity 1.24x  gap-side hit 50.1%
+      gates n>=300=Y payoff>=1.2=n ci95>1=Y move>=1.2=n liq>=1=Y  => fail
+B2_cheap_options     n=2148 days=358 names= 75 payoff-proxy 1.15x [1.11, 1.19] lo90 1.11 (picks 0.64 vs pool 0.56, >1: 20%) move 1.41x (|oc| 2.17%) liquidity 0.75x  gap-side hit 48.0%
+      gates n>=300=Y payoff>=1.2=n ci95>1=Y move>=1.2=Y liq>=1=n  => fail
+B3_gap_x_cheap       n=2148 days=358 names= 80 payoff-proxy 1.16x [1.11, 1.21] lo90 1.12 (picks 0.64 vs pool 0.56, >1: 20%) move 1.17x (|oc| 1.80%) liquidity 1.22x  gap-side hit 50.0%
+      gates n>=300=Y payoff>=1.2=n ci95>1=Y move>=1.2=n liq>=1=Y  => fail
+B4_balanced          n=2148 days=358 names= 80 payoff-proxy 1.16x [1.12, 1.21] lo90 1.13 (picks 0.65 vs pool 0.56, >1: 20%) move 1.24x (|oc| 1.91%) liquidity 4.91x  gap-side hit 49.4%
+      gates n>=300=Y payoff>=1.2=n ci95>1=Y move>=1.2=Y liq>=1=Y  => fail
+B5_liquid_big_gap    n=2148 days=358 names= 66 payoff-proxy 1.15x [1.11, 1.19] lo90 1.11 (picks 0.64 vs pool 0.56, >1: 20%) move 1.78x (|oc| 2.73%) liquidity 1.92x  gap-side hit 49.3%
+      gates n>=300=Y payoff>=1.2=n ci95>1=Y move>=1.2=Y liq>=1=Y  => fail
