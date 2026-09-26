@@ -1,0 +1,239 @@
+{
+  "candidates": {
+    "INSIDE_BREAK": {
+      "active_dates": 3,
+      "current_prefix_incomplete_sessions": 0,
+      "history_eligible_sessions": 77,
+      "joint_label_counts": {
+        "positive_underlying__positive_option": 2
+      },
+      "option_gross_marks": {
+        "average_loss_bp": null,
+        "average_win_bp": 2537.322564855604,
+        "labeled_signals": 2,
+        "losses": 0,
+        "mean_bp": 2537.322564855604,
+        "payoff_ratio": null,
+        "profit_factor": null,
+        "win_rate": 1.0,
+        "wins": 2,
+        "zeros": 0
+      },
+      "option_mark_coverage": 0.6666666666666666,
+      "option_missing_labels": 1,
+      "sessions": 77,
+      "signals": 3,
+      "underlying": {
+        "average_loss_bp": 21.037359459564755,
+        "average_win_bp": 9.094599594115515,
+        "labeled_signals": 3,
+        "losses": 1,
+        "mean_bp": -0.9493867571112405,
+        "payoff_ratio": 0.43230708737928636,
+        "profit_factor": 0.8646141747585727,
+        "win_rate": 0.6666666666666666,
+        "wins": 2,
+        "zeros": 0
+      },
+      "underlying_missing_labels": 0,
+      "underlying_path_counts": {
+        "neither": 3
+      }
+    },
+    "NR7_BREAK": {
+      "active_dates": 1,
+      "current_prefix_incomplete_sessions": 0,
+      "history_eligible_sessions": 77,
+      "joint_label_counts": {},
+      "option_gross_marks": {
+        "average_loss_bp": null,
+        "average_win_bp": null,
+        "labeled_signals": 0,
+        "losses": 0,
+        "mean_bp": null,
+        "payoff_ratio": null,
+        "profit_factor": null,
+        "win_rate": null,
+        "wins": 0,
+        "zeros": 0
+      },
+      "option_mark_coverage": 0.0,
+      "option_missing_labels": 1,
+      "sessions": 77,
+      "signals": 1,
+      "underlying": {
+        "average_loss_bp": 21.037359459564755,
+        "average_win_bp": null,
+        "labeled_signals": 1,
+        "losses": 1,
+        "mean_bp": -21.037359459564755,
+        "payoff_ratio": null,
+        "profit_factor": 0.0,
+        "win_rate": 0.0,
+        "wins": 0,
+        "zeros": 0
+      },
+      "underlying_missing_labels": 0,
+      "underlying_path_counts": {
+        "neither": 1
+      }
+    },
+    "PD_BREAK": {
+      "active_dates": 7,
+      "current_prefix_incomplete_sessions": 0,
+      "history_eligible_sessions": 77,
+      "joint_label_counts": {
+        "negative_underlying__negative_option": 1,
+        "positive_underlying__negative_option": 1,
+        "positive_underlying__positive_option": 4
+      },
+      "option_gross_marks": {
+        "average_loss_bp": 1903.1114952463267,
+        "average_win_bp": 4260.565904152853,
+        "labeled_signals": 6,
+        "losses": 2,
+        "mean_bp": 2206.006771019793,
+        "payoff_ratio": 2.2387368868272177,
+        "profit_factor": 4.477473773654435,
+        "win_rate": 0.6666666666666666,
+        "wins": 4,
+        "zeros": 0
+      },
+      "option_mark_coverage": 0.8571428571428571,
+      "option_missing_labels": 1,
+      "sessions": 77,
+      "signals": 7,
+      "underlying": {
+        "average_loss_bp": 28.122206419322062,
+        "average_win_bp": 28.81533919629353,
+        "labeled_signals": 7,
+        "losses": 2,
+        "mean_bp": 12.547469020403364,
+        "payoff_ratio": 1.0246471690960648,
+        "profit_factor": 2.561617922740162,
+        "win_rate": 0.7142857142857143,
+        "wins": 5,
+        "zeros": 0
+      },
+      "underlying_missing_labels": 0,
+      "underlying_path_counts": {
+        "neither": 6,
+        "target_first": 1
+      }
+    }
+  },
+  "code_sha256": {
+    "custody/dataset.py": "c9b4e398217eb278bf8999fdf2fe853969e291f92bdd1f38e2c097c0ddd3a924",
+    "custody/evaluate.py": "425d9a0c6ea32e3474922d196c2e3d8f41339254554fb6377593ccbddc1b20e8",
+    "custody/marketdata.py": "c1b8259982eac9e70798f1ee731582853bb1c43d8a3f7024529a8ced3d4827c1",
+    "custody/models.py": "9546f1bb6c565e50fab35ff3ac91f8152d80f6816dc8ef53c987aefa23647f9a",
+    "studies/us_opening_range/context_replay.py": "56f86dad451b73c32652952d0294d53306f9d70d0509679a09cdceffdf6321c4",
+    "studies/us_opening_range/context_signals.py": "4ab364e9c45a3733be0d3befd97893ea18b25fda66315e0c387933c13afd3ec8",
+    "studies/us_opening_range/context_stats.py": "f6bc8e9c16302142af16ccce06c5040151bbd2455048f41608fb5fb6be4f7308",
+    "studies/us_opening_range/daily_replay.py": "80ebf94b35e99ef8f28af172e01c4f00bc2389c3341b07e875a4b5954241955d",
+    "studies/us_opening_range/daily_signals.py": "1568d3ac0f4cc65270be73ceec9e157789f5a4577fcc99882e8b3511963ef91a",
+    "studies/us_opening_range/option_bridge.py": "0841a2b6f7cafd649420fbf51e29138c13fddcb52bd21cb95ab80f918c9a2192",
+    "studies/us_opening_range/replay.py": "37731169991e1480017f4b8a561095d2412bf551aba6b9ba99c6dc53e690d827",
+    "studies/us_opening_range/signals.py": "7b072736aa5c2bf7a43eb46cae9602981c6bbfa276d3c02f5ca371ca3433914c"
+  },
+  "coverage": {
+    "AAPL": {
+      "complete_history_days": 43
+    },
+    "AMD": {
+      "complete_history_days": 43
+    },
+    "AMZN": {
+      "complete_history_days": 43
+    },
+    "AVGO": {
+      "complete_history_days": 43
+    },
+    "GOOGL": {
+      "complete_history_days": 43
+    },
+    "INTC": {
+      "complete_history_days": 43
+    },
+    "IWM": {
+      "complete_history_days": 43
+    },
+    "META": {
+      "complete_history_days": 43
+    },
+    "MSFT": {
+      "complete_history_days": 43
+    },
+    "MU": {
+      "complete_history_days": 43
+    },
+    "NVDA": {
+      "complete_history_days": 43
+    },
+    "QQQ": {
+      "complete_history_days": 43
+    },
+    "SNDK": {
+      "complete_history_days": 43
+    },
+    "SPY": {
+      "complete_history_days": 43
+    },
+    "TSLA": {
+      "complete_history_days": 43
+    }
+  },
+  "created_at": "2026-09-26T05:56:22.141935+00:00",
+  "inputs": {
+    "calendar": {
+      "path": "data/or-context-etf-k5-2018-2026-retry1-work/US.DIA.coverage.csv",
+      "sha256": "501c508b69124b1da76c0b986c997ae3a89106eb59e865847637043f21eb72b8"
+    },
+    "custody-0dte-v5": {
+      "CHECKSUMS.sha256": "35875e44318c78ab5b09cd53cac3b22ce26a8a12cb468aeed5efd72e43e97c69",
+      "cases.json": "8871b611e28a94ed1b4348031ae720c658b7b50b7c57620448f20a0b10b1fd81",
+      "manifest.json": "c97c7baeee4f69b1fb7c44e454734ae5355c187efc04e359320ddf0ce7cb806d"
+    },
+    "custody-eval-2026-09-18-v2": {
+      "CHECKSUMS.sha256": "fba36ab960189e6fe80660629455774627915d1b8982361a324ec203892fc2c0",
+      "cases.json": "5e341b917c29e646d1686b1ee0a7190f25e742c8e3eb60ffa68751b5a9db838a",
+      "manifest.json": "ac1091d4eddf18505668b1651709b1c9a4a7aa248fda495de272bfaf7a363736"
+    },
+    "preopen-us-k5-valid-v1": {
+      "CHECKSUMS.sha256": "992ad5f444b9eb36de05a15cd882e28e68466eca1769f5917e9704e673f73da0",
+      "k5/AAPL.csv": "ba26ea988e045525fb9c8399236889d03ffed3e7d324e806fe3614902cfa5d78",
+      "k5/AMD.csv": "d429592e057ba5c6eef928cef1803a643120380a390bcfd8eefcdd6d24d2c801",
+      "k5/AMZN.csv": "db82f815f79bf61a2b86ff9bf85bb289bdc80ba01ae394edabb9798465e38e83",
+      "k5/AVGO.csv": "9f8cce22ab9e3f4a3963ff2847b871b114b4403f8a8cc0bf6ce703ef90edf60e",
+      "k5/GOOGL.csv": "fd2072327b737d017a521aa661b47a5b9feb80b8a7b5f67a9efca2658b7ecaa0",
+      "k5/INTC.csv": "e16cd493c040761f6e8d45bbdeeb91c041ff87d263afc9b424c67c01945d8894",
+      "k5/IWM.csv": "3de98ed70987a62c3758d4c5a14d94e3ecf4b0d726c7ae9b1818019c5b123850",
+      "k5/META.csv": "f3e62e9f86a6febe57cbde2c9402ada974eb327fe2e8f23944e6600f0f151f74",
+      "k5/MSFT.csv": "22683bfff04db46099d0231e300056423864e6da2d246807dc4fdaa8de69535e",
+      "k5/MU.csv": "95dec0ccda685b5d9ad9f46d03ae48fea978c07438fa0434fcfd670d5d619bd2",
+      "k5/NVDA.csv": "f39974bc3bb2862008040bc4f3513fd5f075337345e934bdafcc710fb00207ce",
+      "k5/QQQ.csv": "64c0a1945393ed413cb9bc68984e2fca559926939b323b89cfeebd1e7cd96e61",
+      "k5/SNDK.csv": "a8a8d1d48d0869c54d9172f93459d868df5c5fef933d4feed990d61eb67396cb",
+      "k5/SPY.csv": "f6298e94246210c98042f6fd12f7c5351ec54ab9bd8c33d3e7aa4f47e1020990",
+      "k5/TSLA.csv": "1065974584d27c47aa732194e7ef40195c683f5173fc48707dafe5a484370f8a",
+      "manifest.json": "7e424e4d78024fcfd1c0f6769c40646dfbc616d30d3ea3e8881fd8d3b1e88528"
+    }
+  },
+  "limitations": [
+    "已暴露77标的日／21日期，小样本诊断，不修改DS1判定或挑选候选。",
+    "同分钟期权成交收盘标价变化，不是买卖价、成交回放、净收益或购买建议。",
+    "开盘ATM声明不是信号时刻ATM；旧数据缺完整当时chain与标准乘数快照。",
+    "正股路径和期权标价各自分母；缺失不填零，候选重叠不能增加独立样本。"
+  ],
+  "preregistration_sha256": "56e539f8012091eb9985af498908df579f4b9f4a80dee437909309a6b3e5408b",
+  "records_artifact": {
+    "path": "data/om1-observations-20260926.jsonl",
+    "sha256": "3896a22dd3d31317e3ab6838db2fab69374dd5f53195c1d6c49c0227e5c6141d"
+  },
+  "resources": {
+    "elapsed_seconds": 2.7951213989872485,
+    "peak_rss_kib": 127444
+  },
+  "status": "DIAGNOSTIC_NOT_VALIDATION",
+  "study": "OM1"
+}

@@ -83,6 +83,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--n', type=int, default=3)
     ap.add_argument('--date', default=None, help='trade date T (ET); default today')
+    ap.add_argument('--dump', default=None, help='also write every pool name with its score to this JSON file')
     a = ap.parse_args()
     T = a.date or datetime.now(timezone(timedelta(hours=-4))).date().isoformat()
     uni = [x['code'] for x in json.load(open(HERE / 'notes' / 'universe_stocks300.json', encoding='utf-8'))['symbols']
@@ -126,6 +127,11 @@ def main():
             tables[s]['iv'] = {str(x.time)[:10]: {'iv': x.iv, 'hv': x.hv} for x in v[1].itertuples() if str(x.time)[:10] < T}
         pool, sc, longs, shorts = rank_today(tables, nominal, T, a.n)
         pre = premarket(ctx, ft, sorted({r['symbol'] for r in pool}))
+        if a.dump:
+            Path(a.dump).write_text(json.dumps([
+                {'symbol': r['symbol'], 'score': sc.get(id(r)), 'prev_close': nominal[r['symbol']][max(nominal[r['symbol']])][0],
+                 **{k: r['f'].get(k) for k in ('pcr_z', 'iv', 'hv', 'clv1', 'ovol1', 'ovol20', 'atr20', 'implied_move')}}
+                for r in pool], indent=1), encoding='utf-8')
     finally:
         ctx.close()
     print('Top %d long / short for %s (active pool %d of %d; %d request errors)' % (a.n, T, len(pool), len(uni), len(errors)))
