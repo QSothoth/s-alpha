@@ -4,8 +4,8 @@
 
 ## 一句话结论
 
-**当前最佳方案**（2026-09-24，W1–W11 之后）：现有 `marks()` 标注照出；价位受限的带 `~`；日线背景 `D+`/`D-`；
-只有「价位细且 `D+`」加粗。其余所有尝试（反转取反、资金流、价位反应、VWAP / 压缩 / 钉住日标记、日线偏向）都没通过。
+**当前实现**（2026-09-28）：现有 `marks()` 标注照出；价位受限的带 `~`；日线背景 `D+`/`D-`；
+只有「价位细且 `D+`」加粗。W12 修正量比分母及按日期生效的港股价位表，确定性复刻通过；旧 W2–W11 的收益数字仍描述旧实现，不能直接证明修正后分组有效。W12 两个精简候选均失败：标注少了，但收益更差，未上线。见 [报告](reports/W12_RESULTS_CN.md)。
 
 以下是 W2 时的结论：
 
@@ -29,6 +29,7 @@
 | [notes/W7_PREREG.md](notes/W7_PREREG.md) / [reports/W7_RESULTS_CN.md](reports/W7_RESULTS_CN.md) | 价位反应信号（30 分钟）：失败 |
 | [notes/W8_PREREG.md](notes/W8_PREREG.md) / [reports/W8_RESULTS_CN.md](reports/W8_RESULTS_CN.md) | 不追 VWAP / 压缩 / 非钉住日：失败 |
 | [notes/W9_PREREG.md](notes/W9_PREREG.md)、[W10](notes/W10_PREREG.md)、[W11](notes/W11_PREREG.md) / [reports/W9_W11_RESULTS_CN.md](reports/W9_W11_RESULTS_CN.md) | 全新 2025H2 留出段：价位反应到收盘失败；`D+` 复核成立（约 +11bp）；日线偏向失败 |
+| [notes/W12_PREREG.md](notes/W12_PREREG.md) / [reports/W12_RESULTS_CN.md](reports/W12_RESULTS_CN.md) | 量比与价位表纠错；首次 BOS、统一方向去重两个候选的选择段筛查 |
 | [reports/DATA_SHA256.txt](reports/DATA_SHA256.txt) | 数据文件哈希（数据本身在 `data/`，不进 git） |
 | `code/` | 研究脚本（numpy，只用于研究；盯盘运行时仍只用标准库） |
 
@@ -63,6 +64,14 @@
 | W10 | 组合方案（只报告）：加入价位反应只会稀释 `D+` |
 | W11 | 只按「逆近 5 日」定当天方向：失败；`D+` 是盘中触发 × 日线背景的交互 |
 | W4 | 分钟资金流：单日测试无改善，用户判断无意义，**搁置**；盯盘里的 `f` 已撤下。见 [reports/FLOW_2026-09-24_CN.md](reports/FLOW_2026-09-24_CN.md) |
+| W12 | 修复严格前 20 根量比、港股价位日期与区间边界；40 日 / 594 条复刻零差异。23,224 标的日筛查中，首次 BOS / 统一方向去重均失败，未上线 |
+
+W12 复现（逐标的日处理，需 numpy；不调用行情接口）：
+
+```bash
+/opt/futu-opend/venv/bin/python studies/watch_signal/code/w12_audit.py --audit-only
+/opt/futu-opend/venv/bin/python studies/watch_signal/code/w12_audit.py
+```
 
 采集脚本已写好但**没有运行、没有定时任务**；用户同意后才手动或定时跑（收盘后一次）：
 

@@ -7,13 +7,13 @@ Triggers:
     FVG    3-bar fair value gap wider than FVG_ATR x ATR14
     SWEEP  wick takes out a confirmed swing then closes back inside (stop hunt)
 
-Every trigger that passes the bias is marked. A session averaging fewer than
-GATE_TPB ticks per bar turns many "breaks" into bid/ask flips; those marks
-leaned slightly the wrong way out of sample (study W2, studies/watch_signal/),
-so they are shown dim and tagged `~` rather than hidden. Each mark also gets a
-daily-context tag, D+ or D- (study W6), and only granular D+ marks are drawn
-bold. Volume expansion and the premium/discount half of the day's range only
-split `plain` from `vol` marks for de-duplication.
+Every trigger that passes the bias is marked. Sessions averaging fewer than
+GATE_TPB ticks per bar are shown dim and tagged `~`. Each mark also gets a
+daily-context tag, D+ or D-; only granular D+ marks are drawn bold. These
+labels came from studies W2/W6; W12 corrects dated tick sizes and the volume
+baseline, so earlier performance figures describe the old implementation.
+Volume expansion and the premium/discount half of the day's range only split
+`plain` from `vol` marks for de-duplication.
 
 Read-only OpenD quotes, any number of codes. Every poll re-reads the day's
 closed 1m bars and derives the whole mark list from them, so nothing accumulates
@@ -32,6 +32,7 @@ import sys
 import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
+from math import isfinite
 import unicodedata
 from pathlib import Path
 
@@ -121,10 +122,35 @@ def closed_session(bars):
     """Today's finished 1-minute bars. The bar still forming is dropped."""
     now = now_hkt()
     day = now.strftime('%Y-%m-%d')
-    out = [b for b in bars if day <= b[0] < day + LAST_BAR]
-    if out and out[-1][0].startswith(now.strftime('%Y-%m-%d %H:%M')):
-        out.pop()
-    return out
+    # End-labelled live bars can be ahead of the wall-clock minute. Exclude
+    # both those and the current minute until it has fully settled.
+    cutoff = min(now.strftime('%Y-%m-%d %H:%M'), day + LAST_BAR)
+    return [b for b in bars if day <= b[0] < cutoff]
+
+
+def bar_stale(code, stamp, at):
+    """None outside continuous trading or its opening grace, else freshness."""
+    if at.weekday() >= 5:
+        return None
+    minute = at.hour * 60 + at.minute
+    morning_end = 690 if tencent_symbol(code) else 720
+    afternoon_end = 900 if tencent_symbol(code) else 960
+    if 570 <= minute < morning_end:
+        start = at.replace(hour=9, minute=30, second=0, microsecond=0)
+    elif 780 <= minute < afternoon_end:
+        start = at.replace(hour=13, minute=0, second=0, microsecond=0)
+    else:
+        return None
+    grace = POLL_SEC * STALE_POLLS
+    if (at - start).total_seconds() <= grace:
+        return None
+    if not stamp:
+        return True
+    try:
+        last = datetime.fromisoformat(stamp).replace(tzinfo=HKT)
+    except ValueError:
+        return True
+    return (at - last).total_seconds() > grace
 
 
 def session_bars(ctx, code):
@@ -134,7 +160,10 @@ def session_bars(ctx, code):
     mark fired on it would be emitted and then quietly stop being true once the
     bar completes.
     """
-    ret, frame = ctx.get_cur_kline(code, KLINE_BACK, KLType.K_1M, AuType.NONE)
+    try:
+        ret, frame = ctx.get_cur_kline(code, KLINE_BACK, KLType.K_1M, AuType.NONE)
+    except Exception:
+        return None, ''
     if ret != RET_OK:
         return None, ''
     return closed_session(frame_bars(frame)), frame_name(frame)
@@ -144,10 +173,10 @@ def daily_context(rows, day):
     """Pre-open daily context from sessions strictly before `day`.
 
     rows: [(YYYY-MM-DD, open, high, low, close, volume)], any order. Returns
-    None when fewer than six closed sessions are available.
+    None when fewer than six closed sessions are available or prices are invalid.
     """
-    prev = sorted(r for r in rows if r[0] < day)
-    if len(prev) < 6:
+    prev = sorted(r for r in rows if r[0] < day)[-6:]
+    if len(prev) < 6 or any(not isfinite(x) or x <= 0 for r in prev for x in r[2:5]):
         return None
     return {'ret5d': prev[-1][4] / prev[-6][4] - 1.0, 'pdh': prev[-1][2],
             'pdl': prev[-1][3], 'day': prev[-1][0]}
@@ -341,9 +370,9 @@ def read(bars):
     d = {'t': bars[-1][0], 'close': closes[-1], 'n': len(bars),
          'vwap': vwap_last(bars), 'ema9': ema_last(closes, 9),
          'ema21': ema_last(closes, 21), 'rsi': rsi_last(closes)}
-    win = bars[-VOL_LOOKBACK:]
-    avg_v = sum(b[5] for b in win) / len(win)
-    d['vol_ratio'] = bars[-1][5] / avg_v if avg_v > 0 else 0.0
+    win = bars[-VOL_LOOKBACK - 1:-1]
+    avg_v = sum(b[5] for b in win) / len(win) if win else 0.0
+    d['vol_ratio'] = bars[-1][5] / avg_v if avg_v > 0 else None
     atr_win = bars[-ATR_LEN:]
     d['atr'] = sum(b[2] - b[3] for b in atr_win) / len(atr_win)
     hi, lo = max(highs), min(lows)
@@ -382,10 +411,18 @@ def structure(bars, d):
     return bull, bear
 
 
-def hk_tick(price):
-    """HKEX spread table (the part that covers listed equities)."""
+def hk_tick(price, day=None):
+    """HKEX equity spreads, with inclusive upper bounds and dated reductions."""
+    day = day or now_hkt().strftime('%Y-%m-%d')
+    if day >= '2026-08-03' and 0.5 < price <= 10:
+        return 0.005
+    if day >= '2025-08-04':
+        if 10 < price <= 20:
+            return 0.01
+        if 20 < price <= 50:
+            return 0.02
     for upper, tick in HK_TICK_BANDS:
-        if price < upper:
+        if price <= upper:
             return tick
     return 5.0
 
@@ -403,7 +440,7 @@ def ticks_per_bar(bars, tick=hk_tick):
     out, total = [], 0.0
     for i, b in enumerate(bars):
         if i:
-            step = tick(b[4])
+            step = hk_tick(b[4], b[0][:10]) if tick is hk_tick else tick(b[4])
             total += (b[2] - b[3]) / step if step > 0 else 0.0
         out.append(total / max(i, 1))
     return out
@@ -436,19 +473,21 @@ def marks(bars, rule='repeat15', tick=hk_tick):
            day's range.
 
     `rule` only changes emission. Bias stays VWAP / EMA9 / EMA21 / RSI14, and
-    triggers stay BOS / FVG / SWEEP. The live default is `repeat15`: on
+    triggers stay BOS / FVG / SWEEP. The live default retains `repeat15`: on
     HK.02513 / HK.09988 / HK.01810 / HK.00100 from 2026-07-28 through
     2026-09-22 it had the best second-half 30-bar mean among repeat15,
     repeat30, episode, and extend2, and none of the others raised that
-    half without giving up the pooled mean. `vol` marks are NOT more
+    half without giving up the pooled mean. That comparison predates W12's
+    corrected volume baseline and dated spreads. `vol` marks are NOT more
     accurate than `plain` ones on the older 40-day cut -- only rarer.
 
-    Tick density (study W2, studies/watch_signal/): a mark whose bar sits in
+    Tick density (historical study W2, studies/watch_signal/): a mark whose bar sits in
     a session averaging fewer than GATE_TPB ticks per bar is `coarse`. There
     a break is often the close flipping from bid to ask; those marks averaged
     -1.88bp out of sample (t = -6.6), about 0.2 tick -- real but small, so
     they are downgraded on the board, not dropped. `fine` (>= FINE_TPB ticks
     per bar) is logged only: on its own it was never significant (W9).
+    W2/W9 figures used the old spread table, not the corrected W12 groups.
     """
     if rule not in ('repeat15', 'repeat30', 'episode', 'extend2'):
         raise ValueError('unknown mark rule %r' % rule)
@@ -469,7 +508,8 @@ def marks(bars, rule='repeat15', tick=hk_tick):
             side, trig, ok_zone = 'SELL', '+'.join(bear), d['pos'] >= 1 - PREMIUM
         if side is None:
             continue
-        tier = 'vol' if (d['vol_ratio'] >= VOL_MULT and ok_zone) else 'plain'
+        vr = d['vol_ratio']
+        tier = 'vol' if (vr is not None and vr >= VOL_MULT and ok_zone) else 'plain'
         if not _emit_ok(rule, i, side, tier, d, last, anchor):
             continue
         last[(side, tier)] = i
@@ -478,7 +518,7 @@ def marks(bars, rule='repeat15', tick=hk_tick):
                     'tpb': round(tpb[i], 2), 'fine': tpb[i] >= FINE_TPB,
                     'coarse': tpb[i] < GATE_TPB,
                     'trigger': trig, 'close': d['close'], 'rsi': round(d['rsi'], 1),
-                    'vwap': round(d['vwap'], 3), 'vol_ratio': round(d['vol_ratio'], 2),
+                    'vwap': round(d['vwap'], 3), 'vol_ratio': round(vr, 2) if vr is not None else None,
                     'pos': round(d['pos'], 2),
                     'stop': d['swing_low'] if side == 'BUY' else d['swing_high']})
     if d is not None and tpb:
@@ -488,6 +528,10 @@ def marks(bars, rule='repeat15', tick=hk_tick):
 
 def is_strong(m):
     return m.get('daily') is True and not m.get('coarse')
+
+
+def volume_text(ratio):
+    return '-' if ratio is None else '%.1fx' % ratio
 
 
 def paint_side(side, strong):
@@ -524,12 +568,14 @@ def cell(text, width, color=''):
 
 
 def mark_text(m, width):
-    """One signal. Bold = granular tape AND daily D+ (the best-supported group
-    across three independent segments, studies W2/W6/W9), `~` = tick-bound."""
+    """One signal. Bold = granular tape AND daily D+; `~` = tick-bound.
+
+    Emphasis is context, not volume confirmation or a profitability claim.
+    """
     strong = is_strong(m)
     inv = '-' if m.get('stop') is None else '%.2f' % m['stop']
     rest = clip(('~' if m.get('coarse') else ' ') + cell(m['trigger'], 13) + cell('%.2f' % m['close'], 9)
-                + cell('%.1fx' % m['vol_ratio'], 6)
+                + cell(volume_text(m['vol_ratio']), 6)
                 + cell({True: 'D+', False: 'D-'}.get(m.get('daily'), ''), 3)
                 + 'inv ' + inv, width - 9)
     base = '' if strong else DIM
@@ -539,15 +585,20 @@ def mark_text(m, width):
 def symbol_lines(code, st, width):
     """One symbol's quote and every signal, oldest first."""
     name = st.get('name', '')
+    bars = st.get('bars') or []
+    stamp = bars[-1][0] if bars else st.get('last_bar')
+    health = DIM + '  data ' + (stamp[11:16] if stamp else '-') + OFF
+    if st.get('stale'):
+        health += RED + ' STALE' + OFF
     if st.get('error'):
-        return [cell(code, 11) + cell(name, 10, DIM) + DIM + st['error'] + OFF]
+        return [cell(code, 11) + cell(name, 10, DIM) + DIM + st['error'] + OFF, health]
     bars, ms, d = st['bars'], st['marks'], st['read']
     last = bars[-1][4]
     op = bars[0][1] or last
     ret_bp = (last / op - 1.0) * 10000.0
     vwap_bp = (last / d['vwap'] - 1.0) * 10000.0 if d.get('vwap') else 0.0
     rsi = d.get('rsi')
-    vr = d.get('vol_ratio', 0.0)
+    vr = d.get('vol_ratio')
     tpb = d.get('tpb')
     lines = [
         cell(code, 11) + cell(name, 10, DIM)
@@ -555,8 +606,10 @@ def symbol_lines(code, st, width):
         + cell('%+dbp' % int(round(ret_bp)), 8)
         + cell('vwap%+d' % int(round(vwap_bp)), 9)
         + cell('rsi%s' % ('-' if rsi is None else '%.1f' % rsi), 8)
-        + cell('%.1fx' % vr, 6, BOLD if vr >= VOL_MULT else DIM)
-        + DIM + ' tpb%s n%d' % ('-' if tpb is None else '%.1f' % tpb, len(bars)) + OFF]
+        + cell(volume_text(vr), 6,
+               BOLD if vr is not None and vr >= VOL_MULT else DIM)
+        + DIM + ' tpb%s n%d' % ('-' if tpb is None else '%.1f' % tpb, len(bars)) + OFF,
+        health]
     if not ms:
         lines.append(DIM + '  (none)' + OFF)
     for m in ms:
@@ -670,48 +723,79 @@ def main():
                 emit('FAILED', {'error': 'subscribe %s' % err})
                 return 1
             # separate call: a failed K_DAY subscription only costs the D+/D- tag
-            ctx.subscribe(hk_codes, [SubType.K_DAY], subscribe_push=False)
+            try:
+                ctx.subscribe(hk_codes, [SubType.K_DAY], subscribe_push=False)
+            except Exception:
+                pass
         emit('START', {'codes': codes, 'until': deadline.isoformat(),
                        'poll_sec': POLL_SEC, 'log': str(log_path())})
-        seen, fails, state, names, prev, dctxs = {}, 0, {}, {}, None, {}
+        seen, state, names, prev, dctxs = {}, {}, {}, None, {}
+        health, last_times, daily_retry = {}, {}, {}
         while True:
-            ok = False
+            poll_start = time.monotonic()
             for code in codes:
                 if tencent_symbol(code):
                     bars, name = tencent_session(code)
                 else:
                     bars, name = session_bars(ctx, code)
+                if bars:
+                    last_times[code] = bars[-1][0]
+                at = now_hkt()
+                stale = bar_stale(code, last_times.get(code), at)
+                if stale is not None and stale != health.get(code, False):
+                    emit('STALE' if stale else 'RECOVERED',
+                         {'code': code, 'last_bar': last_times.get(code), 'at': at.isoformat()})
+                    health[code] = stale
                 if not bars:
-                    state[code] = {'error': 'no data', 'name': names.get(code, '')}
+                    state[code] = {'error': 'no data', 'name': names.get(code, ''),
+                                   'last_bar': last_times.get(code), 'stale': stale is True}
                     continue
-                ok = True
                 names[code] = name or names.get(code, '')
                 ms, d = marks(bars, tick=a_tick if tencent_symbol(code) else hk_tick)
                 today = bars[-1][0][:10]
-                if dctxs.get(code, (None,))[0] != today:
-                    rows = tencent_daily(code) if tencent_symbol(code) else hk_daily(ctx, code)
-                    dc = daily_context(rows or [], today)
-                    if dc:
-                        dctxs[code] = (today, dc)
-                ms = with_daily(ms, dctxs.get(code, (None, None))[1])
+                context_day, dc = dctxs.get(code, (None, None))
+                ms = with_daily(ms, dc if context_day == today else None)
                 state[code] = {'bars': bars, 'marks': ms, 'read': d or read(bars),
-                               'name': names[code]}
+                               'name': names[code], 'stale': stale is True}
                 for m in ms[seen.get(code, 0):]:
                     emit('MARK', dict(m, code=code, name=names[code]))
                 seen[code] = len(ms)
-            if ok:
-                fails = 0
-            else:
-                fails += 1
-                if fails == STALE_POLLS:
-                    emit('STALE', {'failed_polls': fails, 'at': now_hkt().isoformat()})
             if sys.stdout.isatty():
                 size = shutil.get_terminal_size((100, 40))
                 width = min(140, max(80, size.columns))
                 prev = paint(frame_lines(state, now_hkt(), width, size.lines), prev, size.lines)
-            if now_hkt() >= deadline:
+            closing = now_hkt() >= deadline
+            # Optional context comes after every quote/mark and the board. One
+            # request per live poll bounds its cost; failures wait five minutes.
+            # The final frame also needs context when started after the close.
+            context_changed = False
+            for code in sorted(codes, key=lambda c: daily_retry.get(c, 0)):
+                bars = state[code].get('bars')
+                if not bars:
+                    continue
+                today = bars[-1][0][:10]
+                if (dctxs.get(code, (None,))[0] == today
+                        or time.monotonic() < daily_retry.get(code, 0)):
+                    continue
+                rows = tencent_daily(code) if tencent_symbol(code) else hk_daily(ctx, code)
+                dc = daily_context(rows or [], today)
+                daily_retry[code] = time.monotonic() + 300
+                if dc:
+                    dctxs[code] = (today, dc)
+                    state[code]['marks'] = with_daily(state[code]['marks'], dc)
+                    context_changed = True
+                    emit('DAILY_CONTEXT', {'code': code, 'day': today, 'context': dc})
+                if not closing:
+                    break
+            if context_changed and sys.stdout.isatty():
+                size = shutil.get_terminal_size((100, 40))
+                width = min(140, max(80, size.columns))
+                prev = paint(frame_lines(state, now_hkt(), width, size.lines), prev, size.lines)
+            if closing:
                 break
-            time.sleep(POLL_SEC)
+            remaining = POLL_SEC - (time.monotonic() - poll_start)
+            if remaining > 0:
+                time.sleep(min(remaining, max(0, (deadline - now_hkt()).total_seconds())))
         emit('DONE', {'at': now_hkt().isoformat(),
                       'marks': {c: len(s.get('marks', [])) for c, s in state.items()}})
         return 0
