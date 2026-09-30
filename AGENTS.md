@@ -33,6 +33,6 @@
 - 文档中文；代码、标识符、提交信息英文。运行时只用标准库（连 OpenD 的入口需 `futu-api`；研究脚本可用 numpy）。
 - 改哪里跑哪里的测试，`custody/tests` 每次都跑（含规范结构检查）：
   `python3 -m unittest discover -s custody/tests` · `python3 watch/test_watch.py` ·
-  `python3 -m unittest discover -s studies/auction_strength/tests` · `python3 -m unittest discover -s studies/hk_open_scan/tests`
+  `python3 -m unittest discover -s studies/auction_strength/tests` · `python3 -m unittest discover -s studies/hk_open_scan/tests` · `python3 -m unittest discover -s studies/us_0dte_picks/tests`
 - 改文档前核对代码、CLI 和已提交报告；不把约定写成尚未实现的自动保证。
 - 其余文档：[README.md](README.md)（概览）、[docs/OPEND_SETUP.md](docs/OPEND_SETUP.md)（OpenD 环境）。

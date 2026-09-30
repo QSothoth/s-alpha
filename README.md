@@ -4,7 +4,8 @@
 
 | 入口 | 内容 |
 |---|---|
-| [日 K／早盘信号研究](studies/us_opening_range/README.md) | 当前美股 0DTE 研究入口；日线位置、早盘突破质量与实际到期资格分开评估 |
+| [每日 0DTE 选标的](studies/us_0dte_picks/README.md) | 周一三五个股研究：财报／放量宽幅次日的大动信号保留；A4 方向规则在 P5 新截面失败，尚无稳定方向能力；名单工具仅作研究观察，见 `notes/FAILED_TRIALS.md` |
+| [日 K／早盘信号研究](studies/us_opening_range/README.md) | 日线位置与早盘突破观察（DS / OR 各轮未晋级） |
 | [custody](custody/AGENTS.md) | 既有美股 0DTE 单笔执行：上游给定标的、方向和合约，按当日正股 1m K 线择时，按期权成交价计盈亏 |
 | [watch](watch/README.md) | A / H 股实时盯盘，只读行情与标注 |
 | [其他研究](studies/AGENTS.md) | 竞价、港股开盘与期权异动等研究切片 |
@@ -30,6 +31,7 @@ python3 -m unittest discover -s studies/auction_strength/tests
 python3 -m unittest discover -s studies/hk_open_scan/tests
 python3 -m unittest discover -s studies/archive/us_preopen_bias/tests
 python3 -m unittest discover -s studies/us_opening_range/tests
+python3 -m unittest discover -s studies/us_0dte_picks/tests
 ```
 
 行情与策略研究入口不下单；只有 `custody/broker.py` 可使用 OpenD 交易接口。密码、令牌、运行数据库不提交。

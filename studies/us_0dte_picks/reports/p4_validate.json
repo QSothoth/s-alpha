@@ -1,0 +1,87 @@
+{
+ "study": "P4",
+ "phase": "validate",
+ "preregistration_sha256": "b144feaedb2433d0cc64fa4d961bd813dd54dd61b8b1ad699031e5cbfe145956",
+ "code_sha256": "1c48aa9a3afefda9c805a234cc579130b7eee5b34a698f155359d794b1732f6a",
+ "name_days": 5009,
+ "names": 35,
+ "judged": [
+  "A1_ORB",
+  "A4_THRUST_FOLLOW"
+ ],
+ "results": {
+  "A1_ORB": {
+   "picks": 190,
+   "dates": 106,
+   "per_date": 1.7924528301886793,
+   "target_rate": 0.24736842105263157,
+   "stop_rate": 0.4789473684210526,
+   "chop_rate": 0.4105263157894737,
+   "payoff": 0.05438501227451928,
+   "payoff_ci95": [
+    -0.04868735991264503,
+    0.16521393348831268
+   ],
+   "payoff_lo90": -0.03339119597954437,
+   "edge": 0.07894736842105263,
+   "edge_ci95": [
+    -0.03048780487804878,
+    0.1890547263681592
+   ],
+   "edge_lo90": -0.01092896174863388,
+   "halves_payoff": [
+    -0.007118110902077276,
+    0.09815750534615106
+   ],
+   "long": 106,
+   "short": 84,
+   "option_gross_mean": 0.2716787659639929,
+   "option_gross_median": -0.6885665850827609,
+   "option_doubled_rate": 0.2789473684210526,
+   "gates": {
+    "picks>=40": true,
+    "payoff_lo90>0": false,
+    "edge_lo90>0": false
+   },
+   "tier": "-"
+  },
+  "A4_THRUST_FOLLOW": {
+   "picks": 44,
+   "dates": 34,
+   "per_date": 1.2941176470588236,
+   "target_rate": 0.38636363636363635,
+   "stop_rate": 0.3181818181818182,
+   "chop_rate": 0.20454545454545456,
+   "payoff": 0.2907255925522227,
+   "payoff_ci95": [
+    0.07665771612427714,
+    0.4880095965275101
+   ],
+   "payoff_lo90": 0.11720235626484808,
+   "edge": 0.22727272727272727,
+   "edge_ci95": [
+    0,
+    0.44
+   ],
+   "edge_lo90": 0.044444444444444446,
+   "halves_payoff": [
+    0.17168784560680153,
+    0.3994122310676072
+   ],
+   "long": 21,
+   "short": 23,
+   "option_gross_mean": 0.8277262615827962,
+   "option_gross_median": 0.4933595355152165,
+   "option_doubled_rate": 0.4318181818181818,
+   "gates": {
+    "picks>=40": true,
+    "payoff_lo90>0": true,
+    "edge_lo90>0": true
+   },
+   "tier": "B"
+  }
+ },
+ "validated": [
+  "A4_THRUST_FOLLOW"
+ ]
+}

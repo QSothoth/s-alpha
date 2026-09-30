@@ -21,7 +21,7 @@ import re
 
 from .dataset import parse_option_code
 from .marketdata import _num
-from .models import HardSubmitError, OrderUpdate, UnlockRequiredError, instant
+from .models import HardSubmitError, OrderUpdate, PositionSnapshot, UnlockRequiredError, instant, positive
 from .opend import _futu, _records
 
 MODES = {'paper': 'SIMULATE', 'live': 'REAL'}
@@ -73,6 +73,31 @@ def _rows(result, what):
     if ret != 0:
         raise RuntimeError('OpenD %s failed: %s' % (what, data))
     return _records(data)
+
+
+def inspect_us_accounts(market, security_firm='FUTUSECURITIES'):
+    """Read real US account funds, positions and orders without unlocking or submitting."""
+    futu = _futu()
+    context = futu.OpenSecTradeContext(filter_trdmarket=futu.TrdMarket.US, host=market.host, port=market.port,
+                                      security_firm=security_firm)
+    try:
+        result = []
+        for account in _rows(context.get_acc_list(), 'get_acc_list'):
+            if account.get('trd_env') != 'REAL':
+                continue
+            auth = account.get('trdmarket_auth')
+            if auth is not None and 'US' not in auth:
+                continue
+            params = {'trd_env': 'REAL', 'acc_id': int(account['acc_id']), 'refresh_cache': True}
+            result.append({
+                'account': account,
+                'funds': _rows(context.accinfo_query(currency='USD', **params), 'accinfo_query'),
+                'positions': _rows(context.position_list_query(**params), 'position_list_query'),
+                'orders': _rows(context.order_list_query(**params), 'order_list_query'),
+            })
+        return result
+    finally:
+        context.close()
 
 
 def order_update(client_order_id, row, now, underlying_mark=None):
@@ -219,6 +244,24 @@ class OpenDBroker:
                      'position_list_query')
         return sum(int(round(_num(r.get('can_sell_qty')) or 0)) for r in rows
                    if r.get('code') == code and r.get('position_side') == 'LONG')
+
+    def position_snapshot(self, code, now):
+        """Adopt only free long holdings with no competing working order for this contract."""
+        orders = _rows(self.ctx.order_list_query(trd_env=self.env, acc_id=self.acc_id, refresh_cache=True),
+                       'order_list_query')
+        terminal = {'FILLED_ALL', *CANCELLED, *FAILED}
+        if any(r.get('code') == code and r.get('order_status') not in terminal for r in orders):
+            raise ValueError('reconcile existing contract orders before position takeover')
+        rows = _rows(self.ctx.position_list_query(code=code, trd_env=self.env, acc_id=self.acc_id,
+                                                refresh_cache=True), 'position_list_query')
+        longs = [r for r in rows if r.get('code') == code and r.get('position_side') == 'LONG']
+        if len(longs) != 1:
+            raise ValueError('one verified long position required')
+        qty = _num(longs[0].get('can_sell_qty'))
+        if qty is None or qty <= 0 or qty != int(qty):
+            raise ValueError('positive integer sellable position required')
+        cost = positive(_num(longs[0].get('average_cost')), 'broker average_cost')
+        return PositionSnapshot(self.account, self.mode, code, int(qty), instant(now), cost)
 
     def _update(self, cid, row, now):
         mark = None

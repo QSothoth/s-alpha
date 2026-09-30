@@ -1,4 +1,4 @@
-"""Durable single-trade state machine: at most one bought 0DTE option per contract/day.
+"""Durable single-trade state machine: at most one bought option per contract/day.
 
 Broker I/O is injected (:class:`custody.ports.Broker`); market data and strategy
 decisions arrive from the caller as :class:`~custody.models.Quote` and
@@ -12,7 +12,7 @@ Guarantees
   and sold once. The same underlying may have several jobs the same day (for example a
   CALL and a PUT). Identical requests are idempotent; a different request for the same
   contract and day conflicts.
-* Only 0DTE contracts (expiry == trade date) and only registered strategies; live
+* Legacy 0-1 DTE or explicitly verified nearest-expiry contracts; registered strategies; live
   mode additionally requires strategy status ``accepted`` (docs/STANDARD.md).
 * Entry requires a strategy signal; no heartbeat or deadline can force a purchase.
   Unfilled entries may retry on another ENTER frame before flatten; a partial
@@ -27,6 +27,7 @@ Guarantees
 from contextlib import closing, contextmanager
 from dataclasses import asdict, dataclass
 from datetime import timedelta
+from decimal import Decimal
 from pathlib import Path
 import hashlib
 import json
@@ -35,6 +36,7 @@ import sqlite3
 from .models import ET, HardSubmitError, JobRequest, OrderUpdate, UnlockRequiredError, instant, positive, symbol
 from .registry import Registry
 from .strategy import ACTIONS, flatten_minute
+from .position_exit import POLICY as POSITION_EXIT_POLICY, decide as position_exit_decision
 
 SCHEMA_VERSION = '4'
 TERMINAL = {'FILLED', 'CANCELED', 'REJECTED'}
@@ -149,31 +151,46 @@ class CustodyService:
             return job
 
     # ------------------------------------------------------------ jobs
-    def create_job(self, payload, now):
+    def create_job(self, payload, now, position=None):
         now = instant(now)
         request = JobRequest.parse(payload, now)
+        if request.trade_action == 'sell_only' and self.mode == 'live':
+            raise ValueError('sell_only position_pnl_v1 has no independent validation; use dryrun/paper')
         strategy = self.registry.get(request.strategy_id)
         if strategy['status'] == 'retired':
             raise ValueError('strategy is retired')
         if self.mode == 'live' and strategy['status'] != 'accepted':
             raise ValueError('live mode requires a strategy with status accepted (docs/STANDARD.md)')
-        fingerprint = hashlib.sha256(encode(asdict(request)).encode()).hexdigest()
+        request_body = asdict(request)
+        if request.trade_action == 'round_trip':
+            request_body.pop('trade_action')  # Preserve legacy restart identities.
+        if request.expiry_policy == '0_1dte':
+            request_body.pop('expiry_policy')  # Preserve existing job fingerprints.
+        if request.entry_valid_until is None:
+            request_body.pop('entry_valid_until')
+        if request.max_entry_premium is None:
+            request_body.pop('max_entry_premium')  # Preserve identities of existing jobs without a cap.
+        fingerprint = hashlib.sha256(encode(request_body).encode()).hexdigest()
         existing = self._existing_job(request, fingerprint)
         if existing is not None:
             return existing
+        if request.entry_valid_until and now >= instant(request.entry_valid_until):
+            raise ValueError('entry review card expired')
         if now.astimezone(ET).date().isoformat() != request.trade_date:
             raise ValueError('job trade_date must be today in ET; use custody evaluate for history')
         contract = self.contracts.resolve(request.contract)
-        contract.validate(request)
+        nearest = (self.contracts.nearest_expiry(request.symbol, request.trade_date)
+                   if request.expiry_policy == 'nearest' and request.trade_action != 'sell_only' else None)
+        contract.validate(request, nearest_expiry=nearest)
         session = self.calendar.session(request.trade_date)
         if session.day != request.trade_date:
             raise ValueError('calendar date mismatch')
         flatten = flatten_minute(strategy['config']['params'], session)
         flatten_at = session.opens + timedelta(minutes=flatten)
-        if now >= flatten_at:
+        if now >= (session.closes if request.trade_action == 'sell_only' else flatten_at):
             raise ValueError('entry window closed: create the job before %s' % flatten_at.isoformat())
         job_id = hashlib.sha256(encode([self.account, request.contract, request.trade_date]).encode()).hexdigest()[:32]
-        job = {'id': job_id, 'request': asdict(request), 'strategy': strategy, 'contract': asdict(contract),
+        job = {'id': job_id, 'request': request_body, 'strategy': strategy, 'contract': asdict(contract),
                'mode': self.mode, 'state': 'IDLE', 'position_qty': 0, 'entry_at': None, 'entry_underlying': None,
                'entry_reason': None, 'entry_diagnostics': None, 'exit_requested': False, 'exit_reason': None,
                'exit_decision_at': None, 'attention': None, 'last_bar': None,
@@ -184,6 +201,46 @@ class CustodyService:
             row = db.execute('SELECT id, fingerprint FROM jobs WHERE account=? AND contract=? AND day=?',
                              (self.account, request.contract, request.trade_date)).fetchone()
             if row is None:
+                prior = [json.loads(r[0]) for r in db.execute(
+                    'SELECT body FROM jobs WHERE account=? AND contract=?', (self.account, request.contract))]
+                held = [j for j in prior if j['state'] == 'HELD' and j['position_qty']]
+                if any(j['state'] not in ('DONE', 'HELD', 'TRANSFERRED') for j in prior):
+                    raise ValueError('existing contract job must be reconciled before a new session')
+                if held and request.trade_action != 'sell_only':
+                    raise ValueError('held position requires sell_only takeover in the same database')
+                if request.trade_action == 'sell_only':
+                    if len(held) > 1 or (held and held[0]['position_qty'] != request.max_qty):
+                        raise ValueError('takeover must match the entire locally held quantity')
+                    if self.mode != 'dryrun':
+                        if (position is None or position.account != self.account or position.mode != self.mode
+                                or position.contract != request.contract or type(position.quantity) is not int
+                                or position.quantity < request.max_qty
+                                or not 0 <= (now-instant(position.as_of)).total_seconds() <= 30):
+                            raise ValueError('fresh broker position verification required for sell_only')
+                    elif not held:
+                        raise ValueError('dryrun sell_only requires a locally held position; no invented holdings')
+                    if held:
+                        buys = [o for o in self._orders(db, held[0]) if o['side'] == 'BUY_OPEN' and o['cumulative_qty']]
+                        qty = sum(o['cumulative_qty'] for o in buys)
+                        cost = sum(positive(o.get('average_option_price'), 'entry fill price') * o['cumulative_qty']
+                                   for o in buys) / qty if qty else None
+                        cost_source = 'source_job_buy_fills'
+                    else:
+                        cost, cost_source = position.average_cost, 'broker_average_cost'
+                    cost = positive(cost, 'verified average entry cost')
+                    job.update(state='IN', position_qty=request.max_qty,
+                               adopted_position={'quantity': request.max_qty, 'verified_at': now.isoformat(),
+                                                 'source_job': held[0]['id'] if held else None,
+                                                 'average_cost': cost, 'cost_source': cost_source},
+                               position_exit={'policy': dict(POSITION_EXIT_POLICY), 'peak_gross_return': 0.0,
+                                              'last_quote_at': None, 'fees': 'NOT_DEDUCTED'})
+                    if held:
+                        source = held[0]
+                        if any(o['status'] in ACTIVE for o in self._orders(db, source)):
+                            raise ValueError('cannot transfer a position with unresolved orders')
+                        source.update(state='TRANSFERRED', position_qty=0, transferred_to=job_id,
+                                      transferred_qty=request.max_qty)
+                        self._save(db, source)
                 db.execute('INSERT INTO jobs VALUES (?,?,?,?,?,?)',
                            (job_id, self.account, request.contract, request.trade_date, fingerprint, encode(job)))
             elif row['fingerprint'] != fingerprint:
@@ -201,11 +258,11 @@ class CustodyService:
         return self.get_job(row['id'])
 
     def stop_job(self, job_id, now):
-        """Operator stop: cancel the entry or liquidate; never pretends a position is closed."""
+        """Stop the mandate: buy_only retains holdings; other actions request liquidation."""
         now = instant(now)
         with self._tx() as db:
             job = self._load(db, job_id)
-            if job['state'] != 'DONE':
+            if job['state'] not in ('DONE', 'TRANSFERRED'):
                 self._request_exit(db, job, 'operator_stop', now, None)
             self._save(db, job)
         return self.get_job(job_id)
@@ -246,14 +303,15 @@ class CustodyService:
             if job['last_bar'] and bar < instant(job['last_bar']):
                 raise ValueError('out-of-order frame')
             self._clock(db, job, now, quote)
-            fresh = job['state'] != 'DONE' and not (job['last_bar'] and bar == instant(job['last_bar']))
+            fresh = job['state'] not in ('DONE', 'HELD', 'TRANSFERRED') and not (job['last_bar'] and bar == instant(job['last_bar']))
             if fresh:
                 job['last_bar'] = bar.isoformat()
                 if job['state'] == 'IDLE':
                     job['state'] = 'WATCH'
                 if job['state'] == 'WATCH' and frame.action == 'ENTER':
                     self._enter(db, job, now, quote, frame.reason or 'strategy_entry', frame.diagnostics)
-                elif job['position_qty'] and not job['exit_requested'] and frame.action == 'EXIT':
+                elif (job['position_qty'] and not job['exit_requested'] and frame.action == 'EXIT'
+                      and job['request'].get('trade_action', 'round_trip') == 'round_trip'):
                     self._request_exit(db, job, frame.reason or 'strategy_exit', now, quote)
             self._save(db, job)
         return self.get_job(job_id)
@@ -325,6 +383,14 @@ class CustodyService:
         order.update(status=event.status, cumulative_qty=qty, sequence=event.sequence, last_update=body,
                      average_option_price=event.average_option_price)
         self._store_order(db, order)
+        if event.status in TERMINAL:
+            # The target's confirmed terminal state makes a pending cancel obsolete,
+            # including a cancel whose response was lost before a restart.
+            for cancel in self._orders(db, job):
+                if (cancel['kind'] == 'CANCEL' and cancel['target'] == order['client_order_id']
+                        and cancel['status'] in ACTIVE):
+                    cancel.update(status='CANCELED', resolution='TARGET_TERMINAL')
+                    self._store_order(db, cancel)
         db.execute('INSERT INTO order_events VALUES (?,?,?,?)', (order['client_order_id'], event.sequence, job['id'], body))
         if job['exit_requested']:
             self._exit(db, job, now, None)
@@ -351,7 +417,11 @@ class CustodyService:
             order = candidates[0]
             job = self._load(db, order['job_id'])
             stale = order['kind'] == 'LIMIT' and not 0 <= (now - instant(order['quote_as_of'])).total_seconds() <= self.policy.quote_max_age_seconds
-            if order['side'] == 'BUY_OPEN' and (job['exit_requested'] or now >= instant(job['flatten_at'])):
+            forbidden = (order['side'] == 'BUY_OPEN' and job['request'].get('trade_action') == 'sell_only'
+                         or order['side'] == 'SELL_CLOSE' and job['request'].get('trade_action') == 'buy_only')
+            stale = stale or forbidden
+            if order['side'] == 'BUY_OPEN' and (job['exit_requested'] or now >= instant(job['flatten_at'])
+                                               or job.get('entry_stopped') or self._entry_expired(job, now)):
                 stale = True
             if stale:
                 # Never send an old price. The next heartbeat/frame re-creates a fresh intent.
@@ -428,6 +498,9 @@ class CustodyService:
             return False
 
     def _new(self, db, job, kind, side, qty, now, quote=None, target=None, reason=None):
+        action = job['request'].get('trade_action', 'round_trip')
+        if (side == 'BUY_OPEN' and action == 'sell_only') or (side == 'SELL_CLOSE' and action == 'buy_only'):
+            raise ValueError('order side forbidden by trade_action')
         existing = self._orders(db, job)
         if kind == 'CANCEL':
             suffix = 'CANCEL_' + target.rsplit(':', 1)[-1]
@@ -448,11 +521,21 @@ class CustodyService:
         return order
 
     def _enter(self, db, job, now, quote, reason, diagnostics):
+        if job['request'].get('trade_action') == 'sell_only' or job.get('entry_stopped'):
+            return
+        if self._entry_expired(job, now):
+            self._entry_finished(job, now)
+            return
         if any(o['side'] == 'BUY_OPEN' and o['status'] in ACTIVE for o in self._orders(db, job)):
             return
         job.update(entry_reason=reason, entry_diagnostics=diagnostics)
         if not self._quote_ok(job, quote, now):
             job['attention'] = 'ENTRY_WAITING_VALID_QUOTE'
+            return
+        cap = job['request'].get('max_entry_premium')
+        premium = Decimal(str(quote.ask)) * job['contract']['multiplier'] * job['request']['max_qty']
+        if cap is not None and premium > Decimal(str(cap)):
+            job['attention'] = 'ENTRY_PREMIUM_LIMIT'
             return
         self._new(db, job, 'LIMIT', 'BUY_OPEN', job['request']['max_qty'], now, quote, reason=reason)
         job.update(state='ENTRY', entry_reason=reason, entry_diagnostics=diagnostics, attention=None)
@@ -460,13 +543,18 @@ class CustodyService:
     def _entry_finished(self, job, now):
         """A BUY order reached a terminal state (or was dropped unsent)."""
         if job['position_qty']:
-            job.update(state='IN', attention=None)
+            job.update(state='HELD' if job['request'].get('trade_action') == 'buy_only' else 'IN', attention=None)
+        elif self._entry_expired(job, now):
+            job.update(state='DONE', attention='ENTRY_REVIEW_EXPIRED')
         elif now < instant(job['flatten_at']):
             job.update(state='WATCH', attention='ENTRY_RETRY_PENDING')
         else:
             job.update(state='DONE', attention='ENTRY_NOT_FILLED')
 
     def _request_exit(self, db, job, reason, now, quote):
+        if job['request'].get('trade_action') == 'buy_only':
+            self._retain(db, job, now)
+            return
         job['exit_decision_at'] = job['exit_decision_at'] or now.isoformat()
         job['exit_requested'] = True
         job['exit_reason'] = job['exit_reason'] or reason
@@ -487,7 +575,7 @@ class CustodyService:
             job['attention'] = 'WAITING_ENTRY_CANCEL_CONFIRMATION'
             return
         if job['position_qty'] == 0:
-            never_entered = job['entry_at'] is None and job['exit_reason'] != 'operator_stop'
+            never_entered = job['entry_at'] is None and not job.get('adopted_position') and job['exit_reason'] != 'operator_stop'
             attempted = job['entry_reason'] is not None or any(o['side'] == 'BUY_OPEN' for o in orders)
             outcome = 'ENTRY_NOT_FILLED' if attempted else 'NO_ENTRY_SIGNAL'
             job.update(state='DONE', attention=outcome if never_entered else None)
@@ -496,18 +584,33 @@ class CustodyService:
         if sells:
             sell = sells[-1]
             age = (now - instant(sell['created_at'])).total_seconds()
-            if sell['status'] != 'CREATED' and age >= self.policy.exit_timeout_seconds:
+            if sell['status'] == 'CREATED' and not 0 <= (
+                    now-instant(sell['quote_as_of'])).total_seconds() <= self.policy.quote_max_age_seconds:
+                sell['status'] = 'CANCELED'
+                self._store_order(db, sell)
+            elif sell['status'] != 'CREATED' and age >= self.policy.exit_timeout_seconds:
                 if self._new(db, job, 'CANCEL', 'CANCEL', 0, now, target=sell['client_order_id']):
                     job['attention'] = 'EXIT_REPRICE_CANCEL_PENDING'
-            return
+                return
+            else:
+                return
         if not self._quote_ok(job, quote, now, allow_wide=True):
             job['attention'] = 'EXIT_WAITING_VALID_QUOTE'
             return
         self._new(db, job, 'LIMIT', 'SELL_CLOSE', job['position_qty'], now, quote, reason=job['exit_reason'])
         job['attention'] = None
 
+    @staticmethod
+    def _entry_expired(job, now):
+        deadline = job['request'].get('entry_valid_until')
+        return deadline is not None and now >= instant(deadline)
+
     def _clock(self, db, job, now, quote):
-        if job['state'] == 'DONE':
+        if job['state'] in ('DONE', 'HELD', 'TRANSFERRED'):
+            return
+        if job['request'].get('trade_action') == 'buy_only' and (
+                job.get('entry_stopped') or now >= instant(job['flatten_at'])):
+            self._retain(db, job, now)
             return
         if now >= instant(job['flatten_at']) and not job['exit_requested']:
             self._request_exit(db, job, 'scheduled_flatten', now, quote)
@@ -515,9 +618,16 @@ class CustodyService:
         if job['exit_requested']:
             self._exit(db, job, now, quote)
             return
+        if job['request'].get('trade_action') == 'sell_only':
+            self._position_exit(db, job, now, quote)
+            return
         buys = [o for o in self._orders(db, job) if o['side'] == 'BUY_OPEN' and o['status'] in ACTIVE]
+        expired = self._entry_expired(job, now)
+        if expired and not buys and not job['position_qty']:
+            job.update(state='DONE', attention='ENTRY_REVIEW_EXPIRED')
+            return
         for buy in buys:
-            if (now - instant(buy['created_at'])).total_seconds() < self.policy.entry_timeout_seconds:
+            if not expired and (now - instant(buy['created_at'])).total_seconds() < self.policy.entry_timeout_seconds:
                 continue
             if buy['status'] == 'CREATED':
                 buy['status'] = 'CANCELED'
@@ -525,3 +635,36 @@ class CustodyService:
                 self._entry_finished(job, now)
             elif self._new(db, job, 'CANCEL', 'CANCEL', 0, now, target=buy['client_order_id']):
                 job['attention'] = 'ENTRY_TIMEOUT_CANCEL_PENDING'
+
+    def _position_exit(self, db, job, now, quote):
+        if now < instant(job['opens']):
+            return
+        if not self._quote_ok(job, quote, now, allow_wide=True):
+            job['attention'] = 'POSITION_EXIT_WAITING_VALID_QUOTE'
+            return
+        state = job['position_exit']
+        if state['last_quote_at'] and instant(quote.as_of) <= instant(state['last_quote_at']):
+            return
+        reason, value, peak = position_exit_decision(state['policy'], job['adopted_position']['average_cost'],
+                                                     quote.bid, state['peak_gross_return'])
+        state.update(last_quote_at=instant(quote.as_of).isoformat(), gross_return=value, peak_gross_return=peak)
+        job['attention'] = None
+        if reason:
+            self._request_exit(db, job, reason, now, quote)
+
+    def _retain(self, db, job, now):
+        """End a buy-only mandate without selling; reconcile every entry remainder first."""
+        job['entry_stopped'] = True
+        waiting = False
+        for buy in self._orders(db, job):
+            if buy['side'] != 'BUY_OPEN' or buy['status'] not in ACTIVE:
+                continue
+            if buy['status'] == 'CREATED':
+                buy['status'] = 'CANCELED'
+                self._store_order(db, buy)
+            else:
+                self._new(db, job, 'CANCEL', 'CANCEL', 0, now, target=buy['client_order_id'])
+                waiting = True
+        job.update(state='ENTRY' if waiting else 'HELD' if job['position_qty'] else 'DONE',
+                   attention='WAITING_ENTRY_CANCEL_CONFIRMATION' if waiting else
+                   'POSITION_RETAINED' if job['position_qty'] else 'ENTRY_NOT_FILLED')

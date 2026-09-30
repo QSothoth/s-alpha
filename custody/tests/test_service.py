@@ -101,12 +101,103 @@ class ServiceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.service.create_job(dict(self.request, strategy_id='orb_rvol_rsi_1m_v1'), T)
 
+    def test_nearest_expiry_is_verified_and_persisted(self):
+        self.service.contracts.nearest_expiry = lambda symbol, day: '2026-09-18'
+        request = dict(self.request, contract='US.SPY260918C600000', expiry_policy='nearest')
+        job = self.service.create_job(request, T)
+        self.assertEqual(job['request']['expiry_policy'], 'nearest')
+        self.assertEqual(self.service.create_job(request, T)['id'], job['id'])
+        contract = self.service.contracts.resolve(request['contract'])
+        with self.assertRaisesRegex(ValueError, 'verified nearest'):
+            contract.validate(JobRequest.parse(request, T), '2026-09-16')
+
+    def test_review_deadline_blocks_creation_late_dispatch_and_retry(self):
+        end = T + timedelta(seconds=10)
+        self.request['entry_valid_until'] = end.isoformat()
+        job = self.job()
+        self.service.on_frame(job['id'], self.frame(), T, self.quote())
+        adapter = Adapter()
+        result = self.service.dispatch_next(adapter, end)
+        self.assertIn('not_sent', result)
+        self.assertEqual(adapter.calls, [])
+        state = self.service.heartbeat(job['id'], end, self.quote(end))
+        self.assertEqual((state['state'], state['attention']), ('DONE', 'ENTRY_REVIEW_EXPIRED'))
+        self.assertEqual(self.service.create_job(self.request, end)['id'], job['id'])  # Restart stays safe.
+        other = dict(self.request, contract=PUT, direction='SHORT')
+        with self.assertRaisesRegex(ValueError, 'expired'):
+            self.service.create_job(other, end)
+
+    def test_controller_refreshes_clock_before_dispatch_after_io_delay(self):
+        end = T + timedelta(seconds=10)
+        self.request['entry_valid_until'] = end.isoformat()
+        job = self.job()
+        adapter = Adapter()
+        clock = iter([T, end])
+        Controller(self.service, adapter).step(job['id'], T, self.quote(), self.frame(), clock=lambda: next(clock))
+        self.assertEqual(adapter.calls, [])
+        self.assertEqual(self.service.get_job(job['id'])['state'], 'DONE')
+
+    def test_review_deadline_cancels_open_remainder_but_keeps_filled_position(self):
+        self.request['entry_valid_until'] = (T + timedelta(seconds=10)).isoformat()
+        job, adapter, key = self.entry()
+        self.fill(key, qty=1, status='PARTIAL')
+        end = T + timedelta(seconds=10)
+        state = self.service.heartbeat(job['id'], end, self.quote(end))
+        self.assertTrue(any(o['kind'] == 'CANCEL' for o in state['orders']))
+        self.service.apply_update(OrderUpdate(key, 2, 'CANCELED', 1, end, 600, 1.05, T), end)
+        state = self.service.heartbeat(job['id'], end, self.quote(end))
+        self.assertEqual((state['state'], state['position_qty']), ('IN', 1))
+        self.assertFalse(state['exit_requested'])
+
     def test_one_job_per_contract_per_day_idempotent_and_concurrent(self):
         with ThreadPoolExecutor(max_workers=4) as pool:
             ids = list(pool.map(lambda _: self.job()['id'], range(8)))
         self.assertEqual(len(set(ids)), 1)
         with self.assertRaisesRegex(ValueError, 'one_job_per_contract_day'):
             self.service.create_job(dict(self.request, max_qty=1), T)
+
+    def test_entry_premium_cap_blocks_whole_quantity_and_never_blocks_exit(self):
+        self.request['max_entry_premium'] = 200
+        job = self.job()
+        blocked = self.service.on_frame(job['id'], self.frame(), T, self.quote())
+        self.assertEqual((blocked['state'], blocked['attention'], blocked['orders']),
+                         ('WATCH', 'ENTRY_PREMIUM_LIMIT', []))
+        later = T + timedelta(minutes=1)
+        ready = self.service.on_frame(job['id'], self.frame(later), later, self.quote(later, .95, 1.0))
+        self.assertEqual(ready['orders'][0]['limit_price'], 1.0)
+        adapter = Adapter()
+        self.service.dispatch_next(adapter, later)
+        self.fill(adapter.calls[0]['client_order_id'], when=later)
+        end = later + timedelta(minutes=1)
+        closed = self.service.on_frame(job['id'], self.frame(end, 'EXIT'), end, self.quote(end, 3.0, 3.1))
+        self.assertEqual(closed['orders'][-1]['side'], 'SELL_CLOSE')
+        self.assertEqual(closed['orders'][-1]['limit_price'], 3.0)
+
+    def test_premium_cap_survives_restart_and_rechecks_entry_retries(self):
+        self.request['max_entry_premium'] = 210
+        job, adapter, key = self.entry()
+        self.fill(key, qty=0, status='REJECTED')
+        self.service = CustodyService(self.path, 'test', Catalog(), Calendar())
+        self.assertEqual(self.job()['request']['max_entry_premium'], 210)
+        with self.assertRaisesRegex(ValueError, 'one_job_per_contract_day'):
+            self.service.create_job(dict(self.request, max_entry_premium=300), T)
+        without_cap = {k: v for k, v in self.request.items() if k != 'max_entry_premium'}
+        with self.assertRaisesRegex(ValueError, 'one_job_per_contract_day'):
+            self.service.create_job(without_cap, T)
+        later = T + timedelta(minutes=1)
+        blocked = self.service.on_frame(job['id'], self.frame(later), later, self.quote(later, 1.01, 1.06))
+        self.assertEqual(blocked['attention'], 'ENTRY_PREMIUM_LIMIT')
+        self.assertEqual(len(blocked['orders']), 1)
+
+    def test_premium_cap_validation_and_legacy_job_fingerprint(self):
+        for bad in (True, 0, -1, float('nan'), float('inf'), '200'):
+            with self.assertRaises(ValueError):
+                JobRequest.parse(dict(self.request, max_entry_premium=bad), T)
+        job = self.job()
+        self.assertNotIn('max_entry_premium', job['request'])
+        expected = hashlib.sha256(json.dumps(self.request, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute('SELECT fingerprint FROM jobs WHERE id=?', (job['id'],)).fetchone()[0], expected)
 
     def test_same_underlying_can_trade_long_and_short_contracts_the_same_day(self):
         call_job = self.job()

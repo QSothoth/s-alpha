@@ -4,6 +4,7 @@
 
 | 目录 | 内容 | 状态 |
 |---|---|---|
+| [us_0dte_picks/](us_0dte_picks/README.md) | 先筛日线候选、10:00 确认方向的个股 0DTE 名单研究 | P2 大动信号保留、不给方向；A4 在旧 P4 局部通过，但 P5 新截面 40 次目标率仅 7.5%、均值为负，未通过；目前无稳定方向规则，daily_list.py 仅研究观察 |
 | [us_opening_range/](us_opening_range/README.md) | 当前美股 0DTE 上游研究：日K位置、盘前观察／早盘突破提示；旧OR交易回放保留 | DS1/DS2/AH1未晋级；RG1局部raw正但整体未过；OM1仅7次真实0DTE桥接提示，不认证期权净收益；扫描仅观察，九ETF分钟及09/25仍未评测 |
 | [auction_strength/](auction_strength/README.md) | 竞价最后一分钟强弱打分（港股 09:19、A 股 09:24） | 只有 3 天样本，门槛未校准 |
 | [hk_open_scan/](hk_open_scan/README.md) | 港股通全市场竞价时点 / 09:45 排序 | 结论为负（追涨负期望） |

@@ -16,13 +16,53 @@
 
 `dryrun` / `run` 启动时用命令行参数建任务：`--symbol`、`--direction`、`--contract` 必填，`--strategy` 缺省为默认策略，`--max-qty` 缺省 1，交易日是美东今天。
 
-- 合约必须当天到期、与标的一致、LONG 对应 CALL / SHORT 对应 PUT。
+可选 `--max-entry-premium <美元>` 限制本任务买入权利金：`ask × 合约乘数 × max_qty` 超过上限时不产生买入意图，标记 `ENTRY_PREMIUM_LIMIT`，以后新的入场帧仍须满足同一上限。上限随任务保存，重启不能删除或提高，退出不受此限制；未设上限的既有任务行为和身份不变。此参数**不含手续费，也不合并其他任务的预算**；例如总预算 300 美元时，可先为两笔各设 140 美元权利金上限，剩余 20 美元作费用预留，费用是否足够仍需按账户收费表核实。不得把 `--max-qty 1` 当成美元预算限制。
+
+- 合约与标的一致，LONG 对应 CALL / SHORT 对应 PUT。默认 `--expiry-policy 0_1dte` 保留 0–1 日到期兼容范围；显式 `--expiry-policy nearest` 时查询 OpenD，必须等于该标的最近未到期日。后者是 2026-09-29 用户授权的运行扩展，不改变 0DTE 数据集、评测或策略参数。
 - 同一账户 + 同一合约 + 同一交易日只能有一个任务：这张合约当天只买一次、卖一次。重跑同一条命令会接着处理同一个任务；同一合约换参数（数量、策略）会被拒绝。
 - 同一标的可以同时有多个任务，例如一张 CALL 做多、一张 PUT 做空，各开一个进程，各自独立计时、各自一笔。
-- 到达强平时刻就不能再建任务或买入。
+- 到达强平时刻就不能再建入场任务或买入；只卖接管可在当天收盘前创建。
 - 任务、订单和模式（`dryrun` / `paper` / `live`，按账户绑定）保存在 SQLite，缺省为当前目录的 `custody-<模式>.sqlite`。放在持久目录，当天不要删除或换库，否则会丢失这张合约已经下过单的记录。数据库 schema 为 v4，旧库被拒绝，不自动迁移。
 
-## 2. 状态机
+## 1a. 当日买卖权限
+
+2026-09-30 新增 `--trade-action`，与 `--mode dryrun/paper/live` 的订单去向独立：
+
+| 参数 | 买入 | 卖出 | 完成状态 |
+|---|---|---|---|
+| `round_trip`（默认） | 原策略择时 | 原策略退出、人工 stop 或尾盘退出 | 平仓确认后 `DONE` |
+| `buy_only` | 原策略择时，沿用入场截止与预算 | 禁止；策略 EXIT、尾盘、stop 均不卖出 | 买单终态确认后有仓为 `HELD`，无仓为 `DONE` |
+| `sell_only` | 禁止 | 接管已有多头后，按持仓毛收益规则自动退出，兼容 stop 与尾盘退出 | 卖出确认后 `DONE` |
+
+`buy_only` 不等于策略自动管理隔夜仓位。`HELD` 时 worker 正常结束，日志为 `mandate_finished`，保留数量与原始成交；部分成交但挂单仍待撤销时继续轮询，不能提前结束。即使当日到期，程序也不会擅自卖出；这不阻止券商按账户规则处理到期合约，也不保证合约可留到次日。
+
+`sell_only` 的 `--max-qty` 是本次接管并最多卖出的数量。paper/live 启动新任务前刷新券商订单和可卖多头，存在该合约未决委托、数量不足或证据超过 30 秒则拒绝。已有持仓合约只要求未到期且元数据匹配，不强制它仍是最近到期合约；不伪造买入成交或成本，也不套用今天的模拟入场来计算锁盈。不读取择时 K 线；`position_pnl_v1` 按经核实的平均成本与实时 bid 自动择时，未提前退出则沿用策略配置的尾盘截止；在截止后、收盘前也能创建只卖任务并立即进入退出流程。重启已有任务不重新导入账户数量。
+
+跨日处理必须沿用原数据库。前一天 `HELD` 的整份持仓移交给次日 `sell_only`，原记录成为 `TRANSFERRED`，保留移交数量与目标 job；同库有其他未完成任务则拒绝接管。dryrun 只允许接管同库已有的模拟持仓，不接受手填虚构仓位。数据库外的其他程序不在本地去重范围内，不得同时控制该份仓位；每次真实卖单仍会核对账户可卖数量。相同合约当天已有任务时仍禁止换参数重新创建，不提供热切换模式。
+
+示例（执行前替换真实合约／账户，先使用已授权的模式）：
+
+```bash
+# 当日只买；使用真实行情本地模拟，不发券商订单
+/opt/futu-opend/venv/bin/python -m custody dryrun --strategy open_hold_v3 \
+  --symbol US.AAPL --direction LONG --contract '<最近到期CALL>' \
+  --expiry-policy nearest --trade-action buy_only --max-qty 1 \
+  --max-entry-premium 280 --stream-only --db data/retained-dryrun.sqlite
+
+# 后续交易日仅管理上面保留的同一合约，不重复导入或再买
+/opt/futu-opend/venv/bin/python -m custody dryrun --strategy open_hold_v3 \
+  --symbol US.AAPL --direction LONG --contract '<原持仓CALL>' \
+  --trade-action sell_only --max-qty 1 --db data/retained-dryrun.sqlite
+
+# 在另一终端请求该只卖任务退出；worker 继续执行直到确认
+python3 -m custody stop --db data/retained-dryrun.sqlite --job '<只卖任务ID>'
+```
+
+买卖／只买模式可按授权使用 `run --mode live|paper --acc-id ...`；只卖候选目前仅支持 dryrun／paper，live 在连接交易账户前拒绝，不能继承 open_hold_v3 的 accepted 状态。只卖模式不接受 `--entry-valid-until` 或 `--max-entry-premium`。只卖使用独立的实验规则 position_pnl_v1，尚无收益认证；原日内策略参数、哈希与离线报告均未修改。
+
+只卖规则固定为毛亏损 30% 止损、毛收益 100% 止盈、毛收益达到 50% 后回落至接管后最高毛收益的一半退出。规则副本与峰值存入 job，重启沿用；重复、倒序、过期报价不更新峰值。不追溯接管前的峰值，不把毛收益称为扣费净收益。已有本库仓位的成本取原买单成交加权价；外部仓位只接受券商 `average_cost`，缺失或非正则拒绝，不用 `cost_price` 或现价替代。预登记见 [POSITION_EXIT_V1_PREREG](../studies/us_0dte_picks/notes/POSITION_EXIT_V1_PREREG.md)，本轮只完成工程测试，后续须独立真实报价验证。
+
+## 2. 状态机（默认 round_trip）
 
 `IDLE → WATCH → ENTRY → IN → EXIT → DONE`
 
@@ -38,10 +78,12 @@
 | 没有有效报价 | 停在 EXIT 并标记 `EXIT_WAITING_VALID_QUOTE`，不会假装已平仓 |
 
 其他保证：意图先落库再做券商 I/O；提交结果不明记为 `UNKNOWN`，不会盲目重发；重启后任务和待发意图都保留；
-策略帧必须是当天已完成的整分钟 K 线、不超过 15 秒、不能倒序。
+策略帧必须是当天已完成的整分钟 K 线，普通任务最长 15 秒，带审视卡入场截止时间的任务最长 60 秒，不能倒序。
 
-默认执行参数（`ExecutionPolicy`）：报价最长 5 秒、帧最长 15 秒、入场 / 出场超时 30 秒、最大相对点差 30%。
-这些是工程默认值，没有用历史买卖价校准过。
+默认执行参数（`ExecutionPolicy`）：报价最长 30 秒、帧最长 15 秒、入场 / 出场超时 30 秒、最大相对点差 30%。
+这些是工程默认值，没有用历史买卖价校准过。带 `--entry-valid-until` 的 CLI 任务改用帧最长 60 秒、入场价差最多 10%，报价仍最长 30 秒。
+
+可选 `--entry-valid-until <带时区时间>` 将审视卡有效期随任务持久保存：新任务不能在截止后创建，截止后不再买入，未成交买单请求撤销；已成交持仓继续由策略管理。既有同任务可在截止后恢复管理，不能修改该截止时间重新抢入。`--stream-only` 禁止分钟缺口触发历史 K 线回补，缺口会明确报错并等待。人工候选的统一交接与跨任务预算限制见 [操作流程](../studies/us_0dte_picks/notes/WORKFLOW_CN.md)。
 
 ## 3. 策略帧从哪来
 
@@ -51,7 +93,7 @@
 
 ## 4. dryrun
 
-先按 [OpenD 环境](OPEND_SETUP.md) 配置行情。将 `contract` 替换成上游选好的**今天到期**的实际合约代码：
+先按 [OpenD 环境](OPEND_SETUP.md) 配置行情。将 `contract` 替换成上游选好的实际合约代码；下面展示默认的 0–1 DTE 路径，最近到期路径另加 `--expiry-policy nearest`：
 
 ```bash
 contract='<今天到期的 CALL 合约代码>'
@@ -92,7 +134,7 @@ python3 -m custody status --db custody-paper.sqlite --job <job_id>   # 单个任
 python3 -m custody stop   --db custody-paper.sqlite --job <job_id>   # 人工停止
 ```
 
-`stop` 只在数据库里请求退出（撤掉未成交的买单，再卖出持仓，不会假装已平仓），由正在运行的 `dryrun` / `run` 进程在下一轮执行。进程没有运行时，重跑同一条启动命令来执行退出。
+`stop` 对 round_trip / sell_only 在数据库里请求退出（撤掉未成交的买单，再卖出持仓，不会假装已平仓），由正在运行的 `dryrun` / `run` 进程在下一轮执行。进程没有运行时，重跑同一条启动命令来执行退出。对 buy_only 仅停止买入、撤销余单并保留仓位，不覆盖“不卖出”权限。
 
 ## 7. 执行边界
 

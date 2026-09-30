@@ -4,6 +4,10 @@ from .models import Contract, Session, OrderUpdate
 
 
 class ContractResolver(Protocol):
+    def nearest_expiry(self, underlying: str, day: str) -> str | None:
+        """Verify the earliest unexpired date when nearest-expiry execution is requested."""
+        ...
+
     def resolve(self, code: str) -> Contract:
         """Resolve broker instrument metadata; do not infer from arbitrary text."""
         ...

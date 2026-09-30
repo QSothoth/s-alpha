@@ -25,7 +25,7 @@ from .controller import Controller
 from .models import ET, Frame, OrderUpdate, instant, symbol as normalize_symbol
 from .opend import OpenDContractResolver, OpenDMarket, OpenDTradingCalendar
 from .registry import Registry
-from .service import ACTIVE, CustodyService
+from .service import ACTIVE, CustodyService, ExecutionPolicy
 from .strategy import build_strategy
 
 SECURITY_FIRMS = ('FUTUSECURITIES', 'FUTUINC', 'FUTUSG', 'FUTUAU', 'FUTUCA', 'FUTUMY', 'FUTUJP')
@@ -66,8 +66,9 @@ def _push_notify(title, body, *, wxpusher_spt=None):
 class SameDayHistorySource:
     """Complete same-session 1m underlying bars up to a boundary; nothing older."""
 
-    def __init__(self, market, calendar, symbol):
+    def __init__(self, market, calendar, symbol, allow_history=True):
         self.market, self.calendar = market, calendar
+        self.allow_history = allow_history
         self.symbol = symbol if str(symbol).upper().startswith('US.') else 'US.' + str(symbol).upper()
         self._day = None
         self._bars = {}
@@ -94,7 +95,7 @@ class SameDayHistorySource:
         except Exception:  # noqa: BLE001 - history below is an independent same-day source
             current = []
         accept(current)
-        if any(t not in self._bars for t in expected):
+        if self.allow_history and any(t not in self._bars for t in expected):
             try:
                 accept(self.market.history_bars(self.symbol, 'K_1M', day, day, boundary=boundary))
             except Exception as exc:  # noqa: BLE001
@@ -170,8 +171,11 @@ class Runner:
         self._seen = {}
 
     def tick(self, now=None):
+        clock = (lambda: datetime.now(ET)) if now is None else None
         now = instant(now) if now is not None else datetime.now(ET)
         job = self.service.get_job(self.job_id)
+        if job['state'] in ('DONE', 'HELD', 'TRANSFERRED'):
+            return job
         contract, underlying = job['request']['contract'], job['request']['symbol']
         quote = mark = frame = None
         try:
@@ -188,7 +192,9 @@ class Runner:
             except Exception as exc:  # noqa: BLE001 - data gaps are non-fatal
                 self.log('frame_error', symbol=underlying, error=repr(exc))
         try:
-            state = self.controller.step(self.job_id, now, quote, frame)
+            if clock:
+                now = clock()
+            state = self.controller.step(self.job_id, now, quote, frame, clock=clock)
         except Exception as exc:  # noqa: BLE001 - the worker must keep managing an open position
             self.log('step_error', job_id=self.job_id, error=repr(exc))
             return None
@@ -206,7 +212,9 @@ class Runner:
 
     def _simulate_fills(self, state, now, mark):
         for order in state['orders']:
-            if order['kind'] != 'LIMIT' or order['status'] != 'CREATED' or order['limit_price'] is None or not mark:
+            if (order['kind'] != 'LIMIT' or order['status'] != 'CREATED' or order['limit_price'] is None
+                    or (order['side'] == 'BUY_OPEN' and not mark)
+                    or not 0 <= (now-instant(order['quote_as_of'])).total_seconds() <= self.service.policy.quote_max_age_seconds):
                 continue
             first = now if order['side'] == 'BUY_OPEN' else None
             state = self.service.apply_update(OrderUpdate(order['client_order_id'], 0, 'FILLED', order['quantity'],
@@ -237,10 +245,12 @@ class Runner:
         executed = 0
         try:
             while ticks is None or executed < ticks:
-                state = self.tick(datetime.now(ET))
+                state = self.tick()
                 executed += 1
-                if state is not None and state['state'] == 'DONE':
-                    self.log('done', job_id=self.job_id, attention=state['attention'])
+                if state is not None and state['state'] in ('DONE', 'HELD', 'TRANSFERRED'):
+                    self.log('done' if state['state'] == 'DONE' else 'mandate_finished',
+                             job_id=self.job_id, state=state['state'], position_qty=state['position_qty'],
+                             attention=state['attention'])
                     break
                 if ticks is None or executed < ticks:
                     time.sleep(self.interval)
@@ -252,10 +262,10 @@ class Runner:
 
 
 HELP = {
-    'dryrun': 'Watch one 0DTE job on read-only OpenD with simulated fills; never sends an order.',
-    'run': 'Trade one 0DTE job through OpenD: paper = SIMULATE account, live = REAL money.',
+    'dryrun': 'Watch one option job on read-only OpenD with simulated fills; never sends an order.',
+    'run': 'Trade one option job through OpenD: paper = SIMULATE account, live = REAL money.',
     'status': 'Show the jobs of a runtime database.',
-    'stop': 'Request the exit of a job (cancel the entry, sell the position); the running worker executes it.',
+    'stop': 'Stop entry and request exit; buy_only cancels entry remainders and retains holdings.',
 }
 
 
@@ -276,8 +286,16 @@ def build_argument_parser(command):
     parser.add_argument('--strategy', default=None, help='registered strategy_id (default: registry default)')
     parser.add_argument('--symbol', required=True, help='underlying, e.g. US.QQQ')
     parser.add_argument('--direction', choices=['LONG', 'SHORT'], required=True)
-    parser.add_argument('--contract', required=True, help='exact same-day option code, e.g. US.QQQ260916C705000')
+    parser.add_argument('--contract', required=True, help='exact upstream-selected option code')
+    parser.add_argument('--expiry-policy', choices=['0_1dte', 'nearest'], default='0_1dte',
+                        help='nearest: verify the earliest unexpired expiry with OpenD')
     parser.add_argument('--max-qty', type=int, default=1)
+    parser.add_argument('--trade-action', choices=['round_trip', 'buy_only', 'sell_only'], default='round_trip',
+                        help='round_trip: intraday buy/sell; buy_only: retain fills; sell_only: adopt holdings and auto-exit on verified cost/bid (dryrun/paper only)')
+    parser.add_argument('--entry-valid-until', default=None, help='review expiry; stops new buys, never position management')
+    parser.add_argument('--stream-only', action='store_true', help='never request historical-kline quota on a data gap')
+    parser.add_argument('--max-entry-premium', type=float, default=None,
+                        help='maximum entry premium in USD for this job, excluding fees; persisted across restarts')
     parser.add_argument('--db', default=None, help='durable SQLite path (default: custody-<mode>.sqlite)')
     parser.add_argument('--host', default=None, help='OpenD host (default: FUTU_HOST or 127.0.0.1)')
     parser.add_argument('--port', type=int, default=None, help='OpenD port (default: FUTU_PORT or 11111)')
@@ -291,6 +309,7 @@ def build_argument_parser(command):
 
 def _summary(job):
     return {'job_id': job['id'], 'mode': job['mode'], 'contract': job['request']['contract'],
+            'trade_action': job['request'].get('trade_action', 'round_trip'),
             'trade_date': job['request']['trade_date'], 'state': job['state'], 'position_qty': job['position_qty'],
             'attention': job['attention'], 'entry_reason': job['entry_reason'], 'exit_reason': job['exit_reason']}
 
@@ -315,6 +334,8 @@ def main(command, argv=None):
     if command in ('status', 'stop'):
         return _operate(command, args)
     mode = args.mode if command == 'run' else 'dryrun'
+    if mode == 'live' and args.trade_action == 'sell_only':
+        raise SystemExit('sell_only position_pnl_v1 has no independent validation; use dryrun/paper')
     market = OpenDMarket(host=args.host, port=args.port)
     broker, subscribed = None, False
     try:
@@ -328,10 +349,26 @@ def main(command, argv=None):
                     'do not strip them with env -u — GUI unlock expires and place_order then fails silently')
             broker = OpenDBroker.connect(market, mode, args.acc_id, args.security_firm)
         service = CustodyService(args.db or 'custody-%s.sqlite' % mode, broker.account if broker else args.account,
-                                 OpenDContractResolver(market), calendar, registry=registry, mode=mode)
-        job = service.create_job({'strategy_id': args.strategy or registry.default_id, 'symbol': args.symbol,
+                                 OpenDContractResolver(market), calendar, registry=registry, mode=mode,
+                                 policy=ExecutionPolicy(frame_max_age_seconds=60, max_spread_fraction=.10)
+                                 if args.entry_valid_until else None)
+        payload = {'strategy_id': args.strategy or registry.default_id, 'symbol': args.symbol,
                                   'direction': args.direction, 'contract': args.contract,
-                                  'max_qty': args.max_qty}, datetime.now(ET))
+                                  'max_qty': args.max_qty, 'max_entry_premium': args.max_entry_premium,
+                                  'expiry_policy': args.expiry_policy,
+                                  'trade_action': args.trade_action,
+                                  'entry_valid_until': args.entry_valid_until}
+        position = None
+        if args.trade_action == 'sell_only' and broker is not None:
+            # Existing jobs resume from their own durable fills, never re-import account quantity.
+            from .models import JobRequest
+            request = JobRequest.parse(payload, datetime.now(ET))
+            with service._tx() as db:
+                exists = db.execute('SELECT 1 FROM jobs WHERE account=? AND contract=? AND day=?',
+                                    (service.account, request.contract, request.trade_date)).fetchone()
+            if not exists:
+                position = broker.position_snapshot(args.contract, datetime.now(ET))
+        job = service.create_job(payload, datetime.now(ET), position=position)
         underlying = 'US.' + normalize_symbol(args.symbol)
         if not args.no_subscribe:
             try:
@@ -340,7 +377,9 @@ def main(command, argv=None):
             except Exception as exc:  # noqa: BLE001 - polling still works
                 _json_logger('subscribe_error', error=repr(exc))
         runner = Runner(service, market, job['id'], broker=broker,
-                        frame_source=StrategyFrameSource(SameDayHistorySource(market, calendar, underlying)),
+                        frame_source=None if args.trade_action == 'sell_only' else StrategyFrameSource(SameDayHistorySource(market, calendar, underlying,
+                                                                             allow_history=not args.stream_only),
+                                                         max_age_seconds=service.policy.frame_max_age_seconds),
                         interval=args.interval, wxpusher_spt=args.wxpusher_spt,
                         simulate_fills=command == 'dryrun' and not args.intent_only)
         _json_logger('start', command=command, mode=mode, account=service.account, db=service.path, job_id=job['id'],

@@ -205,6 +205,13 @@ class OpenDContractResolver:
     def __init__(self, market):
         self.market = market
 
+    def nearest_expiry(self, underlying, day):
+        ret, data = self.market.context.get_option_expiration_date('US.' + underlying.removeprefix('US.'))
+        if ret != 0:
+            raise RuntimeError('get_option_expiration_date failed: ' + str(data))
+        dates = sorted({_day(row.get('strike_time')) for row in _records(data)} - {None, ''})
+        return next((expiry for expiry in dates if expiry >= day), None)
+
     def resolve(self, code):
         underlying, expiry, right_from_code, strike_from_code = parse_option_code(code)
         code = str(code).strip().upper()

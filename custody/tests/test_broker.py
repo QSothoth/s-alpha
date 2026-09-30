@@ -4,7 +4,7 @@ import unittest.mock
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from custody.broker import OpenDBroker, order_update, trade_password_present
+from custody.broker import OpenDBroker, inspect_us_accounts, order_update, trade_password_present
 from custody.models import HardSubmitError, UnlockRequiredError
 from custody.controller import Controller
 from custody.models import ET, Contract, Frame, Quote, Session
@@ -46,7 +46,7 @@ class FakeTradeContext:
         if 'position_list_query' in self.fail:
             return -1, 'down'
         held = self.positions.get(code, 0)
-        return 0, [{'code': code, 'position_side': 'LONG', 'can_sell_qty': float(held)}] if held else []
+        return 0, [{'code': code, 'position_side': 'LONG', 'can_sell_qty': float(held), 'average_cost': 1.05}] if held else []
 
     def modify_order(self, op, order_id, qty, price, trd_env, acc_id):
         self.cancelled.append((op, order_id))
@@ -94,6 +94,32 @@ class BrokerTests(unittest.TestCase):
     def setUp(self):
         self.ctx = FakeTradeContext()
         self.broker = OpenDBroker(self.ctx, Market(), 'paper', SIM)
+
+    def test_account_inspection_reads_real_us_only_and_never_unlocks_or_submits(self):
+        sdk = unittest.mock.Mock()
+        context = sdk.OpenSecTradeContext.return_value
+        context.get_acc_list.return_value = (0, [
+            {'acc_id': 1, 'trd_env': 'SIMULATE', 'trdmarket_auth': ['US']},
+            {'acc_id': 2, 'trd_env': 'REAL', 'trdmarket_auth': ['HK']},
+            {'acc_id': 3, 'trd_env': 'REAL', 'trdmarket_auth': ['US']},
+        ])
+        context.accinfo_query.return_value = (0, [{'cash': 300.0}])
+        context.position_list_query.return_value = (0, [])
+        context.order_list_query.return_value = (0, [])
+        market = unittest.mock.Mock(host='127.0.0.1', port=11111)
+        with unittest.mock.patch('custody.broker._futu', return_value=sdk):
+            result = inspect_us_accounts(market)
+        self.assertEqual([r['account']['acc_id'] for r in result], [3])
+        context.accinfo_query.assert_called_once_with(currency='USD', trd_env='REAL', acc_id=3, refresh_cache=True)
+        context.unlock_trade.assert_not_called()
+        context.place_order.assert_not_called()
+        context.modify_order.assert_not_called()
+        context.close.assert_called_once()
+        context.get_acc_list.return_value = (-1, 'unavailable')
+        context.close.reset_mock()
+        with unittest.mock.patch('custody.broker._futu', return_value=sdk), self.assertRaises(RuntimeError):
+            inspect_us_accounts(market)
+        context.close.assert_called_once()
 
     def test_account_must_exist_in_the_requested_environment(self):
         with self.assertRaisesRegex(ValueError, 'SIMULATE'):

@@ -1,0 +1,3291 @@
+{
+  "study": "P5 input parity, not a strategy validation",
+  "input_root": "data/p5-parity-raw",
+  "code_sha256": "a55a2d872fed0c7465c86dbb9b00cd643381176a30ad996f16321495c61b9515",
+  "checksums_sha256": "1981ad1a712f73e702cd32a9543e0fdf6f9a0ef547daaf84678de15656e843f6",
+  "verified_files": {
+    "COIN.K_30M.json": "3f0848cb53cfe0c1ed1ff39a38a81314fce1e5f46f095904aa1c97d6452801aa",
+    "COIN.K_5M.json": "760d8db80c6d096ba29b62497d1977bbcd017a8b89568993964d2784b5534696",
+    "F.K_30M.json": "ce0de46526846c0a5b9c1b1bc2b83230f2145aa079a582d9ca8d8b795a6fcfe8",
+    "F.K_5M.json": "187829beca186e5b56d019248a86a8715cfe0315b34081558dbbd346b7aad7a3",
+    "MARA.K_30M.json": "a0cdbd5c5eac23e694c1ef3997781950060cc89cb3287de018d62b4bea9cfcfb",
+    "MARA.K_5M.json": "c0450a03a2a662d5c9f0ba0cad626e93e4326d31da17b27a128fe47eba1d3f81",
+    "NFLX.K_30M.json": "c0288b4dca458d173476ab163b9da3b365dafb2ca06c8a7a202520fa152be9eb",
+    "NFLX.K_5M.json": "988eeb11930f9daa06db7313767189398c1ac98519d1f1d8d74fbd26e1e34d67",
+    "ORCL.K_30M.json": "8065dd27d2e0f63ffc5360bb597a8c4698f6d56a5d2be40a070eee7c9ad7f001",
+    "ORCL.K_5M.json": "439d87dc1c0727b1cac93093d99f3ca669e8f3dcce8188cb13c47e26f51798b2",
+    "PFE.K_30M.json": "7c09c813ebc56b77457a6390c35670b0e907b598e00a45281c7abac8ed0c4d1b",
+    "PFE.K_5M.json": "6443a951338ae3a31814448bd6ee1706319118ac1487ee0a6c7fa6e3f5eb1925",
+    "PLTR.K_30M.json": "219c80b31d28bf7eb14ce2d4f1140df9274dd72deb43d1f0443034ba3f6e1251",
+    "PLTR.K_5M.json": "e10490cf05cde66d0ce90ad2208cbad69a16763730c7d06833a3e8f587afe608",
+    "RKLB.K_30M.json": "f161215fd8c4f77ad2d0c552643c2ec35ed6818d2bc33f1a5f29557b32787c22",
+    "RKLB.K_5M.json": "33663f6b4892f5e6c018fcd4a1923b8b845e8b3b9e0dfa7a5c4b05e3b41c5064",
+    "SOFI.K_30M.json": "79c4b36156d702490daea20cbeb923176ed05be0dc6bb543b4c5159873a37f64",
+    "SOFI.K_5M.json": "ef22349f0711cd03b72bc23c3ae5403543672b10b937d3374adc18cfed6aa56d",
+    "WMT.K_30M.json": "23598d65829a244ceabcc0305d8cfe779d7705cf97d7384304b243d6b52f6510",
+    "WMT.K_5M.json": "10335238362383a77ec6382e7dd0c3611e7f72f45a49997253318be83354b883"
+  },
+  "source_manifest_present": false,
+  "timestamp_convention": "RTH bar close: 5m 09:35..16:00, 30m 10:00..16:00",
+  "numeric_comparison": "Exact Decimal; relative delta denominator is the 5-minute aggregation",
+  "strict_parity": false,
+  "opening": {
+    "comparisons": 120,
+    "fields": {
+      "open": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "high": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "low": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "close": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "volume": {
+        "different": 120,
+        "max_absolute_delta": "4.0",
+        "worst_absolute": {
+          "label": "COIN 2026-09-11",
+          "k5": "1154207.0",
+          "k30": "1154211.0",
+          "delta": "4.0"
+        },
+        "max_relative_delta": "0.000004475494430247181557382551837",
+        "worst_relative_label": "COIN 2026-09-25"
+      },
+      "turnover": {
+        "different": 64,
+        "max_absolute_delta": "0.002",
+        "worst_absolute": {
+          "label": "COIN 2026-09-24",
+          "k5": "232465310.528",
+          "k30": "232465310.526",
+          "delta": "-0.002"
+        },
+        "max_relative_delta": "3.141602540978664678813093067E-11",
+        "worst_relative_label": "MARA 2026-09-15"
+      }
+    }
+  },
+  "daily": {
+    "comparisons": 120,
+    "fields": {
+      "open": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "high": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "low": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "close": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "volume": {
+        "different": 120,
+        "max_absolute_delta": "39.0",
+        "worst_absolute": {
+          "label": "COIN 2026-09-11",
+          "k5": "7273351.0",
+          "k30": "7273390.0",
+          "delta": "39.0"
+        },
+        "max_relative_delta": "0.000007651873943928868179817237241",
+        "worst_relative_label": "COIN 2026-09-10"
+      },
+      "turnover": {
+        "different": 101,
+        "max_absolute_delta": "2470.799",
+        "worst_absolute": {
+          "label": "NFLX 2026-09-23",
+          "k5": "2138515377.556",
+          "k30": "2138512906.757",
+          "delta": "-2470.799"
+        },
+        "max_relative_delta": "0.000001155380515815485966087860309",
+        "worst_relative_label": "NFLX 2026-09-23"
+      }
+    }
+  },
+  "blocks": {
+    "comparisons": 1660,
+    "fields": {
+      "open": {
+        "different": 1,
+        "max_absolute_delta": "0.40",
+        "worst_absolute": {
+          "label": "RKLB 2026-09-24 16:00:00",
+          "k5": "73.28",
+          "k30": "73.68",
+          "delta": "0.40"
+        },
+        "max_relative_delta": "0.005458515283842794759825327511",
+        "worst_relative_label": "RKLB 2026-09-24 16:00:00"
+      },
+      "high": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "low": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "close": {
+        "different": 0,
+        "max_absolute_delta": "0",
+        "worst_absolute": null,
+        "max_relative_delta": "0",
+        "worst_relative_label": null
+      },
+      "volume": {
+        "different": 1658,
+        "max_absolute_delta": "32.0",
+        "worst_absolute": {
+          "label": "NFLX 2026-09-23 16:00:00",
+          "k5": "8766650.0",
+          "k30": "8766618.0",
+          "delta": "-32.0"
+        },
+        "max_relative_delta": "0.00002608973564575356940195803466",
+        "worst_relative_label": "COIN 2026-09-25 15:00:00"
+      },
+      "turnover": {
+        "different": 832,
+        "max_absolute_delta": "2470.794",
+        "worst_absolute": {
+          "label": "NFLX 2026-09-23 16:00:00",
+          "k5": "625735962.802",
+          "k30": "625733492.008",
+          "delta": "-2470.794"
+        },
+        "max_relative_delta": "0.000003948620739226757382916950806",
+        "worst_relative_label": "NFLX 2026-09-23 16:00:00"
+      }
+    }
+  },
+  "block_volume_delta_counts": {
+    "-11.0": 1,
+    "-32.0": 1,
+    "0.0": 2,
+    "1.0": 132,
+    "2.0": 719,
+    "3.0": 669,
+    "4.0": 132,
+    "5.0": 4
+  },
+  "block_anomalies": [
+    {
+      "label": "NFLX 2026-09-23 16:00:00",
+      "k5": {
+        "open": "71.58",
+        "high": "71.59",
+        "low": "71.28",
+        "close": "71.36",
+        "volume": "8766650.0",
+        "turnover": "625735962.802"
+      },
+      "k30": {
+        "open": "71.58",
+        "high": "71.59",
+        "low": "71.28",
+        "close": "71.36",
+        "volume": "8766618.0",
+        "turnover": "625733492.008"
+      },
+      "delta": {
+        "open": "0.00",
+        "high": "0.00",
+        "low": "0.00",
+        "close": "0.00",
+        "volume": "-32.0",
+        "turnover": "-2470.794"
+      }
+    },
+    {
+      "label": "RKLB 2026-09-24 16:00:00",
+      "k5": {
+        "open": "73.28",
+        "high": "73.81",
+        "low": "73.17",
+        "close": "73.61",
+        "volume": "3115740.0",
+        "turnover": "229284707.494"
+      },
+      "k30": {
+        "open": "73.68",
+        "high": "73.81",
+        "low": "73.17",
+        "close": "73.61",
+        "volume": "3115729.0",
+        "turnover": "229284707.494"
+      },
+      "delta": {
+        "open": "0.40",
+        "high": "0.00",
+        "low": "0.00",
+        "close": "0.00",
+        "volume": "-11.0",
+        "turnover": "0.000"
+      }
+    }
+  ],
+  "symbols": {
+    "COIN": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "COIN 2026-09-11",
+              "k5": "1154207.0",
+              "k30": "1154211.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000004475494430247181557382551837",
+            "worst_relative_label": "COIN 2026-09-25"
+          },
+          "turnover": {
+            "different": 7,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "COIN 2026-09-24",
+              "k5": "232465310.528",
+              "k30": "232465310.526",
+              "delta": "-0.002"
+            },
+            "max_relative_delta": "8.603434187481077279917554994E-12",
+            "worst_relative_label": "COIN 2026-09-24"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "39.0",
+            "worst_absolute": {
+              "label": "COIN 2026-09-11",
+              "k5": "7273351.0",
+              "k30": "7273390.0",
+              "delta": "39.0"
+            },
+            "max_relative_delta": "0.000007651873943928868179817237241",
+            "worst_relative_label": "COIN 2026-09-10"
+          },
+          "turnover": {
+            "different": 11,
+            "max_absolute_delta": "0.006",
+            "worst_absolute": {
+              "label": "COIN 2026-09-18",
+              "k5": "3976795609.732",
+              "k30": "3976795609.726",
+              "delta": "-0.006"
+            },
+            "max_relative_delta": "3.911836499078014962291744915E-12",
+            "worst_relative_label": "COIN 2026-09-10"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "COIN 2026-09-10 13:30:00",
+              "k5": "158419.0",
+              "k30": "158423.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.00002608973564575356940195803466",
+            "worst_relative_label": "COIN 2026-09-25 15:00:00"
+          },
+          "turnover": {
+            "different": 76,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "COIN 2026-09-09 15:00:00",
+              "k5": "45823564.722",
+              "k30": "45823564.72",
+              "delta": "-0.002"
+            },
+            "max_relative_delta": "4.364566598285173017928179507E-11",
+            "worst_relative_label": "COIN 2026-09-09 15:00:00"
+          }
+        }
+      }
+    },
+    "F": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "F 2026-09-21",
+              "k5": "3399695.0",
+              "k30": "3399699.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000001176576134035553189330219328",
+            "worst_relative_label": "F 2026-09-21"
+          },
+          "turnover": {
+            "different": 6,
+            "max_absolute_delta": "0.001",
+            "worst_absolute": {
+              "label": "F 2026-09-11",
+              "k5": "44152966.599",
+              "k30": "44152966.598",
+              "delta": "-0.001"
+            },
+            "max_relative_delta": "3.140318693624730314800536474E-11",
+            "worst_relative_label": "F 2026-09-25"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "37.0",
+            "worst_absolute": {
+              "label": "F 2026-09-10",
+              "k5": "42667032.0",
+              "k30": "42667069.0",
+              "delta": "37.0"
+            },
+            "max_relative_delta": "0.000001129701973664661457074542940",
+            "worst_relative_label": "F 2026-09-14"
+          },
+          "turnover": {
+            "different": 9,
+            "max_absolute_delta": "0.004",
+            "worst_absolute": {
+              "label": "F 2026-09-18",
+              "k5": "1327496708.542",
+              "k30": "1327496708.546",
+              "delta": "0.004"
+            },
+            "max_relative_delta": "5.779894848623324723583984929E-12",
+            "worst_relative_label": "F 2026-09-15"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "F 2026-09-10 15:30:00",
+              "k5": "2255680.0",
+              "k30": "2255684.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000003229226654036802419767172758",
+            "worst_relative_label": "F 2026-09-14 15:30:00"
+          },
+          "turnover": {
+            "different": 80,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "F 2026-09-10 13:30:00",
+              "k5": "23131314.321",
+              "k30": "23131314.319",
+              "delta": "-0.002"
+            },
+            "max_relative_delta": "8.646287764912171762624158065E-11",
+            "worst_relative_label": "F 2026-09-10 13:30:00"
+          }
+        }
+      }
+    },
+    "MARA": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "3.0",
+            "worst_absolute": {
+              "label": "MARA 2026-09-11",
+              "k5": "7498605.0",
+              "k30": "7498608.0",
+              "delta": "3.0"
+            },
+            "max_relative_delta": "7.212464292291366247494269697E-7",
+            "worst_relative_label": "MARA 2026-09-16"
+          },
+          "turnover": {
+            "different": 5,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "MARA 2026-09-15",
+              "k5": "63661776.877",
+              "k30": "63661776.879",
+              "delta": "0.002"
+            },
+            "max_relative_delta": "3.141602540978664678813093067E-11",
+            "worst_relative_label": "MARA 2026-09-15"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "37.0",
+            "worst_absolute": {
+              "label": "MARA 2026-09-16",
+              "k5": "44861293.0",
+              "k30": "44861330.0",
+              "delta": "37.0"
+            },
+            "max_relative_delta": "9.446251564847975222371013032E-7",
+            "worst_relative_label": "MARA 2026-09-23"
+          },
+          "turnover": {
+            "different": 11,
+            "max_absolute_delta": "0.004",
+            "worst_absolute": {
+              "label": "MARA 2026-09-24",
+              "k5": "508420071.421",
+              "k30": "508420071.417",
+              "delta": "-0.004"
+            },
+            "max_relative_delta": "7.867510007660138749272708367E-12",
+            "worst_relative_label": "MARA 2026-09-24"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 164,
+            "max_absolute_delta": "5.0",
+            "worst_absolute": {
+              "label": "MARA 2026-09-21 11:30:00",
+              "k5": "3280634.0",
+              "k30": "3280639.0",
+              "delta": "5.0"
+            },
+            "max_relative_delta": "0.000002098335338117887626798470104",
+            "worst_relative_label": "MARA 2026-09-15 13:00:00"
+          },
+          "turnover": {
+            "different": 84,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "MARA 2026-09-10 14:00:00",
+              "k5": "37216534.201",
+              "k30": "37216534.203",
+              "delta": "0.002"
+            },
+            "max_relative_delta": "7.822676040121686844963293495E-11",
+            "worst_relative_label": "MARA 2026-09-11 12:30:00"
+          }
+        }
+      }
+    },
+    "NFLX": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "3.0",
+            "worst_absolute": {
+              "label": "NFLX 2026-09-10",
+              "k5": "3000556.0",
+              "k30": "3000559.0",
+              "delta": "3.0"
+            },
+            "max_relative_delta": "0.000001616064108185795658389904555",
+            "worst_relative_label": "NFLX 2026-09-11"
+          },
+          "turnover": {
+            "different": 7,
+            "max_absolute_delta": "0.001",
+            "worst_absolute": {
+              "label": "NFLX 2026-09-10",
+              "k5": "226176637.723",
+              "k30": "226176637.722",
+              "delta": "-0.001"
+            },
+            "max_relative_delta": "7.033434537341068845521883780E-12",
+            "worst_relative_label": "NFLX 2026-09-11"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "39.0",
+            "worst_absolute": {
+              "label": "NFLX 2026-09-17",
+              "k5": "26533169.0",
+              "k30": "26533208.0",
+              "delta": "39.0"
+            },
+            "max_relative_delta": "0.000001694817267626899913696138472",
+            "worst_relative_label": "NFLX 2026-09-25"
+          },
+          "turnover": {
+            "different": 11,
+            "max_absolute_delta": "2470.799",
+            "worst_absolute": {
+              "label": "NFLX 2026-09-23",
+              "k5": "2138515377.556",
+              "k30": "2138512906.757",
+              "delta": "-2470.799"
+            },
+            "max_relative_delta": "0.000001155380515815485966087860309",
+            "worst_relative_label": "NFLX 2026-09-23"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "32.0",
+            "worst_absolute": {
+              "label": "NFLX 2026-09-23 16:00:00",
+              "k5": "8766650.0",
+              "k30": "8766618.0",
+              "delta": "-32.0"
+            },
+            "max_relative_delta": "0.000006271495551001056119850788578",
+            "worst_relative_label": "NFLX 2026-09-25 14:30:00"
+          },
+          "turnover": {
+            "different": 92,
+            "max_absolute_delta": "2470.794",
+            "worst_absolute": {
+              "label": "NFLX 2026-09-23 16:00:00",
+              "k5": "625735962.802",
+              "k30": "625733492.008",
+              "delta": "-2470.794"
+            },
+            "max_relative_delta": "0.000003948620739226757382916950806",
+            "worst_relative_label": "NFLX 2026-09-23 16:00:00"
+          }
+        }
+      }
+    },
+    "ORCL": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "ORCL 2026-09-23",
+              "k5": "2800985.0",
+              "k30": "2800989.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000001428069054279119666831489637",
+            "worst_relative_label": "ORCL 2026-09-23"
+          },
+          "turnover": {
+            "different": 8,
+            "max_absolute_delta": "0.001",
+            "worst_absolute": {
+              "label": "ORCL 2026-09-16",
+              "k5": "926488491.260",
+              "k30": "926488491.261",
+              "delta": "0.001"
+            },
+            "max_relative_delta": "2.426746932812656900568374378E-12",
+            "worst_relative_label": "ORCL 2026-09-23"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "34.0",
+            "worst_absolute": {
+              "label": "ORCL 2026-09-21",
+              "k5": "20093905.0",
+              "k30": "20093939.0",
+              "delta": "34.0"
+            },
+            "max_relative_delta": "0.000001692055376991182152000818159",
+            "worst_relative_label": "ORCL 2026-09-21"
+          },
+          "turnover": {
+            "different": 9,
+            "max_absolute_delta": "0.004",
+            "worst_absolute": {
+              "label": "ORCL 2026-09-11",
+              "k5": "10901239738.501",
+              "k30": "10901239738.497",
+              "delta": "-0.004"
+            },
+            "max_relative_delta": "6.707639304664321280573672160E-13",
+            "worst_relative_label": "ORCL 2026-09-21"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "ORCL 2026-09-10 10:30:00",
+              "k5": "2403816.0",
+              "k30": "2403820.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000004759321130433954900672968008",
+            "worst_relative_label": "ORCL 2026-09-25 14:30:00"
+          },
+          "turnover": {
+            "different": 97,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "ORCL 2026-09-16 13:00:00",
+              "k5": "142296604.882",
+              "k30": "142296604.884",
+              "delta": "0.002"
+            },
+            "max_relative_delta": "1.405514911377195257346505494E-11",
+            "worst_relative_label": "ORCL 2026-09-16 13:00:00"
+          }
+        }
+      }
+    },
+    "PFE": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "PFE 2026-09-16",
+              "k5": "1886132.0",
+              "k30": "1886136.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000002120742344650321398502331756",
+            "worst_relative_label": "PFE 2026-09-16"
+          },
+          "turnover": {
+            "different": 5,
+            "max_absolute_delta": "0.001",
+            "worst_absolute": {
+              "label": "PFE 2026-09-11",
+              "k5": "89520238.454",
+              "k30": "89520238.453",
+              "delta": "-0.001"
+            },
+            "max_relative_delta": "1.479781523265369457702167808E-11",
+            "worst_relative_label": "PFE 2026-09-17"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "37.0",
+            "worst_absolute": {
+              "label": "PFE 2026-09-16",
+              "k5": "25413180.0",
+              "k30": "25413217.0",
+              "delta": "37.0"
+            },
+            "max_relative_delta": "0.000001455937430892159107990420719",
+            "worst_relative_label": "PFE 2026-09-16"
+          },
+          "turnover": {
+            "different": 8,
+            "max_absolute_delta": "0.003",
+            "worst_absolute": {
+              "label": "PFE 2026-09-14",
+              "k5": "742610033.546",
+              "k30": "742610033.543",
+              "delta": "-0.003"
+            },
+            "max_relative_delta": "4.039805368202271876606277356E-12",
+            "worst_relative_label": "PFE 2026-09-14"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "PFE 2026-09-09 11:30:00",
+              "k5": "1678193.0",
+              "k30": "1678197.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000004756747843211248757299625961",
+            "worst_relative_label": "PFE 2026-09-11 15:00:00"
+          },
+          "turnover": {
+            "different": 84,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "PFE 2026-09-10 15:30:00",
+              "k5": "37919134.878",
+              "k30": "37919134.88",
+              "delta": "0.002"
+            },
+            "max_relative_delta": "7.575945004350015763164601307E-11",
+            "worst_relative_label": "PFE 2026-09-17 15:30:00"
+          }
+        }
+      }
+    },
+    "PLTR": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "3.0",
+            "worst_absolute": {
+              "label": "PLTR 2026-09-11",
+              "k5": "2475200.0",
+              "k30": "2475203.0",
+              "delta": "3.0"
+            },
+            "max_relative_delta": "0.000001212023270846800258564964447",
+            "worst_relative_label": "PLTR 2026-09-11"
+          },
+          "turnover": {
+            "different": 3,
+            "max_absolute_delta": "0.001",
+            "worst_absolute": {
+              "label": "PLTR 2026-09-16",
+              "k5": "422769271.567",
+              "k30": "422769271.568",
+              "delta": "0.001"
+            },
+            "max_relative_delta": "2.365356394738639659038017721E-12",
+            "worst_relative_label": "PLTR 2026-09-16"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "34.0",
+            "worst_absolute": {
+              "label": "PLTR 2026-09-16",
+              "k5": "19272000.0",
+              "k30": "19272034.0",
+              "delta": "34.0"
+            },
+            "max_relative_delta": "0.000002135250617567859866064269762",
+            "worst_relative_label": "PLTR 2026-09-11"
+          },
+          "turnover": {
+            "different": 10,
+            "max_absolute_delta": "0.004",
+            "worst_absolute": {
+              "label": "PLTR 2026-09-16",
+              "k5": "3319757610.715",
+              "k30": "3319757610.711",
+              "delta": "-0.004"
+            },
+            "max_relative_delta": "1.204907245965614736292323904E-12",
+            "worst_relative_label": "PLTR 2026-09-16"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "PLTR 2026-09-09 11:30:00",
+              "k5": "1069615.0",
+              "k30": "1069619.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000008153398030546705721443232985",
+            "worst_relative_label": "PLTR 2026-09-16 13:00:00"
+          },
+          "turnover": {
+            "different": 79,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "PLTR 2026-09-11 13:00:00",
+              "k5": "63287295.520",
+              "k30": "63287295.522",
+              "delta": "0.002"
+            },
+            "max_relative_delta": "3.160191920932948723987439557E-11",
+            "worst_relative_label": "PLTR 2026-09-11 13:00:00"
+          }
+        }
+      }
+    },
+    "RKLB": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "RKLB 2026-09-10",
+              "k5": "3972377.0",
+              "k30": "3972381.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000001140312833422721189331081089",
+            "worst_relative_label": "RKLB 2026-09-16"
+          },
+          "turnover": {
+            "different": 7,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "RKLB 2026-09-18",
+              "k5": "355658493.286",
+              "k30": "355658493.288",
+              "delta": "0.002"
+            },
+            "max_relative_delta": "6.209906619793666038669329789E-12",
+            "worst_relative_label": "RKLB 2026-09-24"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "38.0",
+            "worst_absolute": {
+              "label": "RKLB 2026-09-14",
+              "k5": "13371118.0",
+              "k30": "13371156.0",
+              "delta": "38.0"
+            },
+            "max_relative_delta": "0.000002841946350335102868735434090",
+            "worst_relative_label": "RKLB 2026-09-14"
+          },
+          "turnover": {
+            "different": 11,
+            "max_absolute_delta": "0.006",
+            "worst_absolute": {
+              "label": "RKLB 2026-09-18",
+              "k5": "1811211017.757",
+              "k30": "1811211017.763",
+              "delta": "0.006"
+            },
+            "max_relative_delta": "3.323501600834262580986338986E-12",
+            "worst_relative_label": "RKLB 2026-09-11"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 1,
+            "max_absolute_delta": "0.40",
+            "worst_absolute": {
+              "label": "RKLB 2026-09-24 16:00:00",
+              "k5": "73.28",
+              "k30": "73.68",
+              "delta": "0.40"
+            },
+            "max_relative_delta": "0.005458515283842794759825327511",
+            "worst_relative_label": "RKLB 2026-09-24 16:00:00"
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "11.0",
+            "worst_absolute": {
+              "label": "RKLB 2026-09-24 16:00:00",
+              "k5": "3115740.0",
+              "k30": "3115729.0",
+              "delta": "-11.0"
+            },
+            "max_relative_delta": "0.00001296495572467620023077621190",
+            "worst_relative_label": "RKLB 2026-09-16 13:00:00"
+          },
+          "turnover": {
+            "different": 75,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "RKLB 2026-09-15 11:30:00",
+              "k5": "56430098.386",
+              "k30": "56430098.384",
+              "delta": "-0.002"
+            },
+            "max_relative_delta": "5.309702014467846261593686329E-11",
+            "worst_relative_label": "RKLB 2026-09-15 14:00:00"
+          }
+        }
+      }
+    },
+    "SOFI": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "3.0",
+            "worst_absolute": {
+              "label": "SOFI 2026-09-10",
+              "k5": "4421291.0",
+              "k30": "4421294.0",
+              "delta": "3.0"
+            },
+            "max_relative_delta": "7.595650123087510244633103514E-7",
+            "worst_relative_label": "SOFI 2026-09-14"
+          },
+          "turnover": {
+            "different": 10,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "SOFI 2026-09-16",
+              "k5": "93571131.662",
+              "k30": "93571131.664",
+              "delta": "0.002"
+            },
+            "max_relative_delta": "2.638643700201306555532486615E-11",
+            "worst_relative_label": "SOFI 2026-09-25"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "36.0",
+            "worst_absolute": {
+              "label": "SOFI 2026-09-22",
+              "k5": "87062916.0",
+              "k30": "87062952.0",
+              "delta": "36.0"
+            },
+            "max_relative_delta": "0.000001452926246293717229908935866",
+            "worst_relative_label": "SOFI 2026-09-11"
+          },
+          "turnover": {
+            "different": 10,
+            "max_absolute_delta": "0.007",
+            "worst_absolute": {
+              "label": "SOFI 2026-09-21",
+              "k5": "1019606862.688",
+              "k30": "1019606862.695",
+              "delta": "0.007"
+            },
+            "max_relative_delta": "1.271277923581583437759930006E-11",
+            "worst_relative_label": "SOFI 2026-09-11"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "SOFI 2026-09-09 14:00:00",
+              "k5": "1812372.0",
+              "k30": "1812376.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000003806254056039478467069241471",
+            "worst_relative_label": "SOFI 2026-09-11 14:00:00"
+          },
+          "turnover": {
+            "different": 79,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "SOFI 2026-09-11 13:00:00",
+              "k5": "21314571.462",
+              "k30": "21314571.46",
+              "delta": "-0.002"
+            },
+            "max_relative_delta": "9.383252220508565437467297272E-11",
+            "worst_relative_label": "SOFI 2026-09-11 13:00:00"
+          }
+        }
+      }
+    },
+    "WMT": {
+      "k5": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-09-09",
+            "bars": 64,
+            "first": "2026-09-09 10:45:00",
+            "last": "2026-09-09 16:00:00"
+          }
+        ]
+      },
+      "k30": {
+        "rows": 1000,
+        "complete_days": [
+          "2026-06-09",
+          "2026-06-10",
+          "2026-06-11",
+          "2026-06-12",
+          "2026-06-15",
+          "2026-06-16",
+          "2026-06-17",
+          "2026-06-18",
+          "2026-06-22",
+          "2026-06-23",
+          "2026-06-24",
+          "2026-06-25",
+          "2026-06-26",
+          "2026-06-29",
+          "2026-06-30",
+          "2026-07-01",
+          "2026-07-02",
+          "2026-07-06",
+          "2026-07-07",
+          "2026-07-08",
+          "2026-07-09",
+          "2026-07-10",
+          "2026-07-13",
+          "2026-07-14",
+          "2026-07-15",
+          "2026-07-16",
+          "2026-07-17",
+          "2026-07-20",
+          "2026-07-21",
+          "2026-07-22",
+          "2026-07-23",
+          "2026-07-24",
+          "2026-07-27",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05",
+          "2026-08-06",
+          "2026-08-07",
+          "2026-08-10",
+          "2026-08-11",
+          "2026-08-12",
+          "2026-08-13",
+          "2026-08-14",
+          "2026-08-17",
+          "2026-08-18",
+          "2026-08-19",
+          "2026-08-20",
+          "2026-08-21",
+          "2026-08-24",
+          "2026-08-25",
+          "2026-08-26",
+          "2026-08-27",
+          "2026-08-28",
+          "2026-08-31",
+          "2026-09-01",
+          "2026-09-02",
+          "2026-09-03",
+          "2026-09-04",
+          "2026-09-08",
+          "2026-09-09",
+          "2026-09-10",
+          "2026-09-11",
+          "2026-09-14",
+          "2026-09-15",
+          "2026-09-16",
+          "2026-09-17",
+          "2026-09-18",
+          "2026-09-21",
+          "2026-09-22",
+          "2026-09-23",
+          "2026-09-24",
+          "2026-09-25"
+        ],
+        "excluded_days": [
+          {
+            "day": "2026-06-08",
+            "bars": 12,
+            "first": "2026-06-08 10:30:00",
+            "last": "2026-06-08 16:00:00"
+          }
+        ]
+      },
+      "common_complete_days": [
+        "2026-09-10",
+        "2026-09-11",
+        "2026-09-14",
+        "2026-09-15",
+        "2026-09-16",
+        "2026-09-17",
+        "2026-09-18",
+        "2026-09-21",
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25"
+      ],
+      "opening": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "3.0",
+            "worst_absolute": {
+              "label": "WMT 2026-09-15",
+              "k5": "1806680.0",
+              "k30": "1806683.0",
+              "delta": "3.0"
+            },
+            "max_relative_delta": "0.000001742650082833967270707910934",
+            "worst_relative_label": "WMT 2026-09-17"
+          },
+          "turnover": {
+            "different": 6,
+            "max_absolute_delta": "0.001",
+            "worst_absolute": {
+              "label": "WMT 2026-09-11",
+              "k5": "150701667.080",
+              "k30": "150701667.079",
+              "delta": "-0.001"
+            },
+            "max_relative_delta": "6.635626661443299542828123040E-12",
+            "worst_relative_label": "WMT 2026-09-11"
+          }
+        }
+      },
+      "daily": {
+        "comparisons": 12,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 12,
+            "max_absolute_delta": "37.0",
+            "worst_absolute": {
+              "label": "WMT 2026-09-15",
+              "k5": "18080382.0",
+              "k30": "18080419.0",
+              "delta": "37.0"
+            },
+            "max_relative_delta": "0.000002248524830976261472566204319",
+            "worst_relative_label": "WMT 2026-09-25"
+          },
+          "turnover": {
+            "different": 11,
+            "max_absolute_delta": "0.006",
+            "worst_absolute": {
+              "label": "WMT 2026-09-14",
+              "k5": "2183623776.604",
+              "k30": "2183623776.610",
+              "delta": "0.006"
+            },
+            "max_relative_delta": "2.747726080053624332604634043E-12",
+            "worst_relative_label": "WMT 2026-09-14"
+          }
+        }
+      },
+      "blocks": {
+        "comparisons": 166,
+        "fields": {
+          "open": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "high": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "low": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "close": {
+            "different": 0,
+            "max_absolute_delta": "0",
+            "worst_absolute": null,
+            "max_relative_delta": "0",
+            "worst_relative_label": null
+          },
+          "volume": {
+            "different": 166,
+            "max_absolute_delta": "4.0",
+            "worst_absolute": {
+              "label": "WMT 2026-09-11 15:30:00",
+              "k5": "990231.0",
+              "k30": "990235.0",
+              "delta": "4.0"
+            },
+            "max_relative_delta": "0.000007434741555992277781770509354",
+            "worst_relative_label": "WMT 2026-09-25 14:30:00"
+          },
+          "turnover": {
+            "different": 86,
+            "max_absolute_delta": "0.002",
+            "worst_absolute": {
+              "label": "WMT 2026-09-15 12:30:00",
+              "k5": "73032129.335",
+              "k30": "73032129.337",
+              "delta": "0.002"
+            },
+            "max_relative_delta": "3.014940773853643308746036519E-11",
+            "worst_relative_label": "WMT 2026-09-18 13:30:00"
+          }
+        }
+      }
+    }
+  }
+}

@@ -259,6 +259,28 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 上述三包均已独立回下载核验远端ZIP/sidecar、精确成员、逐文件SHA和CRC；tag仍锚定既有远端提交，不代表该tag包含后续研究实现。代码另由Git提交保存，不重指向数据tag；包内“未发布”是创建时的事实快照，发布后不回改字节。
 
+## 附录：末日期权选标的研究数据（本机，尚未发布 Release）
+
+[studies/us_0dte_picks/](../studies/us_0dte_picks/README.md) P2–P4 于 2026-09-26 一次性拉取，均为 OpenD 只读接口；除 `p3-k5-validation-raw` 用了 35 个历史 K 线额度（用户同意 ≤ 40）外不扣额度。**不接入 `custody check` / `evaluate`**；发布 Release 前以本地 CHECKSUMS 为准。
+
+| 本机目录 | 内容 | CHECKSUMS.sha256 的 SHA256 |
+|---|---|---|
+| `data/p2-rank-20260924-raw` | 2026-09-24 期权成交量排名 31 页原始返回与 ETF 代码表；重建与 `universe_stocks300.json`、`universe_stocks301_600.json` 逐一一致，第 601–900 名见 `studies/us_0dte_picks/notes/universe_stocks601_900.json` | `5f0f839377f20b14106e2ca06b78ef174bb06897664be7b1bace7ce65b724777` |
+| `data/p2-601-900-raw` | 第 601–900 名日线（前复权 / 不复权，K_DAY 订阅接口，约 2022-10 → 2026-09-25）、期权统计与 IV / HV（2023-06 起）；P2 验证段只用过一次 | `a213d60bce299fb2366cb2fde93adb2e9d6a06a3240238f313b88a551a0b6e87` |
+| `data/p2-events-raw` | 第 1–900 名的历次财报（16 期，发布日与盘前 / 盘后）与 2026-09-26 的当前到期日原始返回 | `b3fefef0e1e28c3cbdf745fc258f887ee0c70573ff8d433bd3546eebda459869` |
+| `data/p3-option-events-raw` | 505 只有周度 / 周一三到期个股的 OpenD 期权异动原始返回（滚动约一年，2025-09-29 → 2026-09-25），不扣额度；P3b 选择段用过 | `829e7d1affc0ae2f2bac569246b646b9eff6321afc0e06ac8550a85347f8dd59` |
+| `data/p3-k5-validation-raw` | 35 只新个股常规时段 5 分钟 K（2023-05 → 2026-09-25，前复权），动用 35 个历史 K 线额度（已用 228 → 263）；**P4 验证已用一次** | `dd2eba4e353aba90d7e52877f3b9016cf36a228c02198de8c39e7dc1ccc2f506` |
+| `data/p5-parity-raw` | 10 只个股各 1000 根 5／30 分钟原始 K；用于跨周期口径审计，30 分钟有 76 个完整日、共同完整日 12 个；成交量近似相等、存在少数异常，见[比对报告](../studies/us_0dte_picks/reports/P5_PARITY_CN.md)。没有原采集 manifest，不补写成当时已有的参数凭证 | `1981ad1a712f73e702cd32a9543e0fdf6f9a0ef547daaf84678de15656e843f6` |
+| `data/p5-k30-validation-raw` | P5：145 只此前未有分钟数据的周度股、53 个细行业，每股 1000 根原生 RTH K_30M（QFQ）；2026-09-28 有界一次性采集，评测截止 09-25。名单、行业、日历在采分钟前锁定，全部158个成员验签通过，未扣历史额度；**P5 已验证一次且失败**，见[报告](../studies/us_0dte_picks/reports/P5_RESULTS_CN.md) | `f5f8541994749f63708e000e2d0eb941bb2d624c0ad8f3649c6c04be81ba7f0b` |
+| `data/human-top10-2026-09-28-090327` | 09-28 09:05 ET 盘前人工候选：11 股股票快照、各 1000 根 RTH K_30M、IV/HV、财报、期权量、当日到期及标准 Call／Put 链，冻结方法与完整排名；74 个成员校验通过，未用历史额度、订阅已释放。排序组合未经回测验证，见[Top 10 报告](../studies/us_0dte_picks/reports/TOP10_20260928_PRE_CN.md)；本机采集脚本副本仅供复核，未来数据发布包不含源码 | `9f9ad51925e0bd36572dba6537c8e75047528c09600f35b84d7a896f1e9fabfe` |
+| `data/human-trial-2026-09-28` | 用户授权的有限只读盘中观察：10 股冻结 15／30 分钟量分母、开盘快照、真实期权报价、相对排名及 v3 预演，后纳入 AAPL 共 11 股；首次监测止于 09:44、无 09:45 结果，10:00 恢复，最后输出至 10:30、10:31:01 正常结束。仅人工候选试验，非独立验证、非成交记录，未调用历史 K 线请求；见[试验报告](../studies/us_0dte_picks/reports/TRIAL_20260928_CN.md)与[全天复盘](../studies/us_0dte_picks/reports/REVIEW_20260928_FULLDAY_CN.md)。账户原始返回和含账户 ID 的人工启动脚本仅本机私有保存，未来发布时排除 | 观察已结束，父目录未整体封存或发布 |
+
+完整样本名单、逐股窗口、校验与已用轮次见[测试集清单](../studies/us_0dte_picks/notes/TEST_SETS.md)。P4 旧样本的 30 分钟精度重算是数据审计，不恢复其验证资格。
+
+`human-trial-2026-09-28/sector_review` 另保存当天 10:08／10:16 的 11 大行业代理与半导体／生物科技／软件代理、代表个股快照、正股与期权分钟数据、未改参数的策略重放及新增到期日检查，见[盘中复盘](../studies/us_0dte_picks/reports/REVIEW_20260928_INTRADAY_CN.md)。仅作当日描述性复核，不是新验证集；重放旧信号不证明当时已监测到或可按某价格成交。后续 `supervised_v4` 从修改时点才纳入 AAPL 后备并展示全部被检查合约的策略状态，旧分钟记录不回改。
+
+`human-trial-2026-09-28/day_after_review` 保存 09-29 有界只读补取的 09-28 全天材料：37 标的完整 RTH 30m、11 股完整 RTH 1m、四个既有合约完整 1m，META 717.5 Put 末 60 根 1m，另有五合约完整 15m；包括实际运行摘要、合约标价及盘中／盘后数据差异审计。只作描述性复盘，不接入 custody 正式评测，不把不完整的 1m 用 15m 伪补；未调用历史额度接口。详情见[全天复盘](../studies/us_0dte_picks/reports/REVIEW_20260928_FULLDAY_CN.md)。
+
 ## 附录：盯盘信号研究数据（非 custody Release）
 
 `studies/watch_signal/`（盯盘 `watch/` 的信号研究）的数据，按用途分成 6 个 Release。只供该研究使用，**不接入 `custody check` / `evaluate`**，
@@ -312,3 +334,9 @@ cd data && sha256sum -c watch-hk1m-train-v1.zip.sha256 && unzip watch-hk1m-train
 gh release download preopen-us-train-v1 --repo QSothoth/s-alpha --dir data
 cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train-v1.zip
 ```
+
+## 附录：2026-09-29 最近到期人工观察输入（本机，未发布）
+
+`data/human-nearest-2026-09-29-pre`：11 只科技股的真实最近到期日与标准 Call／Put 链、盘前快照、IV／HV、期权量、财报辅助、原生 RTH 15／30 分钟 K、冻结排名与量基准、请求日志和采集源码；2026-09-29 06:30 ET 完成。只用订阅接口，未调用历史 K 线配额接口。
+
+87 个冻结输入成员已逐项核验；`CHECKSUMS.sha256` 的 SHA256：`a818551c5cb5df379d0a8ac1372a83b71f87c89ade5713f27239512329e4a3d8`。量基准为 09-09→09-28 的 14 个完整日；15／30 分钟开盘量最大差 1 股。角色是人工试运行输入，不是新增独立验证集。`monitor/` 为随后产生的分钟记录，不包含在该冻结输入清单内；尚未收盘，不提前声明输出完整。数据未进 git，未发布 Release。

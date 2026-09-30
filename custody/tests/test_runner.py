@@ -271,6 +271,11 @@ class FrameSourceTests(unittest.TestCase):
         gappy = SameDayHistorySource(Market(rows[:10] + rows[11:]), Calendar(), 'US.SPY')
         with self.assertRaisesRegex(ValueError, 'not ready'):
             gappy.collect(s.opens + timedelta(minutes=30))
+        market = Market(rows)
+        market.history_bars = mock.Mock(side_effect=AssertionError('must not consume history quota'))
+        with self.assertRaisesRegex(ValueError, 'not ready'):
+            SameDayHistorySource(market, Calendar(), 'SPY', allow_history=False).collect(s.opens + timedelta(minutes=30))
+        market.history_bars.assert_not_called()
 
 
 class WxPusherNotifyTests(unittest.TestCase):
@@ -328,6 +333,16 @@ class FakeQuoteContext:
 
 
 class OpenDAdapterTests(unittest.TestCase):
+    def test_nearest_expiry_ignores_expired_dates_and_propagates_errors(self):
+        context = mock.Mock()
+        context.get_option_expiration_date.return_value = (0, [
+            {'strike_time': '2026-09-18'}, {'strike_time': '2026-09-11'}, {'strike_time': '2026-09-16'}])
+        resolver = OpenDContractResolver(OpenDMarket(quote_context=context))
+        self.assertEqual(resolver.nearest_expiry('SPY', DAY), '2026-09-16')
+        context.get_option_expiration_date.return_value = (-1, 'unavailable')
+        with self.assertRaises(RuntimeError):
+            resolver.nearest_expiry('SPY', DAY)
+
     def test_contract_resolver_uses_snapshot_metadata(self):
         row = {'code': CONTRACT, 'option_type': 'PUT', 'option_strike_price': 700.0, 'strike_time': DAY,
                'option_contract_multiplier': 100.0, 'option_valid': True, 'sec_status': 'NORMAL'}
@@ -370,6 +385,8 @@ class CliTests(unittest.TestCase):
                          (None, None, None, 1, False, None))
         run = build_argument_parser('run').parse_args(self.ARGS + ['--mode', 'paper', '--acc-id', '281756'])
         self.assertEqual((run.mode, run.acc_id, run.security_firm), ('paper', 281756, 'FUTUSECURITIES'))
+        capped = build_argument_parser('dryrun').parse_args(self.ARGS + ['--max-entry-premium', '140'])
+        self.assertEqual(capped.max_entry_premium, 140)
         with contextlib.redirect_stderr(io.StringIO()):
             for missing in (['--mode', 'paper'], ['--acc-id', '1'], ['--mode', 'dryrun', '--acc-id', '1']):
                 with self.assertRaises(SystemExit):

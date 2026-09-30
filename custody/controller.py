@@ -1,5 +1,6 @@
 """One worker iteration; the caller supplies quotes and frames via trusted adapters."""
 from .service import ACTIVE
+from .models import instant
 
 
 class Controller:
@@ -19,7 +20,7 @@ class Controller:
         self.service, self.broker = service, broker
         self.last_dispatch = None
 
-    def step(self, job_id, now, quote=None, frame=None):
+    def step(self, job_id, now, quote=None, frame=None, clock=None):
         # Clock first: flatten must never wait for a bar.
         self.service.heartbeat(job_id, now, quote)
         job = self.service.get_job(job_id)
@@ -35,12 +36,15 @@ class Controller:
                             failed = True
                     except Exception:
                         failed = True
+        if clock:
+            now = clock()  # Broker polling must not extend a review card's lifetime.
         self.service.heartbeat(job_id, now, quote)
-        if frame is not None:
+        if frame is not None and (clock is None or
+                0 <= (now-instant(frame.bar_close)).total_seconds() <= self.service.policy.frame_max_age_seconds):
             self.service.on_frame(job_id, frame, now, quote)
         self.last_dispatch = None
         if self.broker is not None:
-            self.last_dispatch = self.service.dispatch_next(self.broker, now)
+            self.last_dispatch = self.service.dispatch_next(self.broker, clock() if clock else now)
         if failed:
             self.service.flag_attention(job_id, 'RECONCILE_ORDER_STATUS')
         return self.service.get_job(job_id)

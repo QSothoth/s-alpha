@@ -31,9 +31,9 @@ def symbol(value):
 
 @dataclass(frozen=True)
 class JobRequest:
-    """Public custody input chosen upstream: strategy, underlying, direction, exact 0DTE contract.
+    """Public custody input chosen upstream: strategy, underlying, direction, exact option contract.
 
-    * ``contract`` is the option that is bought once and sold once today;
+    * ``trade_action`` restricts the day's mandate to buy/sell, buy-only or sell-only;
     * ``symbol`` supplies the same-day underlying 1m bars used only for timing;
     * success is measured on the option fills, never on an underlying proxy.
     """
@@ -44,6 +44,10 @@ class JobRequest:
     contract: str
     max_qty: int = 1
     trade_date: str | None = None
+    max_entry_premium: float | None = None
+    expiry_policy: str = '0_1dte'
+    entry_valid_until: str | None = None
+    trade_action: str = 'round_trip'
 
     @classmethod
     def parse(cls, payload, now):
@@ -57,7 +61,25 @@ class JobRequest:
         if type(qty) is not int or qty < 1: raise ValueError('max_qty must be a positive integer')
         day = payload.get('trade_date', instant(now).astimezone(ET).date().isoformat())
         if not isinstance(day, str) or date.fromisoformat(day).isoformat() != day: raise ValueError('ISO trade_date required')
-        return cls(payload['strategy_id'], symbol(payload['symbol']), payload['direction'], payload['contract'].strip(), qty, day)
+        premium = payload.get('max_entry_premium')
+        expiry_policy = payload.get('expiry_policy', '0_1dte')
+        trade_action = payload.get('trade_action', 'round_trip')
+        if trade_action not in ('round_trip', 'buy_only', 'sell_only'):
+            raise ValueError('trade_action must be round_trip, buy_only or sell_only')
+        if trade_action == 'sell_only' and (premium is not None or payload.get('entry_valid_until') is not None):
+            raise ValueError('sell_only does not accept entry constraints')
+        if expiry_policy not in ('0_1dte', 'nearest'):
+            raise ValueError('expiry_policy must be 0_1dte or nearest')
+        if premium is not None:
+            premium = positive(premium, 'max_entry_premium')
+        deadline = payload.get('entry_valid_until')
+        if deadline is not None:
+            deadline = instant(deadline).astimezone(ET)
+            if deadline.date().isoformat() != day:
+                raise ValueError('entry deadline must be on trade_date')
+            deadline = deadline.isoformat()
+        return cls(payload['strategy_id'], symbol(payload['symbol']), payload['direction'], payload['contract'].strip(),
+                   qty, day, premium, expiry_policy, deadline, trade_action)
 
 
 @dataclass(frozen=True)
@@ -72,14 +94,17 @@ class Contract:
     currency: str = 'USD'
     tradable: bool = True
 
-    def validate(self, request):
+    def validate(self, request, nearest_expiry=None):
         if self.code != request.contract or symbol(self.underlying) != request.symbol:
             raise ValueError('resolved contract does not match request')
-        # TEMP 2026-09-22 live: allow 0–1 DTE (user-approved INTC 119P exp 2026-09-23 while trade_date=2026-09-22)
-        from datetime import date as _date, timedelta as _timedelta
-        _td = _date.fromisoformat(request.trade_date)
-        _ex = _date.fromisoformat(self.expiry)
-        if _ex < _td or _ex > _td + _timedelta(days=1):
+        days = (date.fromisoformat(self.expiry) - date.fromisoformat(request.trade_date)).days
+        if request.trade_action == 'sell_only':
+            if days < 0:
+                raise ValueError('cannot sell an expired contract')
+        elif request.expiry_policy == 'nearest':
+            if days < 0 or self.expiry != nearest_expiry:
+                raise ValueError('contract must match the verified nearest unexpired expiry')
+        elif not 0 <= days <= 1:
             raise ValueError('contract must expire on trade_date or next day (0-1 DTE only)')
         if self.right != ('CALL' if request.direction == 'LONG' else 'PUT'): raise ValueError('contract right/direction mismatch')
         positive(self.strike, 'strike')
@@ -107,6 +132,17 @@ class Quote:
     bid: float
     ask: float
     as_of: datetime
+
+
+@dataclass(frozen=True)
+class PositionSnapshot:
+    """Trusted broker evidence for adopting an existing long position; not a fill."""
+    account: str
+    mode: str
+    contract: str
+    quantity: int
+    as_of: datetime
+    average_cost: float | None = None
 
 
 @dataclass(frozen=True)

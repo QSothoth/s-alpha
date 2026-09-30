@@ -1,0 +1,242 @@
+{
+ "study": "P4",
+ "phase": "select",
+ "preregistration_sha256": "b144feaedb2433d0cc64fa4d961bd813dd54dd61b8b1ad699031e5cbfe145956",
+ "code_sha256": "1c48aa9a3afefda9c805a234cc579130b7eee5b34a698f155359d794b1732f6a",
+ "name_days": 9199,
+ "names": 44,
+ "a1_base_target_rate": 0.26037735849056604,
+ "results": {
+  "A1_ORB": {
+   "picks": 265,
+   "dates": 149,
+   "per_date": 1.778523489932886,
+   "target_rate": 0.26037735849056604,
+   "stop_rate": 0.44150943396226416,
+   "chop_rate": 0.36981132075471695,
+   "payoff": 0.10294104440808029,
+   "payoff_ci95": [
+    0.020200671804603474,
+    0.19477192182879313
+   ],
+   "payoff_lo90": 0.03264946628013338,
+   "edge": 0.1018867924528302,
+   "edge_ci95": [
+    0.015503875968992248,
+    0.19217081850533807
+   ],
+   "edge_lo90": 0.028469750889679714,
+   "halves_payoff": [
+    0.03547245048006492,
+    0.15546692961378353
+   ],
+   "long": 171,
+   "short": 94,
+   "option_gross_mean": 0.3618571228822045,
+   "option_gross_median": -0.6797311885803905,
+   "option_doubled_rate": 0.3132075471698113,
+   "tier": "-"
+  },
+  "C1_MARKET_ALIGN": {
+   "picks": 62,
+   "dates": 38,
+   "per_date": 1.631578947368421,
+   "target_rate": 0.27419354838709675,
+   "stop_rate": 0.45161290322580644,
+   "chop_rate": 0.3548387096774194,
+   "payoff": 0.08144087529260823,
+   "payoff_ci95": [
+    -0.1422324544822241,
+    0.289477440832888
+   ],
+   "payoff_lo90": -0.1100734313781431,
+   "edge": 0.11290322580645161,
+   "edge_ci95": [
+    -0.09433962264150944,
+    0.2976190476190476
+   ],
+   "edge_lo90": -0.06153846153846154,
+   "halves_payoff": [
+    0.019192471948025768,
+    0.12946107215842897
+   ],
+   "long": 43,
+   "short": 19,
+   "option_gross_mean": 0.3174549422666907,
+   "option_gross_median": -0.6773084870305877,
+   "option_doubled_rate": 0.2903225806451613,
+   "gates": {
+    "picks>=100": false,
+    "dates>=50": false,
+    "target>=33%": false,
+    "target>=A1+5pp": false,
+    "payoff_ci95_low>0": false,
+    "edge>=10pp": true,
+    "edge_ci95_low>0": false,
+    "halves_payoff>0": true
+   },
+   "tier": "-"
+  },
+  "C2_REL_STRENGTH": {
+   "picks": 225,
+   "dates": 130,
+   "per_date": 1.7307692307692308,
+   "target_rate": 0.27111111111111114,
+   "stop_rate": 0.4666666666666667,
+   "chop_rate": 0.37333333333333335,
+   "payoff": 0.10113812359276125,
+   "payoff_ci95": [
+    0.010081001055273882,
+    0.19248942602114005
+   ],
+   "payoff_lo90": 0.025885653490803868,
+   "edge": 0.09333333333333334,
+   "edge_ci95": [
+    0,
+    0.18303571428571427
+   ],
+   "edge_lo90": 0.01646090534979424,
+   "halves_payoff": [
+    0.04523960441944881,
+    0.14273702158220308
+   ],
+   "long": 150,
+   "short": 75,
+   "option_gross_mean": 0.4030426736577483,
+   "option_gross_median": -0.6773084870305877,
+   "option_doubled_rate": 0.3333333333333333,
+   "gates": {
+    "picks>=100": true,
+    "dates>=50": true,
+    "target>=33%": false,
+    "target>=A1+5pp": false,
+    "payoff_ci95_low>0": true,
+    "edge>=10pp": false,
+    "edge_ci95_low>0": false,
+    "halves_payoff>0": true
+   },
+   "tier": "-"
+  },
+  "C3_EFFICIENCY": {
+   "picks": 207,
+   "dates": 126,
+   "per_date": 1.6428571428571428,
+   "target_rate": 0.27053140096618356,
+   "stop_rate": 0.4396135265700483,
+   "chop_rate": 0.37681159420289856,
+   "payoff": 0.11368658750153714,
+   "payoff_ci95": [
+    0.019130822357240708,
+    0.2128271116956992
+   ],
+   "payoff_lo90": 0.032331902904480334,
+   "edge": 0.12077294685990338,
+   "edge_ci95": [
+    0.027149321266968326,
+    0.21717171717171718
+   ],
+   "edge_lo90": 0.04145077720207254,
+   "halves_payoff": [
+    0.05285864825563972,
+    0.15606670910728535
+   ],
+   "long": 133,
+   "short": 74,
+   "option_gross_mean": 0.397012525750065,
+   "option_gross_median": -0.6797311885803905,
+   "option_doubled_rate": 0.33816425120772947,
+   "gates": {
+    "picks>=100": true,
+    "dates>=50": true,
+    "target>=33%": false,
+    "target>=A1+5pp": false,
+    "payoff_ci95_low>0": true,
+    "edge>=10pp": true,
+    "edge_ci95_low>0": true,
+    "halves_payoff>0": true
+   },
+   "tier": "-"
+  },
+  "C4_VWAP_HOLD": {
+   "picks": 188,
+   "dates": 121,
+   "per_date": 1.5537190082644627,
+   "target_rate": 0.28191489361702127,
+   "stop_rate": 0.40425531914893614,
+   "chop_rate": 0.3351063829787234,
+   "payoff": 0.1467235053409909,
+   "payoff_ci95": [
+    0.047659263604320136,
+    0.24734659527576078
+   ],
+   "payoff_lo90": 0.06549410767139714,
+   "edge": 0.13297872340425532,
+   "edge_ci95": [
+    0.03626943005181347,
+    0.23497267759562843
+   ],
+   "edge_lo90": 0.049723756906077346,
+   "halves_payoff": [
+    0.10462983601065652,
+    0.1799975487163981
+   ],
+   "long": 123,
+   "short": 65,
+   "option_gross_mean": 0.44976073792497423,
+   "option_gross_median": -0.6754895554620877,
+   "option_doubled_rate": 0.35106382978723405,
+   "gates": {
+    "picks>=100": true,
+    "dates>=50": true,
+    "target>=33%": false,
+    "target>=A1+5pp": false,
+    "payoff_ci95_low>0": true,
+    "edge>=10pp": true,
+    "edge_ci95_low>0": true,
+    "halves_payoff>0": true
+   },
+   "tier": "-"
+  },
+  "C5_LATE_CONFIRM": {
+   "picks": 130,
+   "dates": 90,
+   "per_date": 1.4444444444444444,
+   "target_rate": 0.2230769230769231,
+   "stop_rate": 0.43846153846153846,
+   "chop_rate": 0.3153846153846154,
+   "payoff": 0.08143383705922438,
+   "payoff_ci95": [
+    -0.023876217683541853,
+    0.19456913339276505
+   ],
+   "payoff_lo90": -0.004270763597402681,
+   "edge": 0.06923076923076923,
+   "edge_ci95": [
+    -0.038461538461538464,
+    0.171875
+   ],
+   "edge_lo90": -0.02027027027027027,
+   "halves_payoff": [
+    0.056589538354908105,
+    0.10207909936281116
+   ],
+   "long": 81,
+   "short": 49,
+   "option_gross_mean": 0.259217385849069,
+   "option_gross_median": -0.6808462578358394,
+   "option_doubled_rate": 0.2846153846153846,
+   "gates": {
+    "picks>=100": true,
+    "dates>=50": true,
+    "target>=33%": false,
+    "target>=A1+5pp": false,
+    "payoff_ci95_low>0": false,
+    "edge>=10pp": false,
+    "edge_ci95_low>0": false,
+    "halves_payoff>0": true
+   },
+   "tier": "-"
+  }
+ },
+ "passed": []
+}
