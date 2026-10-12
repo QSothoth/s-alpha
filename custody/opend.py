@@ -13,10 +13,11 @@ from __future__ import annotations
 
 from datetime import date, datetime, time as dtime, timedelta
 import os
+from pathlib import Path
 
 from .dataset import parse_option_code
 from .marketdata import Bar, _day, _et, _num, normalize_bar_rows
-from .models import Contract, Quote, Session, ET, instant
+from .models import Contract, Quote, Session, ET
 
 __all__ = ['DEFAULT_HOST', 'DEFAULT_PORT', 'OpenDMarket', 'OpenDContractResolver',
            'OpenDTradingCalendar', 'FORBIDDEN_TRADE_NAMES']
@@ -35,6 +36,8 @@ FORBIDDEN_TRADE_NAMES = (
 
 
 def _futu():
+    # Futu's logger indexes HOME even in systemd's minimal service environment.
+    os.environ.setdefault('HOME', str(Path.home()))
     try:
         import futu  # noqa: WPS433 - intentionally lazy
     except ImportError as exc:  # pragma: no cover - environment dependent
@@ -96,7 +99,7 @@ class OpenDMarket:
         return {str(row.get('code', '')).upper(): row for row in _records(data)}
 
     def quote(self, contract, now=None):
-        """Return a fresh ``Quote`` or ``None`` when bid/ask is missing/crossed."""
+        """Return a provider-timestamped ``Quote``; unknown time is unavailable."""
         contract = str(contract).upper()
         row = self.snapshot([contract]).get(contract)
         if row is None:
@@ -104,7 +107,9 @@ class OpenDMarket:
         bid, ask = _num(row.get('bid_price')), _num(row.get('ask_price'))
         if bid is None or ask is None or bid <= 0 or ask <= 0 or ask < bid:
             return None
-        as_of = _et(row.get('update_time')) or (instant(now) if now is not None else datetime.now(ET))
+        as_of = _et(row.get('update_time'))
+        if as_of is None:
+            return None
         return Quote(contract, bid, ask, as_of)
 
     def underlying_mark(self, symbol, now=None):

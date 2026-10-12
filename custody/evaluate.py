@@ -15,7 +15,9 @@ What is fixed here (and therefore identical for every strategy version):
 * ex-post scenario labels (never visible to strategies) and the mirror-symmetric
   scenario weighting that removes the direction mix of the dataset;
 * the reference benchmark (buy right after the open, hold to flatten), the
-  same-schedule shuffle null, the prefix-consistency check and the gates.
+  same-schedule shuffle null, the random-entry control (G13), the prefix-consistency
+  check and the gates;
+* report-only views: one fixed-premium account in time order and SPY day regimes.
 """
 from __future__ import annotations
 
@@ -58,6 +60,10 @@ PAIR_KINDS = ('both', 'with_only', 'against_only', 'chop_only', 'none')
 SCORE_WEIGHTS = {'payoff_ratio': 2, 'profit_factor': 1, 'with_direction': 1, 'not_with_direction': 1}
 COMPLETION_SCORE_WEIGHT = 0.2
 SKILLED_HIT_RATE = 0.6       # upstream direction right 60% of the time: reported next to the 50/50 main view
+RANDOM_ENTRY_DRAWS = 200     # G13: random entry minutes, the strategy's own exits
+RANDOM_ENTRY_MAX_P = 0.10    # G13: the signal's entries must beat random entries at this p
+ACCOUNT_BUDGET_USD = 100.0   # account view: every trade risks the same premium
+REGIME_SYMBOL = 'US.SPY'     # market regime of the day, ex post (report only)
 
 
 @dataclass(frozen=True)
@@ -465,6 +471,128 @@ def shuffle_null(datas, trades, labels, params, fill=PRIMARY_FILL, draws=NULL_DR
             'p_payoff_ratio': (ge_payoff + 1) / (valid_payoff + 1) if valid_payoff else None}
 
 
+def guaranteed_entry(item):
+    """The guaranteed-entry line buys every day by construction (STANDARD section 9b)."""
+    config = item['config']
+    return config['engine'] == 'open_hold' or config['params'].get('must_enter_by_minute') is not None
+
+
+def _force_entry(engine, minute):
+    """The same engine and exit rules, with the entry decided at ``minute`` instead of by its signal."""
+    from .engines import OpenHold, ZeroDteTiming
+    if isinstance(engine, OpenHold):
+        engine.p = dict(engine.p, entry_minute=minute)
+    elif isinstance(engine, ZeroDteTiming):
+        engine.p = dict(engine.p, must_enter_by_minute=None)
+        engine._entry_reason = lambda bar, m: 'random_entry' if m >= minute else None
+    else:
+        raise ValueError('random entry is not defined for engine %s' % type(engine).__name__)
+    return engine
+
+
+def random_entry_control(datas, trades, labels, item, fill=PRIMARY_FILL, draws=RANDOM_ENTRY_DRAWS, seed=20261002):
+    """G13: does the entry signal beat a random entry minute, with the strategy's own exits?
+
+    Only the cases the strategy entered are re-run (unentered cases stay zero), so this
+    isolates the choice of minute from the choice of day. Each draw gives every entered
+    case a minute drawn with replacement from the strategy's own entry decision minutes;
+    the engine then manages the position with its own rules, risk frozen at that minute.
+    p = (draws at least as good as the strategy + 1) / (valid draws + 1).
+    """
+    entered = [i for i, t in enumerate(trades) if t['entry'] is not None]
+    if not entered or not draws:
+        return None
+    weights, _ = mirror_weights([l['scenario'] for l in labels])
+    observed = weighted_metrics([case_value(t) for t in trades], weights)
+    if observed['expectancy'] is None:
+        return None
+    minutes = [trades[i]['entry']['minute'] for i in entered]
+    cache = {}
+
+    def replay(i, minute):
+        if (i, minute) not in cache:
+            data = datas[i]
+            engine = _force_entry(build_strategy(item, data.case.direction, data.session, data.case.strike), minute)
+            cache[i, minute] = case_value(simulate(data, engine, item['config']['params'], fill)) or 0.0
+        return cache[i, minute]
+
+    rng = random.Random(seed)
+    expectancies, payoffs = [], []
+    ge_expectancy = ge_payoff = 0
+    for _ in range(draws):
+        values = [0.0] * len(trades)
+        for i in entered:
+            values[i] = replay(i, rng.choice(minutes))
+        m = weighted_metrics(values, weights)
+        if m['expectancy'] is None:
+            continue
+        expectancies.append(m['expectancy'])
+        ge_expectancy += m['expectancy'] >= observed['expectancy']
+        if m['payoff_ratio'] is not None and observed['payoff_ratio'] is not None:
+            payoffs.append(m['payoff_ratio'])
+            ge_payoff += m['payoff_ratio'] >= observed['payoff_ratio']
+    if not expectancies:
+        return None
+    return {'draws': len(expectancies), 'entered_cases': len(entered), 'distinct_minutes': len(set(minutes)),
+            'strategy_expectancy': observed['expectancy'], 'random_expectancy_mean': _mean(expectancies),
+            'strategy_payoff_ratio': observed['payoff_ratio'], 'random_payoff_ratio_mean': _mean(payoffs),
+            'p_expectancy': (ge_expectancy + 1) / (len(expectancies) + 1),
+            'p_payoff_ratio': (ge_payoff + 1) / (len(payoffs) + 1) if payoffs else None}
+
+
+def account_view(datas, trades, budget=ACCOUNT_BUDGET_USD):
+    """One account trading every entered case with the same premium, in time order. Report only."""
+    days = sorted({d.case.trade_date for d in datas})
+    rows = sorted((d.case.trade_date, t['entry']['fill_minute'], t['contract'], t['net_return'] * budget)
+                  for d, t in zip(datas, trades) if t['entry'] is not None and t['net_return'] is not None)
+    pnl = [r[3] for r in rows]
+    wins, losses = [x for x in pnl if x > 0], [-x for x in pnl if x < 0]
+    equity = peak = drawdown = 0.0
+    streak = worst_streak = 0
+    for x in pnl:
+        equity += x
+        peak = max(peak, equity)
+        drawdown = max(drawdown, peak - equity)
+        streak = streak + 1 if x < 0 else 0
+        worst_streak = max(worst_streak, streak)
+    by_day = {day: 0.0 for day in days}
+    for day, _, _, x in rows:
+        by_day[day] += x
+    return {
+        'budget_per_trade_usd': budget, 'sessions': len(days), 'trades': len(pnl),
+        'trades_per_session': len(pnl) / len(days) if days else None,
+        'win_rate': len(wins) / len(pnl) if pnl else None,
+        'average_win_usd': _mean(wins), 'average_loss_usd': _mean(losses),
+        'payoff_ratio': _mean(wins) / _mean(losses) if wins and losses else None,
+        'expectancy_usd': _mean(pnl), 'profit_factor': sum(wins) / sum(losses) if losses else None,
+        'total_usd': sum(pnl), 'max_drawdown_usd': drawdown, 'max_drawdown_budgets': drawdown / budget,
+        'max_consecutive_losses': worst_streak,
+        'worst_day_usd': min(by_day.values()) if by_day else None, 'best_day_usd': max(by_day.values()) if by_day else None,
+    }
+
+
+def market_regimes(datas, trades, bench, params, budget=ACCOUNT_BUDGET_USD):
+    """Each day labelled by SPY's own move to the flatten (same 0.25-range rule as the labels). Report only."""
+    regime = {}
+    for d in datas:
+        if d.case.symbol == REGIME_SYMBOL and d.case.trade_date not in regime:
+            bars = d.underlying[:flatten_minute(params, d.session)]
+            span = max(b.high for b in bars) - min(b.low for b in bars)
+            net = (bars[-1].close - bars[0].open) / span if span > 0 else 0.0
+            regime[d.case.trade_date] = 'up' if net >= LABEL_BAND else 'down' if net <= -LABEL_BAND else 'chop'
+    out = {}
+    for name in ('up', 'down', 'chop', 'unknown'):
+        idx = [i for i, d in enumerate(datas) if regime.get(d.case.trade_date, 'unknown') == name]
+        if not idx:
+            continue
+        values = [case_value(trades[i]) for i in idx]
+        out[name] = dict(weighted_metrics(values), sessions=len({datas[i].case.trade_date for i in idx}), cases=len(idx),
+                         traded=sum(trades[i]['entry'] is not None for i in idx),
+                         total_usd=sum(v * budget for v in values if v is not None),
+                         benchmark_expectancy=weighted_metrics([case_value(bench[i]) for i in idx])['expectancy'])
+    return out
+
+
 def day_bootstrap(datas, labels, trades, bench, draws=BOOTSTRAP_DRAWS, seed=20260917):
     """95% intervals of the balanced metrics when whole trading days are resampled."""
     days = sorted({d.case.trade_date for d in datas})
@@ -516,7 +644,7 @@ def prefix_consistency(datas, trades, item, fill=PRIMARY_FILL):
 
 
 # ------------------------------------------------------------------ verdict
-def gates(summary, benchmark, robust, pairs):
+def gates(summary, benchmark, robust, pairs, random_entry=None, guaranteed=False):
     s, b = summary, benchmark
     pair_s, pair_b = pairs['strategy'], pairs['benchmark']
     against, bench_against = s['by_scenario']['trend_against'], b['by_scenario']['trend_against']
@@ -536,6 +664,9 @@ def gates(summary, benchmark, robust, pairs):
             _gt(pair_s['profitable_share_traded'], pair_b['profitable_share_traded']),
             _le(pair_s['big_loss_share_traded'], PAIR_MAX_BIG_LOSS_SHARE)]),
     }
+    if not guaranteed:  # the guaranteed-entry line reports G13 but is not judged by it (STANDARD section 9b)
+        informative = random_entry and random_entry['distinct_minutes'] >= 2  # one minute: random == strategy
+        checks['G13_entry_beats_random_entry'] = _le(random_entry['p_expectancy'] if informative else None, RANDOM_ENTRY_MAX_P)
     return checks
 
 
@@ -646,7 +777,7 @@ def verdict(checks, prefix_ok, coverage_ok, oos_sessions, both_sides_ok):
 
 
 # ------------------------------------------------------------------ report
-def evaluate(dataset_dir, strategy_id=None, registry=None, null_draws=NULL_DRAWS):
+def evaluate(dataset_dir, strategy_id=None, registry=None, null_draws=NULL_DRAWS, random_entry_draws=RANDOM_ENTRY_DRAWS):
     registry = registry or Registry()
     item = registry.get(strategy_id or registry.default_id)
     params = item['config']['params']
@@ -679,6 +810,10 @@ def evaluate(dataset_dir, strategy_id=None, registry=None, null_draws=NULL_DRAWS
         'bootstrap_by_day': day_bootstrap(datas, labels, trades, bench, draws=BOOTSTRAP_DRAWS if null_draws else 50),
         'market_shapes': _market_shapes(trades, bench, labels),
         'pairs': {'strategy': pair_outcomes(datas, trades, labels), 'benchmark': pair_outcomes(datas, bench, labels)},
+        'guaranteed_entry': guaranteed_entry(item),
+        'random_entry': random_entry_control(datas, trades, labels, item, draws=random_entry_draws),
+        'account': {'strategy': account_view(datas, trades), 'benchmark': account_view(datas, bench)},
+        'market_regimes': market_regimes(datas, trades, bench, params),
         'cases': [dict(t, decisions=None, benchmark_net_return=b['net_return'], **l)
                   for t, b, l in zip(trades, bench, labels)],
     }
@@ -690,7 +825,8 @@ def evaluate(dataset_dir, strategy_id=None, registry=None, null_draws=NULL_DRAWS
     coverage = {s: report['summary']['by_scenario'][s]['n'] for s in SCENARIOS}
     coverage_ok = all(n >= MIN_CASES_PER_SCENARIO for n in coverage.values())
     report['robustness'] = robustness(datas, labels, trades, bench, item)
-    in_sample_checks = gates(report['summary'], report['benchmark_open_hold'], report['robustness'], report['pairs'])
+    in_sample_checks = gates(report['summary'], report['benchmark_open_hold'], report['robustness'], report['pairs'],
+                             report['random_entry'], report['guaranteed_entry'])
     oos = None
     if oos_idx:
         pick = lambda seq: [seq[i] for i in oos_idx]
@@ -699,9 +835,11 @@ def evaluate(dataset_dir, strategy_id=None, registry=None, null_draws=NULL_DRAWS
         oos_robust = robustness(pick(datas), pick(labels), pick(trades), pick(bench), item)
         oos_pairs = {'strategy': pair_outcomes(pick(datas), pick(trades), pick(labels)),
                      'benchmark': pair_outcomes(pick(datas), pick(bench), pick(labels))}
+        oos_random = random_entry_control(pick(datas), pick(trades), pick(labels), item, draws=random_entry_draws)
         oos = {'sessions': len({datas[i].case.trade_date for i in oos_idx}), 'summary': oos_summary,
-               'benchmark_open_hold': oos_bench, 'robustness': oos_robust,
-               'pairs': oos_pairs, 'gates': gates(oos_summary, oos_bench, oos_robust, oos_pairs)}
+               'benchmark_open_hold': oos_bench, 'robustness': oos_robust, 'pairs': oos_pairs,
+               'random_entry': oos_random, 'account': account_view(pick(datas), pick(trades)),
+               'gates': gates(oos_summary, oos_bench, oos_robust, oos_pairs, oos_random, report['guaranteed_entry'])}
     oos_sessions = oos['sessions'] if oos else 0
     decisive = oos['gates'] if oos and oos_sessions >= MIN_OOS_SESSIONS else in_sample_checks
     report['score'] = {'strategy': composite_score(report['summary']),
@@ -753,6 +891,10 @@ def _share(x):
     return '—' if x is None else '%.1f%%' % (100 * x)
 
 
+def _usd(x):
+    return '—' if x is None else '%.0f 美元' % x
+
+
 def _num(x, fmt='%.2f'):
     return '—' if x is None else fmt % x
 
@@ -769,7 +911,9 @@ GATE_TEXT = {
     'G11_profit_factor_above_1': 'G11 整体赚钱（总赚 ÷ 总亏 > 1）',
     'G12_call_put_pairs_tolerate_the_wrong_side': 'G12 同一标的 CALL + PUT 合起来：赚钱的配对比例高于对照组，'
                                                   '亏掉一半以上的配对不超过 %d%%' % round(100 * PAIR_MAX_BIG_LOSS_SHARE),
+    'G13_entry_beats_random_entry': 'G13 入场时点好于随机入场（同样的离场规则，p ≤ %.2f）' % RANDOM_ENTRY_MAX_P,
 }
+REGIME_ZH = {'up': '上涨日', 'down': '下跌日', 'chop': '震荡日', 'unknown': '未知（当天没有 SPY）'}
 VERDICT_TEXT = {
     'ACCEPT': '达标，可以把策略状态改为 accepted',
     'PROVISIONAL': '能判断的门槛都过了，但数据还不够（有门槛无法判断、场景样本太少或样本外交易日不足），暂不能上线',
@@ -842,6 +986,53 @@ def _pair_lines(pairs):
         row = s['by_bought'][kind]
         lines.append('| %s | %d | %s | %s |' % (PAIR_KIND_ZH[kind], row['pairs'],
                                                 '—' if kind == 'none' else row['profitable'], _pct(row['mean_return'])))
+    return lines
+
+
+def _entry_account_regime_lines(report):
+    rnd, acc = report['random_entry'], report['account']
+    lines = ['', '## 6. 入场有没有用、账户会怎么走、分行情', '']
+    if rnd:
+        lines.append(
+            '**随机入场对照（G13）**：只重放策略实际买过的 %d 个 case，买入时点从策略自己的 %d 个不同入场时刻里随机抽（有放回），'
+            '止损、止盈、强平都按策略自己的规则，重复 %d 次。策略平均每笔 %s，随机入场平均 %s；随机不比策略差的比例 p = %s'
+            '（门槛 ≤ %.2f），盈亏比 p = %s。这一项考的是「挑的时点」，不考「挑的日子」；只有一个入场时刻时随机等于策略，记不适用。%s' % (
+                rnd['entered_cases'], rnd['distinct_minutes'], rnd['draws'], _pct(rnd['strategy_expectancy']),
+                _pct(rnd['random_expectancy_mean']), _num(rnd['p_expectancy'], '%.3f'), RANDOM_ENTRY_MAX_P,
+                _num(rnd['p_payoff_ratio'], '%.3f'),
+                '**保证入场线按第 9b 节判定，G13 只报告、不判定。**' if report['guaranteed_entry'] else ''))
+    else:
+        lines.append('**随机入场对照（G13）**：无法计算（没有入场，或这份数据算不出方向对错各半的指标）。')
+    lines += [
+        '',
+        '**账户视角**（只报告，不设门槛）：每笔都按 %.0f 美元权利金下单，按交易日和成交时刻排成一条资金曲线；'
+        '数据集里 CALL 和 PUT 两边都在，相当于上游方向一半对一半错。' % acc['strategy']['budget_per_trade_usd'],
+        '',
+        '| 指标 | 策略 | 对照组 |', '|---|---:|---:|',
+    ]
+    rows = (('trades', '交易笔数', lambda v: '%d' % v), ('trades_per_session', '每个交易日笔数', _num),
+            ('win_rate', '胜率', _share), ('average_win_usd', '平均赚（美元）', _money),
+            ('average_loss_usd', '平均亏（美元）', _usd), ('payoff_ratio', '盈亏比', _num),
+            ('expectancy_usd', '每笔期望（美元）', _money), ('profit_factor', '总赚 ÷ 总亏', _num),
+            ('total_usd', '总盈亏（美元）', _money), ('max_drawdown_usd', '最大回撤（美元）', _usd),
+            ('max_drawdown_budgets', '最大回撤（折合几笔本金）', _num), ('max_consecutive_losses', '最长连亏（笔）', lambda v: '%d' % v),
+            ('worst_day_usd', '最差一天（美元）', _money), ('best_day_usd', '最好一天（美元）', _money))
+    for key, name, fmt in rows:
+        x, y = acc['strategy'][key], acc['benchmark'][key]
+        lines.append('| %s | %s | %s |' % (name, '—' if x is None else fmt(x), '—' if y is None else fmt(y)))
+    lines += [
+        '',
+        '**分行情**（只报告，不设门槛；事后标签，策略看不到）：按当天 SPY 从开盘到强平的净移动占全天振幅的比例，'
+        '≥ %g 为上涨日、≤ −%g 为下跌日，其余为震荡日。每笔收益不加权，未入场记 0。' % (LABEL_BAND, LABEL_BAND),
+        '',
+        '| 行情 | 交易日 | 合约数 | 买入数 | 策略平均每笔 | 策略盈亏比 | 策略总盈亏（每笔 %.0f 美元） | 对照组平均每笔 |' %
+        acc['strategy']['budget_per_trade_usd'],
+        '|---|---:|---:|---:|---:|---:|---:|---:|',
+    ]
+    for name, row in report['market_regimes'].items():
+        lines.append('| %s | %d | %d | %d | %s | %s | %s | %s |' % (
+            REGIME_ZH[name], row['sessions'], row['cases'], row['traded'], _pct(row['expectancy']),
+            _num(row['payoff_ratio']), _money(row['total_usd']), _pct(row['benchmark_expectancy'])))
     return lines
 
 
@@ -1028,8 +1219,9 @@ def render_markdown(report):
             stress_names.get(name, name), _pct(row['strategy']['expectancy']), _num(row['strategy']['payoff_ratio']),
             _pct(row['benchmark']['expectancy'])))
     lines += ['', '完成情况：' + '；'.join('%s %d' % (OUTCOME_ZH[k], s['outcomes'].get(k, 0)) for k in OUTCOME_ZH),
-              '', '未入场的收益率逐笔记为 —，总体比较贡献零；到期结算纳入盈亏但不计完成卖出。',
-              '', '## 6. 逐笔明细', '',
+              '', '未入场的收益率逐笔记为 —，总体比较贡献零；到期结算纳入盈亏但不计完成卖出。']
+    lines += _entry_account_regime_lines(report)
+    lines += ['', '## 7. 逐笔明细', '',
               '| 标的 | 日期 | 合约 | 当天走势 | 买入 | 买入原因 | 卖出 | 卖出原因 | 策略收益 | 对照组收益 | 完成情况 |',
               '|---|---|---|---|---|---|---|---|---:|---:|---|']
     for c in report['cases']:
@@ -1060,8 +1252,9 @@ def main(argv=None):
     parser.add_argument('--strategy', default=None, help='registered strategy_id (default: registry default)')
     parser.add_argument('--out', required=True, help='directory for report.json and REPORT.md')
     parser.add_argument('--null-draws', type=int, default=NULL_DRAWS)
+    parser.add_argument('--random-entry-draws', type=int, default=RANDOM_ENTRY_DRAWS)
     args = parser.parse_args(argv)
-    report = evaluate(args.dataset, args.strategy, null_draws=args.null_draws)
+    report = evaluate(args.dataset, args.strategy, null_draws=args.null_draws, random_entry_draws=args.random_entry_draws)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / 'report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False, allow_nan=False) + '\n', encoding='utf-8')

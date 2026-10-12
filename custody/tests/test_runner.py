@@ -21,7 +21,7 @@ from custody.runner import (Runner, SameDayHistorySource, StrategyFrameSource, _
                             bar_boundary, build_argument_parser)
 from custody.marketdata import normalize_bar_rows  # noqa: E402
 from custody.models import ET, Contract, Frame, Quote, Session  # noqa: E402
-from custody.opend import OpenDContractResolver, OpenDMarket, OpenDTradingCalendar  # noqa: E402
+from custody.opend import OpenDContractResolver, OpenDMarket, OpenDTradingCalendar, _futu  # noqa: E402
 from custody.registry import Registry  # noqa: E402
 from custody.service import CustodyService  # noqa: E402
 from custody.strategy import build_strategy  # noqa: E402
@@ -153,6 +153,16 @@ class DryRunSafetyTests(unittest.TestCase):
         self.assertEqual([(f['side'], f['price'], f['submitted']) for f in fills],
                          [('BUY_OPEN', 1.05, False), ('SELL_CLOSE', 1.0, False)])
         self.assertEqual(calls, [])
+
+    def test_simulated_fill_uses_clock_after_order_creation(self):
+        service, job = make_dryrun(self.path)
+        runner, events = runner_for(service, job, FakeFrameSource(frame(service)), simulate=True)
+        ticks = iter(T + timedelta(milliseconds=i) for i in range(20))
+        with mock.patch('custody.runner.datetime') as clock:
+            clock.now.side_effect = lambda tz: next(ticks)
+            state = runner.tick()
+        self.assertEqual((state['state'], state['position_qty']), ('IN', 1))
+        self.assertTrue(any(e['event'] == 'simulated_fill' for e in events))
 
     def test_frame_and_step_errors_are_non_fatal(self):
         service, job = make_dryrun(self.path)
@@ -333,6 +343,16 @@ class FakeQuoteContext:
 
 
 class OpenDAdapterTests(unittest.TestCase):
+    def test_sdk_import_restores_missing_service_home_and_preserves_existing_home(self):
+        sdk = object()
+        with mock.patch.dict(sys.modules, {'futu': sdk}), mock.patch.dict(os.environ, {}, clear=True):
+            expected = str(Path.home())
+            self.assertIs(_futu(), sdk)
+            self.assertEqual(os.environ['HOME'], expected)
+        with mock.patch.dict(sys.modules, {'futu': sdk}), mock.patch.dict(os.environ, {'HOME': '/tmp/sdk-home'}):
+            _futu()
+            self.assertEqual(os.environ['HOME'], '/tmp/sdk-home')
+
     def test_nearest_expiry_ignores_expired_dates_and_propagates_errors(self):
         context = mock.Mock()
         context.get_option_expiration_date.return_value = (0, [
@@ -360,6 +380,19 @@ class OpenDAdapterTests(unittest.TestCase):
         self.assertEqual(market.underlying_mark('US.QQQ'), 701.2)
         crossed = OpenDMarket(quote_context=FakeQuoteContext(snapshot=[dict(snapshot[0], bid_price=0)]))
         self.assertIsNone(crossed.quote(CONTRACT, T))
+
+    def test_quote_missing_provider_time_is_not_relabelled_as_received_now(self):
+        for stamp in (None, '', 'NaT', 'invalid'):
+            with self.subTest(stamp=stamp):
+                context = FakeQuoteContext(snapshot=[{'code':CONTRACT,'bid_price':4.35,
+                    'ask_price':4.50,'update_time':stamp}])
+                market = OpenDMarket(quote_context=context)
+                self.assertIsNone(market.quote(CONTRACT, T))
+                self.assertIsNone(market.quote(CONTRACT))
+        old = T - timedelta(minutes=10)
+        context = FakeQuoteContext(snapshot=[{'code':CONTRACT,'bid_price':4.35,
+            'ask_price':4.50,'update_time':old.strftime('%Y-%m-%d %H:%M:%S')}])
+        self.assertEqual(OpenDMarket(quote_context=context).quote(CONTRACT, T).as_of,old)
 
     def test_calendar_regular_and_early_close(self):
         days = [{'time': DAY, 'trade_date_type': 'WHOLE'}, {'time': '2026-11-27', 'trade_date_type': 'MORNING'}]

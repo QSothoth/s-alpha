@@ -307,6 +307,75 @@ class WeightingAndMetricsTests(unittest.TestCase):
         self.assertTrue(ev._all([True, True]))
 
 
+class EntryAccountRegimeTests(unittest.TestCase):
+    closes = piecewise([(1, 100.0), (30, 100.0), (200, 104.0), (390, 101.0)])
+
+    def test_forced_entry_keeps_the_engines_own_exits(self):
+        data = case_data(self.closes)
+        for strategy_id in ('zero_dte_timing_v6.6', 'open_hold_v3', 'open_hold_v2'):
+            item = Registry().get(strategy_id)
+            engine = ev._force_entry(ev.build_strategy(item, 'LONG', data.session, 100.0), 45)
+            trade = ev.simulate(data, engine, item['config']['params'])
+            self.assertEqual(trade['entry']['minute'], 45, strategy_id)
+            self.assertNotEqual(trade['exit']['reason'], 'random_entry', strategy_id)
+        with self.assertRaises(ValueError):
+            ev._force_entry(Scripted(), 45)
+
+    def test_guaranteed_entry_line_is_reported_not_judged_by_g13(self):
+        self.assertTrue(ev.guaranteed_entry(Registry().get('open_hold_v3')))
+        self.assertTrue(ev.guaranteed_entry(Registry().get('open_hold_v2')))
+        self.assertFalse(ev.guaranteed_entry(Registry().get('zero_dte_timing_v6.6')))
+        flat = {'expectancy': 0.0, 'payoff_ratio': 1.0, 'profit_factor': 1.0}
+        summary = {'balanced': flat, 'balanced_dollars': flat, 'by_scenario': {'trend_against': flat}, 'with_direction': flat}
+        robust = {'halves': {'passed': True}, 'leave_one_day_out': {'passed': True}, 'neighbors': {'passed': True}}
+        empty = {'profitable_share_traded': None, 'big_loss_share_traded': None}
+        pairs = {'strategy': empty, 'benchmark': empty}
+        key = 'G13_entry_beats_random_entry'
+        for p, minutes, expected in ((0.05, 3, True), (ev.RANDOM_ENTRY_MAX_P, 3, True), (0.2, 3, False), (0.01, 1, None)):
+            rnd = {'p_expectancy': p, 'distinct_minutes': minutes}
+            self.assertIs(ev.gates(summary, summary, robust, pairs, rnd)[key], expected, (p, minutes))
+        self.assertIsNone(ev.gates(summary, summary, robust, pairs)[key])
+        self.assertNotIn(key, ev.gates(summary, summary, robust, pairs, {'p_expectancy': 0.5, 'distinct_minutes': 3}, True))
+
+    def test_random_entry_control_only_moves_the_entered_cases(self):
+        data = case_data(self.closes)
+        item = Registry().get('zero_dte_timing_v6.6')
+        entered = ev.simulate(data, ev._force_entry(ev.build_strategy(item, 'LONG', data.session, 100.0), 40),
+                              item['config']['params'])
+        flat = ev.simulate(data, Scripted(), PARAMS)
+        labels = [{'scenario': 'chop'}] * 2
+        result = ev.random_entry_control([data, data], [entered, flat], labels, item, draws=10)
+        # one entry minute: every random draw replays the strategy exactly
+        self.assertEqual((result['entered_cases'], result['distinct_minutes'], result['draws']), (1, 1, 10))
+        self.assertAlmostEqual(result['random_expectancy_mean'], result['strategy_expectancy'])
+        self.assertEqual(result['p_expectancy'], 1.0)
+        self.assertIsNone(ev.random_entry_control([data], [flat], labels[:1], item, draws=10))
+
+    def test_account_view_orders_trades_and_measures_drawdown(self):
+        def row(day, minute, ret):
+            data = SimpleNamespace(case=SimpleNamespace(trade_date=day))
+            trade = {'contract': 'C', 'entry': None if ret is None else {'fill_minute': minute}, 'net_return': ret}
+            return data, trade
+        rows = [row('2026-09-02', 30, -1.0), row('2026-09-01', 50, -0.5), row('2026-09-01', 10, 2.0),
+                row('2026-09-03', None, None)]
+        acc = ev.account_view(*zip(*rows), budget=100.0)
+        self.assertEqual((acc['sessions'], acc['trades'], acc['max_consecutive_losses']), (3, 3, 2))
+        self.assertAlmostEqual(acc['total_usd'], 50.0)
+        self.assertAlmostEqual(acc['max_drawdown_usd'], 150.0)  # +200, then -50 and -100
+        self.assertAlmostEqual(acc['max_drawdown_budgets'], 1.5)
+        self.assertAlmostEqual(acc['payoff_ratio'], 200.0 / 75.0)
+        self.assertEqual((acc['worst_day_usd'], acc['best_day_usd']), (-100.0, 150.0))
+
+    def test_market_regime_comes_from_spy_and_unknown_without_it(self):
+        up, down = case_data(self.closes), case_data(piecewise([(1, 100.0), (390, 97.0)]))
+        other = CaseData(Case('US.QQQ', CALL, '2026-09-15', 'LONG', 100.0), up.session, up.underlying, up.option)
+        flat = ev.simulate(up, Scripted(), PARAMS)
+        self.assertEqual(set(ev.market_regimes([up], [flat], [flat], PARAMS)), {'up'})
+        self.assertEqual(set(ev.market_regimes([down], [flat], [flat], PARAMS)), {'down'})
+        regimes = ev.market_regimes([up, other], [flat, flat], [flat, flat], PARAMS)
+        self.assertEqual({k: v['cases'] for k, v in regimes.items()}, {'up': 1, 'unknown': 1})
+
+
 class EndToEndTests(unittest.TestCase):
     def test_report_on_a_small_dataset(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -345,10 +414,14 @@ class EndToEndTests(unittest.TestCase):
             self.assertEqual(report['out_of_sample']['pairs']['strategy']['pairs'], 1)
             self.assertIn('G12_call_put_pairs_tolerate_the_wrong_side', report['out_of_sample']['gates'])
             self.assertIn('G12_call_put_pairs_tolerate_the_wrong_side', report['gates_in_sample'])
+            self.assertIn('G13_entry_beats_random_entry', report['gates_in_sample'])
+            self.assertFalse(report['guaranteed_entry'])
+            self.assertEqual(report['account']['strategy']['trades'], 1)
+            self.assertEqual(set(report['market_regimes']), {'up'})  # both synthetic SPY days end above the open
             markdown = ev.render_markdown(report)
             for section in ('## 先看这里', '**综合分：', '### 综合分怎么来的', '对照组', '## 1. 过没过门槛', '## 2. 总体',
                             '## 3. 分走势看', '## 4. 同一标的 CALL 和 PUT 合起来看', '## 5. 结果靠不靠得住',
-                            '## 6. 逐笔明细', '方向正确时参与率', '80%', '20%'):
+                            '## 6. 入场有没有用、账户会怎么走、分行情', '## 7. 逐笔明细', '方向正确时参与率', '80%', '20%'):
                 self.assertIn(section, markdown)
             self.assertEqual(ev.evaluate(Path(tmp) / 'ds', ITEM['strategy_id'], null_draws=20), report)  # deterministic
 

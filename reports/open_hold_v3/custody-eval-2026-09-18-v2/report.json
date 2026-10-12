@@ -4,7 +4,7 @@
     "strategy_id": "open_hold_v3",
     "sha256": "6817da2325435db83be33867b144ed0d65962478cee37412eb1546b574483def",
     "engine": "zero_dte_timing",
-    "status": "candidate"
+    "status": "accepted"
   },
   "strategy_params": {
     "ema_fast": 9,
@@ -877,6 +877,72 @@
           "net_return": 0.07712
         }
       ]
+    }
+  },
+  "guaranteed_entry": true,
+  "random_entry": {
+    "draws": 200,
+    "entered_cases": 28,
+    "distinct_minutes": 6,
+    "strategy_expectancy": -0.122944,
+    "random_expectancy_mean": -0.217448,
+    "strategy_payoff_ratio": 0.675873,
+    "random_payoff_ratio_mean": 0.679924,
+    "p_expectancy": 0.014925,
+    "p_payoff_ratio": 0.432836
+  },
+  "account": {
+    "strategy": {
+      "budget_per_trade_usd": 100.0,
+      "sessions": 1,
+      "trades": 28,
+      "trades_per_session": 28.0,
+      "win_rate": 0.5,
+      "average_win_usd": 51.272688,
+      "average_loss_usd": 75.861461,
+      "payoff_ratio": 0.675873,
+      "expectancy_usd": -12.294387,
+      "profit_factor": 0.675873,
+      "total_usd": -344.242824,
+      "max_drawdown_usd": 807.458883,
+      "max_drawdown_budgets": 8.074589,
+      "max_consecutive_losses": 5,
+      "worst_day_usd": -344.242824,
+      "best_day_usd": -344.242824
+    },
+    "benchmark": {
+      "budget_per_trade_usd": 100.0,
+      "sessions": 1,
+      "trades": 28,
+      "trades_per_session": 28.0,
+      "win_rate": 0.25,
+      "average_win_usd": 116.810526,
+      "average_loss_usd": 72.885897,
+      "payoff_ratio": 1.602649,
+      "expectancy_usd": -25.461791,
+      "profit_factor": 0.534216,
+      "total_usd": -712.930142,
+      "max_drawdown_usd": 935.852889,
+      "max_drawdown_budgets": 9.358529,
+      "max_consecutive_losses": 9,
+      "worst_day_usd": -712.930142,
+      "best_day_usd": -712.930142
+    }
+  },
+  "market_regimes": {
+    "chop": {
+      "n": 28,
+      "expectancy": -0.122944,
+      "win_rate": 0.5,
+      "average_win": 0.512727,
+      "average_loss": 0.758615,
+      "payoff_ratio": 0.675873,
+      "profit_factor": 0.675873,
+      "sessions": 1,
+      "cases": 28,
+      "traded": 28,
+      "total_usd": -344.242824,
+      "benchmark_expectancy": -0.254618
     }
   },
   "cases": [

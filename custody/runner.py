@@ -203,6 +203,8 @@ class Runner:
             self.log('dispatch_result', job_id=self.job_id, **dispatch)
         self._log_orders(state)
         if self.simulate_fills:
+            if clock:
+                now = clock()
             state = self._simulate_fills(state, now, mark)
         self.log('tick', mode=self.service.mode, state=state['state'], underlying_mark=mark,
                  action=frame and frame.action, reason=frame and frame.reason, position_qty=state['position_qty'],

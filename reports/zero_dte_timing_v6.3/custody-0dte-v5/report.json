@@ -1696,6 +1696,100 @@
       ]
     }
   },
+  "guaranteed_entry": false,
+  "random_entry": {
+    "draws": 200,
+    "entered_cases": 45,
+    "distinct_minutes": 36,
+    "strategy_expectancy": -0.003277,
+    "random_expectancy_mean": -0.031889,
+    "strategy_payoff_ratio": 4.427349,
+    "random_payoff_ratio_mean": 3.694866,
+    "p_expectancy": 0.174129,
+    "p_payoff_ratio": 0.318408
+  },
+  "account": {
+    "strategy": {
+      "budget_per_trade_usd": 100.0,
+      "sessions": 20,
+      "trades": 45,
+      "trades_per_session": 2.25,
+      "win_rate": 0.177778,
+      "average_win_usd": 115.613338,
+      "average_loss_usd": 26.113447,
+      "payoff_ratio": 4.427349,
+      "expectancy_usd": -0.917574,
+      "profit_factor": 0.957265,
+      "total_usd": -41.290815,
+      "max_drawdown_usd": 488.189351,
+      "max_drawdown_budgets": 4.881894,
+      "max_consecutive_losses": 11,
+      "worst_day_usd": -183.364984,
+      "best_day_usd": 219.166324
+    },
+    "benchmark": {
+      "budget_per_trade_usd": 100.0,
+      "sessions": 20,
+      "trades": 126,
+      "trades_per_session": 6.3,
+      "win_rate": 0.253968,
+      "average_win_usd": 124.807066,
+      "average_loss_usd": 77.943743,
+      "payoff_ratio": 1.601245,
+      "expectancy_usd": -26.451474,
+      "profit_factor": 0.545105,
+      "total_usd": -3332.885735,
+      "max_drawdown_usd": 3574.85436,
+      "max_drawdown_budgets": 35.748544,
+      "max_consecutive_losses": 12,
+      "worst_day_usd": -1154.662525,
+      "best_day_usd": 105.772425
+    }
+  },
+  "market_regimes": {
+    "up": {
+      "n": 32,
+      "expectancy": -0.015434,
+      "win_rate": 0.0625,
+      "average_win": 1.284926,
+      "average_loss": 0.306375,
+      "payoff_ratio": 4.193965,
+      "profit_factor": 0.838793,
+      "sessions": 5,
+      "cases": 32,
+      "traded": 12,
+      "total_usd": -49.389843,
+      "benchmark_expectancy": -0.024248
+    },
+    "down": {
+      "n": 38,
+      "expectancy": 0.012368,
+      "win_rate": 0.052632,
+      "average_win": 1.608915,
+      "average_loss": 0.228988,
+      "payoff_ratio": 7.026201,
+      "profit_factor": 1.171034,
+      "sessions": 9,
+      "cases": 38,
+      "traded": 14,
+      "total_usd": 46.997535,
+      "benchmark_expectancy": -0.217272
+    },
+    "chop": {
+      "n": 56,
+      "expectancy": -0.006946,
+      "win_rate": 0.071429,
+      "average_win": 0.865346,
+      "average_loss": 0.256691,
+      "payoff_ratio": 3.371155,
+      "profit_factor": 0.898975,
+      "sessions": 6,
+      "cases": 56,
+      "traded": 19,
+      "total_usd": -38.898506,
+      "benchmark_expectancy": -0.433867
+    }
+  },
   "cases": [
     {
       "symbol": "US.SPY",
@@ -5834,7 +5928,8 @@
     "G9_leave_one_day_out_stable": true,
     "G10_parameter_neighbors_beat_benchmark": true,
     "G11_profit_factor_above_1": false,
-    "G12_call_put_pairs_tolerate_the_wrong_side": false
+    "G12_call_put_pairs_tolerate_the_wrong_side": false,
+    "G13_entry_beats_random_entry": false
   },
   "out_of_sample": null,
   "verdict": "REJECT"

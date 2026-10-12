@@ -36,6 +36,12 @@ class DocsTests(unittest.TestCase):
         self.assertIn('| G12 |', text)
         self.assertIn('不超过 %d%%' % round(100 * ev.PAIR_MAX_BIG_LOSS_SHARE), text)
         self.assertIn('16 分', text)
+        self.assertIn('| G13 |', text)
+        self.assertIn('重复 %d 次' % ev.RANDOM_ENTRY_DRAWS, text)
+        self.assertIn('p ≤ %.2f' % ev.RANDOM_ENTRY_MAX_P, text)
+        self.assertIn('固定 %.0f 美元权利金' % ev.ACCOUNT_BUDGET_USD, text)
+        self.assertIn('`%s`' % ev.REGIME_SYMBOL, text)
+        self.assertIn('G3–G13', text)
 
     def test_both_sides_rule_is_written_everywhere_it_applies(self):
         for name in ('custody/AGENTS.md', 'docs/DATA.md', 'docs/STANDARD.md'):
@@ -58,6 +64,11 @@ class DocsTests(unittest.TestCase):
                     self.assertIn('return_score', report['score'][side], path)
                 self.assertNotIn('G1_completion_100pct', report['gates_in_sample'], path)
                 self.assertIn('G12_call_put_pairs_tolerate_the_wrong_side', report['gates_in_sample'], path)
+                self.assertEqual(report['guaranteed_entry'], ev.guaranteed_entry(Registry().get(item['strategy_id'])), path)
+                self.assertEqual('G13_entry_beats_random_entry' in report['gates_in_sample'], not report['guaranteed_entry'], path)
+                self.assertIn('random_entry', report, path)
+                self.assertEqual(set(report['account']), {'strategy', 'benchmark'}, path)
+                self.assertIn('market_regimes', report, path)
 
 
 if __name__ == '__main__':
