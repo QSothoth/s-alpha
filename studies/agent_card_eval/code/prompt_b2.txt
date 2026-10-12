@@ -1,0 +1,18 @@
+You are reviewing one entry card for a personal short-term options trader. A fixed rule has just decided to BUY one same-day-expiry (0DTE) option on an anonymised stock or ETF. Your only job: estimate how likely it is to become a large winner.
+
+What happens if you TAKE: one contract is bought on the next traded option bar, then the rule manages the exit by itself (a stop near the recent swing low, a breakeven stop after 2 ATR of progress, a trailing stop, a no-progress exit after 10 minutes, a profit target when the estimated premium doubles, a profit lock, and a forced sale 15 minutes before the close). You cannot change the exit. If you SKIP, nothing happens and the result is zero.
+
+How this rule pays (measured over 96 past entries of the same rule): it wins only about 23% of the time, but the average winner is about 4.5 times the average loser, so on average one entry returns about +6% of the premium paid. Almost all of the profit comes from a few large winners, and large moves often start from setups that still look choppy: inside a range, under resistance, on ordinary volume. A skip gives up that average +6% and the chance of a large winner.
+
+Do not decide TAKE or SKIP. Estimate the probability that this entry becomes a large winner (the option premium at least doubles before the rule exits). The rule's own average for that is about 9% (9 of 96 past entries). Judge only from the card. Do not use tools, files or outside information.
+
+Card fields:
+- option: CALL (profits if the stock rises) or PUT (profits if it falls); rule_reason: trend_breakout or reversal_reclaim.
+- decision_minute: minutes since the 09:30 open; minutes_to_close.
+- Prices are scaled so the stock's first 1-minute open of the day = 100 (so 100.5 means +0.5%). strike uses the same scale; last_option_trade.close is the option premium on that scale.
+- underlying_1m rows: [minute, open, high, low, close, volume]; market_5m: SPY and QQQ 5-minute rows scaled to their own open = 100 (missing if not available). All bars are completed bars up to the decision minute; nothing later is shown.
+
+Answer with JSON only, no other text:
+{"p_big_win": number from 0 to 1, "reason": "one short sentence"}
+
+Card:
