@@ -9,6 +9,20 @@ from studies.us_0dte_picks.launch_watch import build_command, validate_launch
 
 
 class LaunchWatchTests(unittest.TestCase):
+    def test_human_selection_is_checked_before_launch_and_forwarded_to_monitor(self):
+        now = datetime(2026, 9, 30, 9, 0, tzinfo=ET)
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            candidates, baselines = root/'candidates.json', root/'baselines.json'
+            candidates.write_text(json.dumps({'trade_date': '2026-09-30', 'top10': [{'code': 'US.NVDA'}]}))
+            baselines.write_text('{}')
+            with self.assertRaisesRegex(ValueError, 'outside the frozen pool'):
+                validate_launch(candidates, baselines, root/'out', '15:45', 300, 20, now, 'AAPL')
+            cutoff = validate_launch(candidates, baselines, root/'out', '15:45', 300, 20, now, 'NVDA')
+            command = build_command('watch-test', candidates, baselines, root/'out', '15:45',
+                                    300, 20, cutoff, now, symbols='NVDA')
+            self.assertEqual(command[-2:], ['--symbols', 'NVDA'])
+
     def test_validation_rejects_stale_inputs_and_existing_output(self):
         now=datetime(2026,9,30,9,0,tzinfo=ET)
         with tempfile.TemporaryDirectory() as folder:

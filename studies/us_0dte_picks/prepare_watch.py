@@ -23,8 +23,8 @@ def nearest_expiry(rows, day):
     return next((value for value in dates if value >= day), None)
 
 
-def opening_baseline(raw15, raw30, day, calendar):
-    base = daily_list.premarket_record(raw30, day, calendar)
+def opening_baseline(raw15, raw30, day, calendar, session_types=None):
+    base = daily_list.premarket_record(raw30, day, calendar, session_types)
     sessions = {}
     for row in raw15:
         stamp = str(row['time_key'])
@@ -48,8 +48,8 @@ def opening_baseline(raw15, raw30, day, calendar):
                 for d, volume in zip(dates, base['opening_volumes']))}
 
 
-def rank_record(code, raw30, snap, aux, day):
-    sessions = daily_list.complete_sessions(raw30, day)
+def rank_record(code, raw30, snap, aux, day, session_types=None):
+    sessions = daily_list.complete_sessions(raw30, day, session_types)
     days = sorted(sessions)
     bars = {d: p3.daily_bar(v) for d, v in sessions.items()}
     prev = bars[days[-1]]
@@ -86,7 +86,7 @@ def prepare(out):
               'sort': ['earnings reaction today, previous-day thrust, other',
                        'descending abs(premarket_gap)/ATR20_fraction + HV/IV',
                        'descending previous-day option volume', 'code'],
-              'baselines': '14 matching complete RTH sessions; native 15m and 30m',
+              'baselines': '14 matching full RTH sessions; native 15m and 30m; calendar-confirmed morning sessions only in daily price background',
               'history': '1000 subscribed bars per symbol/period, no historical-kline quota',
               'budget_usd': 300, 'fee_reserve_usd': 20,
               'pool_scope': '11 named liquid technology stocks; not whole-market or biotech coverage'}
@@ -110,6 +110,7 @@ def prepare(out):
             calendar_rows = get('request_trading_days', 'calendar.json', market='US',
                                 start=(now.date()-timedelta(days=120)).isoformat(), end=day)
             calendar = sorted(str(r['time'])[:10] for r in calendar_rows)
+            session_types = {str(r['time'])[:10]: r.get('trade_date_type') for r in calendar_rows}
             if not any(r['time'] == day and r.get('trade_date_type') == 'WHOLE' for r in calendar_rows):
                 raise ValueError('full US trading day required')
             previous = calendar[calendar.index(day)-1]
@@ -156,7 +157,7 @@ def prepare(out):
                     rows = get('get_cur_kline', f'{folder}/{code[3:]}.json', code, 1000, subtype, ft.AuType.QFQ)
                     if folder == 'k15':
                         raw30 = json.loads((out/f'k30/{code[3:]}.json').read_text())
-                        bases[code] = opening_baseline(rows, raw30, day, calendar)
+                        bases[code] = opening_baseline(rows, raw30, day, calendar, session_types)
                     return True
                 fetched = client.subscribed(eligible, subtype, fetch, session=ft.Session.RTH)
                 failures = {code: str(value) for code, value in fetched.items() if isinstance(value, Exception)}
@@ -165,13 +166,13 @@ def prepare(out):
             snapshots = get('get_market_snapshot', 'stock_snapshot.json', eligible)
             by_code = {row['code']: row for row in snapshots}
             rows = [rank_record(code, json.loads((out/f'k30/{code[3:]}.json').read_text()),
-                                by_code[code], aux[code], day) for code in eligible]
+                                by_code[code], aux[code], day, session_types) for code in eligible]
             rows.sort(key=lambda r: (-r['event_tier'], -r['score'], -(r['option_volume'] or 0), r['code']))
             for rank, row in enumerate(rows, 1):
                 row['rank'] = rank
             ranking = {'trade_date': day, 'previous': previous, 'method': method, 'top10': rows,
                        'completed_at': datetime.now(ET).isoformat()}
-            validate_inputs(ranking, bases, day, calendar)
+            validate_inputs(ranking, bases, day, calendar, session_types=session_types)
             save('baselines.json', bases)
             save('ranking.json', ranking)
             get('query_subscription', 'subscription_after.json', is_all_conn=True)
@@ -188,7 +189,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', required=True, type=Path)
     parser.add_argument('--launch', action='store_true', help='also check and launch the bounded read-only monitor')
-    parser.add_argument('--until', default='10:45')
+    parser.add_argument('--until', default='15:45')
     args = parser.parse_args(argv)
     ranking = prepare(args.out)
     print(json.dumps({'out': str(args.out), 'trade_date': ranking['trade_date'],

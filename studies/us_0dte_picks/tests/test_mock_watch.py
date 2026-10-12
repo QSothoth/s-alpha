@@ -5,9 +5,10 @@ from studies.us_0dte_picks.mock_watch import mark_job, observation_status
 
 class MockWatchTests(unittest.TestCase):
     def test_failed_handoff_and_closed_entry_window_are_not_waiting(self):
-        now=datetime(2026,9,29,11,0,5,tzinfo=ET)
+        now=datetime(2026,9,29,15,45,5,tzinfo=ET)  # v6.6 may enter until the 15:45 flatten
         self.assertEqual(observation_status([],['failed'],now),'HANDOFF_FAILED')
         self.assertEqual(observation_status([],[],now),'NO_ENTRY')
+        self.assertEqual(observation_status([],[],now.replace(hour=11)),'WAITING_FOR_FRESH_SIGNAL')
         self.assertEqual(observation_status([{}],[],now),'OBSERVING')
 
     def test_bid_marks_fees_excluded_stale_quotes_and_realized_exit(self):

@@ -12,7 +12,7 @@ import time
 from custody.dataset import check, parse_option_code, write_bars, write_checksums
 from custody.marketdata import normalize_daily_rows
 from custody.models import ET, symbol as normalize_symbol
-from custody.opend import OpenDMarket, OpenDTradingCalendar, _records
+from custody.opend import OpenDMarket, OpenDTradingCalendar, _futu, _records
 from .scan import atm_pair, completed_bars
 
 
@@ -34,7 +34,7 @@ def _write_json(path, value):
 def capture(symbols, out, market, day=None, now_fn=lambda: datetime.now(ET),
             pause=time.sleep, clock=time.monotonic):
     """Capture a finite symbol list; the caller owns and closes this private connection."""
-    import futu as ft
+    ft = _futu()
 
     now = now_fn().astimezone(ET)
     today = now.date().isoformat()

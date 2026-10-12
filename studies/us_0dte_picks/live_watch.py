@@ -2,6 +2,10 @@
 
 Inputs are today's premarket ranking and frozen 14-session opening-volume baselines.
 The relative ranking is a human-review heuristic, not a validated directional strategy.
+
+Direction is not taken from the ranking: the timing line watches the CALL and the PUT of
+every candidate independently from the open, and a card names the side whose own entry
+signal fired (2026-10-02 user decision: zero_dte_timing_v6.6, no deadline entry).
 """
 from __future__ import annotations
 
@@ -18,9 +22,27 @@ from custody.models import ET, Session
 from custody.opend import OpenDMarket, OpenDContractResolver, _futu, _records
 from custody.registry import Registry
 from custody.strategy import build_strategy
+from .daily_list import volume_reference_day
 
+STRATEGY_ID = 'zero_dte_timing_v6.6'
 REFERENCES = {'US.SPY': 'broad_market', 'US.QQQ': 'nasdaq100',
               'US.SMH': 'semiconductors', 'US.XBI': 'biotech'}
+
+
+def select_candidates(rows, symbols=None):
+    """Restrict the frozen pool to the human's explicit selection before scanning."""
+    if symbols is None:
+        return rows
+    requested = [s.strip().upper() for s in symbols.split(',')]
+    if not requested or any(not s for s in requested):
+        raise ValueError('selected symbols must be a nonempty comma-separated list')
+    requested = [s if s.startswith('US.') else 'US.' + s for s in requested]
+    if len(set(requested)) != len(requested):
+        raise ValueError('duplicate selected symbol')
+    unknown = set(requested) - {row['code'] for row in rows}
+    if unknown:
+        raise ValueError('selected symbols are outside the frozen pool: ' + ', '.join(sorted(unknown)))
+    return [row for row in rows if row['code'] in requested]
 
 
 def reference_summary(raw, code, session, boundary):
@@ -106,27 +128,33 @@ def option_check(row, direction, day, now, premium_cap, expiry=None):
     premium=Decimal(str(ask))*100 if ask is not None and ask>0 else None
     if premium is None or premium>Decimal(str(premium_cap)):
         reason.append('entry_premium_limit')
-    return {'contract':row.get('code'),'expiry':expiry,'strike':_num(row.get('option_strike_price')),
+    return {'contract':row.get('code'),'direction':direction,'expiry':expiry,'strike':_num(row.get('option_strike_price')),
             'bid':bid,'ask':ask,'delta':delta,'volume':row.get('volume'),
             'quoted_at':row.get('update_time'),'entry_premium':float(premium) if premium else None,
             'rejections':reason}
 
 
-def choose_drafts(ranked, quotes, day, now, premium_budget):
+def side(quote):
+    """The direction a quoted contract trades: CALL is LONG, PUT is SHORT."""
+    return {'CALL': 'LONG', 'PUT': 'SHORT'}.get(quote.get('option_type'), 'FLAT')
+
+
+def choose_drafts(ranked, quotes, day, now, premium_budget, max_entry_premium=None):
     """Choose the relative best affordable name first; at most one extra distinct name.
 
-    A single draft gets the full premium cap. Two drafts each get half, so their
-    persisted per-job caps cannot exceed the caller's premium allocation in total.
+    A single draft gets the full budget and two get half, further limited by
+    max_entry_premium when the human-selected pool reserves two daily slots.
     """
+    limit = premium_budget if max_entry_premium is None else min(premium_budget, max_entry_premium)
     eligible=[]
     for row in ranked:
-        inspected=[option_check(q,row['direction'],day,now,premium_budget,row.get('expiry'))
+        inspected=[option_check(q,side(q),day,now,limit,row.get('expiry'))
                    for q in quotes.get(row['code'],[])]
         row['contracts_checked']=inspected
         good=[c for c in inspected if not c['rejections'] and c['strike'] is not None]
         if good:
             contract=min(good,key=lambda c:(abs(c['strike']-row['close']),c['ask'],c['contract']))
-            eligible.append({'symbol':row['code'],'direction':row['direction'],
+            eligible.append({'symbol':row['code'],
                              'expiry_policy':row.get('expiry_policy','0_1dte'),**contract})
     if not eligible:
         return []
@@ -136,28 +164,29 @@ def choose_drafts(ranked, quotes, day, now, premium_budget):
         second=next((r for r in eligible[1:] if r['entry_premium']<=half),None)
         if second:
             chosen.append(second)
-    cap=half if len(chosen)==2 else premium_budget
-    return [{**row,'strategy_id':'open_hold_v3','max_qty':1,'max_entry_premium':cap,
+    cap=min(half if len(chosen)==2 else premium_budget, limit)
+    return [{**row,'strategy_id':STRATEGY_ID,'max_qty':1,'max_entry_premium':cap,
              'trade_date':day,'role':'HUMAN_REVIEW_DRAFT'} for row in chosen]
 
 
 def annotate_timing(ranked, bars_by_code, strategy, session):
     """Expose every inspected contract's timing, including unselected candidates.
 
-    Replay uses the current candidate direction and never invents a fill. An old
-    latched ENTER is explicitly different from a first entry on the latest bar;
-    today's quote checks cannot establish eligibility at that earlier time.
+    Each contract is replayed in its own direction (CALL long, PUT short), so both sides
+    of a candidate are watched independently and the move since the open never decides
+    the side. Replay never invents a fill. An old latched ENTER is explicitly different
+    from a first entry on the latest bar; today's quote checks cannot establish
+    eligibility at that earlier time.
     """
     timings, signals = {}, []
     for row in ranked:
-        if row['direction'] not in ('LONG', 'SHORT'):
-            continue
         bars = bars_by_code[row['code']]
         for contract in row.get('contracts_checked', []):
             strike = contract['strike']
-            if strike is None or not math.isfinite(strike) or strike <= 0:
+            if (strike is None or not math.isfinite(strike) or strike <= 0
+                    or contract.get('direction') not in ('LONG', 'SHORT')):
                 continue
-            engine = build_strategy(strategy, row['direction'], session, strike)
+            engine = build_strategy(strategy, contract['direction'], session, strike)
             first = None
             for bar in bars:
                 decision = engine.on_bar(bar)
@@ -173,25 +202,27 @@ def annotate_timing(ranked, bars_by_code, strategy, session):
             contract['timing'] = timing
             timings[contract['contract']] = timing
             if first is not None:
-                signals.append({'symbol': row['code'], 'direction': row['direction'],
+                signals.append({'symbol': row['code'], 'direction': contract['direction'],
                                 'contract': contract['contract'], **timing,
                                 'quote_eligible_now': not contract['rejections'],
                                 'quote_rejections_now': contract['rejections']})
     return timings, signals
 
 
-def build_review_card(ranked, signals, day, boundary, premium_budget):
+def build_review_card(ranked, signals, day, boundary, premium_budget, max_entry_premium=None):
     """Return only newly actionable, currently eligible contracts for human review."""
+    limit = premium_budget if max_entry_premium is None else min(premium_budget, max_entry_premium)
     fresh = {s['contract']: s for s in signals
              if s['signal_status'] == 'FIRST_ENTRY_THIS_MINUTE' and s['quote_eligible_now']}
     eligible = []
     for row in ranked:
         contracts = [c for c in row.get('contracts_checked', [])
-                     if c['contract'] in fresh and not c['rejections'] and c['strike'] is not None]
+                     if c['contract'] in fresh and not c['rejections'] and c['strike'] is not None
+                     and c['entry_premium'] <= limit]
         if contracts:
             contract = min(contracts, key=lambda c: (
                 abs(c['strike'] - row['close']), c['ask'], c['contract']))
-            eligible.append({'symbol': row['code'], 'direction': row['direction'], **contract,
+            eligible.append({'symbol': row['code'], **contract,
                              'expiry_policy': row.get('expiry_policy', '0_1dte'),
                              'signal': fresh[contract['contract']]})
     chosen = eligible[:1]
@@ -200,14 +231,14 @@ def build_review_card(ranked, signals, day, boundary, premium_budget):
         second = next((item for item in eligible[1:] if item['entry_premium'] <= half), None)
         if second:
             chosen.append(second)
-    cap = half if len(chosen) == 2 else premium_budget
+    cap = min(half if len(chosen) == 2 else premium_budget, limit)
     actions = []
     for item in chosen:
         actions.append({
-            **item, 'strategy_id': 'open_hold_v3', 'trade_date': day,
+            **item, 'strategy_id': STRATEGY_ID, 'trade_date': day,
             'max_qty': 1, 'max_entry_premium': cap,
             'custody_request': {
-                'strategy': 'open_hold_v3', 'symbol': item['symbol'],
+                'strategy': STRATEGY_ID, 'symbol': item['symbol'],
                 'direction': item['direction'], 'contract': item['contract'],
                 'max_qty': 1, 'max_entry_premium': cap,
                 'expiry_policy': item['expiry_policy'],
@@ -225,19 +256,22 @@ def build_review_card(ranked, signals, day, boundary, premium_budget):
     }
 
 
-def validate_inputs(ranking, bases, day, calendar, required_periods=(15,30)):
+def validate_inputs(ranking, bases, day, calendar, required_periods=(15,30), session_types=None):
     if ranking.get('trade_date')!=day:
         raise ValueError('candidate file must be for today')
     rows=ranking.get('top10',[])
     if not 1<=len(rows)<=20 or len({r['code'] for r in rows})!=len(rows):
         raise ValueError('need 1-20 distinct candidates')
     previous=calendar[calendar.index(day)-1]
+    reference=volume_reference_day(calendar,day,session_types)
     recent=set(calendar[max(0,calendar.index(day)-20):calendar.index(day)])
     for row in rows:
         if row.get('expiry_policy') == 'nearest':
             if datetime.fromisoformat(row['expiry']).date().isoformat() != row['expiry'] or row['expiry'] < day:
                 raise ValueError('invalid candidate expiry')
         base=bases[row['code']]
+        if base.get('close_t1_date',previous)!=previous:
+            raise ValueError('prior close date does not match the previous trading day')
         if not row['code'].startswith('US.') or (_num(row.get('iv')) or 0)<=0:
             raise ValueError('invalid candidate')
         age=(datetime.fromisoformat(day)-datetime.fromisoformat(row['volatility_date'])).days
@@ -245,7 +279,8 @@ def validate_inputs(ranking, bases, day, calendar, required_periods=(15,30)):
             raise ValueError('stale IV')
         for minutes in required_periods:
             dates=base[f'rvol{minutes}_days']
-            if len(dates)!=14 or dates!=sorted(set(dates)) or dates[-1]!=previous or not set(dates)<=recent:
+            if (len(dates)!=14 or dates!=sorted(set(dates)) or dates[-1]!=reference or not set(dates)<=recent
+                    or session_types is not None and any(session_types.get(d)!='WHOLE' for d in dates)):
                 raise ValueError('invalid frozen opening-volume dates')
             if (_num(base.get(f'rvol{minutes}_base')) or 0)<=0:
                 raise ValueError('invalid frozen opening-volume mean')
@@ -261,6 +296,7 @@ def main(argv=None):
     parser.add_argument('--budget-usd',type=float,default=300)
     parser.add_argument('--fee-reserve-usd',type=float,default=20)
     parser.add_argument('--once',action='store_true')
+    parser.add_argument('--symbols', help='human-selected symbols from the frozen pool, e.g. AAPL,NVDA')
     args=parser.parse_args(argv)
     if not math.isfinite(args.budget_usd) or not math.isfinite(args.fee_reserve_usd) or not 0<=args.fee_reserve_usd<args.budget_usd:
         parser.error('budget must exceed a nonnegative fee reserve')
@@ -274,23 +310,27 @@ def main(argv=None):
     args.out.mkdir(parents=True,exist_ok=False)
     (args.out/'inputs').mkdir()
     source_root = Path(__file__).resolve().parents[2]
-    for relative in ('studies/us_0dte_picks/live_watch.py', 'custody/strategy.py',
+    for relative in ('studies/us_0dte_picks/live_watch.py', 'studies/us_0dte_picks/daily_list.py', 'custody/strategy.py',
                      'custody/marketdata.py', 'custody/models.py', 'custody/indicators.py',
                      'custody/engines/zero_dte_timing.py',
-                     'custody/strategies/open_hold_v3.json', 'custody/strategies/index.json'):
+                     'custody/strategies/%s.json' % STRATEGY_ID, 'custody/strategies/index.json'):
         destination = args.out/'sources'/relative
         destination.parent.mkdir(parents=True,exist_ok=True)
         destination.write_bytes((source_root/relative).read_bytes())
-    strategy=Registry().get('open_hold_v3')
+    strategy=Registry().get(STRATEGY_ID)
     with OpenDMarket() as market:
         ft=_futu()
         calendar_rows=market.trading_days((started.date()-timedelta(days=60)).isoformat(),day)
         calendar=sorted(r['time'] for r in calendar_rows)
+        session_types={r['time']:r.get('trade_date_type') for r in calendar_rows}
         if not any(r['time']==day and r.get('trade_date_type')=='WHOLE' for r in calendar_rows):
             raise ValueError('full market session required')
         session=Session(day,started.replace(hour=9,minute=30,second=0,microsecond=0),started.replace(hour=16,minute=0,second=0,microsecond=0))
         periods=(30,) if started>=session.opens+timedelta(minutes=30) else (15,30)
-        candidates=validate_inputs(ranking,bases,day,calendar,periods)
+        candidates=select_candidates(validate_inputs(ranking,bases,day,calendar,periods,session_types), args.symbols)
+        premium_budget = args.budget_usd-args.fee_reserve_usd
+        # Selected names keep their slot when their fresh signals arrive separately.
+        entry_cap = premium_budget/min(2,len(candidates)) if args.symbols is not None else None
         codes=[r['code'] for r in candidates]
         types=[ft.SubType.K_1M,ft.SubType.K_15M,ft.SubType.K_30M]
         ret,quota=market.context.query_subscription(is_all_conn=True)
@@ -377,12 +417,12 @@ def main(argv=None):
                         errors[code] = str(exc)
                     time.sleep(.1)
                 quote_groups={}
-                if minutes>=15:
+                if minutes >= strategy['config']['params']['opening_minutes']:
                     targets={}
                     for row in rows:
-                        right='CALL' if row['direction']=='LONG' else 'PUT'
-                        near=sorted([c for c in chains[row['code']] if c['option_type']==right],key=lambda c:abs(float(c['strike_price'])-row['close']))[:5]
-                        for c in near: targets[c['code']]=row['code']
+                        for right in ('CALL', 'PUT'):  # both sides are watched; the signal picks the side
+                            near=sorted([c for c in chains[row['code']] if c['option_type']==right],key=lambda c:abs(float(c['strike_price'])-row['close']))[:5]
+                            for c in near: targets[c['code']]=row['code']
                     try:
                         snapshots=market.snapshot(list(targets)) if targets else {}
                     except RuntimeError as exc:
@@ -390,12 +430,12 @@ def main(argv=None):
                         snapshots={}
                     for code,q in snapshots.items(): quote_groups.setdefault(targets[code],[]).append(q)
                     inputs['option_snapshots'] = snapshots
-                drafts=choose_drafts(rows,quote_groups,day,datetime.now(ET),args.budget_usd-args.fee_reserve_usd)
+                drafts=choose_drafts(rows,quote_groups,day,datetime.now(ET),premium_budget,entry_cap)
                 timings,signals=annotate_timing(rows,bars_by_code,strategy,session)
                 for draft in drafts:
                     draft.update(timings[draft['contract']])
                 review_card=build_review_card(rows,signals,day,boundary,
-                                              args.budget_usd-args.fee_reserve_usd)
+                                              premium_budget,entry_cap)
                 review_card['market_context'] = context
                 review_card['context_errors'] = {code: errors[code] for code in REFERENCES if code in errors}
                 review_card['strategy_scope'] = '0DTE_MODEL_UNCHANGED_NEAREST_EXPIRY_PERFORMANCE_UNVALIDATED'

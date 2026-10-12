@@ -12,19 +12,21 @@ import subprocess
 import time
 
 from custody.models import ET
+from .live_watch import select_candidates
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PYTHON = Path('/opt/futu-opend/venv/bin/python')
 
 
-def validate_launch(candidates, baselines, out, until, budget, fee_reserve, now):
+def validate_launch(candidates, baselines, out, until, budget, fee_reserve, now, symbols=None):
     if out.exists():
         raise ValueError('output directory already exists')
     ranking = json.loads(candidates.read_text())
     json.loads(baselines.read_text())
     if ranking.get('trade_date') != now.date().isoformat():
         raise ValueError('candidate file must be for today')
+    select_candidates(ranking.get('top10', []), symbols)
     cutoff = datetime.fromisoformat(f'{now.date().isoformat()}T{until}').replace(tzinfo=ET)
     latest = now.replace(hour=15, minute=45, second=0, microsecond=0)
     if not now < cutoff <= latest:
@@ -35,10 +37,10 @@ def validate_launch(candidates, baselines, out, until, budget, fee_reserve, now)
 
 
 def build_command(unit, candidates, baselines, out, until, budget, fee_reserve,
-                  cutoff, now, python=DEFAULT_PYTHON):
+                  cutoff, now, python=DEFAULT_PYTHON, symbols=None):
     runtime = math.ceil((cutoff - now).total_seconds()) + 90
     user = pwd.getpwuid(os.getuid()).pw_name
-    return [
+    command = [
         'systemd-run', f'--unit={unit}', '--collect', '--property=Type=exec',
         f'--property=User={user}', '--property=MemoryMax=512M',
         f'--property=RuntimeMaxSec={runtime}s', f'--property=WorkingDirectory={ROOT}',
@@ -48,6 +50,9 @@ def build_command(unit, candidates, baselines, out, until, budget, fee_reserve,
         '--out', str(out.resolve()), '--until', until,
         '--budget-usd', str(budget), '--fee-reserve-usd', str(fee_reserve),
     ]
+    if symbols is not None:
+        command += ['--symbols', symbols]
+    return command
 
 
 def wait_ready(unit, ready, timeout):
@@ -70,21 +75,22 @@ def main(argv=None):
     parser.add_argument('--candidates', type=Path, required=True)
     parser.add_argument('--baselines', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
-    parser.add_argument('--until', default='10:45')
+    parser.add_argument('--until', default='15:45')
     parser.add_argument('--budget-usd', type=float, default=300)
     parser.add_argument('--fee-reserve-usd', type=float, default=20)
     parser.add_argument('--startup-timeout', type=float, default=120)
     parser.add_argument('--check-only', action='store_true')
+    parser.add_argument('--symbols', help='human-selected symbols from the frozen pool, e.g. AAPL,NVDA')
     args = parser.parse_args(argv)
     now = datetime.now(ET)
     try:
         cutoff = validate_launch(args.candidates, args.baselines, args.out, args.until,
-                                 args.budget_usd, args.fee_reserve_usd, now)
+                                 args.budget_usd, args.fee_reserve_usd, now, args.symbols)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         parser.error(str(exc))
     unit = 'us0dte-watch-' + now.strftime('%Y%m%d-%H%M%S')
     command = build_command(unit, args.candidates, args.baselines, args.out, args.until,
-                            args.budget_usd, args.fee_reserve_usd, cutoff, now)
+                            args.budget_usd, args.fee_reserve_usd, cutoff, now, symbols=args.symbols)
     summary = {'unit': unit, 'command': command, 'ready': str(args.out/'ready.json'),
                'latest': str(args.out/'latest.json'),
                'review_card': str(args.out/'review_card.json'), 'check_only': args.check_only}

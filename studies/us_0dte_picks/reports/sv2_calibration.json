@@ -1,0 +1,53 @@
+{
+  "preregistration": "studies/us_0dte_picks/notes/SV2_PREREG.md",
+  "datasets": [
+    "data/custody-0dte-v6.1",
+    "data/custody-eval-2026-09-18-v2"
+  ],
+  "cases": 174,
+  "cases_with_iv": 174,
+  "k": 0.46,
+  "w": 0.04,
+  "cases_measured": 174,
+  "limits": {
+    "C1_same_entry_minute": 0.9,
+    "C2_sign_agreement": 0.75,
+    "C3_spearman": 0.7,
+    "C4_mean_bias_abs": 0.05
+  },
+  "strategies": {
+    "zero_dte_timing_v6.6": {
+      "traded_either": 108,
+      "traded_both": 108,
+      "C1_same_entry_minute": 1.0,
+      "C2_sign_agreement": 1.0,
+      "C3_spearman": 0.9584536092295673,
+      "C4_mean_bias_abs": 0.0033583320969612033,
+      "mean_bias": 0.0033583320969612033,
+      "real_mean_return": 0.057945935494298134,
+      "proxy_mean_return": 0.06130426759125934,
+      "passed": true
+    },
+    "open_hold_v3": {
+      "traded_either": 174,
+      "traded_both": 174,
+      "C1_same_entry_minute": 1.0,
+      "C2_sign_agreement": 0.9597701149425287,
+      "C3_spearman": 0.9162457159868096,
+      "C4_mean_bias_abs": 0.04548760356708664,
+      "mean_bias": 0.04548760356708664,
+      "real_mean_return": -0.07238524802531499,
+      "proxy_mean_return": -0.026897644458228346,
+      "passed": true
+    }
+  },
+  "flows_report_only": {
+    "N_real": 625.81610333842,
+    "N_proxy": 662.0860899856012,
+    "O_real": 824.3984017997827,
+    "O_proxy": 1339.7813034162593,
+    "N_minus_O_real": -198.5822984613627,
+    "N_minus_O_proxy": -677.6952134306581
+  },
+  "passed": true
+}

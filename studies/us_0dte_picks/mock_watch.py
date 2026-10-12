@@ -18,6 +18,8 @@ from custody.opend import OpenDMarket
 from .live_watch import write_json_atomic
 from .session import RUNTIME, accept, jobs_in
 
+ENTRY_CLOSE = 15*60+45  # v6.6 may enter until the 15:45 flatten; no 10:45 entry window any more
+
 
 def mark_job(job, orders, quote, now):
     multiplier = job['contract']['multiplier']
@@ -72,7 +74,7 @@ def main(argv=None):
             while datetime.now(ET) < cutoff:
                 now = datetime.now(ET)
                 card_path = args.session/'monitor/review_card.json'
-                if now.hour*60+now.minute < 645 and card_path.exists():
+                if now.hour*60+now.minute < ENTRY_CLOSE and card_path.exists():
                     raw = card_path.read_bytes()
                     card = json.loads(raw)
                     digest = hashlib.sha256(raw).hexdigest()[:16]
@@ -139,7 +141,7 @@ def observation_status(positions, errors, now):
         return 'OBSERVING'
     if errors:
         return 'HANDOFF_FAILED'
-    return 'NO_ENTRY' if now.hour*60+now.minute >= 645 else 'WAITING_FOR_FRESH_SIGNAL'
+    return 'NO_ENTRY' if now.hour*60+now.minute >= ENTRY_CLOSE else 'WAITING_FOR_FRESH_SIGNAL'
 
 
 if __name__=='__main__':

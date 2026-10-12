@@ -99,16 +99,35 @@ def stock_universe(client, previous):
     return codes[:TOP_STOCKS]
 
 
-def complete_sessions(rows, before):
-    """Keep only complete, valid 13-bar RTH days; never include today's partial day."""
+def volume_reference_day(calendar, today, session_types=None):
+    """Last calendar-confirmed full session; half days never enter volume baselines."""
+    prior = calendar[:calendar.index(today)]
+    if not prior:
+        raise ValueError('previous trading day missing')
+    if session_types is None:
+        return prior[-1]
+    if any(session_types.get(day) not in ('WHOLE', 'MORNING') for day in prior):
+        raise ValueError('unsupported or missing US session type')
+    full = [day for day in prior if session_types[day] == 'WHOLE']
+    if not full:
+        raise ValueError('previous full trading day missing')
+    return full[-1]
+
+
+def complete_sessions(rows, before, session_types=None):
+    """Validate full RTH, or confirmed US morning sessions ending at 13:00 ET."""
     sessions = {}
     for row in rows:
         stamp = str(row['time_key'])
         day = stamp[:10]
         if day < before:
             sessions.setdefault(day, []).append((stamp[11:19], *(float(row[k]) for k in ('open', 'high', 'low', 'close', 'volume'))))
+    def expected(day):
+        if session_types is None or session_types.get(day) == 'WHOLE':
+            return GRID30
+        return GRID30[:7] if session_types.get(day) == 'MORNING' else ()
     return {day: sorted(bars) for day, bars in sessions.items()
-            if tuple(b[0] for b in sorted(bars)) == GRID30
+            if tuple(b[0] for b in sorted(bars)) == expected(day)
             and all(all(isfinite(v) for v in b[1:]) and 0 < b[3] <= min(b[1], b[4])
                     <= max(b[1], b[4]) <= b[2] and b[5] >= 0 for b in bars)}
 
@@ -122,15 +141,19 @@ def thrust_on(bars, today):
     return p3.thrust_side(bars, days + [today], len(days)), bars[days[-1]][3], turnover
 
 
-def premarket_record(rows, today, calendar):
-    sessions = complete_sessions(rows, today)
+def premarket_record(rows, today, calendar, session_types=None):
+    sessions = complete_sessions(rows, today, session_types)
     days = sorted(sessions)
     index = calendar.index(today)
     if len(days) < 25:
         raise ValueError('fewer than 25 complete RTH sessions')
     if not index or days[-1] != calendar[index - 1]:
         raise ValueError('T-1 complete RTH session missing')
-    prior = days[-14:]
+    reference = volume_reference_day(calendar, today, session_types)
+    full_days = [day for day in days if len(sessions[day]) == len(GRID30)]
+    prior = full_days[-14:]
+    if len(prior) != 14 or prior[-1] != reference:
+        raise ValueError('14 complete full-session volume dates missing')
     recent = set(calendar[max(0, index - 20):index])
     if not all(day in recent for day in prior):
         raise ValueError('14-session opening-volume baseline extends beyond 20 market days')
@@ -140,7 +163,8 @@ def premarket_record(rows, today, calendar):
         raise ValueError('opening-volume baseline is zero')
     bars = {day: p3.daily_bar(values) for day, values in sessions.items()}
     side, close, turnover = thrust_on(bars, today)
-    return {'side': side, 'close_t1': close, 'turnover20': turnover,
+    return {'side': side, 'close_t1': close, 'close_t1_date': days[-1], 'turnover20': turnover,
+            'rvol_reference_day': reference,
             'rvol30_base': base, 'rvol30_days': prior, 'opening_volumes': opening,
             'complete_sessions': len(days), 'daily_window': [days[0], days[-1]]}
 

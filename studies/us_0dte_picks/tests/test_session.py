@@ -19,7 +19,7 @@ from studies.us_0dte_picks.tests.test_daily_list import daily_rows, weekdays, T,
 
 class SessionTests(unittest.TestCase):
     def test_review_handoff_propagates_buy_only_but_rejects_sell_only(self):
-        action = {'custody_request': {'strategy': 'open_hold_v3', 'symbol': 'US.AAA', 'direction': 'LONG',
+        action = {'custody_request': {'strategy': 'zero_dte_timing_v6.6', 'symbol': 'US.AAA', 'direction': 'LONG',
                                      'contract': 'US.AAA260930C100000', 'max_qty': 1,
                                      'max_entry_premium': 280, 'expiry_policy': 'nearest'}}
         command = custody_command(action, '2026-09-30T10:00:00-04:00', Path('/tmp/test.sqlite'),
@@ -66,7 +66,7 @@ class SessionTests(unittest.TestCase):
         day = now.date().isoformat()
         expiry = (now+timedelta(days=1)).date().isoformat()
         contract = 'US.AAA' + (now+timedelta(days=1)).strftime('%y%m%d') + 'C100000'
-        request = {'strategy': 'open_hold_v3', 'symbol': 'US.AAA', 'direction': 'LONG',
+        request = {'strategy': 'zero_dte_timing_v6.6', 'symbol': 'US.AAA', 'direction': 'LONG',
                    'contract': contract, 'expiry_policy': 'nearest', 'max_qty': 1, 'max_entry_premium': 280}
         action = {'symbol': 'US.AAA', 'direction': 'LONG', 'contract': contract,
                   'expiry': expiry, 'custody_request': request}
@@ -132,7 +132,7 @@ class SessionTests(unittest.TestCase):
     def test_fresh_card_exact_contract_budget_and_explicit_execution_mode(self):
         now = datetime(2026, 9, 29, 9, 51, 10, tzinfo=ET)
         action = {'symbol': 'US.AAA', 'direction': 'LONG', 'contract': 'US.AAA260930C100000',
-                  'custody_request': {'strategy': 'open_hold_v3', 'symbol': 'US.AAA', 'direction': 'LONG',
+                  'custody_request': {'strategy': 'zero_dte_timing_v6.6', 'symbol': 'US.AAA', 'direction': 'LONG',
                                       'contract': 'US.AAA260930C100000', 'expiry_policy': 'nearest',
                                       'max_qty': 1, 'max_entry_premium': 140}}
         card = {'status': 'ENTER_REVIEW', 'trade_date': '2026-09-29', 'as_of': now.replace(second=0).isoformat(),

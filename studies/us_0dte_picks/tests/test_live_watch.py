@@ -4,8 +4,9 @@ from unittest.mock import patch
 
 from custody.models import ET, Session
 from custody.engines.open_hold import OpenHold
-from studies.us_0dte_picks.live_watch import (annotate_timing, build_review_card,
-    choose_drafts, option_check, reference_summary, summarize, validate_inputs)
+from custody.registry import Registry
+from studies.us_0dte_picks.live_watch import (STRATEGY_ID, annotate_timing, build_review_card,
+    choose_drafts, option_check, reference_summary, select_candidates, summarize, validate_inputs)
 
 DAY='2026-09-28'
 NOW=datetime(2026,9,28,9,45,5,tzinfo=ET)
@@ -23,6 +24,33 @@ def candidate(code, rank):
 
 
 class LiveWatchTests(unittest.TestCase):
+    def test_selected_slots_use_same_quote_and_card_cap_when_signals_arrive_separately(self):
+        ranked=[candidate('US.AAA',1),candidate('US.BBB',2)]
+        expensive='US.AAA260928C100000'
+        affordable='US.AAA260928C101000'
+        second='US.BBB260928C100000'
+        quotes={'US.AAA':[option(expensive,2.5),option(affordable,1.2,option_strike_price=101)],
+                'US.BBB':[option(second,1.2)]}
+        choose_drafts(ranked,quotes,DAY,NOW,280,140)
+        self.assertIn('entry_premium_limit',ranked[0]['contracts_checked'][0]['rejections'])
+        for contract in (affordable,second):
+            signals=[{'contract':contract,'signal_status':'FIRST_ENTRY_THIS_MINUTE','quote_eligible_now':True}]
+            result=build_review_card(ranked,signals,DAY,NOW.replace(second=0),280,140)
+            self.assertEqual(len(result['actions']),1)
+            self.assertEqual(result['actions'][0]['contract'],contract)
+            self.assertEqual(result['actions'][0]['custody_request']['max_entry_premium'],140)
+        drafts=choose_drafts(ranked[:1],quotes,DAY,NOW,280,280)
+        self.assertEqual(drafts[0]['contract'],expensive)
+        self.assertEqual(drafts[0]['max_entry_premium'],280)
+
+    def test_human_selection_limits_the_frozen_pool_and_rejects_unknown_or_empty_scope(self):
+        rows = [{'code': 'US.AAPL', 'rank': 1}, {'code': 'US.NVDA', 'rank': 2}, {'code': 'US.TSLA', 'rank': 3}]
+        self.assertEqual(select_candidates(rows, ' nvda,US.AAPL '), rows[:2])
+        self.assertEqual(select_candidates(rows), rows)
+        for symbols in ('', 'AAPL,', 'AAPL,US.AAPL', 'SPY'):
+            with self.subTest(symbols=symbols), self.assertRaises(ValueError):
+                select_candidates(rows, symbols)
+
     def test_nearest_expiry_flows_through_quote_checks_and_custody_request(self):
         expiry = '2026-10-02'
         ranked = [{**candidate('US.AAA', 1), 'expiry': expiry, 'expiry_policy': 'nearest'}]
@@ -122,6 +150,35 @@ class LiveWatchTests(unittest.TestCase):
             self.assertEqual(signals[0]['historical_quote_eligibility'],'NOT_RECONSTRUCTED')
             _,fresh=annotate_timing(ranked,{'US.AAA':bars[:3],'US.BBB':bars[:3]},{},session)
             self.assertEqual(fresh[0]['signal_status'],'FIRST_ENTRY_THIS_MINUTE')
+
+    def test_both_sides_are_watched_and_the_signal_picks_the_side(self):
+        opens=NOW.replace(hour=9,minute=30,second=0)
+        session=Session(DAY,opens,opens.replace(hour=16))
+        raw=[{'time_key':(opens+timedelta(minutes=i)).isoformat(),
+              'open':100,'high':101,'low':99,'close':100,'volume':100} for i in range(1,6)]
+        _,bars=summarize(raw,{'code':'US.AAA','rank':1,'iv':30,'close_t1':100},session,opens+timedelta(minutes=5))
+        ranked=[candidate('US.AAA',1)]  # the move since the open is up ...
+        call,put='US.AAA260928C100000','US.AAA260928P100000'
+        choose_drafts(ranked,{'US.AAA':[option(call),option(put,option_type='PUT',option_delta=-.5)]},DAY,NOW,280)
+        self.assertEqual({c['contract']:c['direction'] for c in ranked[0]['contracts_checked']},{call:'LONG',put:'SHORT'})
+        self.assertTrue(all(not c['rejections'] for c in ranked[0]['contracts_checked']))
+
+        def build(item,direction,session,strike):  # ... but only the PUT side's own signal fires
+            return OpenHold({'entry_minute':5 if direction=='SHORT' else 60,
+                             'flatten_before_close_minutes':15},direction,session,strike)
+
+        with patch('studies.us_0dte_picks.live_watch.build_strategy',side_effect=build):
+            _,signals=annotate_timing(ranked,{'US.AAA':bars},{},session)
+        self.assertEqual([(s['contract'],s['direction'],s['signal_status']) for s in signals],
+                         [(put,'SHORT','FIRST_ENTRY_THIS_MINUTE')])
+        card=build_review_card(ranked,signals,DAY,NOW.replace(second=0),280)
+        request=card['actions'][0]['custody_request']
+        self.assertEqual((request['contract'],request['direction'],request['strategy']),(put,'SHORT',STRATEGY_ID))
+
+    def test_session_strategy_is_the_timing_line_without_a_deadline_entry(self):
+        item=Registry().get(STRATEGY_ID)
+        self.assertEqual(item['config']['engine'],'zero_dte_timing')
+        self.assertIsNone(item['config']['params'].get('must_enter_by_minute'))
 
     def test_review_card_only_contains_fresh_currently_eligible_signals(self):
         ranked=[candidate('US.AAA',1),candidate('US.BBB',2),candidate('US.CCC',3)]
