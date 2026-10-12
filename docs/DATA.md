@@ -281,6 +281,15 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 `human-trial-2026-09-28/day_after_review` 保存 09-29 有界只读补取的 09-28 全天材料：37 标的完整 RTH 30m、11 股完整 RTH 1m、四个既有合约完整 1m，META 717.5 Put 末 60 根 1m，另有五合约完整 15m；包括实际运行摘要、合约标价及盘中／盘后数据差异审计。只作描述性复盘，不接入 custody 正式评测，不把不完整的 1m 用 15m 伪补；未调用历史额度接口。详情见[全天复盘](../studies/us_0dte_picks/reports/REVIEW_20260928_FULLDAY_CN.md)。
 
+### SV1 会话验证段（采集中，尚未评测）
+
+按 [SV1 预登记](../studies/us_0dte_picks/notes/SV1_PREREG.md)，11 只会话池股票的当天到期平值 CALL/PUT，角色 `validation/custody`，凑满 8 个交易日后评测一次。评分入口根据实际cases检查指定8日、验证角色和股票池，日期不足不加载行情或计算收益；不是只看manifest的日期声明。
+
+- `data/sv1-session-validation-work`：09-21 的 11 对（`fetch_sv1.py`，历史接口，合约代码按网格推算）。07-24、08-14 试探返回「未知股票」，没有扣额度；09-23 因期权历史额度满（60/60，7 天滚动）未取到，待释放后补取。
+- `data/sv1-0923-recovery-20261003-work`：沿原SV1的09-23补取授权，10-03有限前台先试AAPL再试余10股。AAPL标准同价CALL/PUT各390根，2case/5个冻结成员通过custody check；其余10股实际返回期权历史额度60/60已满，错误尝试保留，不改写为合约不存在。两进程均exit0且结束，普通额度193/107不变（不能据此推断期权额度释放）；CHECKSUMS自身SHA为`6e69c9d07d666e9565c0927073b0b5ca7f5a6816550af3e8aaa45ffa7eaa1d61`。角色仍validation/custody，未看收益、未评分、不用作新策略训练；工作产物未发布。
+
+- `data/sv1-capture-<日期>`：10-02、10-05、10-07、10-09、10-12 收盘后 16:30 ET 由一次性 systemd 定时器运行 `studies/us_opening_range/capture.py`（订阅接口，不扣历史额度），日志在 `data/sv1-capture-logs/`。用户 2026-10-02 同意，只采这 5 天，跑完即止。
+
 ## 附录：盯盘信号研究数据（非 custody Release）
 
 `studies/watch_signal/`（盯盘 `watch/` 的信号研究）的数据，按用途分成 6 个 Release。只供该研究使用，**不接入 `custody check` / `evaluate`**，
@@ -340,3 +349,17 @@ cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train
 `data/human-nearest-2026-09-29-pre`：11 只科技股的真实最近到期日与标准 Call／Put 链、盘前快照、IV／HV、期权量、财报辅助、原生 RTH 15／30 分钟 K、冻结排名与量基准、请求日志和采集源码；2026-09-29 06:30 ET 完成。只用订阅接口，未调用历史 K 线配额接口。
 
 87 个冻结输入成员已逐项核验；`CHECKSUMS.sha256` 的 SHA256：`a818551c5cb5df379d0a8ac1372a83b71f87c89ade5713f27239512329e4a3d8`。量基准为 09-09→09-28 的 14 个完整日；15／30 分钟开盘量最大差 1 股。角色是人工试运行输入，不是新增独立验证集。`monitor/` 为随后产生的分钟记录，不包含在该冻结输入清单内；尚未收盘，不提前声明输出完整。数据未进 git，未发布 Release。
+
+## 附录：本机研究工作数据（未发布）
+
+2026-10-02 之后的 TS / FD 择时研究和历法研究都已归档（[失败经验](../studies/us_0dte_picks/notes/FAILED_TRIALS.md)、[历法归档](../studies/archive/calendar_weekly/README.md)），逐轮的数据登记不再保留。本机 `data/` 下仍有这些目录，都没进 git、没发布 Release：
+
+| 目录 | 内容 | 状态 |
+|---|---|---|
+| `data/sv2-stock-raw` | [SV2](../studies/us_0dte_picks/notes/SV2_PREREG.md) 重拉的 12 只股票真实不复权日 K、原生 RTH 1m、IV/HV、财报辅助数据（已扣费标的，没有扣新额度） | 有用；TS 系列的开发集，已经用烂了，不能再当验证 |
+| `data/ux1-stock-raw` | 扩展的 8 只（BA、BAC、COIN、NFLX、ORCL、PLTR、SOFI、WMT）日 K 和 1m；ORCL 有 11 个异常股票日 | 有用；用过 TS5 起的开发，同样不能再当验证 |
+| `data/sv1-*`、`data/fd2-capture-2026-10-02` | 真实 0DTE 期权 1m 采集，见上文 SV1 | 有用；SV1 验证段，评测前不要看 |
+| `data/ts*-*`、`data/fd*-*`、`data/me*-*`、其余以研究代号开头的目录 | TS / FD 各轮的回放单位、模型、宏观日历、外部来源原件（SEC、BLS、Fed、Cboe 等） | 中间产物，研究已归档；是否删除由用户决定 |
+| `data/calendar-*`（81 个） | 历法研究的指数日线、HKO 历表、封存的预测包 | 研究已归档；NA2 的前向预测在 `data/calendar-najia-na2` |
+
+各目录自带 `CHECKSUMS.sha256` 或 manifest。需要发布的，先固定 zip 和 SHA256，发布后不改。

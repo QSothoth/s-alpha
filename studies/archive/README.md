@@ -5,6 +5,8 @@
 | 目录 | 归档原因与保留内容 |
 |---|---|
 | [us_preopen_bias](us_preopen_bias/README.md) | S1–S29：盘前方向、每日多空 Top N 及 09:45 固定时点选边未获得可交易的样本外结果；S22 仅支持大波动筛选，不能推出方向。保留现存代码、预登记、报告和测试；现有 Git 历史未保留 S11–S20 的完整代码与报告，不能承诺恢复或复现这些轮次，也不据此认定相应机制从未试过。 |
+| [calendar_weekly](calendar_weekly/README.md) | 易学／历法预测指数周月走势约 60 轮，无易学增量；只留结论，代码与报告已移出仓库 |
+| [us_0dte_picks TS 系列](../us_0dte_picks/notes/FAILED_TRIALS.md) | TS1–TS67、FD 等开盘择时与准入研究全部未过；只留机制家族表和总教训，代码与报告已移出仓库 |
 | [opend_probes](opend_probes/) | 单次已知过期期权取数试验的原执行脚本与原预登记；脚本从临时目录原字节归档，预登记由现存笔记前27行按旧SHA恢复，供核对已发布manifest指纹，不作为日常入口。执行会请求历史行情，原一次性授权不表示允许再次消耗额度。 |
 
 S28 / S29 用过的 `preopen-us-k5-select-v1`、`preopen-us-k5-valid-v1`、`preopen-s20-select-v1`、`preopen-s20-valid-v1` 已按此前决定删除，不能从远端 Release 完整复现。现有本机副本的位置和历史哈希见 [DATA](../../docs/DATA.md)，不重新发布或篡改旧 tag。
