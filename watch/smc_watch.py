@@ -12,6 +12,8 @@ GATE_TPB ticks per bar are shown dim and tagged `~`. Each mark also gets a
 daily-context tag, D+ or D-; only granular D+ marks are drawn bold. These
 labels came from studies W2/W6; W12 corrects dated tick sizes and the volume
 baseline, so earlier performance figures describe the old implementation.
+Hong Kong marks also carry one S00-S100 joint stock-and-HSI directional
+strength percentile from W19; it is not a future-return probability.
 Volume expansion and the premium/discount half of the day's range only split
 `plain` from `vol` marks for de-duplication.
 
@@ -40,12 +42,14 @@ logging.getLogger('futu').setLevel(logging.ERROR)
 logging.getLogger().setLevel(logging.ERROR)
 
 from futu import AuType, KLType, OpenQuoteContext, RET_OK, SubType  # noqa: E402
+from signal_strength import score as signal_strength_score  # noqa: E402
 
 # futu prints connection notices to stdout through its own logger, which would
 # break the one-JSON-object-per-line output that `| jq` relies on.
 logging.getLogger('FTConsoleLog').setLevel(logging.ERROR)
 
 DEFAULT_CODES = ['HK.02513']
+HSI_CODE = 'HK.800000'
 HOST = '127.0.0.1'
 PORT = 11111
 POLL_SEC = 30
@@ -71,7 +75,7 @@ HKT = timezone(timedelta(hours=8))
 LOG_DIR = Path(__file__).resolve().parent / 'logs'
 
 DIM, BOLD, OFF = '\033[2m', '\033[1m', '\033[0m'
-GREEN, RED = '\033[32m', '\033[31m'
+GREEN, YELLOW, RED = '\033[32m', '\033[33m', '\033[31m'
 
 
 def now_hkt():
@@ -154,7 +158,7 @@ def bar_stale(code, stamp, at):
 
 
 def session_bars(ctx, code):
-    """(today's CLOSED 1m bars, display name), or (None, '') on failure.
+    """(today's closed 1m bars, display name, previous close), or empty values.
 
     The minute still being traded is dropped: OpenD returns it half-built, and a
     mark fired on it would be emitted and then quietly stop being true once the
@@ -163,10 +167,33 @@ def session_bars(ctx, code):
     try:
         ret, frame = ctx.get_cur_kline(code, KLINE_BACK, KLType.K_1M, AuType.NONE)
     except Exception:
-        return None, ''
+        return None, '', None
     if ret != RET_OK:
-        return None, ''
-    return closed_session(frame_bars(frame)), frame_name(frame)
+        return None, '', None
+    bars = closed_session(frame_bars(frame))
+    previous = None
+    if bars and 'last_close' in frame.columns:
+        day = bars[0][0][:10]
+        times = frame['time_key'] if 'time_key' in frame.columns else frame['time']
+        for stamp, value in zip(times, frame['last_close']):
+            if str(stamp)[11:16] == '09:30' and str(stamp)[:10] == day:
+                value = float(value)
+                previous = value if isfinite(value) and value > 0 else None
+                break
+    return bars, frame_name(frame), previous
+
+
+def hsi_session(ctx):
+    """Closed HSI minute closes plus yesterday's close, or None."""
+    try:
+        ret, frame = ctx.get_cur_kline(HSI_CODE, KLINE_BACK, KLType.K_1M, AuType.NONE)
+        previous = float(frame['last_close'][0])
+    except Exception:
+        return None
+    if ret != RET_OK or not isfinite(previous) or previous <= 0:
+        return None
+    bars = closed_session(frame_bars(frame))
+    return ({bar[0][11:16]: bar[4] for bar in bars}, previous) if bars else None
 
 
 def daily_context(rows, day):
@@ -199,6 +226,15 @@ def daily_support(m, dctx):
 
 def with_daily(ms, dctx):
     return [dict(m, daily=daily_support(m, dctx)) for m in ms]
+
+
+def with_strength(ms, hsi, stock_previous):
+    closes, previous = hsi if hsi else ({}, None)
+    return [dict(m, strength=(
+        signal_strength_score(m['side'], m['t'], m['close'], stock_previous,
+                              closes[m['t']], previous)
+        if stock_previous is not None and previous is not None and m['t'] in closes else None))
+            for m in ms]
 
 
 def hk_daily(ctx, code):
@@ -543,6 +579,15 @@ def paint_side(side, strong):
     return color + (BOLD if strong else '') + ch + OFF
 
 
+def paint_strength(value, base=''):
+    """Color the validated five strength bands without changing the score."""
+    label = 'S-' if value is None else 'S%02d' % value
+    color = (DIM if value is None else BOLD + GREEN if value >= 80 else GREEN
+             if value >= 65 else YELLOW if value >= 45 else RED
+             if value >= 20 else BOLD + RED)
+    return color + label + OFF + base
+
+
 def disp_width(text):
     """Terminal columns a string occupies; CJK glyphs take two."""
     return sum(2 if unicodedata.east_asian_width(c) in 'WF' else 1 for c in text)
@@ -574,11 +619,14 @@ def mark_text(m, width):
     """
     strong = is_strong(m)
     inv = '-' if m.get('stop') is None else '%.2f' % m['stop']
+    strength = 'S-' if m.get('strength') is None else 'S%02d' % m['strength']
     rest = clip(('~' if m.get('coarse') else ' ') + cell(m['trigger'], 13) + cell('%.2f' % m['close'], 9)
                 + cell(volume_text(m['vol_ratio']), 6)
                 + cell({True: 'D+', False: 'D-'}.get(m.get('daily'), ''), 3)
+                + cell(strength, 5)
                 + 'inv ' + inv, width - 9)
     base = '' if strong else DIM
+    rest = rest.replace(strength, paint_strength(m.get('strength'), base), 1)
     return base + '  ' + cell(m['t'], 6) + paint_side(m['side'], strong) + base + rest + OFF
 
 
@@ -669,7 +717,7 @@ def frame_lines(state, at, width, rows=None):
     legend = (GREEN + 'B' + OFF + '/' + RED + 'S' + OFF
               + DIM + ' D+ & >=%g ticks/bar  ' % GATE_TPB + OFF
               + GREEN + 'b' + OFF + '/' + RED + 's' + OFF
-              + DIM + ' plain  ~ <%g ticks  D+/D- daily   ^C' % GATE_TPB + OFF)
+              + DIM + ' plain  ~ <%g ticks  D+/D- daily  Sxx strength   ^C' % GATE_TPB + OFF)
     chrome = [BOLD + clip(head, width) + OFF, legend, '-' * width]
     blocks = [symbol_lines(code, st, width) for code, st in state.items()]
     body = _stack(blocks)
@@ -718,7 +766,7 @@ def main():
     try:
         if hk_codes:
             ctx = OpenQuoteContext(host=HOST, port=PORT)
-            ret, err = ctx.subscribe(hk_codes, [SubType.K_1M], subscribe_push=False)
+            ret, err = ctx.subscribe(sorted(set(hk_codes + [HSI_CODE])), [SubType.K_1M], subscribe_push=False)
             if ret != RET_OK:
                 emit('FAILED', {'error': 'subscribe %s' % err})
                 return 1
@@ -733,11 +781,13 @@ def main():
         health, last_times, daily_retry = {}, {}, {}
         while True:
             poll_start = time.monotonic()
+            hsi = hsi_session(ctx) if ctx is not None else None
             for code in codes:
                 if tencent_symbol(code):
                     bars, name = tencent_session(code)
+                    stock_previous = None
                 else:
-                    bars, name = session_bars(ctx, code)
+                    bars, name, stock_previous = session_bars(ctx, code)
                 if bars:
                     last_times[code] = bars[-1][0]
                 at = now_hkt()
@@ -752,6 +802,7 @@ def main():
                     continue
                 names[code] = name or names.get(code, '')
                 ms, d = marks(bars, tick=a_tick if tencent_symbol(code) else hk_tick)
+                ms = with_strength(ms, hsi if not tencent_symbol(code) else None, stock_previous)
                 today = bars[-1][0][:10]
                 context_day, dc = dctxs.get(code, (None, None))
                 ms = with_daily(ms, dc if context_day == today else None)

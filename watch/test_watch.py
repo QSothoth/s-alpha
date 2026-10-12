@@ -5,6 +5,7 @@ import re
 import sys
 import types
 import unittest
+from pathlib import Path
 from contextlib import ExitStack
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
@@ -14,6 +15,7 @@ _futu.AuType = _futu.KLType = _futu.SubType = type('X', (), {'K_1M': None, 'K_DA
 _futu.OpenQuoteContext = object
 _futu.RET_OK = 0
 sys.modules.setdefault('futu', _futu)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 _spec = importlib.util.spec_from_file_location(
     'watcher', __file__.replace('test_watch.py', 'smc_watch.py'))
@@ -24,9 +26,11 @@ NAN = float('nan')
 
 
 class Frame:
-    def __init__(self, rows, name='腾讯控股'):
-        self.rows = [(name,) + r for r in rows]
+    def __init__(self, rows, name='腾讯控股', last_close=None):
+        self.rows = [(name,) + r + (() if last_close is None else (last_close,)) for r in rows]
         self.columns = ['name', 'time_key', 'open', 'high', 'low', 'close', 'volume']
+        if last_close is not None:
+            self.columns.append('last_close')
 
     def __len__(self):
         return len(self.rows)
@@ -124,12 +128,13 @@ def test_session_bars_keeps_today_and_drops_the_auction():
         (day + ' 09:30:00', 1, 1, 1, 1, 10),
         (day + ' 15:59:00', 1, 1, 1, 1, 10),
         (day + ' 16:00:00', 1, 1, 1, 1, 10),       # closing auction
-    ])
+    ], last_close=0.9)
     ctx = types.SimpleNamespace(get_cur_kline=lambda *a: (0, f))
     with patch.object(w, 'now_hkt', return_value=now):
-        bars, name = w.session_bars(ctx, 'X')
+        bars, name, previous = w.session_bars(ctx, 'X')
     assert [b[0] for b in bars] == [day + ' 09:30:00', day + ' 15:59:00']
     assert name == '腾讯控股', name
+    assert previous == 0.9
     assert w.session_bars(types.SimpleNamespace(get_cur_kline=lambda *a: (-1, 'x')), 'X')[0] is None
 
 
@@ -375,6 +380,38 @@ def test_daily_tag_is_optional_and_shown():
     assert w.hk_daily(broken, 'HK.00001') is None
 
 
+def test_signal_strength_is_joint_and_missing_safe():
+    marks = [{'t': '10:47', 'side': 'BUY'}, {'t': '10:47', 'side': 'SELL'}]
+    marks[0]['close'] = marks[1]['close'] = 102.0
+    scored = w.with_strength(marks, ({'10:47': 102.0}, 100.0), 100.0)
+    assert scored[0]['strength'] >= 90
+    assert scored[1]['strength'] <= 10
+    assert w.with_strength(marks, None, 100.0)[0]['strength'] is None
+    assert w.with_strength(marks, ({'10:47': 102.0}, 100.0), None)[0]['strength'] is None
+    text = re.sub(r'\x1b\[[0-9;]*m', '', w.mark_text(dict(
+        marks[0], trigger='BOS', close=10, vol_ratio=1, stop=9, strength=91), 100))
+    assert 'S91' in text
+
+
+def test_signal_strength_uses_five_colors():
+    assert w.paint_strength(80) == w.BOLD + w.GREEN + 'S80' + w.OFF
+    assert w.paint_strength(65) == w.GREEN + 'S65' + w.OFF
+    assert w.paint_strength(45) == w.YELLOW + 'S45' + w.OFF
+    assert w.paint_strength(20) == w.RED + 'S20' + w.OFF
+    assert w.paint_strength(19) == w.BOLD + w.RED + 'S19' + w.OFF
+    assert w.paint_strength(None) == w.DIM + 'S-' + w.OFF
+
+
+def test_hsi_session_uses_closed_minutes_and_previous_close():
+    rows = [('2026-09-28 10:29:00', 100, 102, 99, 102, 100),
+            ('2026-09-28 10:30:00', 102, 103, 101, 103, 100)]
+    ctx = types.SimpleNamespace(get_cur_kline=lambda *a: (w.RET_OK, Frame(rows, last_close=100)))
+    with patch.object(w, 'now_hkt', return_value=datetime(2026, 9, 28, 10, 30, 20, tzinfo=w.HKT)):
+        assert w.hsi_session(ctx) == ({'10:29': 102.0}, 100.0)
+    broken = types.SimpleNamespace(get_cur_kline=lambda *a: (w.RET_OK, Frame(rows)))
+    assert w.hsi_session(broken) is None
+
+
 def test_tencent_daily_maps_close_high_low():
     payload = {'data': {'sz300795': {'qfqday': [['2026-09-23', '14.040', '13.500', '14.190', '13.440', '270449.000']]}}}
     assert w.parse_tencent_day(payload, 'sz300795') == [('2026-09-23', 14.04, 14.19, 13.44, 13.5, 270449.0)]
@@ -448,6 +485,7 @@ class PollingTests(unittest.TestCase):
                 'now_hkt': lambda: base + timedelta(seconds=elapsed[0]),
                 'close_hkt': lambda: base + timedelta(seconds=seconds),
                 'tencent_session': get_quote,
+                'hsi_session': lambda ctx: None,
                 'tencent_daily': get_daily,
                 'marks': lambda bars, **kw: ([{'t': '09:59', 'side': 'BUY', 'close': 100}], {}),
                 'read': lambda bars: {},
@@ -492,7 +530,7 @@ class PollingTests(unittest.TestCase):
         ctx = Mock()
         ctx.subscribe.side_effect = [(w.RET_OK, ''), RuntimeError('daily unavailable')]
         with patch.object(w, 'OpenQuoteContext', return_value=ctx), \
-                patch.object(w, 'session_bars', return_value=(fake_bars(), 'test')), \
+                patch.object(w, 'session_bars', return_value=(fake_bars(), 'test', 99.0)), \
                 patch.object(w, 'hk_daily', return_value=None):
             _, events, _ = self.run_watch(seconds=0, codes=('HK.00700',))
         self.assertTrue(any(kind == 'MARK' for kind, _ in events))

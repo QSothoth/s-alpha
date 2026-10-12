@@ -4,8 +4,8 @@
 
 ## 一句话结论
 
-**当前实现**（2026-09-28）：现有 `marks()` 标注照出；价位受限的带 `~`；日线背景 `D+`/`D-`；
-只有「价位细且 `D+`」加粗。W12 修正量比分母及按日期生效的港股价位表，确定性复刻通过；旧 W2–W11 的收益数字仍描述旧实现，不能直接证明修正后分组有效。W12 两个精简候选均失败：标注少了，但收益更差，未上线。见 [报告](reports/W12_RESULTS_CN.md)。
+**当前实现**（2026-09-29）：现有 `marks()` 标注照出；价位受限的带 `~`；日线背景 `D+`/`D-`；
+只有「价位细且 `D+`」加粗。W12 修正量比分母及按日期生效的港股价位表，确定性复刻通过；旧 W2–W11 的收益数字仍描述旧实现，不能直接证明修正后分组有效。W13–W16 的未来胜率分数跨时期失败；W19 将个股与恒指同向力度按最弱环节合成唯一 `S00`–`S100`，在全新 2024H1 的 188,122 条信号及极端 20 日上通过全部门槛，已接入看板。
 
 以下是 W2 时的结论：
 
@@ -30,6 +30,13 @@
 | [notes/W8_PREREG.md](notes/W8_PREREG.md) / [reports/W8_RESULTS_CN.md](reports/W8_RESULTS_CN.md) | 不追 VWAP / 压缩 / 非钉住日：失败 |
 | [notes/W9_PREREG.md](notes/W9_PREREG.md)、[W10](notes/W10_PREREG.md)、[W11](notes/W11_PREREG.md) / [reports/W9_W11_RESULTS_CN.md](reports/W9_W11_RESULTS_CN.md) | 全新 2025H2 留出段：价位反应到收盘失败；`D+` 复核成立（约 +11bp）；日线偏向失败 |
 | [notes/W12_PREREG.md](notes/W12_PREREG.md) / [reports/W12_RESULTS_CN.md](reports/W12_RESULTS_CN.md) | 量比与价位表纠错；首次 BOS、统一方向去重两个候选的选择段筛查 |
+| [notes/W13_PREREG.md](notes/W13_PREREG.md) / [reports/W13_RESULTS_CN.md](reports/W13_RESULTS_CN.md) | 0–100 概率型强度：开发段走步筛查通过，缺全新独立验证，未上线 |
+| [notes/W14_PREREG.md](notes/W14_PREREG.md) / [reports/W14_RESULTS_CN.md](reports/W14_RESULTS_CN.md) | W13 强度的极端涨跌日压力测试：下跌日 BUY 排序反向，未通过 |
+| [notes/W15_PREREG.md](notes/W15_PREREG.md) / [reports/W15_RESULTS_CN.md](reports/W15_RESULTS_CN.md) | 加入信号时刻恒指状态：旧极端日合计改善，但分侧与全段门槛失败 |
+| [notes/W16_PREREG.md](notes/W16_PREREG.md) / [reports/W16_RESULTS_CN.md](reports/W16_RESULTS_CN.md) | 全新 2024H2 验证：M3/M4 在极端上涨日显著反向，均失败 |
+| [notes/W17_PREREG.md](notes/W17_PREREG.md) / [reports/W17_RESULTS_CN.md](reports/W17_RESULTS_CN.md) | 改定义为因果恒指市场支持百分位；极端日行为通过，仅孤立 12:00 桶样本不足 |
+| [notes/W18_PREREG.md](notes/W18_PREREG.md) / [reports/W18_RESULTS_CN.md](reports/W18_RESULTS_CN.md) | 合并午间收市桶，在第二个全新半年通过全部门槛 |
+| [notes/W19_PREREG.md](notes/W19_PREREG.md) / [reports/W19_RESULTS_CN.md](reports/W19_RESULTS_CN.md) | 个股与恒指最弱环节合成唯一总体强度；全新 2024H1 全部门槛通过 |
 | [reports/DATA_SHA256.txt](reports/DATA_SHA256.txt) | 数据文件哈希（数据本身在 `data/`，不进 git） |
 | `code/` | 研究脚本（numpy，只用于研究；盯盘运行时仍只用标准库） |
 
@@ -65,6 +72,13 @@
 | W11 | 只按「逆近 5 日」定当天方向：失败；`D+` 是盘中触发 × 日线背景的交互 |
 | W4 | 分钟资金流：单日测试无改善，用户判断无意义，**搁置**；盯盘里的 `f` 已撤下。见 [reports/FLOW_2026-09-24_CN.md](reports/FLOW_2026-09-24_CN.md) |
 | W12 | 修复严格前 20 根量比、港股价位日期与区间边界；40 日 / 594 条复刻零差异。23,224 标的日筛查中，首次 BOS / 统一方向去重均失败，未上线 |
+| W13 | 概率型强度 P2 在 113 日因果走步筛查通过，但预测主要仅 45–53 分；没有全新独立验证段，未接入盯盘 |
+| W14 | 恒指最大上涨/下跌各 10 日压力测试：总体略有排序，但 DOWN BUY 斜率为负且合计收益斜率 t=1.05，失败 |
+| W15 | 因果恒指方向/强弱使旧极端 20 日合计胜率/收益斜率升至 t=4.11/3.55，但 BUY 分侧及全段 Brier 未过，失败 |
+| W16 | M3/M4 用全新 2024H2 一次验证；普通日收益排序不显著，极端上涨日显著反向，无候选上线 |
+| W17 | 放弃不稳定的胜率预测，改成同时间桶的恒指方向支持百分位；2024H2 极端 20 日 20/20 通过，但孤立 12:00 桶样本不足 |
+| W18 | 只把 12:00 并入 11:30 桶；全新 2024-12 → 2025-05 的 226,055 条信号通过全部六项门槛，极端顺/逆方向分离 80.84–85.63 分 |
+| W19 | C1 最弱环节在选择段首先通过；全新 2024H1 的 188,122 条信号再次通过，极端顺向 83.74–85.92、逆向 7.64–8.53，20/20 日通过；唯一 `Sxx` 已替换 `Mxx` |
 
 W12 复现（逐标的日处理，需 numpy；不调用行情接口）：
 
