@@ -45,4 +45,4 @@ python3 -m studies.us_0dte_picks.p4 select --out /tmp/p4-select.json
 python3 -m studies.us_0dte_picks.p4 validate --select-report /tmp/p4-select.json --out /tmp/p4-validate.json
 ```
 
-机器报告：[p4_select.json](p4_select.json)、[p4_validate.json](p4_validate.json)。
+机器报告：p4_select.json（已归档）、p4_validate.json（已归档）。

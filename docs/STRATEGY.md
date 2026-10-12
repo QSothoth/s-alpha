@@ -1,5 +1,7 @@
 # 策略说明
 
+> **一句话现状（2026-10-12）**：默认 `zero_dte_timing_v6.6`（candidate，live 会拒绝）；`v6.5`、`open_hold_v3` 为破例 `accepted`；全部报告结论只有 REJECT / PROVISIONAL，没有 ACCEPT；参数搜索已结束，下一步是攒满 20 个样本外交易日后按标准重评。下文从「研究轮次」起是逐轮历史记录，只供审计。
+
 ## 当前基线（2026-09-20）
 
 本项目有两条并行的策略线，各自独立管理版本号：
@@ -16,9 +18,11 @@
 - **以下为 2026-09-20 的原记录**：两条线都是 `candidate`，结论都是 PROVISIONAL，样本外交易日 0 个，都不得用于 `custody run --mode live`**（live 只接受 `accepted`）。实盘下单目前只能显式指定 `zero_dte_timing_v6.5`。
 - 两条线怎么选取决于上游方向命中率：低于 83.6% 时择时主线优于「开盘买入持有」；保证入场线适用于「某些标的宁可买错也要建仓」的场景。**这个命中率目前没有独立估计**，是当前所有策略决策的共同瓶颈。
 
-### 唯一 `accepted` 的版本
+### `accepted` 的版本（两个，都是破例，均无 ACCEPT 报告）
 
-**`zero_dte_timing_v6.5`（accepted，破例）**：2026-09-18 用户决定在未经评测 ACCEPT 的情况下改为 `accepted`（结论 PROVISIONAL，样本外交易日 0，验证集那一天 −15.2%），用于每单 1 张的实盘链路试运行。这违反 custody/AGENTS.md「只有评测 ACCEPT 才能改为 accepted」，仅此一次；样本外交易日满 20 个后按标准重新评测，未 ACCEPT 则改回 `candidate`。它也是 2026-09-18 至 09-20 期间的默认策略与研究基线。
+`open_hold_v3` 的情况见上文 2026-10-02 核对记录。
+
+**`zero_dte_timing_v6.5`（accepted，破例）**：2026-09-18 用户决定在未经评测 ACCEPT 的情况下改为 `accepted`（结论 PROVISIONAL，样本外交易日 0，验证集那一天 −15.2%），用于每单 1 张的实盘链路试运行。这违反 custody/AGENTS.md「只有评测 ACCEPT 才能改为 accepted」（原记为「仅此一次」，后来 `open_hold_v3` 也同样破例）；样本外交易日满 20 个后按标准重新评测，未 ACCEPT 则改回 `candidate`。它也是 2026-09-18 至 09-20 期间的默认策略与研究基线。
 
 ### 其余已注册版本（全部 `candidate`，保留供比较）
 

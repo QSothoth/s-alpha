@@ -1,6 +1,6 @@
 # P5 输入比对：30 分钟与 5 分钟常规时段 K 线
 
-审计日期：2026-09-28。仅检查已经保存的 `data/p5-parity-raw/`；未联网、未拉新数据、未运行策略验证。机器结果：[p5_parity.json](p5_parity.json)，复现代码：[parity.py](../parity.py)。
+审计日期：2026-09-28。仅检查已经保存的 `data/p5-parity-raw/`；未联网、未拉新数据、未运行策略验证。机器结果：p5_parity.json（已归档），复现代码：parity.py（已归档）。
 
 ## 结论
 

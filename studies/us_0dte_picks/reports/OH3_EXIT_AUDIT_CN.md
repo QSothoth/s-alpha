@@ -1,6 +1,6 @@
 # open_hold_v3 退出诊断与部署判定
 
-2026-09-29。结论：**有明确的期限适配问题和大幅利润回吐，但目前没有证据充分、可用于今天真实交易的新退出策略。** 本轮完成诊断，没有修改策略参数、注册状态、默认值或运行服务。预登记见 [OH3_EXIT_AUDIT_PREREG.md](../notes/OH3_EXIT_AUDIT_PREREG.md)，逐笔结果见 [OH3_EXIT_AUDIT.json](OH3_EXIT_AUDIT.json)。
+2026-09-29。结论：**有明确的期限适配问题和大幅利润回吐，但目前没有证据充分、可用于今天真实交易的新退出策略。** 本轮完成诊断，没有修改策略参数、注册状态、默认值或运行服务。预登记见 [OH3_EXIT_AUDIT_PREREG.md](../notes/OH3_EXIT_AUDIT_PREREG.md)，逐笔结果见 OH3_EXIT_AUDIT.json（已归档）。
 
 ## 实测结果
 

@@ -1,24 +1,51 @@
-# 历史研究归档
+# 已结束的研究（只留结论）
 
-当前美股研究入口是 [日K／早盘信号研究](../us_opening_range/README.md)。这里保留停止推进的研究代码、预登记、原始输出与测试，供审计和复现；失败结果不删除、不改写，归档不代表后来获得了有效性证明。
+当前美股上游入口是 [近到期选标的与盘中会话](../us_0dte_picks/README.md)。下列研究都已结束，结论为负或未晋级；代码、预登记、报告和测试已移出仓库，原文件按原路径放在本机 `/root/opend-us-options-archive-20261012/`，也可从 Git 历史取回（最后一次在仓库内的提交：`39bb800`）。失败结果不改写；已用过的验证段仍视为已用，不能因移动目录重新成为样本外数据。
 
-| 目录 | 归档原因与保留内容 |
+新研究登记前先对照本页和 [FAILED_TRIALS](../us_0dte_picks/notes/FAILED_TRIALS.md)，不重开已失败的机制。
+
+## us_preopen_bias：美股盘前选股 S1–S29
+
+**「今天谁会大动」可以在开盘时挑出来，「往哪边动」用开盘前的日线级信息判断不了。**
+
+- 大波动名单（S22，验证段成立）：34 只热门中小盘里按开盘跳空或盘前放量（≥2 倍）挑出的票，当天 |开→收| 是同日准入池的 1.25x / 1.32x（验证段 2025-01 → 2026-09），不给方向。
+- 方向：5 种方向规则命中率 48%–52%，全部未过门槛。
+- 每日多空 Top 3（S24–S27）：约 15 个排序规则只有一个合成分在选择段过关，验证段 +17bp/天、扣成本后为负；在第 301–600 名上一次性验证仍低于成本——未成立。
+- 09:45 版（S28/S29）：5 个规则选择段全败，事后提出的篮子口径验证段也失败。
+- S11–S20 的完整代码与报告当时就未保留；S28/S29 的四个源 Release 已删除，只能用本机副本，见 [DATA](../../docs/DATA.md)。
+- `us_0dte_picks` 仍在用的股票池 `universe_stocks300.json`、`universe_stocks301_600.json` 已移到 [us_0dte_picks/notes/](../us_0dte_picks/notes/)。
+
+## us_opening_range：日 K 位置与早盘突破（DS / OR / RG / AH / OM）
+
+- DS1（NR7、内包日对昨日高低突破）：都未稳定好过对照，未晋级。DS2（20 日边界突破、跳空守住／收回）：三项全败。
+- RG1（三 ETF 反向观察）：局部 30 分钟胜率 55.9%、盈亏比 1.90，但对照差值下限未过，约 80% 净标签收益来自两个日期——看过 DS2 后提出，未晋级。AH1（盘后背景 + 09:45 卖压确认）未晋级。
+- OM1（真实 0DTE 桥接）：77 个标的日只有 7 次提示，样本太小，不认证期权净收益。
+- OR1–OR4 开盘区间交易回放全部未过。SV1 仍在用的收盘采集 `capture.py`（及依赖 `scan.py`、`signals.py`）留在原路径 [studies/us_opening_range/](../us_opening_range/README.md)。`daily_scan` 只读扫描输出均为 `UNVALIDATED`，从未作选股依据。
+- 已发布的 Release（RG1/OM1 图卡、信号快照等）照旧登记在 [DATA](../../docs/DATA.md)。归档时 RG1 图卡导出因冻结了 `custody/models.py` 的哈希（custody 2026-09-30 改过）已无法在当前代码上重跑，需从对应 Git 版本复现。
+
+## agent_card_eval：agent 审择时卡片
+
+- A1：Codex 审 v6.6 卡片，接受 9/96，接受部分 −155 美元，全部接受 +612 美元；赚钱的 22 张只接受 1 张。
+- A2：告诉收益结构、改打分、加摘要、提高推理强度——三个退化为全部接受，打分版概率无信息。
+- 结论：审卡不应否决 v6.6 的信号；agent 的价值在执行与运维。09-25 验证段**未使用**，以后仍可当样本外。
+
+## hk_open_scan：港股通开盘窗口扫描
+
+- 大盘港股通 140 只、69 个交易日、10 个候选按预登记全部失败：追涨是负期望，越晚越差（同一跳空排序竞价时点 +31.9bp/天，09:45 只剩 +6.9bp，去掉最好一天为 −10.0bp）。
+- R3（大盘 ORB 只做多）、R4（中小盘 515 只、Yahoo 5m）十二档全部失败，中小盘没有救活追涨。
+- 目录里另有 OpenD 港股能力实测（额度、全市场接口、竞价历史）和对 `watch/smc_watch.py` 的复核报告，原文见归档目录。
+
+## hk_near_expiry_flow：港股正股期权近月异动
+
+- R1–R3 共 13 个候选（相对放量、V/OI、彩票档、集中度、IV 抬升、新合约、末日占比等）全部不达标。
+- 现行 aggressive 门槛是显著的负向筛子：扣大盘后 T+2 超额 −1.03%（同日置换 p=0.013）。旧报告的「3 日内冲高胜率 54%–58%」只是基准率。
+- 多个候选的正超额在剔除单一标的（MiniMax）后归零。排行历史只能回到约 2026-08-07，且只有 CALL。
+- 原仓库内 CSV（约 6MB，根规范「数据不进 git」的唯一例外）随目录一并移出。
+
+## calendar_weekly、TS 系列、opend_probes
+
+| 目录 | 结论 |
 |---|---|
-| [us_preopen_bias](us_preopen_bias/README.md) | S1–S29：盘前方向、每日多空 Top N 及 09:45 固定时点选边未获得可交易的样本外结果；S22 仅支持大波动筛选，不能推出方向。保留现存代码、预登记、报告和测试；现有 Git 历史未保留 S11–S20 的完整代码与报告，不能承诺恢复或复现这些轮次，也不据此认定相应机制从未试过。 |
-| [calendar_weekly](calendar_weekly/README.md) | 易学／历法预测指数周月走势约 60 轮，无易学增量；只留结论，代码与报告已移出仓库 |
-| [us_0dte_picks TS 系列](../us_0dte_picks/notes/FAILED_TRIALS.md) | TS1–TS67、FD 等开盘择时与准入研究全部未过；只留机制家族表和总教训，代码与报告已移出仓库 |
-| [opend_probes](opend_probes/) | 单次已知过期期权取数试验的原执行脚本与原预登记；脚本从临时目录原字节归档，预登记由现存笔记前27行按旧SHA恢复，供核对已发布manifest指纹，不作为日常入口。执行会请求历史行情，原一次性授权不表示允许再次消耗额度。 |
-
-S28 / S29 用过的 `preopen-us-k5-select-v1`、`preopen-us-k5-valid-v1`、`preopen-s20-select-v1`、`preopen-s20-valid-v1` 已按此前决定删除，不能从远端 Release 完整复现。现有本机副本的位置和历史哈希见 [DATA](../../docs/DATA.md)，不重新发布或篡改旧 tag。
-
-归档前后保留了用户在 `daily_top.py` 中未提交的 `--dump` 修改，该文件内容 SHA256 均为 `284bc4f0d27af98097f8b1fc42b46509b94aec4c54b465e63d442eb087a9c834`。历史 `notes/` 和 `reports/` 内容原样保留。已有 `custody` 注册策略和根目录 `reports/` 仍被执行、测试及复现代码引用，因此保持原位；本次归档没有更改交易策略或注册状态。
-
-从仓库根目录执行离线测试：
-
-```bash
-python3 -m unittest discover -s studies/archive/us_preopen_bias/tests
-```
-
-具体复现命令见各归档目录 README。已用过的验证段仍视为已用，不能因移动目录重新成为样本外数据。
-
-机制去重、缺失记录及数据段污染审计见 [RESEARCH_AUDIT](../us_opening_range/notes/RESEARCH_AUDIT.md)。
+| [calendar_weekly](calendar_weekly/README.md) | 易学／历法预测指数周月走势约 60 轮，无增量 |
+| [us_0dte_picks TS 系列](../us_0dte_picks/notes/FAILED_TRIALS.md) | TS1–TS67、FD 等开盘择时与准入研究全部未过 |
+| opend_probes | 单次已知过期期权取数试验脚本与预登记，仅供核对已发布 manifest 指纹；再次执行会扣历史额度 |

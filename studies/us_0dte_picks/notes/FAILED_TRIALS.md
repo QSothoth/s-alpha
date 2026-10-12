@@ -17,7 +17,7 @@
 
 - **SV1**（[预登记](SV1_PREREG.md)）：v6.6 两边独立盯 vs open_hold_v3 按开盘方向。数据凑满 8 个交易日（最后一天 10-12）后评测一次，评分入口 `sv1.py`。
 
-## 开盘前方向（S 系列，[结果](../../archive/us_preopen_bias/reports/RESULTS_CN.md)）
+## 开盘前方向（S 系列，[结果](../../archive/README.md)）
 
 | 轮次 | 试了什么 | 结果 |
 |---|---|---|
@@ -42,7 +42,7 @@
 | S28 | 09:45 开盘段延续 / 回吐 / 放量延续 O1–O5 | 选择段全部失败 |
 | S29 | O3 篮子一次性验证 | 失败 |
 
-## 开盘研究（us_opening_range，[README](../../us_opening_range/README.md)）
+## 开盘研究（us_opening_range，[README](../../archive/README.md)）
 
 | 轮次 | 试了什么 | 结果 |
 |---|---|---|
@@ -110,8 +110,8 @@
 
 | 研究 | 结果 |
 |---|---|
-| [hk_open_scan](../../hk_open_scan/README.md) R1–R4 | 港股开盘放量追涨与 ORB 全部失败 |
-| [hk_near_expiry_flow](../../hk_near_expiry_flow/README.md) R1–R3 | 港股期权近月异动全部不达标 |
+| [hk_open_scan](../../archive/README.md) R1–R4 | 港股开盘放量追涨与 ORB 全部失败 |
+| [hk_near_expiry_flow](../../archive/README.md) R1–R3 | 港股期权近月异动全部不达标 |
 | [watch_signal](../../watch_signal/README.md) W1–W11 | 多数失败，D+ 背景约高 11bp 但低于成本 |
 
 ## TS16–TS67 及配套诊断（只留机制和结论）

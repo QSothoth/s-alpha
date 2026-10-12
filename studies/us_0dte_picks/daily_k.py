@@ -22,18 +22,18 @@ import random
 from statistics import mean
 
 HERE = Path(__file__).resolve().parent
-ARCHIVE_NOTES = HERE.parent / 'archive' / 'us_preopen_bias' / 'notes'
+NOTES = HERE / 'notes'
 PREREG = HERE / 'notes' / 'P2_PREREG.md'
 PREREG_SHA256 = '1efa50a0f0c9be2739c6bc20f70205d62eb2f6ba140fb9f823cd70f7e90e8d0d'
 ADDENDUM = HERE / 'notes' / 'P2_ADDENDUM.md'
 ADDENDUM_SHA256 = 'a71ce350fd6cc69da63abcb11ded495c197e2ac167fe0c8eff69cf3ebd7d2f20'
 EVENTS = Path('data/p2-events-raw')
 PHASES = {  # name -> (universe file, data dirs merged by date, window)
-    'select': (ARCHIVE_NOTES / 'universe_stocks300.json', ('data/preopen-s24-select-v1',), ('2023-06-26', '2024-12-31')),
-    'validate': (HERE / 'notes' / 'universe_stocks601_900.json', ('data/p2-601-900-raw',), ('2023-06-26', '2026-09-25')),
-    'describe_300': (ARCHIVE_NOTES / 'universe_stocks300.json',
+    'select': (NOTES / 'universe_stocks300.json', ('data/preopen-s24-select-v1',), ('2023-06-26', '2024-12-31')),
+    'validate': (NOTES / 'universe_stocks601_900.json', ('data/p2-601-900-raw',), ('2023-06-26', '2026-09-25')),
+    'describe_300': (NOTES / 'universe_stocks300.json',
                      ('data/preopen-s24-select-v1', 'data/preopen-s24-valid-v1'), ('2025-01-02', '2026-09-24')),
-    'describe_301_600': (ARCHIVE_NOTES / 'universe_stocks301_600.json', ('data/preopen-s27-holdout-v1',),
+    'describe_301_600': (NOTES / 'universe_stocks301_600.json', ('data/preopen-s27-holdout-v1',),
                          ('2023-06-26', '2026-09-24')),
 }
 CANDIDATES = ('K1_EARN', 'K2_NR7', 'K3_52W', 'K4_THRUST', 'K5_EXHAUST')

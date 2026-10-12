@@ -80,8 +80,8 @@ PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.live_watch
 
 - 会话流程：[prepare_watch.py](prepare_watch.py)（盘前名单与量基准）、[launch_watch.py](launch_watch.py) / [live_watch.py](live_watch.py)（受管盘中观察）、[session.py](session.py)（状态、许可、交接）、[auto_watch.py](auto_watch.py)（许可范围内自动接受新鲜卡）、[mock_watch.py](mock_watch.py)；运行见 [WORKFLOW_CN](notes/WORKFLOW_CN.md)、[运行细则](notes/SESSION_OPERATIONS_CN.md)、[skill](skills/near-expiry-session/SKILL.md)
 - SV1 / SV2：[fetch_sv1.py](fetch_sv1.py) / [sv1.py](sv1.py)（会话验证取数与评分）、[fetch_sv2.py](fetch_sv2.py) / [sv2.py](sv2.py) / [sv2_calibrate.py](sv2_calibrate.py) / [proxy.py](proxy.py)（正股分钟推算期权代理与校准）
-- P1–P5 研究：[timing.py](timing.py)、[daily_k.py](daily_k.py)、[p3.py](p3.py)、[p4.py](p4.py)、[p5.py](p5.py)、[parity.py](parity.py)、[resolution.py](resolution.py)、[open_hold_exit_audit.py](open_hold_exit_audit.py)；一次性取数 [fetch_events.py](fetch_events.py)、[fetch_option_events.py](fetch_option_events.py)、[fetch_k5.py](fetch_k5.py)（扣额度，须用户同意）、[fetch_p5.py](fetch_p5.py)
+- 名单工具依赖：[daily_k.py](daily_k.py)、[p3.py](p3.py)。P1、P4、P5 与 OH3 审计的代码、一次性取数脚本和原始 JSON 输出已移出仓库（见 [archive](../archive/README.md)），结论保留在 `reports/*_CN.md`
 - [daily_list.py](daily_list.py)：每日 A4 名单研究工具（标注 `P5_FAILED`）
 - `notes/`：P1–P5、SV1、SV2 预登记（代码按 SHA 校验，不能改）、[分母说明](notes/DENOMINATORS.md)、[测试集清单](notes/TEST_SETS.md)（哪些数据已用过、能否再当验证）、失败记录
-- `reports/`：P1–P5 结果与 SV2 校准
+- `reports/`：P1–P5 结果（中文）与 SV2 校准
 - 测试：`python3 -m unittest discover -s studies/us_0dte_picks/tests`

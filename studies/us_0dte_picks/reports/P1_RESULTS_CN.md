@@ -50,7 +50,7 @@
 | O30 | +5.3% | −7.4% |
 | O60 | −12.0% | −9.4% |
 
-6 天、方向不一，只说明真实跨式在这批日子里平均为负，不能用来比较时点。机器报告见 [p1_straddle.json](p1_straddle.json)。
+6 天、方向不一，只说明真实跨式在这批日子里平均为负，不能用来比较时点。机器报告见 p1_straddle.json（已归档）。
 
 ## 限制
 
@@ -68,4 +68,4 @@ python3 -m studies.us_0dte_picks.timing straddle --out /tmp/p1-straddle.json
 python3 -m unittest discover -s studies/us_0dte_picks/tests
 ```
 
-只读本地数据（见预登记），不发起行情请求、不扣额度。机器报告：[p1_select.json](p1_select.json)、[p1_validate.json](p1_validate.json)。
+只读本地数据（见预登记），不发起行情请求、不扣额度。机器报告：p1_select.json（已归档）、p1_validate.json（已归档）。

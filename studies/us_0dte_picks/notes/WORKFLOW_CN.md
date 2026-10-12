@@ -73,7 +73,7 @@ PYTHONUTF8=1 python3 -m studies.us_0dte_picks.session status \
 
 **2026-10-02 起的择时（用户决定）**：策略为 `zero_dte_timing_v6.6`，不再是 `open_hold_v3`。每只候选的 CALL 与 PUT 各取最近五档行权价，分别从开盘起按自己的方向重放 v6.6；哪一边首次出入场信号，卡片就给那一边。不按开盘以来涨跌定方向，也没有开盘一小时兜底入场。v6.6 是 candidate，只用于 dryrun（mock）；`live` 会被 custody 拒绝。
 
-`ENTER_REVIEW` 只包含本分钟首次出现的入场意图。核对方向、到期日、报价和有效期；`WAIT` 不操作。不凭图形否决信号（见 [agent 审卡评测](../../agent_card_eval/README.md)）。报价要求乘数 100、Delta 绝对值至少 0.30、成交至少 100 张、价差不超过 10%、报价不超过 30 秒。仅检查每只 CALL、PUT 各最近五档行权价，不声称穷尽全链。
+`ENTER_REVIEW` 只包含本分钟首次出现的入场意图。核对方向、到期日、报价和有效期；`WAIT` 不操作。不凭图形否决信号（见 [agent 审卡评测](../../archive/README.md)）。报价要求乘数 100、Delta 绝对值至少 0.30、成交至少 100 张、价差不超过 10%、报价不超过 30 秒。仅检查每只 CALL、PUT 各最近五档行权价，不声称穷尽全链。
 
 ## 3. 按唯一合约确认
 

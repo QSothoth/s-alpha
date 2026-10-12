@@ -90,7 +90,7 @@ python3 -m custody check --dataset <训练目录> --validation <验证目录>
 - `custody check` 通过；`manifest.json` 的 `window.end`（2026-09-15）和 `underlyings`（缺 INTC）没有随吸收的 09-16 更新，以 `sessions` 和 `cases.json` 为准
 - 取代 `custody-0dte-v6`（同样 146 个 case，无标签）
 
-2026-09-25研究审计补充：V6.1追加的09-16共20个case缺`selection=both_sides_atm_at_open`及显式`session_close`，仅有旧near-ATM选择说明。现有`custody check`允许这些字段缺省，双边/行情/哈希检查通过不等于验证了开盘最近ATM；OR1更严格的研究准入因此拒绝该日，改用V5＋09-18作旧数据诊断。未修改Release、默认数据或策略注册状态，详见 [运行前更正](../studies/us_opening_range/notes/OR1_PREREG.md#运行前数据审计更正同日收益计算前)。
+2026-09-25研究审计补充：V6.1追加的09-16共20个case缺`selection=both_sides_atm_at_open`及显式`session_close`，仅有旧near-ATM选择说明。现有`custody check`允许这些字段缺省，双边/行情/哈希检查通过不等于验证了开盘最近ATM；OR1更严格的研究准入因此拒绝该日，改用V5＋09-18作旧数据诊断。未修改Release、默认数据或策略注册状态，详见 [运行前更正](../studies/archive/README.md)。
 
 ### 验证集 custody-eval-2026-09-18-v2
 
@@ -200,20 +200,18 @@ gh release create custody-0dte-v6 data/custody-0dte-v6.zip data/custody-0dte-v6.
 
 ## 附录：港股近月流量研究数据（非 custody Release）
 
-与上文 0DTE custody 冻结/Release 流程无关。港股正股期权排行与异动研究切片放在仓库内：
-
-[`studies/hk_near_expiry_flow/dataset/`](../studies/hk_near_expiry_flow/dataset/)（`manifest.json` + CSV）。不走 `data/` Release 规则；仅供后续自行筛选，不接入 `custody check`。
+与上文 0DTE custody 冻结/Release 流程无关。研究已结束（[结论](../studies/archive/README.md)）；原先提交在仓库内的 `studies/hk_near_expiry_flow/dataset/`（`manifest.json` + CSV，约 6MB）已于 2026-10-12 随目录移出仓库，原样保存在本机 `/root/opend-us-options-archive-20261012/`，也可从 Git 提交 `39bb800` 取回。未发布 Release。
 
 
 ## 附录：开盘区间研究数据与 Release
 
-仅用于 [us_opening_range](../studies/us_opening_range/README.md) 研究；不更改上文 custody 当前数据集和默认策略。原目录名中的 `validation` 不代表它对后续反复研究仍是未见样本，使用历史见 [审计](../studies/us_opening_range/notes/RESEARCH_AUDIT.md)。
+仅用于 [us_opening_range](../studies/archive/README.md) 研究；不更改上文 custody 当前数据集和默认策略。原目录名中的 `validation` 不代表它对后续反复研究仍是未见样本，使用历史见 [审计](../studies/archive/README.md)。
 
 | 本机工作目录 | 身份与内容 | 状态 |
 |---|---|---|
 | `data/or-alpha-2026-09-25-holdout-work` | OpenD当日期权链、26标的依盘后链与当日开盘价选择ATM双边共52个0DTE合约、正股完整1m与期权成交1m；`validation/custody`（不是09:30链的PIT存档） | 2026-09-25盘后有限采集，0历史请求；106个文件校验通过，未评测。CHECKSUMS.sha256哈希 `e729dd3c11f61328e2cf996bd2eb0592baed733ad35a89c75ce20a5a67fbf1af` |
-| `data/or-option-history-pilot-20260918-work` | 已知真实SPY09-18到期CALL/PUT原始分钟及元数据；仅接口质量试验，不是新验证 | 另获最多1条期权历史链额度许可，两腿各405根/1页；成功、不评测。CHECKSUMS.sha256哈希 `4da443f830cbbcd86290bc085cca02bbe55c635f879ce406089191e084d239c7`，边界见 [试验记录](../studies/us_opening_range/notes/OPTION_HISTORY_PILOT.md) |
-| `data/or-context-etf-k5-2018-2026-retry1-work` | 获准12个ETF的OpenD QFQ常规5m，发布时角色`holdout/underlying-context`；实际2018-09-20→2026-09-25，每只2,014日，总1,877,760根 | 25文件哈希通过。RG1于09/26评测XLV/XLI/XLY截至09/24；另九ETF分钟及全部09/25仍未评测。CHECKSUMS.sha256哈希 `5ac28d322f91c5877349a2d1021bfabecce98c74e09f83cb45192d1f35cc66ee`；请求前缀缺12交易日，[质量记录](../studies/us_opening_range/notes/DATA_QUALITY_CHECK.md) |
+| `data/or-option-history-pilot-20260918-work` | 已知真实SPY09-18到期CALL/PUT原始分钟及元数据；仅接口质量试验，不是新验证 | 另获最多1条期权历史链额度许可，两腿各405根/1页；成功、不评测。CHECKSUMS.sha256哈希 `4da443f830cbbcd86290bc085cca02bbe55c635f879ce406089191e084d239c7`，边界见 [试验记录](../studies/archive/README.md) |
+| `data/or-context-etf-k5-2018-2026-retry1-work` | 获准12个ETF的OpenD QFQ常规5m，发布时角色`holdout/underlying-context`；实际2018-09-20→2026-09-25，每只2,014日，总1,877,760根 | 25文件哈希通过。RG1于09/26评测XLV/XLI/XLY截至09/24；另九ETF分钟及全部09/25仍未评测。CHECKSUMS.sha256哈希 `5ac28d322f91c5877349a2d1021bfabecce98c74e09f83cb45192d1f35cc66ee`；请求前缀缺12交易日，[质量记录](../studies/archive/README.md) |
 
 以上三个目录已按原字节发布，数据未进 Git。ZIP 内仍以各自原工作目录名为顶层，manifest、CHECKSUMS 及原角色均未修改；对应发布如下：
 
@@ -223,21 +221,21 @@ gh release create custody-0dte-v6 data/custody-0dte-v6.zip data/custody-0dte-v6.
 | [or-option-history-pilot-20260918-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-option-history-pilot-20260918-v1) | `or-option-history-pilot-20260918-work` | `77e956cd14f75b49c60138680117b569b095ef86c2a41585fc1fb8dfa65de490` |
 | [or-context-etf-k5-2018-2026-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-context-etf-k5-2018-2026-v1) | `or-context-etf-k5-2018-2026-retry1-work` | `7a11094d6841e316d2a6b789aa09866a69204c248e46b4b8f5bd4715355902a8` |
 
-各 Release 附 ZIP 与同名 `.zip.sha256`；已从 GitHub 回下载，逐包 SHA256 及包内所有成员哈希均与原数据一致。共约49MiB，打包器 [package_data.py](../studies/us_opening_range/package_data.py) 采用流式复制、精确校验和覆盖及拒绝覆盖已有附件；它只生成本地包，不自动上传。遵守「发布后不替换、变化另发 tag」的项目协议；GitHub 当前返回 `immutable: false`，不宣称服务端已锁定。
+各 Release 附 ZIP 与同名 `.zip.sha256`；已从 GitHub 回下载，逐包 SHA256 及包内所有成员哈希均与原数据一致。共约49MiB，打包器 [package_data.py](../studies/archive/README.md) 采用流式复制、精确校验和覆盖及拒绝覆盖已有附件；它只生成本地包，不自动上传。遵守「发布后不替换、变化另发 tag」的项目协议；GitHub 当前返回 `immutable: false`，不宣称服务端已锁定。
 
 三个 tag 均锚定远端既有提交 `45d0b620c6c05729adbe19daecb8cffe0fb218e3`，仅作数据快照锚点。采集发生于本地工作树，provenance 以原 manifest 与 SHA 为准，**不宣称该 tag 的代码可重现采集**；未推送本地未发布提交或工作区代码。
 
-保存及完整性检查不等于验证 Alpha；单日不足独立验证门槛。12 ETF 分钟数据发布时未评测，但共享旧市场日期，其中9个标的有旧日线研究暴露，不能称全新时间或全新资产验证。订阅已释放，未启动后台采集。12个ETF采集恰新增12个普通历史额度、剩余72；期权pilot另获独立许可，具体范围/未用身份见 [研究计划](../studies/us_opening_range/notes/ALPHA_PLAN.md)。原 `or-context-etf-k5-2018-2026-work` 是零行情/零新额度的启动失败目录，保留原因，不作数据集使用。
+保存及完整性检查不等于验证 Alpha；单日不足独立验证门槛。12 ETF 分钟数据发布时未评测，但共享旧市场日期，其中9个标的有旧日线研究暴露，不能称全新时间或全新资产验证。订阅已释放，未启动后台采集。12个ETF采集恰新增12个普通历史额度、剩余72；期权pilot另获独立许可，具体范围/未用身份见 [研究计划](../studies/archive/README.md)。原 `or-context-etf-k5-2018-2026-work` 是零行情/零新额度的启动失败目录，保留原因，不作数据集使用。
 
 ### 固定旧日来源复核
 
 [or-source-recheck-spy-20240530-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-source-recheck-spy-20240530-v1) 保存 `data/or-source-recheck-spy-20240530-work` 的 8 个原始／审计文件：SPY 2024-05-30 的 OpenD 5m、日 K、延长 30m，以及 Yahoo／腾讯日线原始响应、manifest、比较报告与校验和。仅质量抽查，不是新验证数据；3 次历史请求没有新增额度，前后剩余均为72。
 
-ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；CHECKSUMS SHA256 `0abc2178327c1b0c4db7281cb03e261e31b0fc273758c78434976771b4b12ee3`。已回下载核对 ZIP、sidecar、全部成员和哈希。tag 同样使用远端既有 `45d0b620...` 作快照锚点，不代表该提交已含采集脚本。单日同源重取一致不能替全部历史背书；跨源复权、跨周期量与零量平价条目（成因未确认）的限制见 [复核记录](../studies/us_opening_range/notes/DATA_RECHECK_20260926.md)。
+ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；CHECKSUMS SHA256 `0abc2178327c1b0c4db7281cb03e261e31b0fc273758c78434976771b4b12ee3`。已回下载核对 ZIP、sidecar、全部成员和哈希。tag 同样使用远端既有 `45d0b620...` 作快照锚点，不代表该提交已含采集脚本。单日同源重取一致不能替全部历史背书；跨源复权、跨周期量与零量平价条目（成因未确认）的限制见 [复核记录](../studies/archive/README.md)。
 
 ### 近期分钟跨源复核
 
-[or-recent-crosscheck-20260924-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-recent-crosscheck-20260924-v1)另保存三ETF在09/24的Yahoo原始5m响应、已固定OpenD当日摘录及比较manifest，共8文件；仅3次HTTP，没有历史额度。ZIP SHA256 `99310665c4b8a5223dd14d2ce2fd38e952eb0e779a5ddf9acefe7c6d1fdee703`，17100字节；CHECKSUMS `7be5369bde6b50bde44ab55d0406895d3c2b24adc261c0b8c18769d76bf70ce1`。已回下载核验ZIP、sidecar、精确成员与逐文件SHA，原响应仅按字节验签未提取越界行情。主+5分钟标签对齐下，929/936个OHLC相对误差≤1e-6，226/234根成交量仍不同；不能替全部历史背书。请求虽止于09/25零点，Yahoo每份额外返回09/25 16:00条目：原字节保留，但按时间戳跳过，未用于比较、特征或收益。完整边界见[复核说明](../studies/us_opening_range/notes/RECENT_CROSSCHECK_20260924.md)。
+[or-recent-crosscheck-20260924-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-recent-crosscheck-20260924-v1)另保存三ETF在09/24的Yahoo原始5m响应、已固定OpenD当日摘录及比较manifest，共8文件；仅3次HTTP，没有历史额度。ZIP SHA256 `99310665c4b8a5223dd14d2ce2fd38e952eb0e779a5ddf9acefe7c6d1fdee703`，17100字节；CHECKSUMS `7be5369bde6b50bde44ab55d0406895d3c2b24adc261c0b8c18769d76bf70ce1`。已回下载核验ZIP、sidecar、精确成员与逐文件SHA，原响应仅按字节验签未提取越界行情。主+5分钟标签对齐下，929/936个OHLC相对误差≤1e-6，226/234根成交量仍不同；不能替全部历史背书。请求虽止于09/25零点，Yahoo每份额外返回09/25 16:00条目：原字节保留，但按时间戳跳过，未用于比较、特征或收益。完整边界见[复核说明](../studies/archive/README.md)。
 
 ### 冻结的派生信号／标签快照
 
@@ -245,17 +243,17 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 已撤下的`or-signal-research-20260926-v1`本地备份保留于 `data/or-signal-research-20260926-work`及同名v1 ZIP／sidecar：DS1、DS2、PERSISTENCE、AH1、RG1首次运行的5份机器报告、5份预登记、5个事件／标签文件及合并去重的实现指纹源码，共31文件。**流程偏差：其中14份源码不符合本文“代码只走Git”的约定；已另发纯数据v2，并于2026-09-26获用户同意后删除旧v1 Release、两个附件及同名远端tag，回读确认均不存在；其他Release不变。打包器已修正为仅保存数据及代码SHA。** 7373行派生记录包含重复候选和跨期限描述，不是7373个独立样本；没有原始行情重发，不接入custody交易。
 
-旧ZIP SHA256 `eb42661f10192bd2ce69f85786c5787889376bfc139fe85619052258076f7b1f`，2,652,364字节；CHECKSUMS SHA256 `9e7867f9f6902288361e338abf0d960a3227365c038add93a8d1531974755d2f`。本地31成员在删除远端前重新通过逐SHA／CRC校验，可恢复包内容，不承诺恢复远端对象ID或下载统计；不自动重发。旧tag原锚定`45d0b620c6c05729adbe19daecb8cffe0fb218e3`。已暴露标签不能恢复留出身份，重新生成还需固定原行情与匹配源码；角色及处置见[发布说明](../studies/us_opening_range/notes/SIGNAL_RESEARCH_RELEASE.md)。
+旧ZIP SHA256 `eb42661f10192bd2ce69f85786c5787889376bfc139fe85619052258076f7b1f`，2,652,364字节；CHECKSUMS SHA256 `9e7867f9f6902288361e338abf0d960a3227365c038add93a8d1531974755d2f`。本地31成员在删除远端前重新通过逐SHA／CRC校验，可恢复包内容，不承诺恢复远端对象ID或下载统计；不自动重发。旧tag原锚定`45d0b620c6c05729adbe19daecb8cffe0fb218e3`。已暴露标签不能恢复留出身份，重新生成还需固定原行情与匹配源码；角色及处置见[发布说明](../studies/archive/README.md)。
 
-[or-rg1-cards-20260926-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-rg1-cards-20260926-v1)为全部118个RG1提示提供因果SVG图卡、绘图输入与独立事后标签表，共123文件。ZIP SHA256 `337f11771d1aadfb30f68a12c022351f1da6cba0db1d23442a50d332ee60c739`，349349字节；CHECKSUMS `ac50dd50fe0b354149c629e29d6af9629d81154ddccec2e2941f7b2e41776d21`。解压后直接打开index.html，无CDN；只画提示之前的日K/早盘，不挑赢家、不改变原NOT_PASSED状态。见[图卡说明](../studies/us_opening_range/notes/RG1_CARDS_RELEASE.md)。派生快照及图卡都已回下载核验ZIP、sidecar、精确成员与逐文件SHA。
+[or-rg1-cards-20260926-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-rg1-cards-20260926-v1)为全部118个RG1提示提供因果SVG图卡、绘图输入与独立事后标签表，共123文件。ZIP SHA256 `337f11771d1aadfb30f68a12c022351f1da6cba0db1d23442a50d332ee60c739`，349349字节；CHECKSUMS `ac50dd50fe0b354149c629e29d6af9629d81154ddccec2e2941f7b2e41776d21`。解压后直接打开index.html，无CDN；只画提示之前的日K/早盘，不挑赢家、不改变原NOT_PASSED状态。见[图卡说明](../studies/archive/README.md)。派生快照及图卡都已回下载核验ZIP、sidecar、精确成员与逐文件SHA。
 
 ### S22旧口径复现、日K来源质量与OM1图卡
 
-[or-s22-audit-20260926-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-s22-audit-20260926-v1)保存旧选择／原验证的审计报告、计划、运行记录及2696条重叠派生事件，共7成员，无源码／原行情。原CLI显示字段逐行MATCH，不是新增验证；实际原验证日线截至09/23。ZIP SHA256 `45ee76f214e2e0d36665d107f884da61acd0944a23e527435ddaf917778f42f0`，312355字节；CHECKSUMS `66e62b927bde7705e5cc410d6b6ebf1d2f70f689dab656f73920edf37b9c650b`。范围和指纹见[发布说明](../studies/us_opening_range/notes/S22_AUDIT_RELEASE.md)。
+[or-s22-audit-20260926-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-s22-audit-20260926-v1)保存旧选择／原验证的审计报告、计划、运行记录及2696条重叠派生事件，共7成员，无源码／原行情。原CLI显示字段逐行MATCH，不是新增验证；实际原验证日线截至09/23。ZIP SHA256 `45ee76f214e2e0d36665d107f884da61acd0944a23e527435ddaf917778f42f0`，312355字节；CHECKSUMS `66e62b927bde7705e5cc410d6b6ebf1d2f70f689dab656f73920edf37b9c650b`。范围和指纹见[发布说明](../studies/archive/README.md)。
 
-[or-daily-source-check-20260926-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-daily-source-check-20260926-v1)保存三ETF当前日K只读返回与质量manifest，共8成员；截至09/24的20日、240个OHLC及21项历史levels精确一致，60项volume均不同。6次有限行情调用、0历史请求；09/25附带返回只原始留存，不提取比较其价格。ZIP SHA256 `7646483bbf15f8b3fdc722adde02bf14fef1977474c0648de84bd499379dd7a2`，18627字节；CHECKSUMS `51a21afa5c9e09f3a081c7a045e79225bdb928158f9888f19f12d6e7add54bee`。仍保留全局来源等价性未验证，详见[发布说明](../studies/us_opening_range/notes/DAILY_SOURCE_RELEASE.md)。
+[or-daily-source-check-20260926-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-daily-source-check-20260926-v1)保存三ETF当前日K只读返回与质量manifest，共8成员；截至09/24的20日、240个OHLC及21项历史levels精确一致，60项volume均不同。6次有限行情调用、0历史请求；09/25附带返回只原始留存，不提取比较其价格。ZIP SHA256 `7646483bbf15f8b3fdc722adde02bf14fef1977474c0648de84bd499379dd7a2`，18627字节；CHECKSUMS `51a21afa5c9e09f3a081c7a045e79225bdb928158f9888f19f12d6e7add54bee`。仍保留全局来源等价性未验证，详见[发布说明](../studies/archive/README.md)。
 
-[or-om1-cards-20260926-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-om1-cards-20260926-v1)保存OM1全部7个独立提示的因果图卡、绘图输入、原231候选记录、机器报告及预登记，共14成员，无源码。期权6个有效毛标价、1个缺端点，不是购买胜率或净收益验证；图只含当时已知历史／早盘，已有事后标签另表。ZIP SHA256 `807107c5fdda318764a8ddad13ede873ff7e96883324503e90a0f28eee29d729`，40997字节；CHECKSUMS `b548a56a6356a770edd8ea7c750a355f5d612530a22e849acd54580c8af9966e`。本机初版仍保留，本包只修复文字遮挡而未改行情、规则或标签；远端回下载的ZIP／sidecar、精确14成员及逐文件SHA／CRC均通过，见[发布说明](../studies/us_opening_range/notes/OM1_CARDS_RELEASE.md)。
+[or-om1-cards-20260926-v1](https://github.com/QSothoth/s-alpha/releases/tag/or-om1-cards-20260926-v1)保存OM1全部7个独立提示的因果图卡、绘图输入、原231候选记录、机器报告及预登记，共14成员，无源码。期权6个有效毛标价、1个缺端点，不是购买胜率或净收益验证；图只含当时已知历史／早盘，已有事后标签另表。ZIP SHA256 `807107c5fdda318764a8ddad13ede873ff7e96883324503e90a0f28eee29d729`，40997字节；CHECKSUMS `b548a56a6356a770edd8ea7c750a355f5d612530a22e849acd54580c8af9966e`。本机初版仍保留，本包只修复文字遮挡而未改行情、规则或标签；远端回下载的ZIP／sidecar、精确14成员及逐文件SHA／CRC均通过，见[发布说明](../studies/archive/README.md)。
 
 上述三包均已独立回下载核验远端ZIP/sidecar、精确成员、逐文件SHA和CRC；tag仍锚定既有远端提交，不代表该tag包含后续研究实现。代码另由Git提交保存，不重指向数据tag；包内“未发布”是创建时的事实快照，发布后不回改字节。
 
@@ -272,14 +270,14 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 | `data/p3-k5-validation-raw` | 35 只新个股常规时段 5 分钟 K（2023-05 → 2026-09-25，前复权），动用 35 个历史 K 线额度（已用 228 → 263）；**P4 验证已用一次** | `dd2eba4e353aba90d7e52877f3b9016cf36a228c02198de8c39e7dc1ccc2f506` |
 | `data/p5-parity-raw` | 10 只个股各 1000 根 5／30 分钟原始 K；用于跨周期口径审计，30 分钟有 76 个完整日、共同完整日 12 个；成交量近似相等、存在少数异常，见[比对报告](../studies/us_0dte_picks/reports/P5_PARITY_CN.md)。没有原采集 manifest，不补写成当时已有的参数凭证 | `1981ad1a712f73e702cd32a9543e0fdf6f9a0ef547daaf84678de15656e843f6` |
 | `data/p5-k30-validation-raw` | P5：145 只此前未有分钟数据的周度股、53 个细行业，每股 1000 根原生 RTH K_30M（QFQ）；2026-09-28 有界一次性采集，评测截止 09-25。名单、行业、日历在采分钟前锁定，全部158个成员验签通过，未扣历史额度；**P5 已验证一次且失败**，见[报告](../studies/us_0dte_picks/reports/P5_RESULTS_CN.md) | `f5f8541994749f63708e000e2d0eb941bb2d624c0ad8f3649c6c04be81ba7f0b` |
-| `data/human-top10-2026-09-28-090327` | 09-28 09:05 ET 盘前人工候选：11 股股票快照、各 1000 根 RTH K_30M、IV/HV、财报、期权量、当日到期及标准 Call／Put 链，冻结方法与完整排名；74 个成员校验通过，未用历史额度、订阅已释放。排序组合未经回测验证，见[Top 10 报告](../studies/us_0dte_picks/reports/TOP10_20260928_PRE_CN.md)；本机采集脚本副本仅供复核，未来数据发布包不含源码 | `9f9ad51925e0bd36572dba6537c8e75047528c09600f35b84d7a896f1e9fabfe` |
-| `data/human-trial-2026-09-28` | 用户授权的有限只读盘中观察：10 股冻结 15／30 分钟量分母、开盘快照、真实期权报价、相对排名及 v3 预演，后纳入 AAPL 共 11 股；首次监测止于 09:44、无 09:45 结果，10:00 恢复，最后输出至 10:30、10:31:01 正常结束。仅人工候选试验，非独立验证、非成交记录，未调用历史 K 线请求；见[试验报告](../studies/us_0dte_picks/reports/TRIAL_20260928_CN.md)与[全天复盘](../studies/us_0dte_picks/reports/REVIEW_20260928_FULLDAY_CN.md)。账户原始返回和含账户 ID 的人工启动脚本仅本机私有保存，未来发布时排除 | 观察已结束，父目录未整体封存或发布 |
+| `data/human-top10-2026-09-28-090327` | 09-28 09:05 ET 盘前人工候选：11 股股票快照、各 1000 根 RTH K_30M、IV/HV、财报、期权量、当日到期及标准 Call／Put 链，冻结方法与完整排名；74 个成员校验通过，未用历史额度、订阅已释放。排序组合未经回测验证，见Top 10 报告（已归档）；本机采集脚本副本仅供复核，未来数据发布包不含源码 | `9f9ad51925e0bd36572dba6537c8e75047528c09600f35b84d7a896f1e9fabfe` |
+| `data/human-trial-2026-09-28` | 用户授权的有限只读盘中观察：10 股冻结 15／30 分钟量分母、开盘快照、真实期权报价、相对排名及 v3 预演，后纳入 AAPL 共 11 股；首次监测止于 09:44、无 09:45 结果，10:00 恢复，最后输出至 10:30、10:31:01 正常结束。仅人工候选试验，非独立验证、非成交记录，未调用历史 K 线请求；见试验报告（已归档）与全天复盘（已归档）。账户原始返回和含账户 ID 的人工启动脚本仅本机私有保存，未来发布时排除 | 观察已结束，父目录未整体封存或发布 |
 
 完整样本名单、逐股窗口、校验与已用轮次见[测试集清单](../studies/us_0dte_picks/notes/TEST_SETS.md)。P4 旧样本的 30 分钟精度重算是数据审计，不恢复其验证资格。
 
-`human-trial-2026-09-28/sector_review` 另保存当天 10:08／10:16 的 11 大行业代理与半导体／生物科技／软件代理、代表个股快照、正股与期权分钟数据、未改参数的策略重放及新增到期日检查，见[盘中复盘](../studies/us_0dte_picks/reports/REVIEW_20260928_INTRADAY_CN.md)。仅作当日描述性复核，不是新验证集；重放旧信号不证明当时已监测到或可按某价格成交。后续 `supervised_v4` 从修改时点才纳入 AAPL 后备并展示全部被检查合约的策略状态，旧分钟记录不回改。
+`human-trial-2026-09-28/sector_review` 另保存当天 10:08／10:16 的 11 大行业代理与半导体／生物科技／软件代理、代表个股快照、正股与期权分钟数据、未改参数的策略重放及新增到期日检查，见盘中复盘（已归档）。仅作当日描述性复核，不是新验证集；重放旧信号不证明当时已监测到或可按某价格成交。后续 `supervised_v4` 从修改时点才纳入 AAPL 后备并展示全部被检查合约的策略状态，旧分钟记录不回改。
 
-`human-trial-2026-09-28/day_after_review` 保存 09-29 有界只读补取的 09-28 全天材料：37 标的完整 RTH 30m、11 股完整 RTH 1m、四个既有合约完整 1m，META 717.5 Put 末 60 根 1m，另有五合约完整 15m；包括实际运行摘要、合约标价及盘中／盘后数据差异审计。只作描述性复盘，不接入 custody 正式评测，不把不完整的 1m 用 15m 伪补；未调用历史额度接口。详情见[全天复盘](../studies/us_0dte_picks/reports/REVIEW_20260928_FULLDAY_CN.md)。
+`human-trial-2026-09-28/day_after_review` 保存 09-29 有界只读补取的 09-28 全天材料：37 标的完整 RTH 30m、11 股完整 RTH 1m、四个既有合约完整 1m，META 717.5 Put 末 60 根 1m，另有五合约完整 15m；包括实际运行摘要、合约标价及盘中／盘后数据差异审计。只作描述性复盘，不接入 custody 正式评测，不把不完整的 1m 用 15m 伪补；未调用历史额度接口。详情见全天复盘（已归档）。
 
 ### SV1 会话验证段（采集中，尚未评测）
 
@@ -314,7 +312,7 @@ cd data && sha256sum -c watch-hk1m-train-v1.zip.sha256 && unzip watch-hk1m-train
 
 ## 附录：开盘方向预判研究数据（非 custody Release）
 
-[归档研究 studies/archive/us_preopen_bias/](../studies/archive/us_preopen_bias/README.md)（T 日开盘时判断各标的开盘 → 收盘方向，给 0DTE 上游选边）的数据。全部来自本机 OpenD、一次性拉取，
+[归档研究 studies/archive/us_preopen_bias/](../studies/archive/README.md)（T 日开盘时判断各标的开盘 → 收盘方向，给 0DTE 上游选边）的数据。全部来自本机 OpenD、一次性拉取，
 不需要逐日采集；历史 K 线只拉 30 天内已扣费的标的（S10 新标的的日 K 走订阅接口）。只用技术面 / 交易数据，不含财报、宏观日历。
 **不接入 `custody check` / `evaluate`**；同样不可变，变化发新 tag。每个 zip 内有 `manifest.json`（来源、窗口、行数、字段说明）和 `CHECKSUMS.sha256`。
 

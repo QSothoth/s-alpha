@@ -11,7 +11,7 @@ P4 的 44 个 A4 信号，改用同源 5 分钟 K 聚合的 30 分钟 K 判定�
 ## 固定口径与复现
 
 - 数据为 `data/p3-k5-validation-raw/k5` 的原 35 只个股，名单见 [p3_validation_names.json](../notes/p3_validation_names.json)，窗口仍为 2023-06-26 至 2026-09-25。原始数据校验清单的 36 项全部通过。
-- 沿用 `p3.features`、`p3.signal`、`p3.picks`：池子、到期日筛选、完整 78 根常规时段日线、前 14 日成交量分母、A4 方向、10:00 入场、每日 RVOL30 排序取前 5 全部不变。仍为 5,009 个合格标的日、35 只股票、44 个入选标的日、34 个入选交易日；做多 21、做空 23。原 [p4_validate.json](p4_validate.json) 的全部汇总数值逐项完全复现。
+- 沿用 `p3.features`、`p3.signal`、`p3.picks`：池子、到期日筛选、完整 78 根常规时段日线、前 14 日成交量分母、A4 方向、10:00 入场、每日 RVOL30 排序取前 5 全部不变。仍为 5,009 个合格标的日、35 只股票、44 个入选标的日、34 个入选交易日；做多 21、做空 23。原 p4_validate.json（已归档） 的全部汇总数值逐项完全复现。
 - 只改变 10:00 后的评测分辨率：每 6 根 5 分钟 K 顺序合并为一根 30 分钟 K，开盘价取首根、收盘价取末根、高低取极值、量求和。首根 30 分钟 K 收于 10:00，仅用于固定入场价；退出扫描从收于 10:30 的下一根开始，最后一根收于 16:00。
 - 正向与反向均沿用目标 +1、止损 −0.5 个隐含剩余波动；同一根内两者均触及，先算止损；收盘仍未退出则按收盘收益。方向优势 = 同一批信号的正向先到目标比例 − 反向先到目标比例。
 - 按日期整日重抽 2,000 次，seed `20260926`；沿用原报告的 5% 分位作为 `lo90`。反向使用同一批标的日与相反方向，不重新选股。
@@ -49,4 +49,4 @@ PYTHONUTF8=1 python3 -m studies.us_0dte_picks.resolution --out /tmp/p4-resolutio
 python3 -m unittest studies.us_0dte_picks.tests.test_resolution
 ```
 
-输出路径必须不存在。代码：[resolution.py](../resolution.py)；机器报告：[p4_resolution.json](p4_resolution.json)。
+输出路径必须不存在。代码：resolution.py（已归档）；机器报告：p4_resolution.json（已归档）。

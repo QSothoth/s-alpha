@@ -8,7 +8,7 @@
 |---|---|---|
 | 核心 | 美股期权日内单笔交易（主要是 0DTE）：上游给定标的、方向、合约，本仓库只做时机；唯一会下单的部分 | [custody/AGENTS.md](custody/AGENTS.md) |
 | 核心 | AH 股实时盯盘：只读、只标注 | [watch/AGENTS.md](watch/AGENTS.md) |
-| 研究切片 | 竞价打分、开盘扫描、期权异动、盯盘信号研究——**不成熟，不当生产能力用** | [studies/AGENTS.md](studies/AGENTS.md) |
+| 研究切片 | 近到期选标的与盘中会话、盯盘信号、竞价打分；已结束的研究只留结论——**不成熟，不当生产能力用** | [studies/AGENTS.md](studies/AGENTS.md) |
 
 ## 安全
 
@@ -33,6 +33,6 @@
 - 文档中文；代码、标识符、提交信息英文。运行时只用标准库（连 OpenD 的入口需 `futu-api`；研究脚本可用 numpy）。
 - 改哪里跑哪里的测试，`custody/tests` 每次都跑（含规范结构检查）：
   `python3 -m unittest discover -s custody/tests` · `python3 watch/test_watch.py` ·
-  `python3 -m unittest discover -s studies/auction_strength/tests` · `python3 -m unittest discover -s studies/hk_open_scan/tests` · `python3 -m unittest discover -s studies/us_0dte_picks/tests` · `python3 -m unittest discover -s studies/agent_card_eval/tests`
+  `python3 -m unittest discover -s studies/<切片>/tests`（有 `tests/` 的切片：us_0dte_picks、auction_strength、us_opening_range）
 - 改文档前核对代码、CLI 和已提交报告；不把约定写成尚未实现的自动保证。
 - 其余文档：[README.md](README.md)（概览）、[docs/OPEND_SETUP.md](docs/OPEND_SETUP.md)（OpenD 环境）。

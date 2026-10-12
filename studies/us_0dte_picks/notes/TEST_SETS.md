@@ -86,9 +86,9 @@
 
 | 样本 | 个股名单 | 路径、评测窗 | 已用轮次；能否新验证 |
 |---|---|---|---|
-| 排名 1–300 选择 | [universe_stocks300.json](../../archive/us_preopen_bias/notes/universe_stocks300.json) | `data/preopen-s24-select-v1`；2023-06-26 → 2024-12-31 | S24–S26 选择、P2 选择；否 |
+| 排名 1–300 选择 | [universe_stocks300.json](universe_stocks300.json) | `data/preopen-s24-select-v1`；2023-06-26 → 2024-12-31 | S24–S26 选择、P2 选择；否 |
 | 排名 1–300 后段 | 同上 | `data/preopen-s24-valid-v1`；2025-01-02 → 2026-09-24（热身接 select） | S26 验证已用、P2 描述；否 |
-| 排名 301–600 | [universe_stocks301_600.json](../../archive/us_preopen_bias/notes/universe_stocks301_600.json) | `data/preopen-s27-holdout-v1`；2023-06-26 → 2026-09-24 | S27 验证已用、P2 描述；否 |
+| 排名 301–600 | [universe_stocks301_600.json](universe_stocks301_600.json) | `data/preopen-s27-holdout-v1`；2023-06-26 → 2026-09-24 | S27 验证已用、P2 描述；否 |
 | 排名 601–900 | [universe_stocks601_900.json](universe_stocks601_900.json) | `data/p2-601-900-raw`；2023-06-26 → 2026-09-25 | P2/P2 补登验证已用；否 |
 
 每个目录按 `daily/<SYM>.csv`、`daily_none/<SYM>.csv`、`iv/<SYM>.csv`、`option_stats/<SYM>.csv` 存表；日线不是分钟聚合。源日线多数始于 2022 年 9 月，少数不同；上表是评测窗，逐表实有范围见机器清单。排名股 BRK.B 的历史文件存在代码映射／缺失问题，不能仅按「300 只」假定每只可用。
@@ -147,7 +147,7 @@ parity 的 30m 原始窗为 2026-06-08 10:30 → 2026-09-25 16:00（首日不完
 | `custody-0dte-v5` | 141 | `35875e44318c78ab5b09cd53cac3b22ce26a8a12cb468aeed5efd72e43e97c69` |
 | `custody-eval-2026-09-18-v2` | 45 | `fba36ab960189e6fe80660629455774627915d1b8982361a324ec203892fc2c0` |
 
-登记依据：[P1](P1_PREREG.md)、[P2](P2_PREREG.md)、[P2 补登](P2_ADDENDUM.md)、[P3](P3_PREREG.md)、[P4](P4_PREREG.md)，以及 [p3.py](../p3.py)、[p4.py](../p4.py)、[timing.py](../timing.py)、[daily_k.py](../daily_k.py) 的实际读数路径与已保存报告。文中“已用”是研究暴露事实，不把不同粒度／不同目标的复用包装成新独立验证。
+登记依据：[P1](P1_PREREG.md)、[P2](P2_PREREG.md)、[P2 补登](P2_ADDENDUM.md)、[P3](P3_PREREG.md)、[P4](P4_PREREG.md)，以及 [p3.py](../p3.py)、p4.py（已归档）、timing.py（已归档）、[daily_k.py](../daily_k.py) 的实际读数路径与已保存报告。文中“已用”是研究暴露事实，不把不同粒度／不同目标的复用包装成新独立验证。
 
 
 ## P5 冻结新截面（本次续接）

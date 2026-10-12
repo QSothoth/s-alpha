@@ -71,4 +71,4 @@ python3 -m studies.us_0dte_picks.daily_k validate --select-report /tmp/p2-select
 python3 -m studies.us_0dte_picks.daily_k describe --out /tmp/p2-describe.json
 ```
 
-机器报告：[p2_select.json](p2_select.json)、[p2_validate.json](p2_validate.json)、[p2_describe.json](p2_describe.json)。
+机器报告：p2_select.json（已归档）、p2_validate.json（已归档）、p2_describe.json（已归档）。
