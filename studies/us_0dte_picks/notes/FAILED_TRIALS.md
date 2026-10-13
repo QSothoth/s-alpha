@@ -113,6 +113,7 @@
 | [hk_open_scan](../../archive/README.md) R1–R4 | 港股开盘放量追涨与 ORB 全部失败 |
 | [hk_near_expiry_flow](../../archive/README.md) R1–R3 | 港股期权近月异动全部不达标 |
 | [watch_signal](../../watch_signal/README.md) W1–W11 | 多数失败，D+ 背景约高 11bp 但低于成本 |
+| [trend_breakout](../../trend_breakout/README.md) TF1–TF14 | 多日持有的日 K 策略约 40 个候选：个股突破、动量、动量 + 平静择时、反转、低波动 / MAX / 换手、宽基指数海龟通道、长假前 / 春节前效应、追涨买卖点优化与市场状态过滤，样本外全部不成立。A 股的正结果来自幸存者偏差（必须用点时股票池）；突破 + 大盘过滤比随机更会抓大牛股，但只在牛市年份赚钱；指数趋势跟随只保住了回撤控制 |
 
 ## TS16–TS67 及配套诊断（只留机制和结论）
 

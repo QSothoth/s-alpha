@@ -288,6 +288,27 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 - `data/sv1-capture-<日期>`：10-02、10-05、10-07、10-09、10-12 收盘后 16:30 ET 由一次性 systemd 定时器运行 `studies/us_opening_range/capture.py`（订阅接口，不扣历史额度），日志在 `data/sv1-capture-logs/`。用户 2026-10-02 同意，只采这 5 天，跑完即止。
 
+## 附录：日 K 突破趋势跟随研究数据（已发布 Release）
+
+[studies/trend_breakout/](../studies/trend_breakout/README.md) TF1–TF14 用到的数据，2026-10-12～13 一次性前台取数（不是后台或定时采集），2026-10-13 发布到 `QSothoth/s-alpha`。研究已结束，结论为负，见该切片 README。
+
+| Release tag | 本机目录 | 内容 | ZIP SHA256 | `CHECKSUMS.sha256` 的 SHA256 |
+|---|---|---|---|---|
+| [trend-breakout-v1](https://github.com/QSothoth/s-alpha/releases/tag/trend-breakout-v1) | `data/trend-breakout-v1` | 美股 1,439 只、港股 504 只、A 股 1,773 只日 K（2023-09-01 → 2026-10-09；不复权、源复权、除权系数）；A 股另含新浪历史总股本 `shares*.csv.gz` | `4948c690cfcf850159f5deec17f9cb8292e9e007eb145103b24df1a552ae3d19` | `9e2fe2082a3293d6bd811d9fc82e216b19b3385779857a0f1e7c408306472eb7` |
+| [trend-breakout-cn-pit-v1](https://github.com/QSothoth/s-alpha/releases/tag/trend-breakout-cn-pit-v1) | `data/trend-breakout-cn-pit-v1` | A 股点时补充：`hist/` 主池 2018-01 → 2023-08 日 K；`hist-cnx/` 当前市值 30 亿～100 亿的 2,603 只 2018-01 → 2026-10 日 K；`cnx/` 这批股票的名单，以及其中 1,978 只的复权因子和历史总股本 | `706512142702d5a655f201fe87f8ba276853b942546e6d617c44c62e70a6d10e` | `064761a48fc87c67757b4d08b56cfac1d9ee53bb6f4a2d8156358d833b2d3cf7` |
+| [index-cn-daily-v1](https://github.com/QSothoth/s-alpha/releases/tag/index-cn-daily-v1) | `data/index-cn-daily-v1` | 上证综指、沪深 300、中证 500、创业板指、中证 1000 日线（2005 年或发布日起 → 2026-10-09） | `d518967a198002f270a8bb7cc05b9fe8a291687e6377efafd799ecbe91240c87` | `5d8d9b7465d3b8efef3b797dbbe467cc0d6fa884ef89bd01efdac8cad2f81c2c` |
+
+每个 Release 附 ZIP 与同名 `.zip.sha256`；发布后已从 GitHub 回下载核对 SHA256。ZIP 内以本机目录名为顶层，解压到 `data/` 即可直接被代码读取。
+
+来源与口径：
+- 美股、港股：OpenD 条件选股 + 订阅 `get_cur_kline`（最近 1000 根）+ `get_rehab`，不扣历史 K 线额度（取数前后额度均为 18 / 282）。
+- A 股：新浪全市场列表、日 K、`qfq.js` 复权因子、「股本结构历史」总股本；2022-10-24 以前的历史日 K 用腾讯静态年文件（腾讯 API 有 2,000 根上限且会限流）。成交量统一换算为股（腾讯科创板原为股，其余为手）；成交额为「成交量 × 不复权收盘价」的估算。
+- 股票池按 2026-10-12 的当前流动性 / 市值粗筛，**有幸存者偏差**；A 股的点时研究用 `cnx` 的补充股票和历史股本做了部分修正，但仍缺已退市股票、当前市值不足 30 亿的股票和历史 ST 状态。
+
+已用过的验证数据（以后不能再当样本外）：test 段 2025-10-01 → 2026-10-09（TF5）；A 股 2019-03 → 2023-08（TF6 B，W4）；A 股点时 2022-07 → 2026-10（TF12 验证，K1）；指数 2016–2026（TF9 的 Z3、TF11 的春节前效应）。
+
+逐笔交易和各轮中间输出在本机 `data/trend-breakout-v1-results/`，可由各轮的 `run_tf*.py` 重算，不发布。
+
 ## 附录：盯盘信号研究数据（非 custody Release）
 
 `studies/watch_signal/`（盯盘 `watch/` 的信号研究）的数据，按用途分成 6 个 Release。只供该研究使用，**不接入 `custody check` / `evaluate`**，

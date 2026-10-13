@@ -15,6 +15,8 @@
 
 us_preopen_bias、us_opening_range（采集工具除外）、agent_card_eval、hk_open_scan、hk_near_expiry_flow、calendar_weekly、TS 系列：结论为负或未晋级，代码已移出仓库，结论见 [archive/README.md](archive/README.md)。
 
+[trend_breakout/](trend_breakout/README.md)（2026-10-13 结束）：日 K 突破 / 动量 / 反投机 / 指数趋势跟随 / 节前效应共 TF1–TF14 约 40 个候选，样本外全部不成立；代码、预登记和报告保留在目录里，数据在 Release（见 [DATA](../docs/DATA.md)）。可复用的是点时股票池工具 `pit.py` 和多市场统一取数 `sources.py`。
+
 - 每个切片自带 README（结论、数据、复现），预登记放 `notes/`，结果放 `reports/`。
 - 新研究前先查 [archive](archive/README.md) 与 [FAILED_TRIALS](us_0dte_picks/notes/FAILED_TRIALS.md)，不重开已失败的机制。
 - 切片升级为核心能力由用户决定：改根规范的能力地图，补该目录的 `AGENTS.md`。
