@@ -6,6 +6,8 @@
 
 先读 [notes/FAILED_TRIALS.md](notes/FAILED_TRIALS.md) 开头的「总教训」。2026-10-12 清理时，TS / FD 系列的代码、预登记和报告都移出了仓库，只在失败记录里留了结论。
 
+发现投资机会可用 [opportunity-research skill](skills/opportunity-research/SKILL.md)：从异常现象追查利润受益者、市场预期和反证，输出少量人工判断的观察候选。它不提供已验证的选股信号；中长期逻辑不自动转为最近到期期权，符合当前范围且用户决定参与后才交给会话流程。
+
 ## 人工候选的盘中监测
 
 **2026-09-29 更新：用户允许最近到期，不再只限 0DTE。** 运行入口见 [操作流程](notes/WORKFLOW_CN.md)。`prepare_watch --launch` 生成当天排名、15／30 分钟基准并启动观察；`session status` 汇总；`session accept` 按当前卡先 dryrun、再人工明确选择执行模式。旧研究工具 `daily_list` 的 0DTE 口径不变。

@@ -298,6 +298,10 @@ def build_argument_parser(command):
     parser.add_argument('--stream-only', action='store_true', help='never request historical-kline quota on a data gap')
     parser.add_argument('--max-entry-premium', type=float, default=None,
                         help='maximum entry premium in USD for this job, excluding fees; persisted across restarts')
+    parser.add_argument('--max-loss-usd', type=float, default=None,
+                        help='optional round_trip bid-based loss trigger in USD; not a guaranteed loss ceiling')
+    parser.add_argument('--estimated-round-trip-fee-per-contract-usd', type=float, default=None,
+                        help='explicit combined entry/exit fee estimate per contract, required with --max-loss-usd')
     parser.add_argument('--db', default=None, help='durable SQLite path (default: custody-<mode>.sqlite)')
     parser.add_argument('--host', default=None, help='OpenD host (default: FUTU_HOST or 127.0.0.1)')
     parser.add_argument('--port', type=int, default=None, help='OpenD port (default: FUTU_PORT or 11111)')
@@ -313,7 +317,8 @@ def _summary(job):
     return {'job_id': job['id'], 'mode': job['mode'], 'contract': job['request']['contract'],
             'trade_action': job['request'].get('trade_action', 'round_trip'),
             'trade_date': job['request']['trade_date'], 'state': job['state'], 'position_qty': job['position_qty'],
-            'attention': job['attention'], 'entry_reason': job['entry_reason'], 'exit_reason': job['exit_reason']}
+            'attention': job['attention'], 'entry_reason': job['entry_reason'], 'exit_reason': job['exit_reason'],
+            'loss_guard': job.get('loss_guard')}
 
 
 def _operate(command, args):
@@ -338,6 +343,8 @@ def main(command, argv=None):
     mode = args.mode if command == 'run' else 'dryrun'
     if mode == 'live' and args.trade_action == 'sell_only':
         raise SystemExit('sell_only position_pnl_v1 has no independent validation; use dryrun/paper')
+    if mode == 'live' and args.max_loss_usd is not None:
+        raise SystemExit('max_loss_usd guard has no independent validation; use dryrun/paper')
     market = OpenDMarket(host=args.host, port=args.port)
     broker, subscribed = None, False
     try:
@@ -357,6 +364,8 @@ def main(command, argv=None):
         payload = {'strategy_id': args.strategy or registry.default_id, 'symbol': args.symbol,
                                   'direction': args.direction, 'contract': args.contract,
                                   'max_qty': args.max_qty, 'max_entry_premium': args.max_entry_premium,
+                                  'max_loss_usd': args.max_loss_usd,
+                                  'estimated_round_trip_fee_per_contract_usd': args.estimated_round_trip_fee_per_contract_usd,
                                   'expiry_policy': args.expiry_policy,
                                   'trade_action': args.trade_action,
                                   'entry_valid_until': args.entry_valid_until}

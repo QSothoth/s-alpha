@@ -48,6 +48,8 @@ class JobRequest:
     expiry_policy: str = '0_1dte'
     entry_valid_until: str | None = None
     trade_action: str = 'round_trip'
+    max_loss_usd: float | None = None
+    estimated_round_trip_fee_per_contract_usd: float | None = None
 
     @classmethod
     def parse(cls, payload, now):
@@ -66,6 +68,16 @@ class JobRequest:
         trade_action = payload.get('trade_action', 'round_trip')
         if trade_action not in ('round_trip', 'buy_only', 'sell_only'):
             raise ValueError('trade_action must be round_trip, buy_only or sell_only')
+        loss = payload.get('max_loss_usd')
+        fees = payload.get('estimated_round_trip_fee_per_contract_usd')
+        if loss is not None or fees is not None:
+            if trade_action != 'round_trip':
+                raise ValueError('max_loss_usd guard requires round_trip')
+            loss = positive(loss, 'max_loss_usd')
+            if (isinstance(fees, bool) or not isinstance(fees, (int, float))
+                    or not math.isfinite(fees) or fees < 0):
+                raise ValueError('estimated_round_trip_fee_per_contract_usd must be explicit, finite and nonnegative')
+            fees = float(fees)
         if trade_action == 'sell_only' and (premium is not None or payload.get('entry_valid_until') is not None):
             raise ValueError('sell_only does not accept entry constraints')
         if expiry_policy not in ('0_1dte', 'nearest'):
@@ -79,7 +91,7 @@ class JobRequest:
                 raise ValueError('entry deadline must be on trade_date')
             deadline = deadline.isoformat()
         return cls(payload['strategy_id'], symbol(payload['symbol']), payload['direction'], payload['contract'].strip(),
-                   qty, day, premium, expiry_policy, deadline, trade_action)
+                   qty, day, premium, expiry_policy, deadline, trade_action, loss, fees)
 
 
 @dataclass(frozen=True)

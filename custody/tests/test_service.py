@@ -84,6 +84,91 @@ class ServiceTests(unittest.TestCase):
         return [o for o in self.service.get_job(j['id'])['orders'] if side is None or o['side'] == side]
 
     # request / identity ---------------------------------------------------
+    def test_loss_guard_validation_and_legacy_identity(self):
+        base = dict(self.request, max_loss_usd=35, estimated_round_trip_fee_per_contract_usd=1)
+        for changes in ({'max_loss_usd': 0}, {'max_loss_usd': True}, {'max_loss_usd': float('inf')},
+                        {'estimated_round_trip_fee_per_contract_usd': None},
+                        {'estimated_round_trip_fee_per_contract_usd': -1},
+                        {'estimated_round_trip_fee_per_contract_usd': float('nan')},
+                        {'estimated_round_trip_fee_per_contract_usd': True},
+                        {'max_loss_usd': None}, {'trade_action': 'buy_only'}, {'trade_action': 'sell_only'}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                JobRequest.parse(dict(base, **changes), T)
+        self.assertEqual(JobRequest.parse(dict(base, estimated_round_trip_fee_per_contract_usd=0), T)
+                         .estimated_round_trip_fee_per_contract_usd, 0)
+        job = self.job()
+        self.assertNotIn('max_loss_usd', job['request'])
+        self.assertNotIn('estimated_round_trip_fee_per_contract_usd', job['request'])
+        self.assertEqual(self.service.create_job(dict(self.request, max_loss_usd=None,
+            estimated_round_trip_fee_per_contract_usd=None), T)['id'], job['id'])
+        live = CustodyService(Path(self.tmp.name)/'live.sqlite', 'test', Catalog(), Calendar(), mode='live')
+        with self.assertRaisesRegex(ValueError, 'max_loss_usd guard'):
+            live.create_job(dict(base, strategy_id='open_hold_v3'), T)
+
+    def test_loss_guard_net_threshold_restart_and_partial_sell(self):
+        self.request.update(max_loss_usd=35, estimated_round_trip_fee_per_contract_usd=1)
+        job, adapter, key = self.entry()
+        self.service.apply_update(OrderUpdate(key, 1, 'FILLED', 2, T, 600, 1.15, T), T)
+        j = self.service.heartbeat(job['id'], T, self.quote(bid=.99))
+        self.assertEqual(j['loss_guard']['estimated_net_pnl_usd'], -34)
+        self.assertEqual(j['loss_guard']['average_entry_cost'], 1.15)  # Actual fill, not the 1.05 ask.
+        self.assertFalse(j['exit_requested'])
+        j = self.service.heartbeat(job['id'], T, self.quote(bid=.985))
+        self.assertEqual((j['exit_reason'], j['loss_guard']['estimated_net_pnl_usd']), ('option_max_loss', -35))
+        self.service = CustodyService(self.path, 'test', Catalog(), Calendar())
+        self.assertEqual(self.job()['loss_guard']['status'], 'TRIGGERED')
+        with self.assertRaisesRegex(ValueError, 'different request'):
+            self.service.create_job(dict(self.request, max_loss_usd=70), T)
+        self.service.dispatch_next(adapter, T)
+        sell = adapter.calls[-1]['client_order_id']
+        self.service.apply_update(OrderUpdate(sell, 1, 'PARTIAL', 1, T, average_option_price=.88), T)
+        later = T + timedelta(seconds=31)
+        j = self.service.heartbeat(job['id'], later, self.quote(later, bid=1.2, ask=1.3))
+        self.assertTrue(j['exit_requested'])  # A rebound cannot unlatch exit after a partial sell.
+        self.assertEqual(j['position_qty'], 1)
+        self.service.apply_update(OrderUpdate(sell, 2, 'CANCELED', 1, later, average_option_price=.88), later)
+        j = self.service.heartbeat(job['id'], later, self.quote(later, bid=1.2, ask=1.3))
+        self.assertEqual([o['quantity'] for o in j['orders'] if o['side'] == 'SELL_CLOSE'], [2, 1])
+        self.assertEqual(j['loss_guard']['estimated_net_pnl_usd'], -35)  # Snapshot at the trigger.
+
+    def test_loss_guard_partial_entry_waits_for_cancel_and_late_fills(self):
+        self.request.update(max_loss_usd=30, estimated_round_trip_fee_per_contract_usd=1)
+        job, adapter, key = self.entry()
+        self.fill(key, qty=1, status='PARTIAL')
+        j = self.service.heartbeat(job['id'], T, self.quote(bid=.76))
+        self.assertEqual(j['loss_guard']['estimated_net_pnl_usd'], -30)
+        self.assertEqual(j['attention'], 'WAITING_ENTRY_CANCEL_CONFIRMATION')
+        self.assertEqual(self.orders(job, 'SELL_CLOSE'), [])
+        self.fill(key, qty=2, status='FILLED', seq=2)
+        j = self.service.heartbeat(job['id'], T, self.quote(bid=.76))
+        self.assertEqual([o['quantity'] for o in j['orders'] if o['side'] == 'SELL_CLOSE'], [2])
+
+    def test_loss_guard_invalid_quotes_cost_and_exit_without_quote(self):
+        self.request.update(max_loss_usd=30, estimated_round_trip_fee_per_contract_usd=0)
+        job, adapter, key = self.entry()
+        self.fill(key)
+        for quote in (None, self.quote(T-timedelta(seconds=31), bid=.1),
+                      self.quote(T+timedelta(seconds=1), bid=.1), self.quote(bid=0),
+                      self.quote(bid=float('nan')), self.quote(contract=PUT), self.quote(bid=2, ask=1)):
+            with self.subTest(quote=quote):
+                j = self.service.heartbeat(job['id'], T, quote)
+                self.assertFalse(j['exit_requested'])
+                self.assertEqual(j['attention'], 'LOSS_GUARD_WAITING_VALID_QUOTE')
+        later = T+timedelta(seconds=2)
+        self.service.heartbeat(job['id'], later, self.quote(later))
+        j = self.service.heartbeat(job['id'], later, self.quote(bid=.1))
+        self.assertFalse(j['exit_requested'])  # Ignore out-of-order yet recent quotes.
+        with self.service._tx() as db:
+            order = self.service._orders(db, job)[0]
+            order['average_option_price'] = None
+            self.service._store_order(db, order)
+        j = self.service.heartbeat(job['id'], later, self.quote(later, bid=.1))
+        self.assertEqual(j['attention'], 'LOSS_GUARD_WAITING_ENTRY_COST')
+        self.assertFalse(j['exit_requested'])
+        j = self.service.stop_job(job['id'], later)
+        self.assertTrue(j['exit_requested'])
+        self.assertEqual(j['attention'], 'EXIT_WAITING_VALID_QUOTE')
+
     def test_minimal_input_and_strict_types(self):
         payload = {k: v for k, v in self.request.items() if k not in ('max_qty', 'trade_date')}
         request = JobRequest.parse(payload, T)

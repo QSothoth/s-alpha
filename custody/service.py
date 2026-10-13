@@ -156,6 +156,8 @@ class CustodyService:
         request = JobRequest.parse(payload, now)
         if request.trade_action == 'sell_only' and self.mode == 'live':
             raise ValueError('sell_only position_pnl_v1 has no independent validation; use dryrun/paper')
+        if request.max_loss_usd is not None and self.mode == 'live':
+            raise ValueError('max_loss_usd guard has no independent validation; use dryrun/paper')
         strategy = self.registry.get(request.strategy_id)
         if strategy['status'] == 'retired':
             raise ValueError('strategy is retired')
@@ -170,6 +172,9 @@ class CustodyService:
             request_body.pop('entry_valid_until')
         if request.max_entry_premium is None:
             request_body.pop('max_entry_premium')  # Preserve identities of existing jobs without a cap.
+        if request.max_loss_usd is None:
+            request_body.pop('max_loss_usd')
+            request_body.pop('estimated_round_trip_fee_per_contract_usd')
         fingerprint = hashlib.sha256(encode(request_body).encode()).hexdigest()
         existing = self._existing_job(request, fingerprint)
         if existing is not None:
@@ -621,6 +626,9 @@ class CustodyService:
         if job['request'].get('trade_action') == 'sell_only':
             self._position_exit(db, job, now, quote)
             return
+        self._loss_guard(db, job, now, quote)
+        if job['exit_requested']:
+            return
         buys = [o for o in self._orders(db, job) if o['side'] == 'BUY_OPEN' and o['status'] in ACTIVE]
         expired = self._entry_expired(job, now)
         if expired and not buys and not job['position_qty']:
@@ -635,6 +643,40 @@ class CustodyService:
                 self._entry_finished(job, now)
             elif self._new(db, job, 'CANCEL', 'CANCEL', 0, now, target=buy['client_order_id']):
                 job['attention'] = 'ENTRY_TIMEOUT_CANCEL_PENDING'
+
+    def _loss_guard(self, db, job, now, quote):
+        request = job['request']
+        if (request.get('max_loss_usd') is None or request.get('trade_action', 'round_trip') != 'round_trip'
+                or not job['position_qty'] or now < instant(job['opens'])):
+            return
+        state = job.setdefault('loss_guard', {})
+        if not self._quote_ok(job, quote, now, allow_wide=True):
+            state.update(status='WAITING_VALID_QUOTE', checked_at=now.isoformat())
+            job['attention'] = 'LOSS_GUARD_WAITING_VALID_QUOTE'
+            return
+        if state.get('quote_at') and instant(quote.as_of) < instant(state['quote_at']):
+            state.update(status='WAITING_VALID_QUOTE', checked_at=now.isoformat())
+            job['attention'] = 'LOSS_GUARD_WAITING_VALID_QUOTE'
+            return
+        buys = [o for o in self._orders(db, job) if o['side'] == 'BUY_OPEN' and o['cumulative_qty']]
+        qty = sum(o['cumulative_qty'] for o in buys)
+        try:
+            cost = sum(Decimal(str(positive(o.get('average_option_price'), 'entry fill price')))
+                       * o['cumulative_qty'] for o in buys) / qty
+        except (ValueError, TypeError, ZeroDivisionError):
+            state.update(status='WAITING_ENTRY_COST', checked_at=now.isoformat())
+            job['attention'] = 'LOSS_GUARD_WAITING_ENTRY_COST'
+            return
+        fees = Decimal(str(request['estimated_round_trip_fee_per_contract_usd'])) * job['position_qty']
+        net = (Decimal(str(quote.bid)) - cost) * job['position_qty'] * job['contract']['multiplier'] - fees
+        triggered = net <= -Decimal(str(request['max_loss_usd']))
+        state.update(status='TRIGGERED' if triggered else 'MONITORING', checked_at=now.isoformat(),
+                     quote_at=instant(quote.as_of).isoformat(), bid=quote.bid, average_entry_cost=float(cost),
+                     position_qty=job['position_qty'], estimated_fees_usd=float(fees), estimated_net_pnl_usd=float(net))
+        if job.get('attention') in ('LOSS_GUARD_WAITING_VALID_QUOTE', 'LOSS_GUARD_WAITING_ENTRY_COST'):
+            job['attention'] = None
+        if triggered:
+            self._request_exit(db, job, 'option_max_loss', now, quote)
 
     def _position_exit(self, db, job, now, quote):
         if now < instant(job['opens']):

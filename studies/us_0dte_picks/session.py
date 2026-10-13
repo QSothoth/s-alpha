@@ -7,6 +7,7 @@ from decimal import Decimal
 import fcntl
 import hashlib
 import json
+import math
 import os
 import pwd
 from pathlib import Path
@@ -18,6 +19,7 @@ from custody.models import ET, instant
 from custody.runner import SECURITY_FIRMS
 from .launch_watch import ROOT, DEFAULT_PYTHON
 from .live_watch import STRATEGY_ID, option_check, select_candidates, write_json_atomic
+from .session_risk import check_risk_budget, validate_risk_budget
 from custody.registry import Registry
 
 RUNTIME = ROOT / 'data/near-expiry-runtime'
@@ -29,6 +31,44 @@ class StaleReviewCard(ValueError):
 
 class RejectedEntryQuote(ValueError):
     """An unsuitable market quote rejected before any durable handoff reservation."""
+
+
+class RejectedTradePlan(ValueError):
+    """A signal outside the human's explicitly permitted directions."""
+
+
+def validate_trade_plan(plan, symbols):
+    if not isinstance(plan, dict) or set(plan) != set(symbols):
+        raise ValueError('trade_plan must cover exactly the authorized symbols')
+    for symbol, row in plan.items():
+        if not isinstance(row, dict) or set(row) != {'directions', 'thesis', 'invalidation'}:
+            raise ValueError('trade_plan requires directions, thesis and invalidation for ' + symbol)
+        directions = row['directions']
+        if (not isinstance(directions, list) or any(d not in ('CALL', 'PUT') for d in directions)
+                or len(set(directions)) != len(directions)):
+            raise ValueError('trade_plan directions must be unique CALL/PUT values; [] means observe only')
+        if any(not isinstance(row[k], str) or not row[k].strip() for k in ('thesis', 'invalidation')):
+            raise ValueError('trade_plan thesis and invalidation must be nonempty text')
+
+
+def check_trade_plan(action, permission):
+    plan = permission.get('trade_plan')
+    if plan is not None:
+        option_type = {'LONG': 'CALL', 'SHORT': 'PUT'}.get(action['direction'])
+        if option_type not in plan.get(action['symbol'], {}).get('directions', []):
+            raise RejectedTradePlan('human trade plan does not allow ' + action['symbol'] + ' ' + str(option_type))
+
+
+def validate_loss_guard(permission):
+    limit = permission.get('max_loss_usd')
+    fee = permission.get('estimated_round_trip_fee_per_contract_usd')
+    if limit is None and fee is None:
+        return
+    if (any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v)
+            for v in (limit, fee)) or limit <= 0 or fee < 0):
+        raise ValueError('max_loss_usd requires a positive finite limit and explicit nonnegative estimated fee')
+    if permission['mode'] == 'live' or permission['trade_action'] != 'round_trip':
+        raise ValueError('max_loss_usd is available only for dryrun/paper round_trip')
 
 
 def validate_authorization(permission, now):
@@ -60,6 +100,11 @@ def validate_authorization(permission, now):
         raise ValueError('invalid authorized symbol')
     if len(set(symbols)) != len(symbols):
         raise ValueError('nonempty unique authorized symbols required')
+    if 'trade_plan' in permission:
+        validate_trade_plan(permission['trade_plan'], symbols)
+    validate_loss_guard(permission)
+    if 'risk_budget' in permission:
+        validate_risk_budget(permission['risk_budget'], now)
     start, end = instant(permission['issued_at']), instant(permission['valid_until'])
     latest = now.astimezone(ET).replace(hour=15, minute=45, second=0, microsecond=0)
     if not start <= now < end <= latest:
@@ -70,7 +115,9 @@ def validate_authorization(permission, now):
     return permission
 
 
-def authorize(folder, symbols, mode, acc_id, firm, execute, until='15:45', trade_action='round_trip', now=None):
+def authorize(folder, symbols, mode, acc_id, firm, execute, until='15:45', trade_action='round_trip', now=None,
+              *, trade_plan=None, max_loss_usd=None, estimated_round_trip_fee_per_contract_usd=None,
+              risk_budget=None):
     now = now or datetime.now(ET)
     ranking_raw = (folder/'ranking.json').read_bytes()
     ranking = json.loads(ranking_raw)
@@ -86,13 +133,22 @@ def authorize(folder, symbols, mode, acc_id, firm, execute, until='15:45', trade
                   'security_firm': firm, 'trade_action': trade_action, 'strategy': STRATEGY_ID,
                   'strategy_sha256': Registry().get(STRATEGY_ID)['sha256'],
                   'max_qty': 1, 'max_symbols_per_day': 2, 'premium_budget_usd': 280}
+    if trade_plan is not None:
+        permission['trade_plan'] = trade_plan
+    if max_loss_usd is not None or (estimated_round_trip_fee_per_contract_usd is not None and risk_budget is None):
+        permission.update(max_loss_usd=max_loss_usd,
+                          estimated_round_trip_fee_per_contract_usd=estimated_round_trip_fee_per_contract_usd)
+    if risk_budget is not None:
+        permission['risk_budget'] = risk_budget
     validate_authorization(permission, now)
+    risk = check_risk_budget(RUNTIME, permission, now=now)
     path = folder/'authorization.json'
     if execute:
         # An existing decision is retained; a new session needs a new explicit decision.
         with path.open('x') as fh:
             fh.write(json.dumps(permission, ensure_ascii=False, indent=2) + '\n')
-    return {'executed': execute, 'authorization': permission, 'path': str(path), 'orders_submitted': False}
+    return {'executed': execute, 'authorization': permission, 'path': str(path), 'orders_submitted': False,
+            'risk_budget_status': risk}
 
 
 def selected_action(card, contract, now):
@@ -137,10 +193,13 @@ def authorized_action(action, permission):
     """Tighten a copied request to its share of the selected daily slots."""
     if permission is None:
         return action
+    check_trade_plan(action, permission)
+    guard = {k: permission[k] for k in ('max_loss_usd', 'estimated_round_trip_fee_per_contract_usd')
+             if k in permission}
     cap = min(Decimal(str(action['custody_request']['max_entry_premium'])),
               Decimal(str(permission['premium_budget_usd']))/min(2,len(permission['symbols'])))
     return {**action, 'max_entry_premium':float(cap),
-            'custody_request':{**action['custody_request'], 'max_entry_premium':float(cap)}}
+            'custody_request':{**action['custody_request'], 'max_entry_premium':float(cap), **guard}}
 
 
 def custody_command(action, deadline, db, mode='dryrun', acc_id=None, firm='FUTUSECURITIES', trade_action='round_trip'):
@@ -156,6 +215,9 @@ def custody_command(action, deadline, db, mode='dryrun', acc_id=None, firm='FUTU
         command += ['--mode', mode, '--acc-id', str(acc_id), '--security-firm', firm]
     for key in ('strategy', 'symbol', 'direction', 'contract', 'max_qty', 'max_entry_premium', 'expiry_policy'):
         command += ['--' + key.replace('_', '-'), str(r[key])]
+    for key in ('max_loss_usd', 'estimated_round_trip_fee_per_contract_usd'):
+        if key in r:
+            command += ['--' + key.replace('_', '-'), str(r[key])]
     return command + ['--entry-valid-until', deadline, '--stream-only', '--db', str(db)]
 
 
@@ -209,13 +271,17 @@ def status(folder):
                 'fresh': age is not None and 0 <= age <= 120,
                 'finished': (folder/'mock/final.json').exists()}
     authorization = None
+    risk = None
     if (folder/'authorization.json').exists():
+        permission = {}
         try:
             permission = json.loads((folder/'authorization.json').read_text())
             validate_authorization(permission, now)
             authorization = {**permission, 'active': True}
+            risk = check_risk_budget(RUNTIME, permission, now=now)
         except (ValueError, OSError, KeyError) as exc:
-            authorization = {'active': False, 'error': str(exc)}
+            authorization = {**(permission if isinstance(permission, dict) else {}),
+                             'active': False, 'error': str(exc)}
     auto_final = folder/'auto/final.json'
     auto_path = auto_final if auto_final.exists() else folder/'auto/latest.json'
     auto = json.loads(auto_path.read_text()) if auto_path.exists() else None
@@ -227,7 +293,7 @@ def status(folder):
     return {'now': now.isoformat(), 'session': str(folder.resolve()),
             'runtime_scope': 'all sessions and accounts for this trade date, grouped by mode',
             'trade_date': day, 'ready': ready, 'service': service, 'mock': mock,
-            'authorization': authorization, 'auto': auto,
+            'authorization': authorization, 'risk_budget_status': risk, 'auto': auto,
             'status': 'STOPPED' if service and service['active_state'] != 'active' else
                       card['status'] if current else 'PREMARKET_WAIT' if ready and day == now.date().isoformat()
                       and now.hour*60+now.minute < 570 else 'STALE_OR_STOPPED',
@@ -246,14 +312,21 @@ def check_handoff_authorization(folder, permission, action, mode, acc_id, firm, 
             or (mode, acc_id, firm, trade_action) != (permission['mode'], permission['acc_id'],
                 permission['security_firm'], permission['trade_action'])):
         raise ValueError('automatic handoff no longer matches the persisted human authorization')
+    check_trade_plan(action, permission)
 
 
 def accept(folder, contract, mode, acc_id, firm, execute, trade_action='round_trip', *, authorization=None):
+    # A manual or mock handoff must not bypass a persisted human decision.
+    permission_path = folder/'authorization.json'
+    if authorization is None and permission_path.exists():
+        authorization = json.loads(permission_path.read_text())
     path = folder/'monitor/review_card.json'
     raw = path.read_bytes()
     card = json.loads(raw)
     action = selected_action(card, contract, datetime.now(ET))
     def recheck_permission():
+        if authorization is None and permission_path.exists():
+            raise ValueError('authorization appeared during handoff; review the persisted human decision')
         if authorization is not None:
             check_handoff_authorization(folder, authorization, action, mode, acc_id, firm,
                                         trade_action, datetime.now(ET))
@@ -262,6 +335,12 @@ def accept(folder, contract, mode, acc_id, firm, execute, trade_action='round_tr
         recheck_permission()
         if path.read_bytes() != raw:
             raise StaleReviewCard('review card changed during preflight; read the current card')
+        check_entry_risk()
+    def check_entry_risk():
+        if authorization is not None:
+            return check_risk_budget(RUNTIME, authorization,
+                                     proposed_premium=action['custody_request']['max_entry_premium'],
+                                     now=datetime.now(ET))
     recheck_permission()
     action = authorized_action(action, authorization)
     entry_until = card['valid_until'] if authorization is None else min(
@@ -272,6 +351,7 @@ def accept(folder, contract, mode, acc_id, firm, execute, trade_action='round_tr
     command = custody_command(action, entry_until, runtime/'custody.sqlite', mode, acc_id, firm, trade_action)
     if not execute:
         return {'executed': False, 'request': action, 'command': command,
+                'risk_budget_status': check_entry_risk(),
                 'next': 'add --execute to accept this still-fresh card; live also requires --mode live --acc-id'}
     if mode == 'live' and not any(os.environ.get(key) for key in ('FUTU_TRADE_PASSWORD', 'FUTU_TRADE_PASSWORD_MD5')):
         raise ValueError('live requires trade password in the environment')
@@ -359,15 +439,35 @@ def main(argv=None):
     parser.add_argument('--trade-action', choices=['round_trip', 'buy_only'], default='round_trip')
     parser.add_argument('--symbols', help='human-selected symbols for one explicit daily authorization')
     parser.add_argument('--until', default='15:45')
+    parser.add_argument('--plan-json', type=Path, help='authorize: per-symbol directions, thesis and invalidation JSON')
+    parser.add_argument('--max-loss-usd', type=float, help='authorize: optional actual option P&L exit threshold')
+    parser.add_argument('--estimated-round-trip-fee-per-contract-usd', type=float)
+    parser.add_argument('--loss-budget-start-date', help='authorize: first date of cumulative estimated net P&L')
+    parser.add_argument('--loss-budget-usd', type=float, help='authorize: cumulative loss plus outstanding premium cap')
     args = parser.parse_args(argv)
+    if args.command != 'authorize' and any(value is not None for value in (
+            args.plan_json, args.max_loss_usd, args.estimated_round_trip_fee_per_contract_usd,
+            args.loss_budget_start_date, args.loss_budget_usd)):
+        parser.error('plan and risk flags are only accepted by authorize; accept inherits the persisted permission')
     try:
         if args.command == 'status':
             result = status(args.session)
         elif args.command == 'authorize':
             if not args.symbols:
                 parser.error('authorize requires --symbols')
+            plan = json.loads(args.plan_json.read_text()) if args.plan_json else None
+            if args.plan_json and not isinstance(plan, dict):
+                raise ValueError('--plan-json must contain a per-symbol object')
+            risk = None
+            if args.loss_budget_start_date is not None or args.loss_budget_usd is not None:
+                risk = {'start_date': args.loss_budget_start_date, 'loss_limit_usd': args.loss_budget_usd,
+                        'estimated_round_trip_fee_per_contract_usd': args.estimated_round_trip_fee_per_contract_usd}
             result = authorize(args.session, args.symbols, args.mode, args.acc_id, args.security_firm,
-                               args.execute, args.until, args.trade_action)
+                               args.execute, args.until, args.trade_action,
+                               trade_plan=plan,
+                               max_loss_usd=args.max_loss_usd,
+                               estimated_round_trip_fee_per_contract_usd=args.estimated_round_trip_fee_per_contract_usd,
+                               risk_budget=risk)
         elif args.command == 'revoke':
             path = args.session/'authorization.json'
             permission = json.loads(path.read_text())

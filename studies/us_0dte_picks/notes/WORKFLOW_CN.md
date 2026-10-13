@@ -44,6 +44,24 @@ python3 -m studies.us_0dte_picks.session authorize --session PRE \
 
 核对后同命令加 `--execute` 保存 `authorization.json`，不会下单；已有文件拒绝覆盖。许可固定交易日、所选股票、策略SHA、模式、账户、买卖权限和15:45以内的截止时间；工程约束仍为每笔1张、每日每模式最多2个标的、合计权利金预留280美元。当前信号可选择CALL或PUT，合约始终走nearest核验。paper/live额外要求明确正数 `--acc-id` 和券商；live还要求当前策略为accepted。2026-10-02的用户授权仅mock，不能因这个CLI存在自行切换模式。
 
+需要固定人工方向时，加 `--plan-json PLAN.json`，内容必须覆盖全部所选股票，例如：
+
+```json
+{
+  "US.AAPL": {"directions": ["CALL"], "thesis": "已核实催化，等待顺势信号", "invalidation": "催化被否定时人工撤销"},
+  "US.NVDA": {"directions": [], "thesis": "证据不足，今天只观察", "invalidation": "新信息出现后另行决策"}
+}
+```
+
+`CALL/PUT` 对应 custody 的 `LONG/SHORT`；空列表只观察，两者都填允许双向。程序强制方向、原有截止与预算；理由和失效文字只存档，由人判断，不自动理解新闻或价位。原扫描仍双向生成信号，未许可方向被交接层跳过；不会补造同分钟另一方向或追过期信号。`auto/` 保存 `SKIPPED_TRADE_PLAN`、原卡片和允许方向，便于以后与原流程比较；不构成收益验证。`session status` 保留计划，许可失效后也可查。单卡 `accept` 和 `mock_watch` 同样遵守已有许可。
+
+风险参数均须人明确给金额，省略保持原流程，不据280美元工程预算推断账户本金：
+
+- `--max-loss-usd 金额 --estimated-round-trip-fee-per-contract-usd 金额`：仅 dryrun/paper 的 `round_trip`，将实际成交成本、有效bid及估计双边费用的亏损退出阈值传入 custody；触发不保证成交价，详见 [RUNTIME](../../../docs/RUNTIME.md)。
+- `--loss-budget-start-date YYYY-MM-DD --loss-budget-usd 金额 --estimated-round-trip-fee-per-contract-usd 金额`：同模式、账户、券商的共享交接记录，自起始日累计估计净亏损，加未结束任务的完整权利金预留和费用，再加拟入场预留，不得超上限。即使计划止损更小，也按完整权利金占用；换session不清零，旧未平仓仍计入。该检查不覆盖外部手工交易；费用为估计，资料无法核对则阻止新交接。
+
+两项可合用，费用明确填0也有效。累计预算按允许的最高入场权利金预留，不按眼前报价计；预算小于该预留时，即使报价便宜也会被拒，首版不自动缩小单笔上限。它们不替代既有280美元每日权利金上限，不自动改变策略评测状态或允许实盘；计划变化先撤销新增交接，已有持仓沿原权限管理。
+
 前节观察服务ready后，核对它监控的股票与许可完全一致，再在前台运行：
 
 ```bash

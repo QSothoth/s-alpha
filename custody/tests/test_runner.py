@@ -420,6 +420,15 @@ class CliTests(unittest.TestCase):
         self.assertEqual((run.mode, run.acc_id, run.security_firm), ('paper', 281756, 'FUTUSECURITIES'))
         capped = build_argument_parser('dryrun').parse_args(self.ARGS + ['--max-entry-premium', '140'])
         self.assertEqual(capped.max_entry_premium, 140)
+        guarded = build_argument_parser('dryrun').parse_args(self.ARGS + ['--max-loss-usd', '30',
+            '--estimated-round-trip-fee-per-contract-usd', '2'])
+        self.assertEqual((guarded.max_loss_usd, guarded.estimated_round_trip_fee_per_contract_usd), (30, 2))
+        from custody.runner import main
+        with mock.patch('custody.runner.OpenDMarket') as market:
+            with self.assertRaisesRegex(SystemExit, 'max_loss_usd guard'):
+                main('run', self.ARGS + ['--mode', 'live', '--acc-id', '1', '--max-loss-usd', '30',
+                                       '--estimated-round-trip-fee-per-contract-usd', '2'])
+            market.assert_not_called()
         with contextlib.redirect_stderr(io.StringIO()):
             for missing in (['--mode', 'paper'], ['--acc-id', '1'], ['--mode', 'dryrun', '--acc-id', '1']):
                 with self.assertRaises(SystemExit):

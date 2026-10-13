@@ -1,5 +1,7 @@
 from copy import deepcopy
+from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime, timedelta
+import io
 import json
 import sqlite3
 import subprocess
@@ -13,6 +15,7 @@ from unittest.mock import patch
 from custody.models import ET
 from studies.us_0dte_picks.auto_watch import handoff_card, load_authorization, main
 from studies.us_0dte_picks.session import (accept as real_accept, authorize, check_handoff_authorization,
+                                          main as session_main,
                                           RejectedEntryQuote, selected_action, StaleReviewCard, status,
                                           validate_authorization)
 
@@ -39,9 +42,144 @@ def card():
 
 
 class AutoWatchTests(unittest.TestCase):
-    def test_card_expired_or_replaced_while_waiting_for_lock_never_starts_preflight(self):
+    def test_loss_budget_blocks_before_preflight_and_rechecks_after_slow_preflight(self):
+        for during_preflight in (False, True):
+            with self.subTest(during_preflight=during_preflight), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp); prepared(root); runtime = root/'runtime'
+                config = {'start_date': '2026-09-29', 'loss_limit_usd': 200 if during_preflight else 100,
+                          'estimated_round_trip_fee_per_contract_usd': 2}
+                with patch('studies.us_0dte_picks.session.RUNTIME', runtime):
+                    authorize(root, 'AAA', 'dryrun', None, 'FUTUSECURITIES', True, now=NOW, risk_budget=config)
+                current = card(); current['actions'] = current['actions'][:1]
+                current['actions'][0]['expiry'] = '2026-09-30'
+                (root/'monitor/review_card.json').write_text(json.dumps(current))
+                def preflight(command, **kwargs):
+                    db = Path(command[command.index('--db') + 1])
+                    with sqlite3.connect(db) as conn:
+                        conn.execute('CREATE TABLE jobs (body TEXT)')
+                        conn.execute('INSERT INTO jobs VALUES (?)', (json.dumps({'position_qty': 1}),))
+                    old = runtime/'2026-09-29/dryrun/ledger.json'
+                    old.parent.mkdir(parents=True)
+                    old.write_text(json.dumps({'accepted': [{'contract': 'US.BBB260930C100000',
+                        'symbol': 'US.BBB', 'cap': 100, 'account': None, 'security_firm': 'FUTUSECURITIES',
+                        'state': 'RESERVED'}]}))
+                    return SimpleNamespace(returncode=0, stdout='', stderr='')
+                with patch('studies.us_0dte_picks.session.RUNTIME', runtime), \
+                     patch('studies.us_0dte_picks.session.datetime') as clock, \
+                     patch('studies.us_0dte_picks.session.subprocess.run', side_effect=preflight) as process, \
+                     patch('custody.opend.OpenDMarket') as market:
+                    clock.now.return_value = NOW
+                    with self.assertRaisesRegex(ValueError, 'risk budget exhausted'):
+                        real_accept(root, current['actions'][0]['contract'], 'dryrun', None, 'FUTUSECURITIES', True)
+                    self.assertEqual(process.call_count, int(during_preflight))
+                    market.assert_not_called()
+                self.assertFalse((runtime/'2026-09-30/dryrun/ledger.json').exists())
+
+    def test_cli_plan_and_risk_preview_and_rejects_silently_ignored_flags(self):
+        class Clock(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return NOW
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); prepared(root)
+            plan = {'US.AAA': {'directions': ['CALL'], 'thesis': '理由', 'invalidation': '失效'}}
+            plan_path = root/'plan.json'; plan_path.write_text(json.dumps(plan))
+            output = io.StringIO()
+            with patch('studies.us_0dte_picks.session.datetime', Clock), \
+                 patch('studies.us_0dte_picks.session.RUNTIME', root/'runtime'), redirect_stdout(output):
+                self.assertEqual(session_main(['authorize', '--session', str(root), '--symbols', 'AAA',
+                    '--plan-json', str(plan_path), '--max-loss-usd', '30',
+                    '--estimated-round-trip-fee-per-contract-usd', '2',
+                    '--loss-budget-start-date', '2026-09-29', '--loss-budget-usd', '200']), 0)
+            permission = json.loads(output.getvalue())['authorization']
+            self.assertEqual(permission['trade_plan'], plan)
+            self.assertEqual(permission['max_loss_usd'], 30)
+            self.assertEqual(permission['risk_budget']['loss_limit_usd'], 200)
+            self.assertFalse((root/'authorization.json').exists())
+            plan_path.write_text('null')
+            with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as exc:
+                session_main(['authorize', '--session', str(root), '--symbols', 'AAA', '--plan-json', str(plan_path)])
+            self.assertEqual(exc.exception.code, 2)
+            for flag, value in (('--plan-json', str(plan_path)), ('--max-loss-usd', '30'),
+                                ('--estimated-round-trip-fee-per-contract-usd', '0'),
+                                ('--loss-budget-start-date', '2026-09-29'), ('--loss-budget-usd', '200')):
+                with self.subTest(flag=flag), redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as exc:
+                    session_main(['accept', '--session', str(root), '--contract', 'ignored', flag, value])
+                self.assertEqual(exc.exception.code, 2)
+
+    def test_plan_is_frozen_and_manual_handoff_cannot_bypass_direction_or_revocation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); prepared(root)
+            plan = {'US.AAA': {'directions': ['PUT'], 'thesis': '弱势延续', 'invalidation': '催化落空'}}
+            permission = authorize(root, 'AAA', 'dryrun', None, 'FUTUSECURITIES', True,
+                                   now=NOW, trade_plan=plan)['authorization']
+            self.assertEqual(permission['trade_plan'], plan)
+            (root/'monitor/review_card.json').write_text(json.dumps(card()))
+            with patch('studies.us_0dte_picks.session.datetime') as clock, \
+                 patch('studies.us_0dte_picks.session.subprocess.run') as process:
+                clock.now.return_value = NOW
+                with self.assertRaisesRegex(ValueError, 'human trade plan does not allow'):
+                    real_accept(root, card()['actions'][0]['contract'], 'dryrun', None, 'FUTUSECURITIES', True)
+                permission['revoked_at'] = NOW.isoformat()
+                (root/'authorization.json').write_text(json.dumps(permission))
+                with self.assertRaisesRegex(ValueError, 'revoked'):
+                    real_accept(root, card()['actions'][0]['contract'], 'dryrun', None, 'FUTUSECURITIES', False)
+                process.assert_not_called()
+
+    def test_plan_rejections_are_audited_without_blocking_other_symbols(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); prepared(root)
+            (root/'monitor/ready.json').write_text(json.dumps(
+                {'trade_date': '2026-09-30', 'candidates': ['US.AAA', 'US.BBB']}))
+            plan = {symbol: {'directions': dirs, 'thesis': '事前理由', 'invalidation': '人工判断'}
+                    for symbol, dirs in [('US.AAA', []), ('US.BBB', ['CALL'])]}
+            authorize(root, 'AAA,BBB', 'dryrun', None, 'FUTUSECURITIES', True,
+                      until='09:46', now=NOW, trade_plan=plan)
+            raw = json.dumps(card()).encode()
+            (root/'monitor/review_card.json').write_bytes(raw)
+            now = [NOW]
+            with patch('studies.us_0dte_picks.auto_watch.datetime') as clock, \
+                 patch('studies.us_0dte_picks.auto_watch.accept', return_value={'state': 'JOB_CREATED'}) as accept, \
+                 patch('studies.us_0dte_picks.auto_watch.time.sleep',
+                       side_effect=lambda _: now.__setitem__(0, NOW.replace(minute=46, second=0))):
+                clock.now.side_effect = lambda *args: now[0]
+                self.assertEqual(main(['--session', str(root)]), 0)
+                accept.assert_called_once()
+                self.assertEqual(accept.call_args.args[1], card()['actions'][1]['contract'])
+            final = json.loads((root/'auto/final.json').read_text())
+            skipped = final['last_skipped_plan']
+            self.assertEqual(skipped['status'], 'SKIPPED_TRADE_PLAN')
+            self.assertEqual(skipped['allowed_directions'], [])
+            self.assertEqual(skipped['direction'], 'LONG')
+            self.assertEqual((root/'auto'/('skipped-' + skipped['card_hash'] + '.json')).read_bytes(), raw)
+            self.assertEqual(len(final['handoffs']), 1)
+
+    def test_plan_validation_guard_forwarding_and_no_implicit_amounts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); prepared(root)
+            good = {'US.AAA': {'directions': ['CALL'], 'thesis': '理由', 'invalidation': '失效'}}
+            for bad in ({}, {'US.AAA': {}}, {'US.AAA': dict(good['US.AAA'], directions=['LONG'])},
+                        {'US.AAA': dict(good['US.AAA'], directions=['CALL', 'CALL'])},
+                        {'US.AAA': dict(good['US.AAA'], thesis='')}):
+                with self.subTest(plan=bad), self.assertRaises(ValueError):
+                    authorize(root, 'AAA', 'dryrun', None, 'FUTUSECURITIES', False, now=NOW, trade_plan=bad)
+            for limit, fee in ((30, None), (None, 2), (-1, 0), (float('nan'), 0), (30, -1), (True, 0)):
+                with self.subTest(limit=limit, fee=fee), self.assertRaises(ValueError):
+                    authorize(root, 'AAA', 'dryrun', None, 'FUTUSECURITIES', False, now=NOW,
+                              max_loss_usd=limit, estimated_round_trip_fee_per_contract_usd=fee)
+            authorize(root, 'AAA', 'dryrun', None, 'FUTUSECURITIES', True, now=NOW, trade_plan=good,
+                      max_loss_usd=30, estimated_round_trip_fee_per_contract_usd=2)
+            (root/'monitor/review_card.json').write_text(json.dumps(card()))
+            with patch('studies.us_0dte_picks.session.datetime') as clock:
+                clock.now.return_value = NOW
+                preview = real_accept(root, card()['actions'][0]['contract'], 'dryrun', None, 'FUTUSECURITIES', False)
+            command = preview['command']
+            self.assertEqual(command[command.index('--max-loss-usd') + 1], '30')
+            self.assertEqual(command[command.index('--estimated-round-trip-fee-per-contract-usd') + 1], '2')
+
+    def test_card_or_authority_changed_while_waiting_for_lock_never_starts_preflight(self):
         for automatic in (False, True):
-            for race in ('expiry', 'replacement'):
+            for race in ('expiry', 'replacement', 'authorization'):
                 with self.subTest(automatic=automatic, race=race), tempfile.TemporaryDirectory() as tmp:
                     root=Path(tmp);prepared(root);runtime=root/'runtime'
                     permission=authorize(root,'AAA','dryrun',None,'FUTUSECURITIES',True,
@@ -52,6 +190,7 @@ class AutoWatchTests(unittest.TestCase):
                     now=[NOW]
                     def waited_for_lock(*args):
                         if race=='expiry':now[0]=NOW.replace(minute=46,second=0)
+                        elif race=='authorization':(root/'authorization.json').write_text('{}')
                         else:path.write_text(json.dumps(dict(current,updated_quote=True)))
                     with patch('studies.us_0dte_picks.session.RUNTIME',runtime), \
                          patch('studies.us_0dte_picks.session.datetime') as clock, \
@@ -60,13 +199,14 @@ class AutoWatchTests(unittest.TestCase):
                                side_effect=AssertionError('stale card launched slow preflight')) as process, \
                          patch('custody.opend.OpenDMarket') as market:
                         clock.now.side_effect=lambda *args:now[0]
-                        with self.assertRaises(StaleReviewCard):
+                        with self.assertRaises(ValueError if race=='authorization' else StaleReviewCard):
                             real_accept(root,current['actions'][0]['contract'],'dryrun',None,
                                         'FUTUSECURITIES',True,authorization=permission)
                         process.assert_not_called();market.assert_not_called()
                     self.assertFalse((runtime/'2026-09-30/dryrun/ledger.json').exists())
                     self.assertEqual(list(runtime.rglob('preflight-*')),[])
-                    if automatic:self.assertEqual(json.loads((root/'authorization.json').read_text()),permission)
+                    if automatic and race!='authorization':
+                        self.assertEqual(json.loads((root/'authorization.json').read_text()),permission)
 
     def test_cli_exit_status_matches_recorded_failure_or_permission_expiry(self):
         script = """

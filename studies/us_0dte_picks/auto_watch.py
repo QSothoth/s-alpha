@@ -15,7 +15,7 @@ import time
 
 from custody.models import ET, instant
 from .live_watch import write_json_atomic
-from .session import (RUNTIME, RejectedEntryQuote, StaleReviewCard, accept, authorized_action,
+from .session import (RUNTIME, RejectedEntryQuote, RejectedTradePlan, StaleReviewCard, accept, authorized_action,
                       selected_action, validate_authorization)
 
 
@@ -31,7 +31,7 @@ def load_authorization(folder, now):
     return permission
 
 
-def handoff_card(folder, permission, raw, attempted, now):
+def handoff_card(folder, permission, raw, attempted, now, skipped=None):
     """Only matching, fresh actions may use the fixed mode/account/action permission."""
     validate_authorization(permission, now)
     card = json.loads(raw)
@@ -52,13 +52,22 @@ def handoff_card(folder, permission, raw, attempted, now):
         if action['symbol'] in reserved or len(reserved) >= 2:
             continue
         selected_action(card, action['contract'], now)
-        cap = Decimal(str(authorized_action(action, permission)['custody_request']['max_entry_premium']))
-        if used + cap > Decimal('280'):
-            continue
         key = digest, action['contract']
         if key in attempted:
             continue
         attempted.add(key)
+        try:
+            cap = Decimal(str(authorized_action(action, permission)['custody_request']['max_entry_premium']))
+        except RejectedTradePlan as exc:
+            if skipped is not None:
+                skipped.append({'at': now.isoformat(), 'status': 'SKIPPED_TRADE_PLAN',
+                                'symbol': action['symbol'], 'contract': action['contract'],
+                                'direction': action['direction'], 'card_hash': digest,
+                                'allowed_directions': permission['trade_plan'][action['symbol']]['directions'],
+                                'reason': str(exc)})
+            continue
+        if used + cap > Decimal('280'):
+            continue
         result = accept(folder, action['contract'], permission['mode'], permission['acc_id'],
                         permission['security_firm'], True, permission['trade_action'], authorization=permission)
         reserved.add(action['symbol'])
@@ -91,7 +100,9 @@ def main(argv=None):
                 if load_authorization(args.session, now) != permission:
                     raise ValueError('authorization changed; obtain a new explicit decision')
                 card_path = args.session/'monitor/review_card.json'
-                handoffs = handoff_card(args.session, permission, card_path.read_bytes(), attempted, now) if card_path.exists() else ()
+                skipped = []
+                raw_card = card_path.read_bytes() if card_path.exists() else None
+                handoffs = handoff_card(args.session, permission, raw_card, attempted, now, skipped) if raw_card is not None else ()
                 try:
                     for handoff in handoffs:
                         latest['handoffs'].append(handoff)
@@ -109,6 +120,12 @@ def main(argv=None):
                     latest[field] = {'at': current.isoformat(), 'reason': str(exc)}
                     events.write(json.dumps({'status': status, **latest[field]},
                                             ensure_ascii=False)+'\n')
+                finally:
+                    for row in skipped:
+                        latest['last_skipped_plan'] = row
+                        # Preserve the original opportunity for a later paired review.
+                        (out/('skipped-' + row['card_hash'] + '.json')).write_bytes(raw_card)
+                        events.write(json.dumps(row, ensure_ascii=False)+'\n')
                 latest['as_of'] = datetime.now(ET).isoformat()
                 write_json_atomic(out/'latest.json', latest)
                 time.sleep(2)
