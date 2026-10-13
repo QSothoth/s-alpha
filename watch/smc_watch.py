@@ -678,16 +678,20 @@ def symbol_lines(code, st, width):
     rsi = d.get('rsi')
     vr = d.get('vol_ratio')
     tpb = d.get('tpb')
-    lines = [
-        cell(code, 11) + cell(name, 10, DIM)
-        + cell('%.2f' % last, 9)
-        + cell('%+dbp' % int(round(ret_bp)), 8)
-        + cell('vwap%+d' % int(round(vwap_bp)), 9)
-        + cell('rsi%s' % ('-' if rsi is None else '%.1f' % rsi), 8)
-        + cell(volume_text(vr), 6,
-               BOLD if vr is not None and vr >= VOL_MULT else DIM)
-        + DIM + ' tpb%s n%d' % ('-' if tpb is None else '%.1f' % tpb, len(bars)) + OFF,
-        health]
+    head = (cell(code, 11) + cell(name, 10, DIM)
+            + cell('%.2f' % last, 9)
+            + cell('%+dbp' % int(round(ret_bp)), 8)
+            + cell('vwap%+d' % int(round(vwap_bp)), 9)
+            + cell('rsi%s' % ('-' if rsi is None else '%.1f' % rsi), 8)
+            + cell(volume_text(vr), 6,
+                   BOLD if vr is not None and vr >= VOL_MULT else DIM))
+    tail = DIM + ' tpb%s n%d' % ('-' if tpb is None else '%.1f' % tpb, len(bars)) + OFF
+    # A half-width column cannot hold the full quote row; tpb/n then move
+    # under it so neighbouring columns stay aligned.
+    if _plain_width(head + tail) <= width:
+        lines = [head + tail, health]
+    else:
+        lines = [head, health + tail]
     if not ms:
         lines.append(DIM + '  (none)' + OFF)
     for m in ms:

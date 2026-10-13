@@ -463,6 +463,16 @@ def test_board_renders_without_crashing():
             assert w.disp_width(line) <= wide, (wide, w.disp_width(line), line)
 
 
+def test_two_column_rows_fit_their_column():
+    bars = fake_bars()
+    ms, d = w.marks(bars)
+    st = {'bars': bars, 'marks': ms, 'read': d, 'name': '腾讯控股'}
+    for line in w.symbol_lines('HK.00700', st, 69):
+        assert w._plain_width(line) <= 69, line
+    plain = re.sub(r'\x1b\[[0-9;]*m', '', '\n'.join(w.symbol_lines('HK.00700', st, 69)))
+    assert 'tpb' in plain and 'n%d' % len(bars) in plain
+
+
 class PollingTests(unittest.TestCase):
     def run_watch(self, *, seconds=90, codes=('SZ.300795',), quote=None, daily=None):
         elapsed = [0.0]
