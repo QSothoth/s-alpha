@@ -13,7 +13,9 @@ daily-context tag, D+ or D-; only granular D+ marks are drawn bold. These
 labels came from studies W2/W6; W12 corrects dated tick sizes and the volume
 baseline, so earlier performance figures describe the old implementation.
 Hong Kong marks also carry one S00-S100 joint stock-and-HSI directional
-strength percentile from W19; it is not a future-return probability.
+strength percentile from W19 (pipe output only); it is not a future-return
+probability. The board shows the raw stock and HSI moves it is built from, and
+the swing reference level, which is not a stop.
 Volume expansion and the premium/discount half of the day's range only split
 `plain` from `vol` marks for de-duplication.
 
@@ -229,12 +231,21 @@ def with_daily(ms, dctx):
 
 
 def with_strength(ms, hsi, stock_previous):
+    """W19 score plus the raw moves it is built from (stock and HSI vs
+    yesterday's close, in percent). The board shows the raw moves."""
     closes, previous = hsi if hsi else ({}, None)
-    return [dict(m, strength=(
-        signal_strength_score(m['side'], m['t'], m['close'], stock_previous,
-                              closes[m['t']], previous)
-        if stock_previous is not None and previous is not None and m['t'] in closes else None))
-            for m in ms]
+    out = []
+    for m in ms:
+        hsi_close = closes.get(m['t']) if previous is not None else None
+        out.append(dict(
+            m,
+            strength=(signal_strength_score(m['side'], m['t'], m['close'], stock_previous,
+                                            hsi_close, previous)
+                      if stock_previous is not None and hsi_close is not None else None),
+            stock_pct=(round((m['close'] / stock_previous - 1.0) * 100.0, 2)
+                       if stock_previous else None),
+            hsi_pct=round((hsi_close / previous - 1.0) * 100.0, 2) if hsi_close else None))
+    return out
 
 
 def hk_daily(ctx, code):
@@ -579,13 +590,28 @@ def paint_side(side, strong):
     return color + (BOLD if strong else '') + ch + OFF
 
 
-def paint_strength(value, base=''):
-    """Color the validated five strength bands without changing the score."""
-    label = 'S-' if value is None else 'S%02d' % value
-    color = (DIM if value is None else BOLD + GREEN if value >= 80 else GREEN
-             if value >= 65 else YELLOW if value >= 45 else RED
-             if value >= 20 else BOLD + RED)
-    return color + label + OFF + base
+def moves_text(m):
+    """Stock / HSI move vs yesterday's close, percent; `-` when unknown."""
+    return '/'.join('-' if v is None else '%+.1f' % v
+                    for v in (m.get('stock_pct'), m.get('hsi_pct')))
+
+
+def stop_crossed(m):
+    """The swing reference already sits on the wrong side of the signal close."""
+    stop = m.get('stop')
+    if stop is None:
+        return False
+    return stop >= m['close'] if m['side'] == 'BUY' else stop <= m['close']
+
+
+def ref_text(m):
+    """Swing reference, not a stop: exiting there averaged -1.15bp (W2)."""
+    stop = m.get('stop')
+    if stop is None:
+        return 'ref -'
+    if stop_crossed(m):
+        return 'ref crossed'
+    return 'ref %.2f %+.1f%%' % (stop, (stop / m['close'] - 1.0) * 100.0)
 
 
 def disp_width(text):
@@ -616,18 +642,22 @@ def mark_text(m, width):
     """One signal. Bold = granular tape AND daily D+; `~` = tick-bound.
 
     Emphasis is context, not volume confirmation or a profitability claim.
+    stk/hsi are raw moves vs yesterday's close; `ref` is the swing level.
     """
     strong = is_strong(m)
-    inv = '-' if m.get('stop') is None else '%.2f' % m['stop']
-    strength = 'S-' if m.get('strength') is None else 'S%02d' % m['strength']
     rest = clip(('~' if m.get('coarse') else ' ') + cell(m['trigger'], 13) + cell('%.2f' % m['close'], 9)
                 + cell(volume_text(m['vol_ratio']), 6)
                 + cell({True: 'D+', False: 'D-'}.get(m.get('daily'), ''), 3)
-                + cell(strength, 5)
-                + 'inv ' + inv, width - 9)
+                + cell(moves_text(m), 11)
+                + ref_text(m), width - 9)
     base = '' if strong else DIM
-    rest = rest.replace(strength, paint_strength(m.get('strength'), base), 1)
     return base + '  ' + cell(m['t'], 6) + paint_side(m['side'], strong) + base + rest + OFF
+
+
+def caption(width):
+    """Column names over the signal rows, aligned with mark_text."""
+    return DIM + clip('  ' + cell('time', 6) + cell('', 2) + cell('trigger', 13) + cell('close', 9)
+                      + cell('vol', 6) + cell('D', 3) + cell('stk/hsi%', 11) + 'ref', width) + OFF
 
 
 def symbol_lines(code, st, width):
@@ -715,20 +745,24 @@ def frame_lines(state, at, width, rows=None):
     if width >= 100:
         head += ' src=%s:%s' % (HOST, PORT)
     legend = (GREEN + 'B' + OFF + '/' + RED + 'S' + OFF
-              + DIM + ' D+ & >=%g ticks/bar  ' % GATE_TPB + OFF
+              + DIM + ' 粗=D+且每根≥%g跳  ' % GATE_TPB + OFF
               + GREEN + 'b' + OFF + '/' + RED + 's' + OFF
-              + DIM + ' plain  ~ <%g ticks  D+/D- daily  Sxx strength   ^C' % GATE_TPB + OFF)
-    chrome = [BOLD + clip(head, width) + OFF, legend, '-' * width]
+              + DIM + ' 其余  ~ 不到%g跳  D+/D- 日线背景  ^C' % GATE_TPB + OFF)
+    legend2 = DIM + clip('stk/hsi% 个股/恒指较昨收  ref 结构位(不是止损)  crossed 已在信号价另一侧',
+                         width) + OFF
+    chrome = [BOLD + clip(head, width) + OFF, legend, legend2, '-' * width]
     blocks = [symbol_lines(code, st, width) for code, st in state.items()]
     body = _stack(blocks)
-    room = None if rows is None else rows - 1 - len(chrome)
+    cap = caption(width)
+    room = None if rows is None else rows - 2 - len(chrome)
     if room is not None and len(body) > room and width >= 136:
         col_w = (width - 1) // 2
         narrow = [symbol_lines(code, st, col_w) for code, st in state.items()]
         side = _columns(narrow, width)
         if len(side) <= room:
             body = side
-    return chrome + body
+            cap = _pad(caption(col_w), col_w) + ' ' + caption(col_w)
+    return chrome[:3] + [cap] + chrome[3:] + body
 
 
 def board(state, at, width):

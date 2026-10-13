@@ -388,18 +388,28 @@ def test_signal_strength_is_joint_and_missing_safe():
     assert scored[1]['strength'] <= 10
     assert w.with_strength(marks, None, 100.0)[0]['strength'] is None
     assert w.with_strength(marks, ({'10:47': 102.0}, 100.0), None)[0]['strength'] is None
+    assert scored[0]['stock_pct'] == 2.0 and scored[0]['hsi_pct'] == 2.0
+    assert w.with_strength(marks, None, 100.0)[0]['hsi_pct'] is None
+    assert w.with_strength(marks, ({'10:47': 102.0}, 100.0), None)[0]['stock_pct'] is None
     text = re.sub(r'\x1b\[[0-9;]*m', '', w.mark_text(dict(
-        marks[0], trigger='BOS', close=10, vol_ratio=1, stop=9, strength=91), 100))
-    assert 'S91' in text
+        scored[0], trigger='BOS', vol_ratio=1, stop=100.0), 100))
+    assert '+2.0/+2.0' in text and 'S98' not in text
+    missing = re.sub(r'\x1b\[[0-9;]*m', '', w.mark_text(dict(
+        marks[0], trigger='BOS', vol_ratio=1, stop=100.0), 100))
+    assert ' -/- ' in missing
 
 
-def test_signal_strength_uses_five_colors():
-    assert w.paint_strength(80) == w.BOLD + w.GREEN + 'S80' + w.OFF
-    assert w.paint_strength(65) == w.GREEN + 'S65' + w.OFF
-    assert w.paint_strength(45) == w.YELLOW + 'S45' + w.OFF
-    assert w.paint_strength(20) == w.RED + 'S20' + w.OFF
-    assert w.paint_strength(19) == w.BOLD + w.RED + 'S19' + w.OFF
-    assert w.paint_strength(None) == w.DIM + 'S-' + w.OFF
+def test_swing_reference_on_the_wrong_side_is_flagged_not_hidden():
+    base = {'t': '10:21', 'trigger': 'FVG', 'close': 599.0, 'vol_ratio': 0.6,
+            'daily': True, 'coarse': False}
+    def plain(m):
+        return re.sub(r'\x1b\[[0-9;]*m', '', w.mark_text(m, 100))
+    assert 'ref crossed' in plain(dict(base, side='BUY', stop=599.5))
+    assert 'ref crossed' in plain(dict(base, side='BUY', stop=599.0))
+    assert 'ref 580.00 -3.2%' in plain(dict(base, side='BUY', stop=580.0))
+    assert 'ref crossed' in plain(dict(base, side='SELL', stop=598.0))
+    assert 'ref 605.00 +1.0%' in plain(dict(base, side='SELL', stop=605.0))
+    assert 'ref -' in plain(dict(base, side='BUY', stop=None))
 
 
 def test_hsi_session_uses_closed_minutes_and_previous_close():
