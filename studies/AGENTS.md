@@ -6,6 +6,7 @@
 
 | 目录 | 内容 | 状态 |
 |---|---|---|
+| [daily_technical/](daily_technical/README.md) | 独立 `daily-technical-review` 技能：沪深 / 美 / 港日 K 的 Cycle、SMC、CMF/MFI 参考 | 按需只读，辅助模型和人审视介入条件，不做策略收益认证或交易 |
 | [us_0dte_picks/](us_0dte_picks/README.md) | 近到期个股名单研究与盘中人工会话流程（v6.6 择时，只做 mock） | 方向规则全部未过（A4 在 P5 失败，TS1–TS67 失败，教训见 notes/FAILED_TRIALS.md）；只有大波动名单成立；SV1 待评测 |
 | [watch_signal/](watch_signal/README.md) | 盯盘信号研究 W1–W19 | 通过的结论已进 `watch/` |
 | [us_opening_range/](us_opening_range/README.md) | 仅剩 SV1 收盘采集工具 `capture.py` | 研究已结束；模块路径被定时任务引用，勿移动 |
