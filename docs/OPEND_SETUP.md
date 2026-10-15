@@ -8,6 +8,7 @@
 - API 默认 `127.0.0.1:11111`，telnet 验证码口 `127.0.0.1:22222`
 - 启动后走交互登录；首次通常要手机验证码，用 `input_phone_verify_code -code=......` 打进 telnet
 - 不要把账号密码写进 xml 或 git；记住密码后下次可用 `FutuOpenD -login_account=账号 -login_by_remember=1`
+- GUI 版的"记住密码"CLI 读不到：`-login_by_remember=1` 报 "Unable to find remembered password"；CLI 首次必须用 `-login_pwd_md5=$(printf %s "$FUTU_LOGIN_PASSWORD" | md5sum | cut -d" " -f1)` 或交互密码登录（密码只走环境变量，不进 xml/git），之后才能 remember。GUI 版 API 禁用 unlock_trade，真实下单必须用 CLI。
 - Python：`/opt/futu-opend/venv/bin/python`（已装 `futu-api`）；评测和单元测试不需要。`custody freeze` / `dryrun` / `run` 用这个解释器。端口也可用 `FUTU_HOST` / `FUTU_PORT` 或 `--host` / `--port` 覆盖。
 
 - `freeze` / `dryrun` 只用 `OpenQuoteContext`。只有 `custody run` 通过 `custody/broker.py` 使用 `OpenSecTradeContext` 下单，账户需要美股期权交易权限；其他模块不得出现 `OpenSecTradeContext`、`unlock_trade`、`place_order`、`modify_order`（测试静态扫描）。
