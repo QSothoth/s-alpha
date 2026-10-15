@@ -1,0 +1,3272 @@
+{
+  "dataset": "custody-0dte-v6.1",
+  "fingerprint": "38b2d5d8b852deae9bc1aa599b41fb57410274c283834ea86367177960656206",
+  "verified_files": 163,
+  "sessions": 21,
+  "cases": 146,
+  "sides": {
+    "symbol_sessions": 73,
+    "both_sides": 73,
+    "ok": true,
+    "missing": []
+  },
+  "fill_model": {
+    "delay_minutes": 1,
+    "slippage_fraction": 0.25,
+    "fee_per_contract": 0.65,
+    "multiplier": 100
+  },
+  "source_sha256": {
+    "studies/us_0dte_picks/baselines.py": "208c3e112512f93ee60a3580483861805dd5bc78bd211e87007cf701723e82c5",
+    "studies/us_0dte_picks/notes/R29_BASELINE_PROTOCOL.md": "257af2041792531ae99c62a9e21f65f3be96130e0ba512f3293257c44f7b6ed4",
+    "custody/evaluate.py": "03f7f592c3ccfa58c72c3045584bf46785bc7090592f5598ae6d541275e0bcc0",
+    "custody/engines/zero_dte_timing.py": "4ec8b559cf2b76a4ed185847f92f39c47bf8b0c138836849a209bd3137689f7c",
+    "custody/engines/open_hold.py": "e4a5ba48710d93db374246b34325598be45ad7f2b1470320f7150f205118d0c7",
+    "custody/strategies/index.json": "288340d57213a7f6f4bf1f3a9818f43d651250d8463482e6d2f45e32c8f30a43",
+    "reports/zero_dte_timing_v6.1/custody-0dte-v6.1/report.json": "4842bbc6f6f320209c68ce92854bd3b9abf7e3ceeceaf1e08b5cf9cedd08aae2",
+    "custody/strategies/zero_dte_timing_v6.1.json": "29097de544492b5a2abb3a24329334da3b80cfcea9c8465173d05addf3bacf5b",
+    "reports/zero_dte_timing_v6.2/custody-0dte-v6.1/report.json": "90314117088f208e3dac93e70d9274b5a6873ff5128f91cb9de885bb4ce8dafe",
+    "custody/strategies/zero_dte_timing_v6.2.json": "c35072f93626067f7fa2d1f922a4fa42cce992591e54c9dc5b5623a07b0abcc2",
+    "reports/zero_dte_timing_v6.3/custody-0dte-v6.1/report.json": "32d8283d25618891a6d53c73ae8c1a7368144ea7025f2e188ce9373f83118458",
+    "custody/strategies/zero_dte_timing_v6.3.json": "29f1fde47b3fdd755a6591c3e61f1a168cdc859db642c04edb840d0441543a3c",
+    "reports/zero_dte_timing_v6.4/custody-0dte-v6.1/report.json": "af289f88d01eaf3f1b7b68ff46962a62aa3167ec5621f43947ec1680188d8400",
+    "custody/strategies/zero_dte_timing_v6.4.json": "1df582eb05107fdb7d3cac3e2a853f6bc0537221c9ca0c92e7e6b78593fabd38",
+    "reports/zero_dte_timing_v6.5/custody-0dte-v6.1/report.json": "b232b9e755c0f3569119f22de23fffc739cc67c4aed87820df1c2edc08eb1305",
+    "custody/strategies/zero_dte_timing_v6.5.json": "547d304e3380ea6764057d46cea8e6d9ad6c7cfeff3fd727398586071a7638c2",
+    "reports/zero_dte_timing_v6.6/custody-0dte-v6.1/report.json": "ef1c10f004ca1be4fa5b0e2ad722eb9ad0d99fefbf0a036b3a6a51be987e3429",
+    "custody/strategies/zero_dte_timing_v6.6.json": "2fc2ba2c1856d3a51ffdec09a19efd7412bbc9d507d0a28d2b81a78863b435c2",
+    "reports/open_hold_v1/custody-0dte-v6.1/report.json": "848f584ead081cbd1210d242fff1aec9432899539d69031994c3a2bf7b720b61",
+    "custody/strategies/open_hold_v1.json": "3dcd7617ab766676fdf1906b5e18a5257912a087fc34da3567c39b264ce3fb23",
+    "reports/open_hold_v2/custody-0dte-v6.1/report.json": "ce2269c07fb9b18a6923de282d1b95b080fcde8b2896753a8886c80489c4544c",
+    "custody/strategies/open_hold_v2.json": "b7bdc4956db1c0e354f3b7e8fbba5f399e2ba775fe5e890b059f570a4b887d72",
+    "reports/open_hold_v3/custody-0dte-v6.1/report.json": "34d4c8002d64ad4a7b4a5905af797713e34801cfcceee74a557c567a40330057",
+    "custody/strategies/open_hold_v3.json": "6817da2325435db83be33867b144ed0d65962478cee37412eb1546b574483def"
+  },
+  "rows": [
+    {
+      "strategy": "zero_dte_timing_v6.1",
+      "mode": "selective",
+      "strategy_sha256": "29097de544492b5a2abb3a24329334da3b80cfcea9c8465173d05addf3bacf5b",
+      "prior_verdict": "REJECT",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "COMPLETED": 126,
+          "NO_ENTRY_SIGNAL": 20
+        },
+        "completed": 126,
+        "entered": 126,
+        "sold": 126,
+        "expired_settlement": 0,
+        "balanced": {
+          "n": 146,
+          "expectancy": -0.145092965731073,
+          "win_rate": 0.13698630136986265,
+          "average_win": 0.7527666670310595,
+          "average_loss": 0.3418764748807345,
+          "payoff_ratio": 2.2018674063305066,
+          "profit_factor": 0.41544668043971766
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": -0.14509296573107333,
+          "win_rate": 0.136986301369863,
+          "average_win": 0.7527666670310599,
+          "average_loss": 0.341876474880735,
+          "payoff_ratio": 2.2018674063305044,
+          "profit_factor": 0.41544668043971783
+        },
+        "traded_raw": {
+          "n": 126,
+          "expectancy": -0.16812359521219608,
+          "win_rate": 0.15873015873015872,
+          "average_win": 0.7527666670310599,
+          "average_loss": 0.341876474880735,
+          "payoff_ratio": 2.2018674063305044,
+          "profit_factor": 0.41544668043971783
+        },
+        "coverage_gaps": [],
+        "score": 47.54360432717864,
+        "expectations_by_direction_hit_rate": {
+          "0.5": -0.145092965731073,
+          "0.6": -0.11814893029882002,
+          "0.75": -0.0777328771504393,
+          "0.85": -0.05078884171818576
+        },
+        "break_even_direction_hit_rate": 1.0384975316555156,
+        "entry_reasons": {
+          "trend_breakout": 103,
+          "reversal_reclaim": 23
+        },
+        "exit_reasons": {
+          "invalidation_stop": 67,
+          "breakeven_stop": 33,
+          "trailing_stop": 11,
+          "charm_exit": 2,
+          "scheduled_flatten": 9,
+          "take_profit": 4
+        },
+        "entry_decision_minute_median": 35.0,
+        "entry_fill_minute_median": 36.5,
+        "exit_fill_minute_median": 95.0,
+        "hold_minutes_median": 29.0,
+        "worst_return": -0.8233854520734193,
+        "residual_value": {
+          "n": 126,
+          "negative_entry": 0,
+          "negative_exit": 4,
+          "entry_median": 0.8599999999999841,
+          "exit_median": 0.6550000000000114,
+          "change_median": -0.11999999999999883
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 64,
+            "NO_ENTRY_SIGNAL": 9
+          },
+          "completed": 64,
+          "entered": 64,
+          "sold": 64,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.11554272967938847,
+            "win_rate": 0.11805496468986643,
+            "average_win": 1.3724923152546782,
+            "average_loss": 0.3606402685575159,
+            "payoff_ratio": 3.805710107593793,
+            "profit_factor": 0.5837381982711886
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.13077881948727013,
+            "win_rate": 0.1095890410958904,
+            "average_win": 1.3473015818238359,
+            "average_loss": 0.36295118709216784,
+            "payoff_ratio": 3.712073771180977,
+            "profit_factor": 0.5302962530258538
+          },
+          "traded_raw": {
+            "n": 64,
+            "expectancy": -0.1491695909776675,
+            "win_rate": 0.125,
+            "average_win": 1.3473015818238359,
+            "average_loss": 0.36295118709216784,
+            "payoff_ratio": 3.712073771180977,
+            "profit_factor": 0.5302962530258538
+          },
+          "coverage_gaps": [],
+          "score": 63.26045645433752,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.11554272967938847,
+            "0.6": -0.07565130322830009,
+            "0.75": -0.01581416355166754,
+            "0.85": 0.02407726289942084
+          },
+          "break_even_direction_hit_rate": 0.7896430134456522,
+          "entry_reasons": {
+            "trend_breakout": 52,
+            "reversal_reclaim": 12
+          },
+          "exit_reasons": {
+            "invalidation_stop": 35,
+            "breakeven_stop": 18,
+            "trailing_stop": 4,
+            "take_profit": 4,
+            "scheduled_flatten": 2,
+            "charm_exit": 1
+          },
+          "entry_decision_minute_median": 30.0,
+          "entry_fill_minute_median": 31.0,
+          "exit_fill_minute_median": 73.5,
+          "hold_minutes_median": 27.0,
+          "worst_return": -0.8233854520734193,
+          "residual_value": {
+            "n": 64,
+            "negative_entry": 0,
+            "negative_exit": 3,
+            "entry_median": 0.9649500000000149,
+            "exit_median": 0.705,
+            "change_median": -0.0948999999999961
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 62,
+            "NO_ENTRY_SIGNAL": 11
+          },
+          "completed": 62,
+          "entered": 62,
+          "sold": 62,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.16471115372695608,
+            "win_rate": 0.15364162341529825,
+            "average_win": 0.3506676534501247,
+            "average_loss": 0.3203826413057494,
+            "payoff_ratio": 1.0945276311505077,
+            "profit_factor": 0.24647772657210035
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.15940711197487673,
+            "win_rate": 0.1643835616438356,
+            "average_win": 0.3564100571692092,
+            "average_loss": 0.3182727972039302,
+            "payoff_ratio": 1.1198256976415202,
+            "profit_factor": 0.2687581674339648
+          },
+          "traded_raw": {
+            "n": 62,
+            "expectancy": -0.1876890189381613,
+            "win_rate": 0.1935483870967742,
+            "average_win": 0.3564100571692092,
+            "average_loss": 0.3182727972039302,
+            "payoff_ratio": 1.1198256976415202,
+            "profit_factor": 0.2687581674339648
+          },
+          "coverage_gaps": [],
+          "score": 31.04346222850096,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.16471115372695608,
+            "0.6": -0.14880547970648478,
+            "0.75": -0.12494696867577745,
+            "0.85": -0.10904129465530597
+          },
+          "break_even_direction_hit_rate": 1.5355496630634082,
+          "entry_reasons": {
+            "trend_breakout": 51,
+            "reversal_reclaim": 11
+          },
+          "exit_reasons": {
+            "invalidation_stop": 32,
+            "breakeven_stop": 15,
+            "trailing_stop": 7,
+            "charm_exit": 1,
+            "scheduled_flatten": 7
+          },
+          "entry_decision_minute_median": 41.0,
+          "entry_fill_minute_median": 42.0,
+          "exit_fill_minute_median": 98.0,
+          "hold_minutes_median": 35.0,
+          "worst_return": -0.6498687664041995,
+          "residual_value": {
+            "n": 62,
+            "negative_entry": 0,
+            "negative_exit": 1,
+            "entry_median": 0.8425000000000046,
+            "exit_median": 0.5799999999999841,
+            "change_median": -0.14229999999999554
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 126,
+          "outcomes": {
+            "COMPLETED": 126
+          },
+          "completed": 126,
+          "entered": 126,
+          "sold": 126,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 126,
+            "expectancy": -0.20338661840014996,
+            "win_rate": 0.1370851370851372,
+            "average_win": 0.7273606681575986,
+            "average_loss": 0.351247809408488,
+            "payoff_ratio": 2.070790617548608,
+            "profit_factor": 0.328971753623943
+          },
+          "raw": {
+            "n": 126,
+            "expectancy": -0.16812359521219608,
+            "win_rate": 0.15873015873015872,
+            "average_win": 0.7527666670310599,
+            "average_loss": 0.341876474880735,
+            "payoff_ratio": 2.2018674063305044,
+            "profit_factor": 0.41544668043971783
+          },
+          "traded_raw": {
+            "n": 126,
+            "expectancy": -0.16812359521219608,
+            "win_rate": 0.15873015873015872,
+            "average_win": 0.7527666670310599,
+            "average_loss": 0.341876474880735,
+            "payoff_ratio": 2.2018674063305044,
+            "profit_factor": 0.41544668043971783
+          },
+          "coverage_gaps": [],
+          "score": 47.42295194016471,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.20338661840014996,
+            "0.6": -0.16778158673863003,
+            "0.75": -0.11437403924635077,
+            "0.85": -0.0787690075848311
+          },
+          "break_even_direction_hit_rate": 1.0712299888781198,
+          "entry_reasons": {
+            "trend_breakout": 103,
+            "reversal_reclaim": 23
+          },
+          "exit_reasons": {
+            "invalidation_stop": 67,
+            "breakeven_stop": 33,
+            "trailing_stop": 11,
+            "charm_exit": 2,
+            "scheduled_flatten": 9,
+            "take_profit": 4
+          },
+          "entry_decision_minute_median": 35.0,
+          "entry_fill_minute_median": 36.5,
+          "exit_fill_minute_median": 95.0,
+          "hold_minutes_median": 29.0,
+          "worst_return": -0.8233854520734193,
+          "residual_value": {
+            "n": 126,
+            "negative_entry": 0,
+            "negative_exit": 4,
+            "entry_median": 0.8599999999999841,
+            "exit_median": 0.6550000000000114,
+            "change_median": -0.11999999999999883
+          }
+        },
+        "fallback": {
+          "cases": 0,
+          "outcomes": {},
+          "completed": 0,
+          "entered": 0,
+          "sold": 0,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "traded_raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "coverage_gaps": [],
+          "score": null,
+          "expectations_by_direction_hit_rate": {
+            "0.5": null,
+            "0.6": null,
+            "0.75": null,
+            "0.85": null
+          },
+          "break_even_direction_hit_rate": null,
+          "entry_reasons": {},
+          "exit_reasons": {},
+          "entry_decision_minute_median": null,
+          "entry_fill_minute_median": null,
+          "exit_fill_minute_median": null,
+          "hold_minutes_median": null,
+          "worst_return": null,
+          "residual_value": {
+            "n": 0,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": null,
+            "exit_median": null,
+            "change_median": null
+          }
+        }
+      },
+      "days_with_completed_case": 21,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    },
+    {
+      "strategy": "zero_dte_timing_v6.2",
+      "mode": "selective",
+      "strategy_sha256": "c35072f93626067f7fa2d1f922a4fa42cce992591e54c9dc5b5623a07b0abcc2",
+      "prior_verdict": "REJECT",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "COMPLETED": 67,
+          "NO_ENTRY_SIGNAL": 79
+        },
+        "completed": 67,
+        "entered": 67,
+        "sold": 67,
+        "expired_settlement": 0,
+        "balanced": {
+          "n": 146,
+          "expectancy": -0.03294353618800869,
+          "win_rate": 0.08219178082191758,
+          "average_win": 0.9322218500339705,
+          "average_loss": 0.2908439724337626,
+          "payoff_ratio": 3.2052300834471534,
+          "profit_factor": 0.6993229272975613
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": -0.032943536188008785,
+          "win_rate": 0.0821917808219178,
+          "average_win": 0.9322218500339706,
+          "average_loss": 0.2908439724337624,
+          "payoff_ratio": 3.2052300834471557,
+          "profit_factor": 0.6993229272975614
+        },
+        "traded_raw": {
+          "n": 67,
+          "expectancy": -0.07178740721566094,
+          "win_rate": 0.1791044776119403,
+          "average_win": 0.9322218500339706,
+          "average_loss": 0.2908439724337624,
+          "payoff_ratio": 3.2052300834471557,
+          "profit_factor": 0.6993229272975614
+        },
+        "coverage_gaps": [],
+        "score": 55.336857930479134,
+        "expectations_by_direction_hit_rate": {
+          "0.5": -0.03294353618800869,
+          "0.6": -0.013932931415363359,
+          "0.75": 0.014582975743604882,
+          "0.85": 0.03359358051625041
+        },
+        "break_even_direction_hit_rate": 0.673290311286738,
+        "entry_reasons": {
+          "trend_breakout": 63,
+          "reversal_reclaim": 4
+        },
+        "exit_reasons": {
+          "invalidation_stop": 32,
+          "breakeven_stop": 17,
+          "trailing_stop": 9,
+          "scheduled_flatten": 5,
+          "take_profit": 4
+        },
+        "entry_decision_minute_median": 43,
+        "entry_fill_minute_median": 44,
+        "exit_fill_minute_median": 98,
+        "hold_minutes_median": 37,
+        "worst_return": -0.7940366972477063,
+        "residual_value": {
+          "n": 67,
+          "negative_entry": 0,
+          "negative_exit": 6,
+          "entry_median": 0.866900000000046,
+          "exit_median": 0.5900000000000136,
+          "change_median": -0.140100000000011
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 31,
+            "NO_ENTRY_SIGNAL": 42
+          },
+          "completed": 31,
+          "entered": 31,
+          "sold": 31,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": 0.03570543513098053,
+            "win_rate": 0.09112567004169149,
+            "average_win": 1.6206500457292148,
+            "average_loss": 0.3171712102669241,
+            "payoff_ratio": 5.109700985676829,
+            "profit_factor": 1.3188629092543223
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": 0.0232241448348115,
+            "win_rate": 0.0821917808219178,
+            "average_win": 1.6206500457292148,
+            "average_loss": 0.321141508057362,
+            "payoff_ratio": 5.046529349422298,
+            "profit_factor": 1.2111670438613515
+          },
+          "traded_raw": {
+            "n": 31,
+            "expectancy": 0.05468911525616901,
+            "win_rate": 0.1935483870967742,
+            "average_win": 1.6206500457292148,
+            "average_loss": 0.321141508057362,
+            "payoff_ratio": 5.046529349422298,
+            "profit_factor": 1.2111670438613515
+          },
+          "coverage_gaps": [],
+          "score": 69.46808705251708,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.03570543513098053,
+            "0.6": 0.06770598989063624,
+            "0.75": 0.11570682203011971,
+            "0.85": 0.14770737678977533
+          },
+          "break_even_direction_hit_rate": 0.3884224495507939,
+          "entry_reasons": {
+            "trend_breakout": 29,
+            "reversal_reclaim": 2
+          },
+          "exit_reasons": {
+            "invalidation_stop": 16,
+            "breakeven_stop": 7,
+            "take_profit": 4,
+            "trailing_stop": 3,
+            "scheduled_flatten": 1
+          },
+          "entry_decision_minute_median": 35,
+          "entry_fill_minute_median": 36,
+          "exit_fill_minute_median": 93,
+          "hold_minutes_median": 28,
+          "worst_return": -0.7940366972477063,
+          "residual_value": {
+            "n": 31,
+            "negative_entry": 0,
+            "negative_exit": 3,
+            "entry_median": 0.9800000000000364,
+            "exit_median": 0.6799999999999771,
+            "change_median": -0.23999999999997723
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 36,
+            "NO_ENTRY_SIGNAL": 37
+          },
+          "completed": 36,
+          "entered": 36,
+          "sold": 36,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.08957884313134906,
+            "win_rate": 0.07411937377690803,
+            "average_win": 0.2458595111256146,
+            "average_loss": 0.27086133206889074,
+            "payoff_ratio": 0.9076951266823232,
+            "profit_factor": 0.16904127440726413
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.08911121721082906,
+            "win_rate": 0.0821917808219178,
+            "average_win": 0.2437936543387267,
+            "average_loss": 0.2655960260807627,
+            "payoff_ratio": 0.9179115287839197,
+            "profit_factor": 0.18358230575678394
+          },
+          "traded_raw": {
+            "n": 36,
+            "expectancy": -0.1806977460108478,
+            "win_rate": 0.16666666666666666,
+            "average_win": 0.2437936543387267,
+            "average_loss": 0.2655960260807627,
+            "payoff_ratio": 0.9179115287839197,
+            "profit_factor": 0.18358230575678394
+          },
+          "coverage_gaps": [],
+          "score": 23.97675002497889,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.08957884313134906,
+            "0.6": -0.08139669911502705,
+            "0.75": -0.06912348309054389,
+            "0.85": -0.0609413390742218
+          },
+          "break_even_direction_hit_rate": 1.594808927252485,
+          "entry_reasons": {
+            "trend_breakout": 34,
+            "reversal_reclaim": 2
+          },
+          "exit_reasons": {
+            "invalidation_stop": 16,
+            "breakeven_stop": 10,
+            "trailing_stop": 6,
+            "scheduled_flatten": 4
+          },
+          "entry_decision_minute_median": 44.5,
+          "entry_fill_minute_median": 45.5,
+          "exit_fill_minute_median": 128.0,
+          "hold_minutes_median": 40.0,
+          "worst_return": -0.5786324786324786,
+          "residual_value": {
+            "n": 36,
+            "negative_entry": 0,
+            "negative_exit": 3,
+            "entry_median": 0.7524999999999864,
+            "exit_median": 0.54,
+            "change_median": -0.11999999999999883
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 67,
+          "outcomes": {
+            "COMPLETED": 67
+          },
+          "completed": 67,
+          "entered": 67,
+          "sold": 67,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 67,
+            "expectancy": -0.15287243500069408,
+            "win_rate": 0.12639185027244737,
+            "average_win": 0.943151593712717,
+            "average_loss": 0.3114429622735361,
+            "payoff_ratio": 3.028328483738091,
+            "profit_factor": 0.43813240571505685
+          },
+          "raw": {
+            "n": 67,
+            "expectancy": -0.07178740721566094,
+            "win_rate": 0.1791044776119403,
+            "average_win": 0.9322218500339706,
+            "average_loss": 0.2908439724337624,
+            "payoff_ratio": 3.2052300834471557,
+            "profit_factor": 0.6993229272975614
+          },
+          "traded_raw": {
+            "n": 67,
+            "expectancy": -0.07178740721566094,
+            "win_rate": 0.1791044776119403,
+            "average_win": 0.9322218500339706,
+            "average_loss": 0.2908439724337624,
+            "payoff_ratio": 3.2052300834471557,
+            "profit_factor": 0.6993229272975614
+          },
+          "coverage_gaps": [],
+          "score": 58.47221380872854,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.15287243500069408,
+            "0.6": -0.108619974450317,
+            "0.75": -0.04224128362475133,
+            "0.85": 0.002011176925625704
+          },
+          "break_even_direction_hit_rate": 0.8454552201151929,
+          "entry_reasons": {
+            "trend_breakout": 63,
+            "reversal_reclaim": 4
+          },
+          "exit_reasons": {
+            "invalidation_stop": 32,
+            "breakeven_stop": 17,
+            "trailing_stop": 9,
+            "scheduled_flatten": 5,
+            "take_profit": 4
+          },
+          "entry_decision_minute_median": 43,
+          "entry_fill_minute_median": 44,
+          "exit_fill_minute_median": 98,
+          "hold_minutes_median": 37,
+          "worst_return": -0.7940366972477063,
+          "residual_value": {
+            "n": 67,
+            "negative_entry": 0,
+            "negative_exit": 6,
+            "entry_median": 0.866900000000046,
+            "exit_median": 0.5900000000000136,
+            "change_median": -0.140100000000011
+          }
+        },
+        "fallback": {
+          "cases": 0,
+          "outcomes": {},
+          "completed": 0,
+          "entered": 0,
+          "sold": 0,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "traded_raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "coverage_gaps": [],
+          "score": null,
+          "expectations_by_direction_hit_rate": {
+            "0.5": null,
+            "0.6": null,
+            "0.75": null,
+            "0.85": null
+          },
+          "break_even_direction_hit_rate": null,
+          "entry_reasons": {},
+          "exit_reasons": {},
+          "entry_decision_minute_median": null,
+          "entry_fill_minute_median": null,
+          "exit_fill_minute_median": null,
+          "hold_minutes_median": null,
+          "worst_return": null,
+          "residual_value": {
+            "n": 0,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": null,
+            "exit_median": null,
+            "change_median": null
+          }
+        }
+      },
+      "days_with_completed_case": 19,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    },
+    {
+      "strategy": "zero_dte_timing_v6.3",
+      "mode": "selective",
+      "strategy_sha256": "29f1fde47b3fdd755a6591c3e61f1a168cdc859db642c04edb840d0441543a3c",
+      "prior_verdict": "REJECT",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "COMPLETED": 53,
+          "NO_ENTRY_SIGNAL": 93
+        },
+        "completed": 53,
+        "entered": 53,
+        "sold": 53,
+        "expired_settlement": 0,
+        "balanced": {
+          "n": 146,
+          "expectancy": -0.011367768116792173,
+          "win_rate": 0.05479452054794504,
+          "average_win": 1.1561333849007205,
+          "average_loss": 0.24241691609460952,
+          "payoff_ratio": 4.769194343061065,
+          "profit_factor": 0.8478567720997452
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": -0.011367768116792205,
+          "win_rate": 0.0547945205479452,
+          "average_win": 1.1561333849007205,
+          "average_loss": 0.24241691609460944,
+          "payoff_ratio": 4.769194343061066,
+          "profit_factor": 0.8478567720997451
+        },
+        "traded_raw": {
+          "n": 53,
+          "expectancy": -0.03131498386889928,
+          "win_rate": 0.1509433962264151,
+          "average_win": 1.1561333849007205,
+          "average_loss": 0.24241691609460944,
+          "payoff_ratio": 4.769194343061066,
+          "profit_factor": 0.8478567720997451
+        },
+        "coverage_gaps": [],
+        "score": 61.376127393920186,
+        "expectations_by_direction_hit_rate": {
+          "0.5": -0.011367768116792173,
+          "0.6": 0.004976896672000857,
+          "0.75": 0.029493893855190436,
+          "0.85": 0.04583855864398358
+        },
+        "break_even_direction_hit_rate": 0.5695503288913375,
+        "entry_reasons": {
+          "trend_breakout": 50,
+          "reversal_reclaim": 3
+        },
+        "exit_reasons": {
+          "no_progress": 15,
+          "breakeven_stop": 12,
+          "invalidation_stop": 15,
+          "trailing_stop": 7,
+          "take_profit": 3,
+          "scheduled_flatten": 1
+        },
+        "entry_decision_minute_median": 64,
+        "entry_fill_minute_median": 65,
+        "exit_fill_minute_median": 101,
+        "hold_minutes_median": 12,
+        "worst_return": -0.5786324786324786,
+        "residual_value": {
+          "n": 53,
+          "negative_entry": 1,
+          "negative_exit": 2,
+          "entry_median": 0.77,
+          "exit_median": 0.6300000000000181,
+          "change_median": -0.0818999999999912
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 28,
+            "NO_ENTRY_SIGNAL": 45
+          },
+          "completed": 28,
+          "entered": 28,
+          "sold": 28,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": 0.04641465824472517,
+            "win_rate": 0.07444907683144729,
+            "average_win": 1.696129645005583,
+            "average_loss": 0.24731291131682917,
+            "payoff_ratio": 6.858233304417716,
+            "profit_factor": 1.581195758159123
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": 0.03522264485132198,
+            "win_rate": 0.0684931506849315,
+            "average_win": 1.6661031485373,
+            "average_loss": 0.25040272471913017,
+            "payoff_ratio": 6.653694165692973,
+            "profit_factor": 1.4464552534115158
+          },
+          "traded_raw": {
+            "n": 28,
+            "expectancy": 0.09183046693380374,
+            "win_rate": 0.17857142857142858,
+            "average_win": 1.6661031485373,
+            "average_loss": 0.25040272471913017,
+            "payoff_ratio": 6.653694165692973,
+            "profit_factor": 1.4464552534115158
+          },
+          "coverage_gaps": [],
+          "score": 70.90815696912416,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.04641465824472517,
+            "0.6": 0.07214998488954594,
+            "0.75": 0.11075297485677714,
+            "0.85": 0.13648830150159783
+          },
+          "break_even_direction_hit_rate": 0.3196461273435357,
+          "entry_reasons": {
+            "trend_breakout": 26,
+            "reversal_reclaim": 2
+          },
+          "exit_reasons": {
+            "no_progress": 11,
+            "breakeven_stop": 4,
+            "invalidation_stop": 6,
+            "take_profit": 3,
+            "trailing_stop": 4
+          },
+          "entry_decision_minute_median": 46.0,
+          "entry_fill_minute_median": 47.0,
+          "exit_fill_minute_median": 83.0,
+          "hold_minutes_median": 12.0,
+          "worst_return": -0.4354330708661417,
+          "residual_value": {
+            "n": 28,
+            "negative_entry": 0,
+            "negative_exit": 1,
+            "entry_median": 0.8699499999999887,
+            "exit_median": 0.677149999999999,
+            "change_median": -0.1149499999999966
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "NO_ENTRY_SIGNAL": 48,
+            "COMPLETED": 25
+          },
+          "completed": 25,
+          "entered": 25,
+          "sold": 25,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.05809237745363024,
+            "win_rate": 0.03669275929549902,
+            "average_win": 0.31160461203928885,
+            "average_loss": 0.23889815701280814,
+            "payoff_ratio": 1.304340794988145,
+            "profit_factor": 0.16445115930320206
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.05795818108490639,
+            "win_rate": 0.0410958904109589,
+            "average_win": 0.30618377883975467,
+            "average_loss": 0.23406811616897413,
+            "payoff_ratio": 1.3080969072213156,
+            "profit_factor": 0.17837685098472486
+          },
+          "traded_raw": {
+            "n": 25,
+            "expectancy": -0.16923788876792667,
+            "win_rate": 0.12,
+            "average_win": 0.30618377883975467,
+            "average_loss": 0.23406811616897413,
+            "payoff_ratio": 1.3080969072213156,
+            "profit_factor": 0.17837685098472486
+          },
+          "coverage_gaps": [],
+          "score": 27.524515260379577,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.05809237745363024,
+            "0.6": -0.04943666279023759,
+            "0.75": -0.036453090795148524,
+            "0.85": -0.02779737613175581
+          },
+          "break_even_direction_hit_rate": 1.1711447836805238,
+          "entry_reasons": {
+            "trend_breakout": 24,
+            "reversal_reclaim": 1
+          },
+          "exit_reasons": {
+            "trailing_stop": 3,
+            "breakeven_stop": 8,
+            "invalidation_stop": 9,
+            "no_progress": 4,
+            "scheduled_flatten": 1
+          },
+          "entry_decision_minute_median": 104,
+          "entry_fill_minute_median": 105,
+          "exit_fill_minute_median": 146,
+          "hold_minutes_median": 15,
+          "worst_return": -0.5786324786324786,
+          "residual_value": {
+            "n": 25,
+            "negative_entry": 1,
+            "negative_exit": 1,
+            "entry_median": 0.6950000000000163,
+            "exit_median": 0.56,
+            "change_median": -0.03500000000003434
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 53,
+          "outcomes": {
+            "COMPLETED": 53
+          },
+          "completed": 53,
+          "entered": 53,
+          "sold": 53,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 53,
+            "expectancy": -0.08126929902556862,
+            "win_rate": 0.1167323242794941,
+            "average_win": 1.1549955279439696,
+            "average_loss": 0.24465359423304503,
+            "payoff_ratio": 4.720942406608494,
+            "profit_factor": 0.62391797533347
+          },
+          "raw": {
+            "n": 53,
+            "expectancy": -0.03131498386889928,
+            "win_rate": 0.1509433962264151,
+            "average_win": 1.1561333849007205,
+            "average_loss": 0.24241691609460944,
+            "payoff_ratio": 4.769194343061066,
+            "profit_factor": 0.8478567720997451
+          },
+          "traded_raw": {
+            "n": 53,
+            "expectancy": -0.03131498386889928,
+            "win_rate": 0.1509433962264151,
+            "average_win": 1.1561333849007205,
+            "average_loss": 0.24241691609460944,
+            "payoff_ratio": 4.769194343061066,
+            "profit_factor": 0.8478567720997451
+          },
+          "coverage_gaps": [],
+          "score": 69.40720397639747,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.08126929902556862,
+            "0.6": -0.036531901912008086,
+            "0.75": 0.030574193758332664,
+            "0.85": 0.0753115908718932
+          },
+          "break_even_direction_hit_rate": 0.6816585323890798,
+          "entry_reasons": {
+            "trend_breakout": 50,
+            "reversal_reclaim": 3
+          },
+          "exit_reasons": {
+            "no_progress": 15,
+            "breakeven_stop": 12,
+            "invalidation_stop": 15,
+            "trailing_stop": 7,
+            "take_profit": 3,
+            "scheduled_flatten": 1
+          },
+          "entry_decision_minute_median": 64,
+          "entry_fill_minute_median": 65,
+          "exit_fill_minute_median": 101,
+          "hold_minutes_median": 12,
+          "worst_return": -0.5786324786324786,
+          "residual_value": {
+            "n": 53,
+            "negative_entry": 1,
+            "negative_exit": 2,
+            "entry_median": 0.77,
+            "exit_median": 0.6300000000000181,
+            "change_median": -0.0818999999999912
+          }
+        },
+        "fallback": {
+          "cases": 0,
+          "outcomes": {},
+          "completed": 0,
+          "entered": 0,
+          "sold": 0,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "traded_raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "coverage_gaps": [],
+          "score": null,
+          "expectations_by_direction_hit_rate": {
+            "0.5": null,
+            "0.6": null,
+            "0.75": null,
+            "0.85": null
+          },
+          "break_even_direction_hit_rate": null,
+          "entry_reasons": {},
+          "exit_reasons": {},
+          "entry_decision_minute_median": null,
+          "entry_fill_minute_median": null,
+          "exit_fill_minute_median": null,
+          "hold_minutes_median": null,
+          "worst_return": null,
+          "residual_value": {
+            "n": 0,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": null,
+            "exit_median": null,
+            "change_median": null
+          }
+        }
+      },
+      "days_with_completed_case": 18,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    },
+    {
+      "strategy": "zero_dte_timing_v6.4",
+      "mode": "selective",
+      "strategy_sha256": "1df582eb05107fdb7d3cac3e2a853f6bc0537221c9ca0c92e7e6b78593fabd38",
+      "prior_verdict": "REJECT",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "NO_ENTRY_SIGNAL": 110,
+          "COMPLETED": 36
+        },
+        "completed": 36,
+        "entered": 36,
+        "sold": 36,
+        "expired_settlement": 0,
+        "balanced": {
+          "n": 146,
+          "expectancy": 0.011351434344354663,
+          "win_rate": 0.04794520547945191,
+          "average_win": 1.2200640729115577,
+          "average_loss": 0.2373496240036247,
+          "payoff_ratio": 5.140366571184985,
+          "profit_factor": 1.240778137872238
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": 0.011351434344354691,
+          "win_rate": 0.04794520547945205,
+          "average_win": 1.2200640729115573,
+          "average_loss": 0.2373496240036247,
+          "payoff_ratio": 5.140366571184983,
+          "profit_factor": 1.2407781378722376
+        },
+        "traded_raw": {
+          "n": 36,
+          "expectancy": 0.046036372618771804,
+          "win_rate": 0.19444444444444445,
+          "average_win": 1.2200640729115573,
+          "average_loss": 0.2373496240036247,
+          "payoff_ratio": 5.140366571184983,
+          "profit_factor": 1.2407781378722376
+        },
+        "coverage_gaps": [],
+        "score": 64.08578320627618,
+        "expectations_by_direction_hit_rate": {
+          "0.5": 0.011351434344354663,
+          "0.6": 0.023186909118621625,
+          "0.75": 0.040940121280021946,
+          "0.85": 0.05277559605428894
+        },
+        "break_even_direction_hit_rate": 0.4040897423985443,
+        "entry_reasons": {
+          "trend_breakout": 34,
+          "reversal_reclaim": 2
+        },
+        "exit_reasons": {
+          "no_progress": 9,
+          "breakeven_stop": 7,
+          "invalidation_stop": 11,
+          "trailing_stop": 3,
+          "take_profit": 3,
+          "profit_lock": 2,
+          "scheduled_flatten": 1
+        },
+        "entry_decision_minute_median": 41.0,
+        "entry_fill_minute_median": 42.0,
+        "exit_fill_minute_median": 89.5,
+        "hold_minutes_median": 23.5,
+        "worst_return": -0.48805309734513275,
+        "residual_value": {
+          "n": 36,
+          "negative_entry": 0,
+          "negative_exit": 2,
+          "entry_median": 0.6974999999999681,
+          "exit_median": 0.5549999999999999,
+          "change_median": -0.08594999999999564
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "NO_ENTRY_SIGNAL": 56,
+            "COMPLETED": 17
+          },
+          "completed": 17,
+          "entered": 17,
+          "sold": 17,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": 0.06816711251643094,
+            "win_rate": 0.07444907683144729,
+            "average_win": 1.4855066288063117,
+            "average_loss": 0.25226398887029383,
+            "payoff_ratio": 5.888698721758944,
+            "profit_factor": 2.606673436302461
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": 0.05806347697691705,
+            "win_rate": 0.0684931506849315,
+            "average_win": 1.459609995400759,
+            "average_loss": 0.2549513464740711,
+            "payoff_ratio": 5.725053095764699,
+            "profit_factor": 2.385438789901958
+          },
+          "traded_raw": {
+            "n": 17,
+            "expectancy": 0.24933140113617322,
+            "win_rate": 0.29411764705882354,
+            "average_win": 1.459609995400759,
+            "average_loss": 0.2549513464740711,
+            "payoff_ratio": 5.725053095764699,
+            "profit_factor": 2.385438789901958
+          },
+          "coverage_gaps": [],
+          "score": 71.29138157003831,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.06816711251643094,
+            "0.6": 0.09168214833931755,
+            "0.75": 0.12695470207364756,
+            "0.85": 0.1504697378965341
+          },
+          "break_even_direction_hit_rate": 0.21011265715323513,
+          "entry_reasons": {
+            "reversal_reclaim": 2,
+            "trend_breakout": 15
+          },
+          "exit_reasons": {
+            "breakeven_stop": 3,
+            "take_profit": 3,
+            "invalidation_stop": 4,
+            "trailing_stop": 2,
+            "scheduled_flatten": 1,
+            "no_progress": 4
+          },
+          "entry_decision_minute_median": 35,
+          "entry_fill_minute_median": 36,
+          "exit_fill_minute_median": 67,
+          "hold_minutes_median": 22,
+          "worst_return": -0.48805309734513275,
+          "residual_value": {
+            "n": 17,
+            "negative_entry": 0,
+            "negative_exit": 2,
+            "entry_median": 0.7300000000000091,
+            "exit_median": 0.5001,
+            "change_median": -0.12999999999999998
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 19,
+            "NO_ENTRY_SIGNAL": 54
+          },
+          "completed": 19,
+          "entered": 19,
+          "sold": 19,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.03487607514243642,
+            "win_rate": 0.024951076320939337,
+            "average_win": 0.6211992666885529,
+            "average_loss": 0.23051458899549274,
+            "payoff_ratio": 2.6948371007472294,
+            "profit_factor": 0.30768011049236893
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.03536060828820765,
+            "win_rate": 0.0273972602739726,
+            "average_win": 0.6211992666885529,
+            "average_loss": 0.22492487873036845,
+            "payoff_ratio": 2.7618077208489833,
+            "profit_factor": 0.324918555393998
+          },
+          "traded_raw": {
+            "n": 19,
+            "expectancy": -0.13585917921258728,
+            "win_rate": 0.10526315789473684,
+            "average_win": 0.6211992666885529,
+            "average_loss": 0.22492487873036845,
+            "payoff_ratio": 2.7618077208489833,
+            "profit_factor": 0.324918555393998
+          },
+          "coverage_gaps": [],
+          "score": 43.42358215193129,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.03487607514243642,
+            "0.6": -0.033005438926481695,
+            "0.75": -0.03019948460254952,
+            "0.85": -0.028328848386594753
+          },
+          "break_even_direction_hit_rate": 2.3643964467797884,
+          "entry_reasons": {
+            "trend_breakout": 19
+          },
+          "exit_reasons": {
+            "no_progress": 5,
+            "invalidation_stop": 7,
+            "trailing_stop": 1,
+            "profit_lock": 2,
+            "breakeven_stop": 4
+          },
+          "entry_decision_minute_median": 43,
+          "entry_fill_minute_median": 44,
+          "exit_fill_minute_median": 100,
+          "hold_minutes_median": 25,
+          "worst_return": -0.46853932584269664,
+          "residual_value": {
+            "n": 19,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": 0.6749999999999863,
+            "exit_median": 0.6299999999999499,
+            "change_median": -0.0049999999999954525
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 36,
+          "outcomes": {
+            "COMPLETED": 36
+          },
+          "completed": 36,
+          "entered": 36,
+          "sold": 36,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 36,
+            "expectancy": -0.07370357742144776,
+            "win_rate": 0.1361111111111112,
+            "average_win": 1.1446865194981002,
+            "average_loss": 0.26566857661455984,
+            "payoff_ratio": 4.308701217452777,
+            "profit_factor": 0.6788628927819491
+          },
+          "raw": {
+            "n": 36,
+            "expectancy": 0.046036372618771804,
+            "win_rate": 0.19444444444444445,
+            "average_win": 1.2200640729115573,
+            "average_loss": 0.2373496240036247,
+            "payoff_ratio": 5.140366571184983,
+            "profit_factor": 1.2407781378722376
+          },
+          "traded_raw": {
+            "n": 36,
+            "expectancy": 0.046036372618771804,
+            "win_rate": 0.19444444444444445,
+            "average_win": 1.2200640729115573,
+            "average_loss": 0.2373496240036247,
+            "payoff_ratio": 5.140366571184983,
+            "profit_factor": 1.2407781378722376
+          },
+          "coverage_gaps": [],
+          "score": 71.58006220520538,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.07370357742144776,
+            "0.6": -0.032239529868548236,
+            "0.75": 0.029956541460801053,
+            "0.85": 0.07142058901370052
+          },
+          "break_even_direction_hit_rate": 0.6777529734100783,
+          "entry_reasons": {
+            "trend_breakout": 34,
+            "reversal_reclaim": 2
+          },
+          "exit_reasons": {
+            "no_progress": 9,
+            "breakeven_stop": 7,
+            "invalidation_stop": 11,
+            "trailing_stop": 3,
+            "take_profit": 3,
+            "profit_lock": 2,
+            "scheduled_flatten": 1
+          },
+          "entry_decision_minute_median": 41.0,
+          "entry_fill_minute_median": 42.0,
+          "exit_fill_minute_median": 89.5,
+          "hold_minutes_median": 23.5,
+          "worst_return": -0.48805309734513275,
+          "residual_value": {
+            "n": 36,
+            "negative_entry": 0,
+            "negative_exit": 2,
+            "entry_median": 0.6974999999999681,
+            "exit_median": 0.5549999999999999,
+            "change_median": -0.08594999999999564
+          }
+        },
+        "fallback": {
+          "cases": 0,
+          "outcomes": {},
+          "completed": 0,
+          "entered": 0,
+          "sold": 0,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "traded_raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "coverage_gaps": [],
+          "score": null,
+          "expectations_by_direction_hit_rate": {
+            "0.5": null,
+            "0.6": null,
+            "0.75": null,
+            "0.85": null
+          },
+          "break_even_direction_hit_rate": null,
+          "entry_reasons": {},
+          "exit_reasons": {},
+          "entry_decision_minute_median": null,
+          "entry_fill_minute_median": null,
+          "exit_fill_minute_median": null,
+          "hold_minutes_median": null,
+          "worst_return": null,
+          "residual_value": {
+            "n": 0,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": null,
+            "exit_median": null,
+            "change_median": null
+          }
+        }
+      },
+      "days_with_completed_case": 17,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    },
+    {
+      "strategy": "zero_dte_timing_v6.5",
+      "mode": "selective",
+      "strategy_sha256": "547d304e3380ea6764057d46cea8e6d9ad6c7cfeff3fd727398586071a7638c2",
+      "prior_verdict": "REJECT",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "COMPLETED": 82,
+          "NO_ENTRY_SIGNAL": 64
+        },
+        "completed": 82,
+        "entered": 82,
+        "sold": 82,
+        "expired_settlement": 0,
+        "balanced": {
+          "n": 146,
+          "expectancy": 0.007152713355852978,
+          "win_rate": 0.10958904109589013,
+          "average_win": 1.0426016255137742,
+          "average_loss": 0.23692924027675552,
+          "payoff_ratio": 4.400476801832977,
+          "profit_factor": 1.0667822549898138
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": 0.007152713355852997,
+          "win_rate": 0.1095890410958904,
+          "average_win": 1.0426016255137744,
+          "average_loss": 0.23692924027675538,
+          "payoff_ratio": 4.400476801832981,
+          "profit_factor": 1.0667822549898136
+        },
+        "traded_raw": {
+          "n": 82,
+          "expectancy": 0.012735318901884604,
+          "win_rate": 0.1951219512195122,
+          "average_win": 1.0426016255137744,
+          "average_loss": 0.23692924027675538,
+          "payoff_ratio": 4.400476801832981,
+          "profit_factor": 1.0667822549898136
+        },
+        "coverage_gaps": [],
+        "score": 68.76705653566395,
+        "expectations_by_direction_hit_rate": {
+          "0.5": 0.007152713355852978,
+          "0.6": 0.029131928764505075,
+          "0.75": 0.06210075187748305,
+          "0.85": 0.08407996728613523
+        },
+        "break_even_direction_hit_rate": 0.4674569213556305,
+        "entry_reasons": {
+          "trend_breakout": 75,
+          "reversal_reclaim": 7
+        },
+        "exit_reasons": {
+          "invalidation_stop": 26,
+          "no_progress": 14,
+          "profit_lock": 4,
+          "breakeven_stop": 25,
+          "trailing_stop": 6,
+          "take_profit": 6,
+          "scheduled_flatten": 1
+        },
+        "entry_decision_minute_median": 50.0,
+        "entry_fill_minute_median": 51.0,
+        "exit_fill_minute_median": 96.0,
+        "hold_minutes_median": 17.5,
+        "worst_return": -0.48805309734513275,
+        "residual_value": {
+          "n": 82,
+          "negative_entry": 2,
+          "negative_exit": 1,
+          "entry_median": 0.8499999999999794,
+          "exit_median": 0.7100000000000182,
+          "change_median": -0.07499999999998741
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 40,
+            "NO_ENTRY_SIGNAL": 33
+          },
+          "completed": 40,
+          "entered": 40,
+          "sold": 40,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": 0.09030260592997977,
+            "win_rate": 0.13099846847613378,
+            "average_win": 1.4434229980649846,
+            "average_loss": 0.22769352779740057,
+            "payoff_ratio": 6.339323792063725,
+            "profit_factor": 1.914145763286958
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": 0.0734011450203549,
+            "win_rate": 0.1232876712328767,
+            "average_win": 1.3925313747283523,
+            "average_loss": 0.2314354447119118,
+            "payoff_ratio": 6.016932179345992,
+            "profit_factor": 1.746851277874643
+          },
+          "traded_raw": {
+            "n": 40,
+            "expectancy": 0.1339570896621477,
+            "win_rate": 0.225,
+            "average_win": 1.3925313747283523,
+            "average_loss": 0.2314354447119118,
+            "payoff_ratio": 6.016932179345992,
+            "profit_factor": 1.746851277874643
+          },
+          "coverage_gaps": [],
+          "score": 77.9797575285925,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.09030260592997977,
+            "0.6": 0.12891942699507233,
+            "0.75": 0.18684465859271124,
+            "0.85": 0.2254614796578037
+          },
+          "break_even_direction_hit_rate": 0.2661573287512052,
+          "entry_reasons": {
+            "trend_breakout": 37,
+            "reversal_reclaim": 3
+          },
+          "exit_reasons": {
+            "invalidation_stop": 11,
+            "profit_lock": 2,
+            "breakeven_stop": 12,
+            "trailing_stop": 3,
+            "take_profit": 4,
+            "no_progress": 8
+          },
+          "entry_decision_minute_median": 51.0,
+          "entry_fill_minute_median": 52.0,
+          "exit_fill_minute_median": 104.0,
+          "hold_minutes_median": 18.0,
+          "worst_return": -0.48805309734513275,
+          "residual_value": {
+            "n": 40,
+            "negative_entry": 1,
+            "negative_exit": 1,
+            "entry_median": 0.8449999999999795,
+            "exit_median": 0.6300000000000239,
+            "change_median": -0.11750000000001054
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 42,
+            "NO_ENTRY_SIGNAL": 31
+          },
+          "completed": 42,
+          "entered": 42,
+          "sold": 42,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.06261301379965835,
+            "win_rate": 0.09004084063643326,
+            "average_win": 0.5767183477443567,
+            "average_loss": 0.2429541628843029,
+            "payoff_ratio": 2.3737742992244817,
+            "profit_factor": 0.4533582360783633
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.059095718308648904,
+            "win_rate": 0.0958904109589041,
+            "average_win": 0.5926919479521742,
+            "average_loss": 0.24179517349133103,
+            "payoff_ratio": 2.45121496593241,
+            "profit_factor": 0.490242993186482
+          },
+          "traded_raw": {
+            "n": 42,
+            "expectancy": -0.10271398658408024,
+            "win_rate": 0.16666666666666666,
+            "average_win": 0.5926919479521742,
+            "average_loss": 0.24179517349133103,
+            "payoff_ratio": 2.45121496593241,
+            "profit_factor": 0.490242993186482
+          },
+          "coverage_gaps": [],
+          "score": 45.74273839683842,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.06261301379965835,
+            "0.6": -0.0550509139369103,
+            "0.75": -0.043707764142788166,
+            "0.85": -0.03614566428004009
+          },
+          "break_even_direction_hit_rate": 1.327984487590524,
+          "entry_reasons": {
+            "trend_breakout": 38,
+            "reversal_reclaim": 4
+          },
+          "exit_reasons": {
+            "no_progress": 6,
+            "invalidation_stop": 15,
+            "breakeven_stop": 13,
+            "trailing_stop": 3,
+            "profit_lock": 2,
+            "scheduled_flatten": 1,
+            "take_profit": 2
+          },
+          "entry_decision_minute_median": 47.0,
+          "entry_fill_minute_median": 48.0,
+          "exit_fill_minute_median": 90.0,
+          "hold_minutes_median": 16.5,
+          "worst_return": -0.4623255813953488,
+          "residual_value": {
+            "n": 42,
+            "negative_entry": 1,
+            "negative_exit": 0,
+            "entry_median": 0.8549999999999863,
+            "exit_median": 0.87,
+            "change_median": -0.015000000000011338
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 82,
+          "outcomes": {
+            "COMPLETED": 82
+          },
+          "completed": 82,
+          "entered": 82,
+          "sold": 82,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 82,
+            "expectancy": -0.04033061173402731,
+            "win_rate": 0.1722599180879024,
+            "average_win": 0.9330237310835289,
+            "average_loss": 0.24289412536373484,
+            "payoff_ratio": 3.841277468882059,
+            "profit_factor": 0.7994032868554484
+          },
+          "raw": {
+            "n": 82,
+            "expectancy": 0.012735318901884604,
+            "win_rate": 0.1951219512195122,
+            "average_win": 1.0426016255137744,
+            "average_loss": 0.23692924027675538,
+            "payoff_ratio": 4.400476801832981,
+            "profit_factor": 1.0667822549898136
+          },
+          "traded_raw": {
+            "n": 82,
+            "expectancy": 0.012735318901884604,
+            "win_rate": 0.1951219512195122,
+            "average_win": 1.0426016255137744,
+            "average_loss": 0.23692924027675538,
+            "payoff_ratio": 4.400476801832981,
+            "profit_factor": 1.0667822549898136
+          },
+          "coverage_gaps": [],
+          "score": 72.71643656643252,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.04033061173402731,
+            "0.6": -0.004700362922606875,
+            "0.75": 0.04874501029452378,
+            "0.85": 0.08437525910594426
+          },
+          "break_even_direction_hit_rate": 0.6131920575337108,
+          "entry_reasons": {
+            "trend_breakout": 75,
+            "reversal_reclaim": 7
+          },
+          "exit_reasons": {
+            "invalidation_stop": 26,
+            "no_progress": 14,
+            "profit_lock": 4,
+            "breakeven_stop": 25,
+            "trailing_stop": 6,
+            "take_profit": 6,
+            "scheduled_flatten": 1
+          },
+          "entry_decision_minute_median": 50.0,
+          "entry_fill_minute_median": 51.0,
+          "exit_fill_minute_median": 96.0,
+          "hold_minutes_median": 17.5,
+          "worst_return": -0.48805309734513275,
+          "residual_value": {
+            "n": 82,
+            "negative_entry": 2,
+            "negative_exit": 1,
+            "entry_median": 0.8499999999999794,
+            "exit_median": 0.7100000000000182,
+            "change_median": -0.07499999999998741
+          }
+        },
+        "fallback": {
+          "cases": 0,
+          "outcomes": {},
+          "completed": 0,
+          "entered": 0,
+          "sold": 0,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "traded_raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "coverage_gaps": [],
+          "score": null,
+          "expectations_by_direction_hit_rate": {
+            "0.5": null,
+            "0.6": null,
+            "0.75": null,
+            "0.85": null
+          },
+          "break_even_direction_hit_rate": null,
+          "entry_reasons": {},
+          "exit_reasons": {},
+          "entry_decision_minute_median": null,
+          "entry_fill_minute_median": null,
+          "exit_fill_minute_median": null,
+          "hold_minutes_median": null,
+          "worst_return": null,
+          "residual_value": {
+            "n": 0,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": null,
+            "exit_median": null,
+            "change_median": null
+          }
+        }
+      },
+      "days_with_completed_case": 20,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    },
+    {
+      "strategy": "zero_dte_timing_v6.6",
+      "mode": "selective",
+      "strategy_sha256": "2fc2ba2c1856d3a51ffdec09a19efd7412bbc9d507d0a28d2b81a78863b435c2",
+      "prior_verdict": "PROVISIONAL",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "COMPLETED": 96,
+          "NO_ENTRY_SIGNAL": 50
+        },
+        "completed": 96,
+        "entered": 96,
+        "sold": 96,
+        "expired_settlement": 0,
+        "balanced": {
+          "n": 146,
+          "expectancy": 0.04192843024425571,
+          "win_rate": 0.1506849315068489,
+          "average_win": 1.0687641972510848,
+          "average_loss": 0.2350170476197639,
+          "payoff_ratio": 4.54760285722016,
+          "profit_factor": 1.3519900386330217
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": 0.04192843024425583,
+          "win_rate": 0.1506849315068493,
+          "average_win": 1.0687641972510848,
+          "average_loss": 0.23501704761976375,
+          "payoff_ratio": 4.547602857220164,
+          "profit_factor": 1.3519900386330215
+        },
+        "traded_raw": {
+          "n": 96,
+          "expectancy": 0.06376615432980574,
+          "win_rate": 0.22916666666666666,
+          "average_win": 1.0687641972510848,
+          "average_loss": 0.23501704761976375,
+          "payoff_ratio": 4.547602857220164,
+          "profit_factor": 1.3519900386330215
+        },
+        "coverage_gaps": [],
+        "score": 74.6886657017777,
+        "expectations_by_direction_hit_rate": {
+          "0.5": 0.04192843024425571,
+          "0.6": 0.07002140676521618,
+          "0.75": 0.1121608715466564,
+          "0.85": 0.14025384806761693
+        },
+        "break_even_direction_hit_rate": 0.350751200347272,
+        "entry_reasons": {
+          "trend_breakout": 84,
+          "reversal_reclaim": 12
+        },
+        "exit_reasons": {
+          "no_progress": 18,
+          "profit_lock": 9,
+          "invalidation_stop": 27,
+          "breakeven_stop": 26,
+          "trailing_stop": 7,
+          "take_profit": 8,
+          "scheduled_flatten": 1
+        },
+        "entry_decision_minute_median": 51.0,
+        "entry_fill_minute_median": 52.0,
+        "exit_fill_minute_median": 100.5,
+        "hold_minutes_median": 18.0,
+        "worst_return": -0.5138240574506284,
+        "residual_value": {
+          "n": 96,
+          "negative_entry": 1,
+          "negative_exit": 1,
+          "entry_median": 0.8750000000000069,
+          "exit_median": 0.6399999999999761,
+          "change_median": -0.11500000000001276
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 48,
+            "NO_ENTRY_SIGNAL": 25
+          },
+          "completed": 48,
+          "entered": 48,
+          "sold": 48,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": 0.18449983418676763,
+            "win_rate": 0.20325236109929376,
+            "average_win": 1.4017187364484722,
+            "average_loss": 0.21305929094830153,
+            "payoff_ratio": 6.579007797358139,
+            "profit_factor": 2.837596345872603
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": 0.1611824056674516,
+            "win_rate": 0.1917808219178082,
+            "average_win": 1.366840446171141,
+            "average_loss": 0.21674854801976504,
+            "payoff_ratio": 6.306111199630737,
+            "profit_factor": 2.5966340233773626
+          },
+          "traded_raw": {
+            "n": 48,
+            "expectancy": 0.24513157528591598,
+            "win_rate": 0.2916666666666667,
+            "average_win": 1.366840446171141,
+            "average_loss": 0.21674854801976504,
+            "payoff_ratio": 6.306111199630737,
+            "profit_factor": 2.5966340233773626
+          },
+          "coverage_gaps": [],
+          "score": 83.91577327286441,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.18449983418676763,
+            "0.6": 0.2355176561059501,
+            "0.75": 0.3120443889847241,
+            "0.85": 0.3630622109039063
+          },
+          "break_even_direction_hit_rate": 0.13836199342450514,
+          "entry_reasons": {
+            "trend_breakout": 42,
+            "reversal_reclaim": 6
+          },
+          "exit_reasons": {
+            "no_progress": 10,
+            "profit_lock": 6,
+            "breakeven_stop": 14,
+            "trailing_stop": 3,
+            "take_profit": 6,
+            "invalidation_stop": 9
+          },
+          "entry_decision_minute_median": 55.0,
+          "entry_fill_minute_median": 56.0,
+          "exit_fill_minute_median": 107.5,
+          "hold_minutes_median": 18.5,
+          "worst_return": -0.48805309734513275,
+          "residual_value": {
+            "n": 48,
+            "negative_entry": 0,
+            "negative_exit": 1,
+            "entry_median": 0.8449999999999795,
+            "exit_median": 0.48005,
+            "change_median": -0.14750000000001273
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 48,
+            "NO_ENTRY_SIGNAL": 25
+          },
+          "completed": 48,
+          "entered": 48,
+          "sold": 48,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.08095227051393442,
+            "win_rate": 0.10300561558750959,
+            "average_win": 0.5340801368749706,
+            "average_loss": 0.2531800420732102,
+            "payoff_ratio": 2.1094875113439415,
+            "profit_factor": 0.40461178495906586
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.0773255451789399,
+            "win_rate": 0.1095890410958904,
+            "average_win": 0.5471307616409864,
+            "average_loss": 0.2505452722797626,
+            "payoff_ratio": 2.1837600712339604,
+            "profit_factor": 0.4367520142467921
+          },
+          "traded_raw": {
+            "n": 48,
+            "expectancy": -0.11759926662630443,
+            "win_rate": 0.16666666666666666,
+            "average_win": 0.5471307616409864,
+            "average_loss": 0.2505452722797626,
+            "payoff_ratio": 2.1837600712339604,
+            "profit_factor": 0.4367520142467921
+          },
+          "coverage_gaps": [],
+          "score": 44.31056521677991,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.08095227051393442,
+            "0.6": -0.07245177424857362,
+            "0.75": -0.059701029850532265,
+            "0.85": -0.051200533585171404
+          },
+          "break_even_direction_hit_rate": 1.4523240524651637,
+          "entry_reasons": {
+            "trend_breakout": 42,
+            "reversal_reclaim": 6
+          },
+          "exit_reasons": {
+            "no_progress": 8,
+            "invalidation_stop": 18,
+            "breakeven_stop": 12,
+            "trailing_stop": 4,
+            "profit_lock": 3,
+            "scheduled_flatten": 1,
+            "take_profit": 2
+          },
+          "entry_decision_minute_median": 48.0,
+          "entry_fill_minute_median": 49.0,
+          "exit_fill_minute_median": 94.0,
+          "hold_minutes_median": 15.5,
+          "worst_return": -0.5138240574506284,
+          "residual_value": {
+            "n": 48,
+            "negative_entry": 1,
+            "negative_exit": 0,
+            "entry_median": 0.8800000000000228,
+            "exit_median": 0.7349999999999932,
+            "change_median": -0.07249999999998519
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 96,
+          "outcomes": {
+            "COMPLETED": 96
+          },
+          "completed": 96,
+          "entered": 96,
+          "sold": 96,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 96,
+            "expectancy": 0.013904699661097551,
+            "win_rate": 0.2079613095238095,
+            "average_win": 0.9884676009147079,
+            "average_loss": 0.24198100339233983,
+            "payoff_ratio": 4.084897521116729,
+            "profit_factor": 1.0725494195886573
+          },
+          "raw": {
+            "n": 96,
+            "expectancy": 0.06376615432980574,
+            "win_rate": 0.22916666666666666,
+            "average_win": 1.0687641972510848,
+            "average_loss": 0.23501704761976375,
+            "payoff_ratio": 4.547602857220164,
+            "profit_factor": 1.3519900386330215
+          },
+          "traded_raw": {
+            "n": 96,
+            "expectancy": 0.06376615432980574,
+            "win_rate": 0.22916666666666666,
+            "average_win": 1.0687641972510848,
+            "average_loss": 0.23501704761976375,
+            "payoff_ratio": 4.547602857220164,
+            "profit_factor": 1.3519900386330215
+          },
+          "coverage_gaps": [],
+          "score": 79.0064070357131,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.013904699661097551,
+            "0.6": 0.053438084280951204,
+            "0.75": 0.11273816121073164,
+            "0.85": 0.15227154583058525
+          },
+          "break_even_direction_hit_rate": 0.464827955423491,
+          "entry_reasons": {
+            "trend_breakout": 84,
+            "reversal_reclaim": 12
+          },
+          "exit_reasons": {
+            "no_progress": 18,
+            "profit_lock": 9,
+            "invalidation_stop": 27,
+            "breakeven_stop": 26,
+            "trailing_stop": 7,
+            "take_profit": 8,
+            "scheduled_flatten": 1
+          },
+          "entry_decision_minute_median": 51.0,
+          "entry_fill_minute_median": 52.0,
+          "exit_fill_minute_median": 100.5,
+          "hold_minutes_median": 18.0,
+          "worst_return": -0.5138240574506284,
+          "residual_value": {
+            "n": 96,
+            "negative_entry": 1,
+            "negative_exit": 1,
+            "entry_median": 0.8750000000000069,
+            "exit_median": 0.6399999999999761,
+            "change_median": -0.11500000000001276
+          }
+        },
+        "fallback": {
+          "cases": 0,
+          "outcomes": {},
+          "completed": 0,
+          "entered": 0,
+          "sold": 0,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "traded_raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "coverage_gaps": [],
+          "score": null,
+          "expectations_by_direction_hit_rate": {
+            "0.5": null,
+            "0.6": null,
+            "0.75": null,
+            "0.85": null
+          },
+          "break_even_direction_hit_rate": null,
+          "entry_reasons": {},
+          "exit_reasons": {},
+          "entry_decision_minute_median": null,
+          "entry_fill_minute_median": null,
+          "exit_fill_minute_median": null,
+          "hold_minutes_median": null,
+          "worst_return": null,
+          "residual_value": {
+            "n": 0,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": null,
+            "exit_median": null,
+            "change_median": null
+          }
+        }
+      },
+      "days_with_completed_case": 20,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    },
+    {
+      "strategy": "open_hold_v1",
+      "mode": "required",
+      "strategy_sha256": "3dcd7617ab766676fdf1906b5e18a5257912a087fc34da3567c39b264ce3fb23",
+      "prior_verdict": "REJECT",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "COMPLETED": 144,
+          "EXIT_NOT_FILLED": 2
+        },
+        "completed": 144,
+        "entered": 146,
+        "sold": 144,
+        "expired_settlement": 2,
+        "balanced": {
+          "n": 146,
+          "expectancy": -0.2773112936841387,
+          "win_rate": 0.3013698630136976,
+          "average_win": 0.9780733283035008,
+          "average_loss": 0.8188497580709628,
+          "payoff_ratio": 1.1944478442634399,
+          "profit_factor": 0.5152520112508947
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": -0.27731129368413937,
+          "win_rate": 0.3013698630136986,
+          "average_win": 0.9780733283035008,
+          "average_loss": 0.8188497580709637,
+          "payoff_ratio": 1.1944478442634385,
+          "profit_factor": 0.515252011250895
+        },
+        "traded_raw": {
+          "n": 146,
+          "expectancy": -0.27731129368413937,
+          "win_rate": 0.3013698630136986,
+          "average_win": 0.9780733283035008,
+          "average_loss": 0.8188497580709637,
+          "payoff_ratio": 1.1944478442634385,
+          "profit_factor": 0.515252011250895
+        },
+        "coverage_gaps": [],
+        "score": 34.18755768967178,
+        "expectations_by_direction_hit_rate": {
+          "0.5": -0.2773112936841387,
+          "0.6": -0.15566732106294764,
+          "0.75": 0.026798637868840812,
+          "0.85": 0.14844261049003313
+        },
+        "break_even_direction_hit_rate": 0.7279696130507889,
+        "entry_reasons": {
+          "open_entry": 146
+        },
+        "exit_reasons": {
+          "scheduled_flatten": 146
+        },
+        "entry_decision_minute_median": 1.0,
+        "entry_fill_minute_median": 2.0,
+        "exit_fill_minute_median": 376.0,
+        "hold_minutes_median": 374.0,
+        "worst_return": -1.0066298342541435,
+        "residual_value": {
+          "n": 144,
+          "negative_entry": 1,
+          "negative_exit": 16,
+          "entry_median": 1.3500000000000045,
+          "exit_median": 0.04,
+          "change_median": -1.2299999999999671
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 72,
+            "EXIT_NOT_FILLED": 1
+          },
+          "completed": 72,
+          "entered": 73,
+          "sold": 72,
+          "expired_settlement": 1,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.23217426694261697,
+            "win_rate": 0.32966051220964865,
+            "average_win": 1.0886697773676473,
+            "average_loss": 0.8817408404883584,
+            "payoff_ratio": 1.234682264195316,
+            "profit_factor": 0.6071938100685098
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.2949498140561485,
+            "win_rate": 0.3013698630136986,
+            "average_win": 1.0785348220687931,
+            "average_loss": 0.8874333825806333,
+            "payoff_ratio": 1.2153417295757365,
+            "profit_factor": 0.5242650598169845
+          },
+          "traded_raw": {
+            "n": 73,
+            "expectancy": -0.2949498140561485,
+            "win_rate": 0.3013698630136986,
+            "average_win": 1.0785348220687931,
+            "average_loss": 0.8874333825806333,
+            "payoff_ratio": 1.2153417295757365,
+            "profit_factor": 0.5242650598169845
+          },
+          "coverage_gaps": [],
+          "score": 37.431566696176795,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.23217426694261697,
+            "0.6": -0.09487811638248404,
+            "0.75": 0.11106610945771535,
+            "0.85": 0.24836226001784828
+          },
+          "break_even_direction_hit_rate": 0.6691047170626457,
+          "entry_reasons": {
+            "open_entry": 73
+          },
+          "exit_reasons": {
+            "scheduled_flatten": 73
+          },
+          "entry_decision_minute_median": 1,
+          "entry_fill_minute_median": 2,
+          "exit_fill_minute_median": 376.0,
+          "hold_minutes_median": 374,
+          "worst_return": -1.0066298342541435,
+          "residual_value": {
+            "n": 72,
+            "negative_entry": 0,
+            "negative_exit": 9,
+            "entry_median": 1.3600000000000048,
+            "exit_median": 0.03999999999997737,
+            "change_median": -1.2700000000000227
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 72,
+            "EXIT_NOT_FILLED": 1
+          },
+          "completed": 72,
+          "entered": 73,
+          "sold": 72,
+          "expired_settlement": 1,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.3100082997220915,
+            "win_rate": 0.27891389432485325,
+            "average_win": 0.8653597954467105,
+            "average_loss": 0.7646370744393269,
+            "payoff_ratio": 1.131726180137471,
+            "profit_factor": 0.4377482158195074
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.25967277331213023,
+            "win_rate": 0.3013698630136986,
+            "average_win": 0.8776118345382077,
+            "average_loss": 0.7502661335612959,
+            "payoff_ratio": 1.1697340387369461,
+            "profit_factor": 0.5045911539649571
+          },
+          "traded_raw": {
+            "n": 73,
+            "expectancy": -0.25967277331213023,
+            "win_rate": 0.3013698630136986,
+            "average_win": 0.8776118345382077,
+            "average_loss": 0.7502661335612959,
+            "payoff_ratio": 1.1697340387369461,
+            "profit_factor": 0.5045911539649571
+          },
+          "coverage_gaps": [],
+          "score": 32.1476618978831,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.3100082997220915,
+            "0.6": -0.19997950437916162,
+            "0.75": -0.03493631136476655,
+            "0.85": 0.07509248397816337
+          },
+          "break_even_direction_hit_rate": 0.7817519711598037,
+          "entry_reasons": {
+            "open_entry": 73
+          },
+          "exit_reasons": {
+            "scheduled_flatten": 73
+          },
+          "entry_decision_minute_median": 1,
+          "entry_fill_minute_median": 2,
+          "exit_fill_minute_median": 376.0,
+          "hold_minutes_median": 374,
+          "worst_return": -1.0060913705583756,
+          "residual_value": {
+            "n": 72,
+            "negative_entry": 1,
+            "negative_exit": 7,
+            "entry_median": 1.3349999999999773,
+            "exit_median": 0.0550000000000157,
+            "change_median": -1.1799499999999692
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 0,
+          "outcomes": {},
+          "completed": 0,
+          "entered": 0,
+          "sold": 0,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "traded_raw": {
+            "n": 0,
+            "expectancy": null,
+            "win_rate": null,
+            "average_win": null,
+            "average_loss": null,
+            "payoff_ratio": null,
+            "profit_factor": null
+          },
+          "coverage_gaps": [],
+          "score": null,
+          "expectations_by_direction_hit_rate": {
+            "0.5": null,
+            "0.6": null,
+            "0.75": null,
+            "0.85": null
+          },
+          "break_even_direction_hit_rate": null,
+          "entry_reasons": {},
+          "exit_reasons": {},
+          "entry_decision_minute_median": null,
+          "entry_fill_minute_median": null,
+          "exit_fill_minute_median": null,
+          "hold_minutes_median": null,
+          "worst_return": null,
+          "residual_value": {
+            "n": 0,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": null,
+            "exit_median": null,
+            "change_median": null
+          }
+        },
+        "fallback": {
+          "cases": 146,
+          "outcomes": {
+            "COMPLETED": 144,
+            "EXIT_NOT_FILLED": 2
+          },
+          "completed": 144,
+          "entered": 146,
+          "sold": 144,
+          "expired_settlement": 2,
+          "balanced": {
+            "n": 146,
+            "expectancy": -0.2773112936841387,
+            "win_rate": 0.3013698630136976,
+            "average_win": 0.9780733283035008,
+            "average_loss": 0.8188497580709628,
+            "payoff_ratio": 1.1944478442634399,
+            "profit_factor": 0.5152520112508947
+          },
+          "raw": {
+            "n": 146,
+            "expectancy": -0.27731129368413937,
+            "win_rate": 0.3013698630136986,
+            "average_win": 0.9780733283035008,
+            "average_loss": 0.8188497580709637,
+            "payoff_ratio": 1.1944478442634385,
+            "profit_factor": 0.515252011250895
+          },
+          "traded_raw": {
+            "n": 146,
+            "expectancy": -0.27731129368413937,
+            "win_rate": 0.3013698630136986,
+            "average_win": 0.9780733283035008,
+            "average_loss": 0.8188497580709637,
+            "payoff_ratio": 1.1944478442634385,
+            "profit_factor": 0.515252011250895
+          },
+          "coverage_gaps": [],
+          "score": 34.18755768967178,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.2773112936841387,
+            "0.6": -0.15566732106294764,
+            "0.75": 0.026798637868840812,
+            "0.85": 0.14844261049003313
+          },
+          "break_even_direction_hit_rate": 0.7279696130507889,
+          "entry_reasons": {
+            "open_entry": 146
+          },
+          "exit_reasons": {
+            "scheduled_flatten": 146
+          },
+          "entry_decision_minute_median": 1.0,
+          "entry_fill_minute_median": 2.0,
+          "exit_fill_minute_median": 376.0,
+          "hold_minutes_median": 374.0,
+          "worst_return": -1.0066298342541435,
+          "residual_value": {
+            "n": 144,
+            "negative_entry": 1,
+            "negative_exit": 16,
+            "entry_median": 1.3500000000000045,
+            "exit_median": 0.04,
+            "change_median": -1.2299999999999671
+          }
+        }
+      },
+      "days_with_completed_case": 21,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    },
+    {
+      "strategy": "open_hold_v2",
+      "mode": "required",
+      "strategy_sha256": "b7bdc4956db1c0e354f3b7e8fbba5f399e2ba775fe5e890b059f570a4b887d72",
+      "prior_verdict": "REJECT",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "COMPLETED": 146
+        },
+        "completed": 146,
+        "entered": 146,
+        "sold": 146,
+        "expired_settlement": 0,
+        "balanced": {
+          "n": 146,
+          "expectancy": -0.02134922831708555,
+          "win_rate": 0.21917808219178012,
+          "average_win": 0.8426953227599507,
+          "average_loss": 0.2638880496720426,
+          "payoff_ratio": 3.1933819049678225,
+          "profit_factor": 0.8963879031488604
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": -0.021349228317085633,
+          "win_rate": 0.2191780821917808,
+          "average_win": 0.8426953227599503,
+          "average_loss": 0.26388804967204305,
+          "payoff_ratio": 3.1933819049678154,
+          "profit_factor": 0.8963879031488605
+        },
+        "traded_raw": {
+          "n": 146,
+          "expectancy": -0.021349228317085633,
+          "win_rate": 0.2191780821917808,
+          "average_win": 0.8426953227599503,
+          "average_loss": 0.26388804967204305,
+          "payoff_ratio": 3.1933819049678154,
+          "profit_factor": 0.8963879031488605
+        },
+        "coverage_gaps": [],
+        "score": 69.41068576721915,
+        "expectations_by_direction_hit_rate": {
+          "0.5": -0.02134922831708555,
+          "0.6": 0.005657891815913287,
+          "0.75": 0.04616857201541166,
+          "0.85": 0.0731756921484107
+        },
+        "break_even_direction_hit_rate": 0.5790503697245375,
+        "entry_reasons": {
+          "trend_breakout": 51,
+          "reversal_reclaim": 5,
+          "deadline_entry": 90
+        },
+        "exit_reasons": {
+          "no_progress": 30,
+          "profit_lock": 16,
+          "invalidation_stop": 50,
+          "breakeven_stop": 30,
+          "charm_exit": 1,
+          "trailing_stop": 11,
+          "take_profit": 8
+        },
+        "entry_decision_minute_median": 60.0,
+        "entry_fill_minute_median": 61.0,
+        "exit_fill_minute_median": 72.5,
+        "hold_minutes_median": 16.5,
+        "worst_return": -0.8490066225165562,
+        "residual_value": {
+          "n": 146,
+          "negative_entry": 1,
+          "negative_exit": 4,
+          "entry_median": 0.7425000000000085,
+          "exit_median": 0.5399999999999932,
+          "change_median": -0.10500000000000465
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 73
+          },
+          "completed": 73,
+          "entered": 73,
+          "sold": 73,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": 0.08751512142411835,
+            "win_rate": 0.2528886241810601,
+            "average_win": 1.1654256308924864,
+            "average_loss": 0.27734521205823914,
+            "payoff_ratio": 4.202075897556007,
+            "profit_factor": 1.4223544532065377
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": 0.06679258613389782,
+            "win_rate": 0.2465753424657534,
+            "average_win": 1.1377522703383702,
+            "average_loss": 0.28370331051483877,
+            "payoff_ratio": 4.0103595135131895,
+            "profit_factor": 1.3124812953315896
+          },
+          "traded_raw": {
+            "n": 73,
+            "expectancy": 0.06679258613389782,
+            "win_rate": 0.2465753424657534,
+            "average_win": 1.1377522703383702,
+            "average_loss": 0.28370331051483877,
+            "payoff_ratio": 4.0103595135131895,
+            "profit_factor": 1.3124812953315896
+          },
+          "coverage_gaps": [],
+          "score": 82.94737208180314,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.08751512142411835,
+            "0.6": 0.12131597701246392,
+            "0.75": 0.17201726039498225,
+            "0.85": 0.20581811598332775
+          },
+          "break_even_direction_hit_rate": 0.24108607637052443,
+          "entry_reasons": {
+            "trend_breakout": 23,
+            "reversal_reclaim": 2,
+            "deadline_entry": 48
+          },
+          "exit_reasons": {
+            "no_progress": 11,
+            "profit_lock": 9,
+            "breakeven_stop": 10,
+            "charm_exit": 1,
+            "invalidation_stop": 30,
+            "trailing_stop": 6,
+            "take_profit": 6
+          },
+          "entry_decision_minute_median": 60,
+          "entry_fill_minute_median": 61,
+          "exit_fill_minute_median": 72,
+          "hold_minutes_median": 14,
+          "worst_return": -0.8490066225165562,
+          "residual_value": {
+            "n": 73,
+            "negative_entry": 0,
+            "negative_exit": 1,
+            "entry_median": 0.7500000000000102,
+            "exit_median": 0.44900000000000095,
+            "change_median": -0.12
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 73
+          },
+          "completed": 73,
+          "entered": 73,
+          "sold": 73,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.11890626115817166,
+            "win_rate": 0.18797966476644265,
+            "average_win": 0.45406302991998043,
+            "average_loss": 0.2515465049857578,
+            "payoff_ratio": 1.8050858227813136,
+            "profit_factor": 0.41787060387286096
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.10949104276806909,
+            "win_rate": 0.1917808219178082,
+            "average_win": 0.46333639015912464,
+            "average_loss": 0.24541619634401335,
+            "payoff_ratio": 1.8879617444222818,
+            "profit_factor": 0.4479909224052872
+          },
+          "traded_raw": {
+            "n": 73,
+            "expectancy": -0.10949104276806909,
+            "win_rate": 0.1917808219178082,
+            "average_win": 0.46333639015912464,
+            "average_loss": 0.24541619634401335,
+            "payoff_ratio": 1.8879617444222818,
+            "profit_factor": 0.4479909224052872
+          },
+          "coverage_gaps": [],
+          "score": 46.529826928093044,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.11890626115817166,
+            "0.6": -0.09561658954715069,
+            "0.75": -0.06068208213061914,
+            "0.85": -0.0373924105195981
+          },
+          "break_even_direction_hit_rate": 1.0105536185486768,
+          "entry_reasons": {
+            "trend_breakout": 28,
+            "deadline_entry": 42,
+            "reversal_reclaim": 3
+          },
+          "exit_reasons": {
+            "no_progress": 19,
+            "invalidation_stop": 20,
+            "breakeven_stop": 20,
+            "trailing_stop": 5,
+            "profit_lock": 7,
+            "take_profit": 2
+          },
+          "entry_decision_minute_median": 60,
+          "entry_fill_minute_median": 61,
+          "exit_fill_minute_median": 77,
+          "hold_minutes_median": 17,
+          "worst_return": -0.65,
+          "residual_value": {
+            "n": 73,
+            "negative_entry": 1,
+            "negative_exit": 3,
+            "entry_median": 0.7350000000000068,
+            "exit_median": 0.6299999999999499,
+            "change_median": -0.08999999999998765
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 56,
+          "outcomes": {
+            "COMPLETED": 56
+          },
+          "completed": 56,
+          "entered": 56,
+          "sold": 56,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 56,
+            "expectancy": -0.041001202381062314,
+            "win_rate": 0.2129232374768088,
+            "average_win": 0.7737673733456985,
+            "average_loss": 0.2614157428662398,
+            "payoff_ratio": 2.959911154783118,
+            "profit_factor": 0.8007273187684428
+          },
+          "raw": {
+            "n": 56,
+            "expectancy": 4.3745636513266494e-05,
+            "win_rate": 0.23214285714285715,
+            "average_win": 0.8293496562160112,
+            "average_loss": 0.25067664593403266,
+            "payoff_ratio": 3.308444044022595,
+            "profit_factor": 1.0002272691231102
+          },
+          "traded_raw": {
+            "n": 56,
+            "expectancy": 4.3745636513266494e-05,
+            "win_rate": 0.23214285714285715,
+            "average_win": 0.8293496562160112,
+            "average_loss": 0.25067664593403266,
+            "payoff_ratio": 3.308444044022595,
+            "profit_factor": 1.0002272691231102
+          },
+          "coverage_gaps": [],
+          "score": 67.30286909886982,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.041001202381062314,
+            "0.6": -0.016785549003981347,
+            "0.75": 0.019537931061640156,
+            "0.85": 0.043753584438721134
+          },
+          "break_even_direction_hit_rate": 0.6693169362089899,
+          "entry_reasons": {
+            "trend_breakout": 51,
+            "reversal_reclaim": 5
+          },
+          "exit_reasons": {
+            "no_progress": 13,
+            "profit_lock": 6,
+            "invalidation_stop": 14,
+            "breakeven_stop": 14,
+            "trailing_stop": 5,
+            "take_profit": 4
+          },
+          "entry_decision_minute_median": 36.5,
+          "entry_fill_minute_median": 37.5,
+          "exit_fill_minute_median": 63.5,
+          "hold_minutes_median": 18.0,
+          "worst_return": -0.5138240574506284,
+          "residual_value": {
+            "n": 56,
+            "negative_entry": 0,
+            "negative_exit": 0,
+            "entry_median": 0.97500000000005,
+            "exit_median": 0.7100000000000182,
+            "change_median": -0.11500000000001276
+          }
+        },
+        "fallback": {
+          "cases": 90,
+          "outcomes": {
+            "COMPLETED": 90
+          },
+          "completed": 90,
+          "entered": 90,
+          "sold": 90,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 90,
+            "expectancy": -0.017380054190323,
+            "win_rate": 0.21223154188671411,
+            "average_win": 0.8695999574164945,
+            "average_loss": 0.2563400348131317,
+            "payoff_ratio": 3.392368882412069,
+            "profit_factor": 0.9139331121318993
+          },
+          "raw": {
+            "n": 90,
+            "expectancy": -0.03466041211043606,
+            "win_rate": 0.2111111111111111,
+            "average_win": 0.8518265682900141,
+            "average_loss": 0.27188932235844376,
+            "payoff_ratio": 3.1329901479801894,
+            "profit_factor": 0.8384058142482196
+          },
+          "traded_raw": {
+            "n": 90,
+            "expectancy": -0.03466041211043606,
+            "win_rate": 0.2111111111111111,
+            "average_win": 0.8518265682900141,
+            "average_loss": 0.27188932235844376,
+            "payoff_ratio": 3.1329901479801894,
+            "profit_factor": 0.8384058142482196
+          },
+          "coverage_gaps": [],
+          "score": 70.45122767557297,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.017380054190323,
+            "0.6": 0.009059944143049586,
+            "0.75": 0.048719941643108514,
+            "0.85": 0.07515993997648118
+          },
+          "break_even_direction_hit_rate": 0.5657339458618116,
+          "entry_reasons": {
+            "deadline_entry": 90
+          },
+          "exit_reasons": {
+            "breakeven_stop": 16,
+            "profit_lock": 10,
+            "invalidation_stop": 36,
+            "charm_exit": 1,
+            "no_progress": 17,
+            "trailing_stop": 6,
+            "take_profit": 4
+          },
+          "entry_decision_minute_median": 60.0,
+          "entry_fill_minute_median": 61.0,
+          "exit_fill_minute_median": 77.5,
+          "hold_minutes_median": 14.0,
+          "worst_return": -0.8490066225165562,
+          "residual_value": {
+            "n": 90,
+            "negative_entry": 1,
+            "negative_exit": 4,
+            "entry_median": 0.5950000000000046,
+            "exit_median": 0.37,
+            "change_median": -0.1000000000000068
+          }
+        }
+      },
+      "days_with_completed_case": 21,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    },
+    {
+      "strategy": "open_hold_v3",
+      "mode": "required",
+      "strategy_sha256": "6817da2325435db83be33867b144ed0d65962478cee37412eb1546b574483def",
+      "prior_verdict": "REJECT",
+      "overall": {
+        "cases": 146,
+        "outcomes": {
+          "COMPLETED": 146
+        },
+        "completed": 146,
+        "entered": 146,
+        "sold": 146,
+        "expired_settlement": 0,
+        "balanced": {
+          "n": 146,
+          "expectancy": -0.06268907477152526,
+          "win_rate": 0.43150684931506694,
+          "average_win": 0.9094622170092435,
+          "average_loss": 0.8005870432316263,
+          "payoff_ratio": 1.135994174147679,
+          "profit_factor": 0.8622606382084785
+        },
+        "raw": {
+          "n": 146,
+          "expectancy": -0.06268907477152544,
+          "win_rate": 0.4315068493150685,
+          "average_win": 0.9094622170092426,
+          "average_loss": 0.8005870432316268,
+          "payoff_ratio": 1.1359941741476771,
+          "profit_factor": 0.8622606382084779
+        },
+        "traded_raw": {
+          "n": 146,
+          "expectancy": -0.06268907477152544,
+          "win_rate": 0.4315068493150685,
+          "average_win": 0.9094622170092426,
+          "average_loss": 0.8005870432316268,
+          "payoff_ratio": 1.1359941741476771,
+          "profit_factor": 0.8622606382084779
+        },
+        "coverage_gaps": [],
+        "score": 46.055584909395535,
+        "expectations_by_direction_hit_rate": {
+          "0.5": -0.06268907477152526,
+          "0.6": 0.060366456256092785,
+          "0.75": 0.24494975279752,
+          "0.85": 0.3680052838251388
+        },
+        "break_even_direction_hit_rate": 0.5509437278016017,
+        "entry_reasons": {
+          "trend_breakout": 51,
+          "reversal_reclaim": 5,
+          "deadline_entry": 90
+        },
+        "exit_reasons": {
+          "scheduled_flatten": 88,
+          "profit_lock": 26,
+          "invalidation_stop": 18,
+          "take_profit": 14
+        },
+        "entry_decision_minute_median": 60.0,
+        "entry_fill_minute_median": 61.0,
+        "exit_fill_minute_median": 376.0,
+        "hold_minutes_median": 315.0,
+        "worst_return": -1.042857142857143,
+        "residual_value": {
+          "n": 146,
+          "negative_entry": 1,
+          "negative_exit": 12,
+          "entry_median": 0.7425000000000085,
+          "exit_median": 0.09,
+          "change_median": -0.5450000000000023
+        }
+      },
+      "sides": {
+        "CALL": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 73
+          },
+          "completed": 73,
+          "entered": 73,
+          "sold": 73,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": 0.07472989164722539,
+            "win_rate": 0.43458691397940963,
+            "average_win": 1.2077270142507144,
+            "average_loss": 0.796112568907128,
+            "payoff_ratio": 1.5170304570227229,
+            "profit_factor": 1.1660175560674413
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": 0.03592210303989568,
+            "win_rate": 0.4246575342465753,
+            "average_win": 1.1814567559212206,
+            "average_loss": 0.8095915693248921,
+            "payoff_ratio": 1.4593244305970503,
+            "profit_factor": 1.0771204130597278
+          },
+          "traded_raw": {
+            "n": 73,
+            "expectancy": 0.03592210303989568,
+            "win_rate": 0.4246575342465753,
+            "average_win": 1.1814567559212206,
+            "average_loss": 0.8095915693248921,
+            "payoff_ratio": 1.4593244305970503,
+            "profit_factor": 1.0771204130597278
+          },
+          "coverage_gaps": [],
+          "score": 60.453659967874046,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.07472989164722539,
+            "0.6": 0.21038985397523155,
+            "0.75": 0.41387979746724046,
+            "0.85": 0.5495397597952459
+          },
+          "break_even_direction_hit_rate": 0.4449138195493969,
+          "entry_reasons": {
+            "trend_breakout": 23,
+            "reversal_reclaim": 2,
+            "deadline_entry": 48
+          },
+          "exit_reasons": {
+            "scheduled_flatten": 43,
+            "profit_lock": 13,
+            "take_profit": 10,
+            "invalidation_stop": 7
+          },
+          "entry_decision_minute_median": 60,
+          "entry_fill_minute_median": 61,
+          "exit_fill_minute_median": 376,
+          "hold_minutes_median": 315,
+          "worst_return": -1.042857142857143,
+          "residual_value": {
+            "n": 73,
+            "negative_entry": 0,
+            "negative_exit": 5,
+            "entry_median": 0.7500000000000102,
+            "exit_median": 0.06000000000001582,
+            "change_median": -0.6400000000000727
+          }
+        },
+        "PUT": {
+          "cases": 73,
+          "outcomes": {
+            "COMPLETED": 73
+          },
+          "completed": 73,
+          "entered": 73,
+          "sold": 73,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 73,
+            "expectancy": -0.1805458846403139,
+            "win_rate": 0.42416191610652576,
+            "average_win": 0.663779385814889,
+            "average_loss": 0.8024752681780846,
+            "payoff_ratio": 0.8271649135329909,
+            "profit_factor": 0.6092890770405298
+          },
+          "raw": {
+            "n": 73,
+            "expectancy": -0.16130025258294653,
+            "win_rate": 0.4383561643835616,
+            "average_win": 0.6459675074382635,
+            "average_loss": 0.7913628945507202,
+            "payoff_ratio": 0.8162721703106868,
+            "profit_factor": 0.6370904743888287
+          },
+          "traded_raw": {
+            "n": 73,
+            "expectancy": -0.16130025258294653,
+            "win_rate": 0.4383561643835616,
+            "average_win": 0.6459675074382635,
+            "average_loss": 0.7913628945507202,
+            "payoff_ratio": 0.8162721703106868,
+            "profit_factor": 0.6370904743888287
+          },
+          "coverage_gaps": [],
+          "score": 35.00883311883997,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.1805458846403139,
+            "0.6": -0.06601659234891094,
+            "0.75": 0.10577734608819378,
+            "0.85": 0.22030663837959683
+          },
+          "break_even_direction_hit_rate": 0.6576416661869712,
+          "entry_reasons": {
+            "trend_breakout": 28,
+            "deadline_entry": 42,
+            "reversal_reclaim": 3
+          },
+          "exit_reasons": {
+            "scheduled_flatten": 45,
+            "invalidation_stop": 11,
+            "profit_lock": 13,
+            "take_profit": 4
+          },
+          "entry_decision_minute_median": 60,
+          "entry_fill_minute_median": 61,
+          "exit_fill_minute_median": 376,
+          "hold_minutes_median": 315,
+          "worst_return": -1.03,
+          "residual_value": {
+            "n": 73,
+            "negative_entry": 1,
+            "negative_exit": 7,
+            "entry_median": 0.7350000000000068,
+            "exit_median": 0.0999999999999932,
+            "change_median": -0.5099000000000389
+          }
+        }
+      },
+      "entry_groups": {
+        "signal": {
+          "cases": 56,
+          "outcomes": {
+            "COMPLETED": 56
+          },
+          "completed": 56,
+          "entered": 56,
+          "sold": 56,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 56,
+            "expectancy": -0.21345720372812593,
+            "win_rate": 0.36934717068645645,
+            "average_win": 0.7402813142257547,
+            "average_loss": 0.7720222442820399,
+            "payoff_ratio": 0.9588859902789415,
+            "profit_factor": 0.5615797013166628
+          },
+          "raw": {
+            "n": 56,
+            "expectancy": -0.15608726869967168,
+            "win_rate": 0.39285714285714285,
+            "average_win": 0.7731934156671173,
+            "average_loss": 0.7573865350546529,
+            "payoff_ratio": 1.0208702952599016,
+            "profit_factor": 0.6605631322269951
+          },
+          "traded_raw": {
+            "n": 56,
+            "expectancy": -0.15608726869967168,
+            "win_rate": 0.39285714285714285,
+            "average_win": 0.7731934156671173,
+            "average_loss": 0.7573865350546529,
+            "payoff_ratio": 1.0208702952599016,
+            "profit_factor": 0.6605631322269951
+          },
+          "coverage_gaps": [],
+          "score": 34.81443801257695,
+          "expectations_by_direction_hit_rate": {
+            "0.5": -0.21345720372812593,
+            "0.6": -0.11567801280907257,
+            "0.75": 0.03099077356950776,
+            "0.85": 0.1287699644885613
+          },
+          "break_even_direction_hit_rate": 0.7183053487370709,
+          "entry_reasons": {
+            "trend_breakout": 51,
+            "reversal_reclaim": 5
+          },
+          "exit_reasons": {
+            "scheduled_flatten": 40,
+            "profit_lock": 8,
+            "take_profit": 4,
+            "invalidation_stop": 4
+          },
+          "entry_decision_minute_median": 36.5,
+          "entry_fill_minute_median": 37.5,
+          "exit_fill_minute_median": 376.0,
+          "hold_minutes_median": 331.5,
+          "worst_return": -1.0060913705583756,
+          "residual_value": {
+            "n": 56,
+            "negative_entry": 0,
+            "negative_exit": 4,
+            "entry_median": 0.97500000000005,
+            "exit_median": 0.1049999999999966,
+            "change_median": -0.7925000000000023
+          }
+        },
+        "fallback": {
+          "cases": 90,
+          "outcomes": {
+            "COMPLETED": 90
+          },
+          "completed": 90,
+          "entered": 90,
+          "sold": 90,
+          "expired_settlement": 0,
+          "balanced": {
+            "n": 90,
+            "expectancy": 0.008854939065847386,
+            "win_rate": 0.4563311587449514,
+            "average_win": 0.9804117966391728,
+            "average_loss": 0.806626164430118,
+            "payoff_ratio": 1.2154475516323406,
+            "profit_factor": 1.0201919763319716
+          },
+          "raw": {
+            "n": 90,
+            "expectancy": -0.004574642994012216,
+            "win_rate": 0.45555555555555555,
+            "average_win": 0.9825820616318461,
+            "average_loss": 0.8305629060483022,
+            "payoff_ratio": 1.183031477178326,
+            "profit_factor": 0.9898834809043137
+          },
+          "traded_raw": {
+            "n": 90,
+            "expectancy": -0.004574642994012216,
+            "win_rate": 0.45555555555555555,
+            "average_win": 0.9825820616318461,
+            "average_loss": 0.8305629060483022,
+            "payoff_ratio": 1.183031477178326,
+            "profit_factor": 0.9898834809043137
+          },
+          "coverage_gaps": [],
+          "score": 51.61793247263001,
+          "expectations_by_direction_hit_rate": {
+            "0.5": 0.008854939065847386,
+            "0.6": 0.1440808811236818,
+            "0.75": 0.3469197942104336,
+            "0.85": 0.4821457362682684
+          },
+          "break_even_direction_hit_rate": 0.4934517453300047,
+          "entry_reasons": {
+            "deadline_entry": 90
+          },
+          "exit_reasons": {
+            "scheduled_flatten": 48,
+            "profit_lock": 18,
+            "invalidation_stop": 14,
+            "take_profit": 10
+          },
+          "entry_decision_minute_median": 60.0,
+          "entry_fill_minute_median": 61.0,
+          "exit_fill_minute_median": 376.0,
+          "hold_minutes_median": 315.0,
+          "worst_return": -1.042857142857143,
+          "residual_value": {
+            "n": 90,
+            "negative_entry": 1,
+            "negative_exit": 8,
+            "entry_median": 0.5950000000000046,
+            "exit_median": 0.08000000000000236,
+            "change_median": -0.43999999999999995
+          }
+        }
+      },
+      "days_with_completed_case": 21,
+      "all_primary_trades_match": true,
+      "original_summary_matches": true
+    }
+  ],
+  "evaluated_new_candidates": false,
+  "replayed_primary_trades": 1314,
+  "elapsed_seconds": 16.017091683112085,
+  "max_rss_mb": 148.0859375
+}

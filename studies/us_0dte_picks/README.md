@@ -86,4 +86,5 @@ PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.live_watch
 - [daily_list.py](daily_list.py)：每日 A4 名单研究工具（标注 `P5_FAILED`）
 - `notes/`：P1–P5、SV1、SV2 预登记（代码按 SHA 校验，不能改）、[分母说明](notes/DENOMINATORS.md)、[测试集清单](notes/TEST_SETS.md)（哪些数据已用过、能否再当验证）、失败记录
 - `reports/`：P1–P5 结果（中文）与 SV2 校准
+- 两种日内 mode 基线：[R29_BASELINES_CN.md](reports/R29_BASELINES_CN.md)，九个已注册版本的主交易复核、CALL/PUT 分侧、买入兜底与日内卖出；`python3 -m studies.us_0dte_picks.baselines`。统一入口现支持 `--strategy-version V6.6 --strategy-mode selective|required`，映射到原冻结配置；不改变账户名额或资格。
 - 测试：`python3 -m unittest discover -s studies/us_0dte_picks/tests`
