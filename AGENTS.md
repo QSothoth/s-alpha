@@ -7,7 +7,7 @@
 | 层级 | 能力 | 规范 |
 |---|---|---|
 | 核心 | 美股期权日内单笔交易（主要是 0DTE）：上游给定标的、方向、合约，本仓库只做时机；唯一会下单的部分 | [custody/AGENTS.md](custody/AGENTS.md) |
-| 核心 | AH 股实时盯盘：只读、只标注 | [watch/AGENTS.md](watch/AGENTS.md) |
+| 核心 | 港股 / A 股 / 美股实时盯盘：只读、只标注 | [watch/AGENTS.md](watch/AGENTS.md) |
 | 研究切片 | 近到期选标的与盘中会话、盯盘信号、竞价打分；已结束的研究只留结论——**不成熟，不当生产能力用** | [studies/AGENTS.md](studies/AGENTS.md) |
 
 ## 安全

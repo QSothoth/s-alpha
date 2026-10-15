@@ -1,6 +1,6 @@
 # s-alpha
 
-美股期权日内执行（custody）、AH 股盯盘（watch）与只读研究（studies）。
+美股期权日内执行（custody）、港股 / A 股 / 美股盯盘（watch）与只读研究（studies）。
 
 | 入口 | 内容 |
 |---|---|

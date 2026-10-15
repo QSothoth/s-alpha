@@ -267,16 +267,17 @@ def test_restart_midday_reproduces_the_same_list():
         assert part == [m for m in full if m['i'] < cut], 'cut=%d diverges' % cut
 
 
-def test_only_granular_d_plus_marks_are_bold():
-    """Bold = granular tape and daily D+; fine-but-D- or coarse-and-D+ stay dim."""
+def test_no_bold_marks_only_tick_bound_ones_are_dim():
+    """The grade replaced bold (D2): sides are plain capitals; only `~` dims."""
     base = {'t': '10:47', 'side': 'BUY', 'trigger': 'BOS+FVG', 'close': 78.95,
-            'vol_ratio': 3.8, 'stop': 77.1, 'tier': 'plain'}
-    loud = w.mark_text(dict(base, daily=True, coarse=False, fine=False), 100)
-    assert w.GREEN + w.BOLD + 'B' in loud
-    for quiet in (dict(base, daily=False, coarse=False, fine=True),
-                  dict(base, daily=True, coarse=True), dict(base, daily=None, coarse=False)):
-        line = w.mark_text(quiet, 100)
-        assert w.GREEN + 'b' in line and w.BOLD + 'b' not in line and line.startswith(w.DIM), quiet
+            'vol_ratio': 3.8, 'stop': 77.1, 'tier': 'plain', 'grade': 4}
+    for m in (dict(base, daily=True, coarse=False), dict(base, daily=False, coarse=False),
+              dict(base, daily=None, coarse=False)):
+        line = w.mark_text(m, 100)
+        assert w.BOLD not in line and not line.startswith(w.DIM) and w.GREEN + 'B' in line, m
+    dim = w.mark_text(dict(base, daily=True, coarse=True), 100)
+    assert dim.startswith(w.DIM) and w.BOLD not in dim
+    assert ' B4~' in re.sub(r'\x1b\[[0-9;]*m', '', dim)
 
 
 def test_hk_tick_table_and_a_share_tick():
@@ -393,10 +394,10 @@ def test_signal_strength_is_joint_and_missing_safe():
     assert w.with_strength(marks, ({'10:47': 102.0}, 100.0), None)[0]['stock_pct'] is None
     text = re.sub(r'\x1b\[[0-9;]*m', '', w.mark_text(dict(
         scored[0], trigger='BOS', vol_ratio=1, stop=100.0), 100))
-    assert '+2.0/+2.0' in text and 'S98' not in text
+    assert '+2.0' not in text and 'S98' not in text      # moves stay in JSON only
     missing = re.sub(r'\x1b\[[0-9;]*m', '', w.mark_text(dict(
         marks[0], trigger='BOS', vol_ratio=1, stop=100.0), 100))
-    assert ' -/- ' in missing
+    assert '-/-' not in missing
 
 
 def test_swing_reference_on_the_wrong_side_is_flagged_not_hidden():
@@ -463,6 +464,102 @@ def test_board_renders_without_crashing():
             assert w.disp_width(line) <= wide, (wide, w.disp_width(line), line)
 
 
+def test_range_left_uses_latest_checkpoint_and_is_gated():
+    import math
+    day = '2026-09-28'
+    times = ['09:%02d' % m for m in range(30, 60)] + ['10:%02d' % m for m in range(60)] + ['11:00']
+    bars, price = [], 100.0
+    for k, hm in enumerate(times):
+        price += 0.3 if k % 2 else -0.2
+        bars.append(('%s %s:00' % (day, hm), price, price + 0.25, price - 0.25, price, 1000.0))
+    dctx = {'pdh': 103.0, 'pdl': 99.0, 'pdo': 100.0, 'ret5d': 0.0}
+    assert w.range_left(bars[:30], dctx) is None                 # before 10:00
+    assert w.range_left(bars, None) is None
+    assert w.range_left(bars, dict(dctx, pdo=None)) is None
+    r = w.range_left(bars, dctx)
+    assert r['cp'] == '11:00'
+    cp, minutes, a, b, c, lo, hi = w.RANGE_MODEL[2]
+    rv = sum(abs(math.log(bars[k][4] / bars[k - 1][4])) for k in range(1, 91))
+    mid = a + b * math.log(rv / minutes) + c * math.log(0.04)
+    assert abs(r['half'] - math.exp(mid) * 50) < 1e-9 and r['lo'] < r['half'] < r['hi']
+    flat = [(t0, o, o + 0.01, o - 0.01, o, v) for t0, o, h, l, c0, v in bars]
+    assert w.range_left(flat, dctx) is None                      # tick-bound tape
+    assert w.daily_context([('2026-09-%02d' % d, 10.0 + d, 11.0 + d, 9.0 + d, 10.0 + d, 1.0)
+                            for d in range(18, 25)], day)['pdo'] == 34.0
+    st = {'bars': bars, 'marks': [], 'read': {'vol_ratio': 1.0}, 'range': r}
+    text = re.sub(r'\x1b\[[0-9;]*m', '', '\n'.join(w.symbol_lines('HK.00700', st, 100)))
+    assert 'left \u00b1%.2f%%' % r['half'] in text and '@11:00' in text
+    text = re.sub(r'\x1b\[[0-9;]*m', '', '\n'.join(w.symbol_lines('HK.00700', dict(st, range=None), 100)))
+    assert 'left -' in text
+
+
+def test_grade_is_one_fixed_scale_and_missing_safe():
+    """W27: parts normalized by daily ATR20, so any market reads the same."""
+    dctx = {'pdh': 103.0, 'pdl': 97.0, 'pdo': 100.0, 'ret5d': 0.0, 'atr20': 0.02}
+    base = {'t': '10:47', 'side': 'BUY', 'trigger': 'BOS', 'close': 102.0, 'stop': 101.0,
+            'vol_ratio': 4.0, 'stock_pct': 2.0, 'hsi_pct': 1.0, 'daily': True, 'coarse': False}
+    assert w.with_grade([base], dctx, 0.01)[0]['grade'] == 5      # 4x volume, one ATR each
+    weak = dict(base, vol_ratio=0.5, stock_pct=-2.0, hsi_pct=-1.0)
+    assert w.with_grade([weak], dctx, 0.01)[0]['grade'] == 1
+    flat = dict(base, vol_ratio=1.0, stock_pct=0.0, hsi_pct=0.0)    # 1/3, 1/2, 1/2 -> 0.44
+    assert w.with_grade([flat], dctx, 0.01)[0]['grade'] == 2
+    assert w.with_grade([dict(base, side='SELL')], dctx, 0.01)[0]['grade'] == 1   # volume only; tape against
+    # W31 cuts: 3x volume and half an ATR each way is a 4, not yet a 5.
+    assert w.with_grade([dict(base, vol_ratio=3.0, stock_pct=1.0, hsi_pct=0.5)], dctx, 0.01)[0]['grade'] == 4
+    # Same moves in ATR units grade the same whatever the price or market.
+    assert (w.with_grade([dict(base, stock_pct=6.0, hsi_pct=3.0)], dict(dctx, atr20=0.06), 0.03)[0]['grade']
+            == w.with_grade([base], dctx, 0.01)[0]['grade'])
+    for missing in (dict(base, hsi_pct=None), dict(base, stock_pct=None), dict(base, vol_ratio=None)):
+        assert w.with_grade([missing], dctx, 0.01)[0]['grade'] is None
+    assert w.with_grade([base], None, 0.01)[0]['grade'] is None
+    assert w.with_grade([base], dctx, None)[0]['grade'] is None
+    plain = re.sub(r'\x1b\[[0-9;]*m', '', w.mark_text(dict(base, grade=5), 100))
+    assert re.search(r' B5 +BOS', plain)
+    plain = re.sub(r'\x1b\[[0-9;]*m', '', w.mark_text(dict(base, grade=None, coarse=True), 100))
+    assert re.search(r' B\?~ +BOS', plain)
+
+
+def test_atr20_and_market_routing():
+    rows = [('2026-09-%02d' % d, 100.0, 102.0, 98.0, 100.0, 1.0) for d in range(1, 23)]
+    assert abs(w.atr20(rows) - 0.04) < 1e-12
+    assert w.atr20(rows[:20]) is None
+    assert w.daily_context(rows, '2026-09-23')['atr20'] == w.atr20(rows)
+    assert w.market('HK.00700') == 'HK' and w.market('US.AAPL') == 'US'
+    assert w.market('SZ.300795') == 'A' and w.market(w.INDEX['A']) == 'A'
+    assert w.us_tick(150.0) == 0.01 and w.us_tick(0.5) == 0.0001
+    payload = {'data': {'sh000300': {'qt': {'sh000300': ['1', 'x', '000300', '4275.68', '4287.98']}}}}
+    assert w.tencent_previous(payload, 'sh000300') == 4287.98
+    assert w.tencent_previous({}, 'sh000300') is None
+
+
+def test_us_session_uses_new_york_clock():
+    at = datetime(2026, 10, 13, 22, 0, tzinfo=w.HKT)          # 10:00 New York (EDT)
+    assert w.bar_stale('US.AAPL', '2026-10-13 09:59:00', at) is False
+    assert w.bar_stale('US.AAPL', '2026-10-13 09:50:00', at) is True
+    assert w.bar_stale('HK.00700', '2026-10-13 09:50:00', at) is None   # HK is closed then
+    with patch.object(w, 'now_hkt', return_value=at):
+        bars = [('2026-10-13 09:31:00', 1, 1, 1, 1, 1), ('2026-10-13 09:59:00', 1, 1, 1, 1, 1),
+                ('2026-10-13 10:00:00', 1, 1, 1, 1, 1)]
+        assert [b[0][11:16] for b in w.closed_session(bars, 'US')] == ['09:31', '09:59']
+    late = datetime(2026, 10, 14, 4, 20, tzinfo=w.HKT)          # 16:20 New York
+    with patch.object(w, 'now_hkt', return_value=late):
+        assert w.closed_session([('2026-10-13 16:00:00', 1, 1, 1, 1, 1)], 'US')
+
+
+def test_run_counter_marks_repeats_on_one_side():
+    base = {'trigger': 'BOS', 'close': 10.0, 'vol_ratio': 1.0, 'stop': 9.9, 'coarse': False, 'grade': 3}
+    ms = [dict(base, t='10:00', side='BUY'), dict(base, t='10:20', side='BUY'),
+          dict(base, t='10:40', side='BUY'), dict(base, t='11:00', side='SELL', stop=10.1),
+          dict(base, t='11:20', side='BUY')]
+    bars = [('2026-09-28 11:20:00', 10, 10, 10, 10, 1)]
+    text = re.sub(r'\x1b\[[0-9;]*m', '', '\n'.join(
+        w.symbol_lines('HK.00700', {'bars': bars, 'marks': ms, 'read': {}}, 100)))
+    rows = [line for line in text.splitlines() if line.startswith('  1')]
+    assert [bool(re.search(r'#\d', line)) for line in rows] == [False, True, True, False, False]
+    assert '#2' in rows[1] and '#3' in rows[2]
+    assert text.splitlines()[1].startswith('  left')     # left leads the second line
+
+
 def test_two_column_rows_fit_their_column():
     bars = fake_bars()
     ms, d = w.marks(bars)
@@ -483,7 +580,7 @@ class PollingTests(unittest.TestCase):
 
         def get_quote(code):
             calls.append(('quote', code, elapsed[0]))
-            return (quote(code, elapsed[0]) if quote else bars), 'test'
+            return (quote(code, elapsed[0]) if quote else bars), 'test', None
 
         def get_daily(code):
             calls.append(('daily', code, elapsed[0]))
@@ -505,7 +602,8 @@ class PollingTests(unittest.TestCase):
                 'now_hkt': lambda: base + timedelta(seconds=elapsed[0]),
                 'close_hkt': lambda: base + timedelta(seconds=seconds),
                 'tencent_session': get_quote,
-                'hsi_session': lambda ctx: None,
+                'index_session': lambda ctx, mkt: None,
+                'index_daily': lambda ctx, mkt: None,
                 'tencent_daily': get_daily,
                 'marks': lambda bars, **kw: ([{'t': '09:59', 'side': 'BUY', 'close': 100}], {}),
                 'read': lambda bars: {},
@@ -539,6 +637,22 @@ class PollingTests(unittest.TestCase):
                                     daily=lambda code, now: (12, None))
         self.assertEqual([(code, at) for kind, code, at in calls if kind == 'daily'],
                          [('SZ.300795', 0), ('SH.600519', 30)])
+
+    def test_opend_daily_fills_every_symbol_in_one_poll(self):
+        ctx = Mock()
+        ctx.subscribe.return_value = (w.RET_OK, '')
+        rows = [('2026-09-%02d' % day, 100, 101, 99, 100, 100) for day in range(1, 28)]
+        asked = []
+        def daily(_ctx, code):
+            asked.append((code, w.time.monotonic()))
+            return rows
+        with patch.object(w, 'OpenQuoteContext', return_value=ctx), \
+                patch.object(w, 'session_bars', return_value=(fake_bars(), 'test', 99.0)), \
+                patch.object(w, 'hk_daily', daily):
+            _, events, _ = self.run_watch(seconds=60, codes=('HK.00700', 'HK.01810', 'HK.09988'))
+        self.assertEqual([code for code, _ in asked], ['HK.00700', 'HK.01810', 'HK.09988'])
+        self.assertEqual(len({at for _, at in asked}), 1)
+        self.assertEqual(sum(kind == 'DAILY_CONTEXT' for kind, _ in events), 3)
 
     def test_daily_retries_do_not_starve_later_symbols(self):
         codes = tuple('SZ.%06d' % i for i in range(1, 13))

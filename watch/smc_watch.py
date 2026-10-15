@@ -9,13 +9,14 @@ Triggers:
 
 Every trigger that passes the bias is marked. Sessions averaging fewer than
 GATE_TPB ticks per bar are shown dim and tagged `~`. Each mark also gets a
-daily-context tag, D+ or D-; only granular D+ marks are drawn bold. These
+daily-context tag, D+ or D-, and a strength grade 1-5 on one scale for every
+market (W27 parts, W31 cuts), which replaced the old bold emphasis (D2). These
 labels came from studies W2/W6; W12 corrects dated tick sizes and the volume
 baseline, so earlier performance figures describe the old implementation.
 Hong Kong marks also carry one S00-S100 joint stock-and-HSI directional
 strength percentile from W19 (pipe output only); it is not a future-return
-probability. The board shows the raw stock and HSI moves it is built from, and
-the swing reference level, which is not a stop.
+probability. The board shows the swing reference level, which is not a stop,
+and W24's expected rest-of-day range `left` for Hong Kong names.
 Volume expansion and the premium/discount half of the day's range only split
 `plain` from `vol` marks for de-duplication.
 
@@ -36,7 +37,8 @@ import sys
 import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
-from math import isfinite
+from math import exp, isfinite, log
+from zoneinfo import ZoneInfo
 import unicodedata
 from pathlib import Path
 
@@ -44,6 +46,7 @@ logging.getLogger('futu').setLevel(logging.ERROR)
 logging.getLogger().setLevel(logging.ERROR)
 
 from futu import AuType, KLType, OpenQuoteContext, RET_OK, SubType  # noqa: E402
+from signal_grade import grade as signal_grade  # noqa: E402
 from signal_strength import score as signal_strength_score  # noqa: E402
 
 # futu prints connection notices to stdout through its own logger, which would
@@ -51,14 +54,18 @@ from signal_strength import score as signal_strength_score  # noqa: E402
 logging.getLogger('FTConsoleLog').setLevel(logging.ERROR)
 
 DEFAULT_CODES = ['HK.02513']
-HSI_CODE = 'HK.800000'
 HOST = '127.0.0.1'
 PORT = 11111
 POLL_SEC = 30
 KLINE_BACK = 400        # > one HK session of 1m bars
 TENCENT_M1 = 'https://ifzq.gtimg.cn/appstock/app/kline/mkline?param=%s,m1,,320'
-TENCENT_DAY = 'https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=%s,day,,,12,qfq'
-DAILY_BACK = 12         # daily bars requested; the tag needs the last 6 closed sessions
+TENCENT_DAY = 'https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=%s,day,,,30,qfq'
+DAILY_BACK = 30         # daily bars requested; ATR20 needs 21 closed sessions, D+/D- needs 6
+# Market of each code: Hong Kong and US quotes come from OpenD, A shares from
+# Tencent. The index is the market leg of the strength grade (W27).
+INDEX = {'HK': 'HK.800000', 'US': 'US.SPY', 'A': 'SH.000300'}
+LAST_BARS = {'HK': ' 16:00', 'A': ' 16:00', 'US': ' 16:01'}   # exclusive cutoffs
+SESSIONS = {'HK': ((570, 720), (780, 960)), 'A': ((570, 690), (780, 900)), 'US': ((570, 960),)}
 SWING_LEFT = 3          # bars confirmed on BOTH sides of a swing
 VOL_MULT = 1.5          # trigger bar volume vs the trailing 20-bar mean
 VOL_LOOKBACK = 20
@@ -72,8 +79,24 @@ FINE_TPB = 5.0          # `fine` flag in the log; no longer decides emphasis (W9
 HK_TICK_BANDS = ((0.25, 0.001), (0.5, 0.005), (10, 0.01), (20, 0.02), (100, 0.05),
                  (200, 0.1), (500, 0.2), (1000, 0.5), (2000, 1.0), (5000, 2.0))
 STALE_POLLS = 4
-LAST_BAR = ' 16:00'     # the 16:00 bar is the closing auction, not continuous trade
+# W24 rest-of-day range (studies/watch_signal/reports/W24_RESULTS_CN.md): per
+# checkpoint, log(range to close) = a + b*log(realized 1m vol so far / minutes)
+# + c*log(yesterday's range), fitted on 2025-12..2026-08, validated once on
+# 2024-12..2025-05 (out-of-sample R2 0.55, 80% band covered 77.5%). Minutes are
+# the study's fixed 30-minute steps; lo/hi are the 10%/90% residual quantiles.
+RANGE_MODEL = (
+    ('10:00', 30, 1.0265, 0.6363, 0.2306, -0.4816, 0.4990),
+    ('10:30', 60, 1.5006, 0.7525, 0.1455, -0.4669, 0.4913),
+    ('11:00', 90, 1.6593, 0.7946, 0.1106, -0.4664, 0.4851),
+    ('11:30', 120, 1.6151, 0.7943, 0.1029, -0.4639, 0.4859),
+    ('13:30', 150, 1.4673, 0.8298, 0.0737, -0.4609, 0.4995),
+    ('14:00', 180, 1.2360, 0.8087, 0.0821, -0.4592, 0.4910),
+    ('14:30', 210, 0.9164, 0.7855, 0.0712, -0.4636, 0.4755),
+    ('15:00', 240, 0.3957, 0.7525, 0.0384, -0.4683, 0.4787),
+)
+UNTIL = '16:10'         # board header; main() sets it from the markets watched
 HKT = timezone(timedelta(hours=8))
+ET = ZoneInfo('America/New_York')
 LOG_DIR = Path(__file__).resolve().parent / 'logs'
 
 DIM, BOLD, OFF = '\033[2m', '\033[1m', '\033[0m'
@@ -86,6 +109,23 @@ def now_hkt():
 
 def close_hkt():
     return now_hkt().replace(hour=16, minute=10, second=0, microsecond=0)
+
+
+def market(code):
+    """'A' for Tencent A-share codes, 'US' for US.*, else 'HK'."""
+    if tencent_symbol(code):
+        return 'A'
+    return 'US' if code.upper().startswith('US.') else 'HK'
+
+
+def now_in(mkt):
+    """Wall clock in the market's own time zone (bars are labelled in it)."""
+    now = now_hkt()
+    return now.astimezone(ET) if mkt == 'US' else now
+
+
+def close_us():
+    return now_in('US').replace(hour=16, minute=10, second=0, microsecond=0)
 
 
 def log_path():
@@ -124,36 +164,35 @@ def frame_bars(frame):
     return out
 
 
-def closed_session(bars):
+def closed_session(bars, mkt='HK'):
     """Today's finished 1-minute bars. The bar still forming is dropped."""
-    now = now_hkt()
+    now = now_in(mkt)
     day = now.strftime('%Y-%m-%d')
     # End-labelled live bars can be ahead of the wall-clock minute. Exclude
     # both those and the current minute until it has fully settled.
-    cutoff = min(now.strftime('%Y-%m-%d %H:%M'), day + LAST_BAR)
+    cutoff = min(now.strftime('%Y-%m-%d %H:%M'), day + LAST_BARS[mkt])
     return [b for b in bars if day <= b[0] < cutoff]
 
 
 def bar_stale(code, stamp, at):
     """None outside continuous trading or its opening grace, else freshness."""
+    mkt = market(code)
+    tz = ET if mkt == 'US' else HKT
+    at = at.astimezone(tz)
     if at.weekday() >= 5:
         return None
     minute = at.hour * 60 + at.minute
-    morning_end = 690 if tencent_symbol(code) else 720
-    afternoon_end = 900 if tencent_symbol(code) else 960
-    if 570 <= minute < morning_end:
-        start = at.replace(hour=9, minute=30, second=0, microsecond=0)
-    elif 780 <= minute < afternoon_end:
-        start = at.replace(hour=13, minute=0, second=0, microsecond=0)
-    else:
+    open_ = next((lo for lo, hi in SESSIONS[mkt] if lo <= minute < hi), None)
+    if open_ is None:
         return None
+    start = at.replace(hour=open_ // 60, minute=open_ % 60, second=0, microsecond=0)
     grace = POLL_SEC * STALE_POLLS
     if (at - start).total_seconds() <= grace:
         return None
     if not stamp:
         return True
     try:
-        last = datetime.fromisoformat(stamp).replace(tzinfo=HKT)
+        last = datetime.fromisoformat(stamp).replace(tzinfo=tz)
     except ValueError:
         return True
     return (at - last).total_seconds() > grace
@@ -172,30 +211,41 @@ def session_bars(ctx, code):
         return None, '', None
     if ret != RET_OK:
         return None, '', None
-    bars = closed_session(frame_bars(frame))
+    bars = closed_session(frame_bars(frame), market(code))
     previous = None
     if bars and 'last_close' in frame.columns:
-        day = bars[0][0][:10]
+        # The day's first row (HK 09:30 auction, US 09:31) carries yesterday's
+        # close; later rows carry the previous minute's.
         times = frame['time_key'] if 'time_key' in frame.columns else frame['time']
         for stamp, value in zip(times, frame['last_close']):
-            if str(stamp)[11:16] == '09:30' and str(stamp)[:10] == day:
+            if str(stamp) == bars[0][0]:
                 value = float(value)
                 previous = value if isfinite(value) and value > 0 else None
                 break
     return bars, frame_name(frame), previous
 
 
+def index_session(ctx, mkt):
+    """Closed index minute closes plus yesterday's close, or None.
+
+    Yesterday's close is the `last_close` of today's first bar; the window
+    also holds yesterday's minutes, whose `last_close` is only the minute before.
+    """
+    if mkt == 'A':
+        bars, _name, previous = tencent_session(INDEX['A'])
+        if not bars or not previous:
+            return None
+        return {bar[0][11:16]: bar[4] for bar in bars}, previous
+    if ctx is None:
+        return None
+    bars, _name, previous = session_bars(ctx, INDEX[mkt])
+    if not bars or not previous:
+        return None
+    return {bar[0][11:16]: bar[4] for bar in bars}, previous
+
+
 def hsi_session(ctx):
-    """Closed HSI minute closes plus yesterday's close, or None."""
-    try:
-        ret, frame = ctx.get_cur_kline(HSI_CODE, KLINE_BACK, KLType.K_1M, AuType.NONE)
-        previous = float(frame['last_close'][0])
-    except Exception:
-        return None
-    if ret != RET_OK or not isfinite(previous) or previous <= 0:
-        return None
-    bars = closed_session(frame_bars(frame))
-    return ({bar[0][11:16]: bar[4] for bar in bars}, previous) if bars else None
+    return index_session(ctx, 'HK')
 
 
 def daily_context(rows, day):
@@ -204,11 +254,47 @@ def daily_context(rows, day):
     rows: [(YYYY-MM-DD, open, high, low, close, volume)], any order. Returns
     None when fewer than six closed sessions are available or prices are invalid.
     """
-    prev = sorted(r for r in rows if r[0] < day)[-6:]
-    if len(prev) < 6 or any(not isfinite(x) or x <= 0 for r in prev for x in r[2:5]):
+    rows = sorted(r for r in rows if r[0] < day)
+    prev = rows[-6:]
+    if len(prev) < 6 or any(not isfinite(x) or x <= 0 for r in prev for x in r[1:5]):
         return None
     return {'ret5d': prev[-1][4] / prev[-6][4] - 1.0, 'pdh': prev[-1][2],
-            'pdl': prev[-1][3], 'day': prev[-1][0]}
+            'pdl': prev[-1][3], 'pdo': prev[-1][1], 'day': prev[-1][0],
+            'atr20': atr20(rows)}
+
+
+def atr20(rows):
+    """Mean true range / previous close over the last 20 sessions, or None."""
+    rows = rows[-21:]
+    if len(rows) < 21 or any(not isfinite(x) or x <= 0 for r in rows for x in r[2:5]):
+        return None
+    return sum((max(h, c0) - min(lo, c0)) / c0
+               for (_, _, _, _, c0, _), (_, _, h, lo, _, _) in zip(rows, rows[1:])) / 20
+
+
+def range_left(bars, dctx, tick=None):
+    """W24 expected high-low range from the latest checkpoint to the close.
+
+    Half of it, in percent, with the ~80% band: {'cp', 'half', 'lo', 'hi'}.
+    Validated for Hong Kong names with >= 2 ticks per bar only; None before
+    10:00, without yesterday's range, or on tick-bound tape.
+    """
+    if not bars or not dctx or not dctx.get('pdo'):
+        return None
+    prev_range = (dctx['pdh'] - dctx['pdl']) / dctx['pdo']
+    index = {b[0][11:16]: i for i, b in enumerate(bars)}
+    done = [m for m in RANGE_MODEL if m[0] in index]
+    if not done or prev_range <= 0:
+        return None
+    cp, minutes, a, b, c, lo, hi = done[-1]
+    i = index[cp]
+    if ticks_per_bar(bars[:i + 1], tick or hk_tick)[-1] < GATE_TPB:
+        return None
+    rv = sum(abs(log(bars[k][4] / bars[k - 1][4])) for k in range(1, i + 1))
+    if rv <= 0:
+        return None
+    mid = a + b * log(rv / minutes) + c * log(prev_range)
+    return {'cp': cp, 'half': exp(mid) * 50.0, 'lo': exp(mid + lo) * 50.0, 'hi': exp(mid + hi) * 50.0}
 
 
 def daily_support(m, dctx):
@@ -230,9 +316,24 @@ def with_daily(ms, dctx):
     return [dict(m, daily=daily_support(m, dctx)) for m in ms]
 
 
-def with_strength(ms, hsi, stock_previous):
-    """W19 score plus the raw moves it is built from (stock and HSI vs
-    yesterday's close, in percent). The board shows the raw moves."""
+def with_grade(ms, dctx, index_atr):
+    """W27 strength grade 1-5 on one scale for every market (not a win rate).
+
+    Needs the volume ratio, the stock/index moves from with_strength, and the
+    stock's and index's ATR20 from daily bars; any gap leaves `grade` None.
+    """
+    stock_atr = dctx.get('atr20') if dctx else None
+    return [dict(m, grade=signal_grade(
+        m['side'], m.get('vol_ratio'),
+        None if m.get('hsi_pct') is None else m['hsi_pct'] / 100.0, index_atr,
+        None if m.get('stock_pct') is None else m['stock_pct'] / 100.0, stock_atr))
+            for m in ms]
+
+
+def with_strength(ms, hsi, stock_previous, score=True):
+    """Raw stock and index moves vs yesterday's close (percent; `hsi_pct` is
+    the market's index: HSI, CSI 300 or SPY) plus the W19 score, which is
+    calibrated for Hong Kong only (`score=False` elsewhere)."""
     closes, previous = hsi if hsi else ({}, None)
     out = []
     for m in ms:
@@ -241,10 +342,10 @@ def with_strength(ms, hsi, stock_previous):
             m,
             strength=(signal_strength_score(m['side'], m['t'], m['close'], stock_previous,
                                             hsi_close, previous)
-                      if stock_previous is not None and hsi_close is not None else None),
-            stock_pct=(round((m['close'] / stock_previous - 1.0) * 100.0, 2)
+                      if score and stock_previous is not None and hsi_close is not None else None),
+            stock_pct=(round((m['close'] / stock_previous - 1.0) * 100.0, 4)
                        if stock_previous else None),
-            hsi_pct=round((hsi_close / previous - 1.0) * 100.0, 2) if hsi_close else None))
+            hsi_pct=round((hsi_close / previous - 1.0) * 100.0, 4) if hsi_close else None))
     return out
 
 
@@ -269,6 +370,13 @@ def parse_tencent_day(payload, symbol):
         except (TypeError, ValueError, IndexError):
             continue
     return out
+
+
+def index_daily(ctx, mkt):
+    """Daily bars of the market's index (for its ATR20), or None."""
+    if mkt == 'A':
+        return tencent_daily(INDEX['A'])
+    return hk_daily(ctx, INDEX[mkt]) if ctx is not None else None
 
 
 def tencent_daily(code):
@@ -336,25 +444,36 @@ def parse_tencent_m1(payload, symbol):
     return bars, name
 
 
+def tencent_previous(payload, symbol):
+    """Yesterday's close from the quote array (field 4), or None."""
+    qt = (((payload.get('data') or {}).get(symbol) or {}).get('qt') or {}).get(symbol) or []
+    try:
+        value = float(qt[4])
+    except (TypeError, ValueError, IndexError):
+        return None
+    return value if isfinite(value) and value > 0 else None
+
+
 def fetch_tencent_m1(symbol):
     req = urllib.request.Request(TENCENT_M1 % symbol, headers={'User-Agent': 'Mozilla/5.0'})
     with urllib.request.urlopen(req, timeout=12) as resp:
         payload = json.loads(resp.read().decode('utf-8'))
     if payload.get('code') not in (0, None):
-        return [], ''
-    return parse_tencent_m1(payload, symbol)
+        return [], '', None
+    return parse_tencent_m1(payload, symbol) + (tencent_previous(payload, symbol),)
 
 
 def tencent_session(code):
+    """(today's closed 1m bars, name, yesterday's close) from Tencent."""
     symbol = tencent_symbol(code)
     if not symbol:
-        return None, ''
+        return None, '', None
     try:
-        bars, name = fetch_tencent_m1(symbol)
+        bars, name, previous = fetch_tencent_m1(symbol)
     except Exception:
-        return None, ''
-    bars = closed_session(bars)
-    return (bars, name) if bars else (None, name)
+        return None, '', None
+    bars = closed_session(bars, 'A')
+    return (bars, name, previous) if bars else (None, name, previous)
 
 
 def ema_last(closes, period):
@@ -474,6 +593,10 @@ def hk_tick(price, day=None):
     return 5.0
 
 
+def us_tick(price, _day=None):
+    return 0.01 if price >= 1 else 0.0001
+
+
 def a_tick(_price):
     return 0.01
 
@@ -573,27 +696,12 @@ def marks(bars, rule='repeat15', tick=hk_tick):
     return out, d
 
 
-def is_strong(m):
-    return m.get('daily') is True and not m.get('coarse')
-
-
 def volume_text(ratio):
     return '-' if ratio is None else '%.1fx' % ratio
 
 
-def paint_side(side, strong):
-    """Strong marks (granular tape and D+) are bold B/S, the rest dim b/s."""
-    ch = 'B' if side == 'BUY' else 'S'
-    if not strong:
-        ch = ch.lower()
-    color = GREEN if side == 'BUY' else RED
-    return color + (BOLD if strong else '') + ch + OFF
-
-
-def moves_text(m):
-    """Stock / HSI move vs yesterday's close, percent; `-` when unknown."""
-    return '/'.join('-' if v is None else '%+.1f' % v
-                    for v in (m.get('stock_pct'), m.get('hsi_pct')))
+def paint_side(side):
+    return (GREEN + 'B' if side == 'BUY' else RED + 'S') + OFF
 
 
 def stop_crossed(m):
@@ -638,26 +746,36 @@ def cell(text, width, color=''):
     return (color + text + OFF if color else text) + pad
 
 
-def mark_text(m, width):
-    """One signal. Bold = granular tape AND daily D+; `~` = tick-bound.
+def mark_text(m, width, run=1):
+    """One signal: side, strength grade 1-5 (W27/W31), `~` and dim = tick-bound.
 
-    Emphasis is context, not volume confirmation or a profitability claim.
-    stk/hsi are raw moves vs yesterday's close; `ref` is the swing level.
+    `#n` = the n-th mark in a row on this side (display only). The grade
+    replaced bold emphasis (D2); neither is a profitability claim. The stock
+    and index moves the grade uses stay in the pipe JSON, not on the board.
+    `ref` is the swing level, not a stop.
     """
-    strong = is_strong(m)
-    rest = clip(('~' if m.get('coarse') else ' ') + cell(m['trigger'], 13) + cell('%.2f' % m['close'], 9)
+    rest = clip(('~' if m.get('coarse') else ' ') + cell('#%d' % run if run > 1 else '', 3)
+                + cell(m['trigger'], 13) + cell('%.2f' % m['close'], 9)
                 + cell(volume_text(m['vol_ratio']), 6)
                 + cell({True: 'D+', False: 'D-'}.get(m.get('daily'), ''), 3)
-                + cell(moves_text(m), 11)
-                + ref_text(m), width - 9)
-    base = '' if strong else DIM
-    return base + '  ' + cell(m['t'], 6) + paint_side(m['side'], strong) + base + rest + OFF
+                + ref_text(m), width - 10)
+    base = DIM if m.get('coarse') else ''
+    grade = '?' if m.get('grade') is None else str(m['grade'])   # '-' read as negative
+    return base + '  ' + cell(m['t'], 6) + paint_side(m['side']) + base + grade + rest + OFF
 
 
 def caption(width):
     """Column names over the signal rows, aligned with mark_text."""
-    return DIM + clip('  ' + cell('time', 6) + cell('', 2) + cell('trigger', 13) + cell('close', 9)
-                      + cell('vol', 6) + cell('D', 3) + cell('stk/hsi%', 11) + 'ref', width) + OFF
+    return DIM + clip('  ' + cell('time', 6) + cell('', 3) + cell('#', 3) + cell('trigger', 13)
+                      + cell('close', 9) + cell('vol', 6) + cell('D', 3) + 'ref', width) + OFF
+
+
+def range_text(r):
+    """W24: how far the rest of the day is expected to travel, not which way."""
+    if not r:
+        return DIM + '  left -' + OFF
+    return ('  ' + BOLD + 'left \u00b1%.2f%%' % r['half'] + OFF
+            + DIM + ' (%.2f-%.2f) @%s' % (r['lo'], r['hi'], r['cp']) + OFF)
 
 
 def symbol_lines(code, st, width):
@@ -688,14 +806,18 @@ def symbol_lines(code, st, width):
     tail = DIM + ' tpb%s n%d' % ('-' if tpb is None else '%.1f' % tpb, len(bars)) + OFF
     # A half-width column cannot hold the full quote row; tpb/n then move
     # under it so neighbouring columns stay aligned.
+    info = range_text(st.get('range')) + health      # `left` first: it is what guides a trade
     if _plain_width(head + tail) <= width:
-        lines = [head + tail, health]
+        lines = [head + tail, info]
     else:
-        lines = [head, health + tail]
+        lines = [head, info + tail]
     if not ms:
         lines.append(DIM + '  (none)' + OFF)
+    run, side = 0, None
     for m in ms:
-        lines.append(mark_text(m, width))
+        run = run + 1 if m['side'] == side else 1
+        side = m['side']
+        lines.append(mark_text(m, width, run))
     return lines
 
 
@@ -744,15 +866,13 @@ def _columns(blocks, width):
 
 def frame_lines(state, at, width, rows=None):
     """Grouped log. Two columns only when that keeps every signal on screen."""
-    head = 'kline.1m %s+08 poll=%ds n=%d until=16:10' % (
-        at.strftime('%Y-%m-%d %H:%M:%S'), POLL_SEC, len(state))
+    head = 'kline.1m %s+08 poll=%ds n=%d until=%s' % (
+        at.strftime('%Y-%m-%d %H:%M:%S'), POLL_SEC, len(state), UNTIL)
     if width >= 100:
         head += ' src=%s:%s' % (HOST, PORT)
     legend = (GREEN + 'B' + OFF + '/' + RED + 'S' + OFF
-              + DIM + ' 粗=D+且每根≥%g跳  ' % GATE_TPB + OFF
-              + GREEN + 'b' + OFF + '/' + RED + 's' + OFF
-              + DIM + ' 其余  ~ 不到%g跳  D+/D- 日线背景  ^C' % GATE_TPB + OFF)
-    legend2 = DIM + clip('stk/hsi% 个股/恒指较昨收  ref 结构位(不是止损)  crossed 已在信号价另一侧',
+              + DIM + ' 后的1-5=强度档(跨标的,非胜率,?=日线未到)  暗色~ 不到%g跳  D± 日线' % GATE_TPB + OFF)
+    legend2 = DIM + clip('left 收盘前还能走±(八成区间)  #n 同方向第n次  ref 结构位,非止损',
                          width) + OFF
     chrome = [BOLD + clip(head, width) + OFF, legend, legend2, '-' * width]
     blocks = [symbol_lines(code, st, width) for code, st in state.items()]
@@ -797,33 +917,55 @@ def paint(lines, prev, rows):
 
 
 def main():
+    global UNTIL
     codes = [canonical_code(c) for c in (sys.argv[1:] or DEFAULT_CODES)]
-    deadline = close_hkt()
-    hk_codes = [c for c in codes if not tencent_symbol(c)]
+    mkts = sorted({market(c) for c in codes})
+    closes = ([close_hkt()] if set(mkts) & {'HK', 'A'} else []) + ([close_us()] if 'US' in mkts else [])
+    deadline = max(closes)
+    UNTIL = deadline.astimezone(HKT).strftime('%H:%M')
+    opend_codes = [c for c in codes if market(c) != 'A']
+    opend_index = [INDEX[m] for m in mkts if m != 'A']
     ctx = None
     try:
-        if hk_codes:
+        if opend_codes:
             ctx = OpenQuoteContext(host=HOST, port=PORT)
-            ret, err = ctx.subscribe(sorted(set(hk_codes + [HSI_CODE])), [SubType.K_1M], subscribe_push=False)
+            ret, err = ctx.subscribe(sorted(set(opend_codes + opend_index)), [SubType.K_1M],
+                                     subscribe_push=False)
             if ret != RET_OK:
                 emit('FAILED', {'error': 'subscribe %s' % err})
                 return 1
-            # separate call: a failed K_DAY subscription only costs the D+/D- tag
+            # separate call: a failed K_DAY subscription only costs daily context
             try:
-                ctx.subscribe(hk_codes, [SubType.K_DAY], subscribe_push=False)
+                ctx.subscribe(sorted(set(opend_codes + opend_index)), [SubType.K_DAY],
+                              subscribe_push=False)
             except Exception:
                 pass
         emit('START', {'codes': codes, 'until': deadline.isoformat(),
                        'poll_sec': POLL_SEC, 'log': str(log_path())})
         seen, state, names, prev, dctxs = {}, {}, {}, None, {}
         health, last_times, daily_retry = {}, {}, {}
+        index_atr, index_retry, graded = {}, {}, set()
+
+        def regrade(code):
+            st = state.get(code) or {}
+            if not st.get('bars'):
+                return
+            mkt = market(code)
+            today = st['bars'][-1][0][:10]
+            context_day, dc = dctxs.get(code, (None, None))
+            dc = dc if context_day == today else None
+            st['marks'] = with_grade(with_daily(st['marks'], None if mkt == 'US' else dc), dc,
+                                     index_atr.get(mkt, (None, None))[1])
+            if mkt == 'HK':
+                st['range'] = range_left(st['bars'], dc)
+
         while True:
             poll_start = time.monotonic()
-            hsi = hsi_session(ctx) if ctx is not None else None
+            indexes = {m: index_session(ctx, m) for m in mkts}
             for code in codes:
-                if tencent_symbol(code):
-                    bars, name = tencent_session(code)
-                    stock_previous = None
+                mkt = market(code)
+                if mkt == 'A':
+                    bars, name, stock_previous = tencent_session(code)
                 else:
                     bars, name, stock_previous = session_bars(ctx, code)
                 if bars:
@@ -839,25 +981,39 @@ def main():
                                    'last_bar': last_times.get(code), 'stale': stale is True}
                     continue
                 names[code] = name or names.get(code, '')
-                ms, d = marks(bars, tick=a_tick if tencent_symbol(code) else hk_tick)
-                ms = with_strength(ms, hsi if not tencent_symbol(code) else None, stock_previous)
-                today = bars[-1][0][:10]
-                context_day, dc = dctxs.get(code, (None, None))
-                ms = with_daily(ms, dc if context_day == today else None)
+                ms, d = marks(bars, tick={'A': a_tick, 'US': us_tick}.get(mkt, hk_tick))
+                ms = with_strength(ms, indexes.get(mkt), stock_previous, score=mkt == 'HK')
                 state[code] = {'bars': bars, 'marks': ms, 'read': d or read(bars),
-                               'name': names[code], 'stale': stale is True}
-                for m in ms[seen.get(code, 0):]:
+                               'name': names[code], 'stale': stale is True, 'range': None}
+                regrade(code)
+                for m in state[code]['marks'][seen.get(code, 0):]:
                     emit('MARK', dict(m, code=code, name=names[code]))
-                seen[code] = len(ms)
+                    if m.get('grade') is not None:
+                        graded.add((code, m['t'], m['side']))
+                seen[code] = len(state[code]['marks'])
             if sys.stdout.isatty():
                 size = shutil.get_terminal_size((100, 40))
                 width = min(140, max(80, size.columns))
                 prev = paint(frame_lines(state, now_hkt(), width, size.lines), prev, size.lines)
             closing = now_hkt() >= deadline
-            # Optional context comes after every quote/mark and the board. One
-            # request per live poll bounds its cost; failures wait five minutes.
-            # The final frame also needs context when started after the close.
+            # Daily context comes after every quote/mark and the board; failures
+            # wait five minutes. The final frame also needs context when started
+            # after the close.
             context_changed = False
+            for mkt in mkts:
+                today = now_in(mkt).strftime('%Y-%m-%d')
+                if index_atr.get(mkt, (None,))[0] == today or time.monotonic() < index_retry.get(mkt, 0):
+                    continue
+                rows = index_daily(ctx, mkt)
+                value = atr20(sorted(r for r in rows or [] if r[0] < today))
+                index_retry[mkt] = time.monotonic() + 300
+                if value:
+                    index_atr[mkt] = (today, value)
+                    for code in codes:
+                        if market(code) == mkt:
+                            regrade(code)
+                    context_changed = True
+                    emit('INDEX_CONTEXT', {'market': mkt, 'index': INDEX[mkt], 'day': today, 'atr20': value})
             for code in sorted(codes, key=lambda c: daily_retry.get(c, 0)):
                 bars = state[code].get('bars')
                 if not bars:
@@ -866,16 +1022,27 @@ def main():
                 if (dctxs.get(code, (None,))[0] == today
                         or time.monotonic() < daily_retry.get(code, 0)):
                     continue
-                rows = tencent_daily(code) if tencent_symbol(code) else hk_daily(ctx, code)
+                remote = market(code) == 'A'
+                rows = tencent_daily(code) if remote else hk_daily(ctx, code)
                 dc = daily_context(rows or [], today)
                 daily_retry[code] = time.monotonic() + 300
                 if dc:
                     dctxs[code] = (today, dc)
-                    state[code]['marks'] = with_daily(state[code]['marks'], dc)
+                    regrade(code)
                     context_changed = True
                     emit('DAILY_CONTEXT', {'code': code, 'day': today, 'context': dc})
-                if not closing:
+                # Tencent is a remote call that can take seconds, so at most one
+                # per live poll; OpenD daily bars are local and fill all at once.
+                if remote and not closing:
                     break
+            if context_changed:
+                # Marks already emitted before their daily context get their grade now.
+                for code in codes:
+                    for m in (state[code].get('marks') or [])[:seen.get(code, 0)]:
+                        if m.get('grade') is not None and (code, m['t'], m['side']) not in graded:
+                            graded.add((code, m['t'], m['side']))
+                            emit('MARK_GRADE', {'code': code, 't': m['t'], 'side': m['side'],
+                                                'grade': m['grade'], 'daily': m.get('daily')})
             if context_changed and sys.stdout.isatty():
                 size = shutil.get_terminal_size((100, 40))
                 width = min(140, max(80, size.columns))
