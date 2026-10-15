@@ -27,4 +27,4 @@ cd /opt/opend-us-options
 - `left` 是港股余下振幅估计及区间，不预测方向，不保证价格可达；A 股、美股未验证。`ref` 是结构参考位，不能直接当止损；`~` 和 `D±` 的含义及证据按看板说明解释。
 - 缺日线、指数或报价时报告具体缺口，不自行拉新标的历史 K 线补额度；可选背景缺失不隐藏原标注。不为解释某个 case 修改触发或强度阈值。
 
-单股日 K 计划交给 [daily-technical-review](../daily-technical-review/SKILL.md)，期权会话交给 [near-expiry-session](../near-expiry-session/SKILL.md)。修改信号需遵循 `watch/AGENTS.md` 的预登记与验证要求，研究记录在 [watch_signal](../../studies/watch_signal/README.md)。
+单股日 K 计划交给 [daily-technical-review](../daily-technical-review/SKILL.md)，期权会话交给 [near-expiry-session](../near-expiry-session/SKILL.md)。修改信号需遵循 `watch/AGENTS.md` 的预登记与验证要求，研究记录在 [watch_signal](../../studies/archive/watch_signal/README.md)。

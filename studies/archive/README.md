@@ -1,8 +1,26 @@
-# 已结束的研究（只留结论）
+# 已结束研究归档
 
-当前美股上游入口是 [近到期选标的与盘中会话](../us_0dte_picks/README.md)。下列研究都已结束，结论为负或未晋级；代码、预登记、报告和测试已移出仓库，原文件按原路径放在本机 `/root/opend-us-options-archive-20261012/`，也可从 Git 历史取回（最后一次在仓库内的提交：`39bb800`）。失败结果不改写；已用过的验证段仍视为已用，不能因移动目录重新成为样本外数据。
+当前用户入口统一见 [skills](../../README.md)。本页区分本轮固定 Git 快照和此前仓库外归档；结论、失败与验证数据使用状态都继续保留。
 
-新研究登记前先对照本页和 [FAILED_TRIALS](../us_0dte_picks/notes/FAILED_TRIALS.md)，不重开已失败的机制。
+## 2026-10-15：退出当前工作目录的研究
+
+- [盯盘 W1–W33](watch_signal/README.md)：保留结论索引；完整脚本、预登记、结果和测试在固定 Git 快照。当前实现继续在 `watch/`。
+- [近到期期权研究](us_0dte_picks/README.md)：保留 P 系列、OH3、R27–R29 的中文结果和失败经验；R27–R30 实验代码及逐 case 输出进入同一快照。SV1/SV2 和被会话调用的公共函数继续留在原路径。
+- 趋势 TF/PB 已在此前收敛，最终方案和当前扫描依赖继续留在 [trend_breakout](../trend_breakout/README.md)；未被 skill 调用的 [一次性指定名单扫描脚本](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/trend_breakout/scan_candidates.py) 一并归档。
+
+完整快照：`63ab1aa27ae9a56b423ce2b57ac06729c5f96edc`。需要复刻核对或查看旧研究测试时恢复独立 checkout，原模块、相对路径和指纹因此保持一致：
+
+```bash
+git worktree add --detach /tmp/s-alpha-research-20261015 63ab1aa27ae9a56b423ce2b57ac06729c5f96edc
+```
+
+数据不含在 checkout 中；按原登记与 SHA256 指定已有本地数据或 Release。恢复代码不代表获准重新跑已看过的验证段、拉新历史额度或启用旧策略。注册策略的资格报告仍在根 `reports/`，本轮不移动。
+
+## 此前归档
+
+下列研究都已结束，结论为负或未晋级；代码、预登记、报告和测试已移出仓库，原文件按原路径放在本机 `/root/opend-us-options-archive-20261012/`，也可从 Git 历史取回（最后一次在仓库内的提交：`39bb800`）。失败结果不改写；已用过的验证段仍视为已用，不能因移动目录重新成为样本外数据。
+
+新研究登记前先对照本页和 [FAILED_TRIALS](us_0dte_picks/FAILED_TRIALS.md)，不重开已失败的机制。
 
 ## us_preopen_bias：美股盘前选股 S1–S29
 
@@ -47,5 +65,5 @@
 | 目录 | 结论 |
 |---|---|
 | [calendar_weekly](calendar_weekly/README.md) | 易学／历法预测指数周月走势约 60 轮，无增量 |
-| [us_0dte_picks TS 系列](../us_0dte_picks/notes/FAILED_TRIALS.md) | TS1–TS67、FD 等开盘择时与准入研究全部未过 |
+| [us_0dte_picks TS 系列](us_0dte_picks/FAILED_TRIALS.md) | TS1–TS67、FD 等开盘择时与准入研究全部未过 |
 | opend_probes | 单次已知过期期权取数试验脚本与预登记，仅供核对已发布 manifest 指纹；再次执行会扣历史额度 |

@@ -1,11 +1,12 @@
 """Synthetic fixtures only; checks P2 definitions, never market data."""
 from datetime import date, timedelta
+import hashlib
 import json
 from pathlib import Path
 import tempfile
 import unittest
 
-from studies.us_0dte_picks import daily_k
+from studies.us_0dte_picks import daily_k, p3
 
 
 def flat(n=260, price=100.0, volume=1000.0):
@@ -25,6 +26,12 @@ def replace(bars, index, o, h, low, c, volume=None):
 
 
 class SignalTests(unittest.TestCase):
+    def test_frozen_preregistrations_keep_their_original_hashes(self):
+        for path, expected in ((daily_k.PREREG, daily_k.PREREG_SHA256),
+                               (daily_k.ADDENDUM, daily_k.ADDENDUM_SHA256),
+                               (p3.PREREG, p3.PREREG_SHA256)):
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), expected, path)
+
     def test_nr7_needs_strictly_the_narrowest_of_seven(self):
         bars = flat()
         i = len(bars) - 1

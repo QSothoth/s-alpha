@@ -268,8 +268,8 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 | `data/p2-events-raw` | 第 1–900 名的历次财报（16 期，发布日与盘前 / 盘后）与 2026-09-26 的当前到期日原始返回 | `b3fefef0e1e28c3cbdf745fc258f887ee0c70573ff8d433bd3546eebda459869` |
 | `data/p3-option-events-raw` | 505 只有周度 / 周一三到期个股的 OpenD 期权异动原始返回（滚动约一年，2025-09-29 → 2026-09-25），不扣额度；P3b 选择段用过 | `829e7d1affc0ae2f2bac569246b646b9eff6321afc0e06ac8550a85347f8dd59` |
 | `data/p3-k5-validation-raw` | 35 只新个股常规时段 5 分钟 K（2023-05 → 2026-09-25，前复权），动用 35 个历史 K 线额度（已用 228 → 263）；**P4 验证已用一次** | `dd2eba4e353aba90d7e52877f3b9016cf36a228c02198de8c39e7dc1ccc2f506` |
-| `data/p5-parity-raw` | 10 只个股各 1000 根 5／30 分钟原始 K；用于跨周期口径审计，30 分钟有 76 个完整日、共同完整日 12 个；成交量近似相等、存在少数异常，见[比对报告](../studies/us_0dte_picks/reports/P5_PARITY_CN.md)。没有原采集 manifest，不补写成当时已有的参数凭证 | `1981ad1a712f73e702cd32a9543e0fdf6f9a0ef547daaf84678de15656e843f6` |
-| `data/p5-k30-validation-raw` | P5：145 只此前未有分钟数据的周度股、53 个细行业，每股 1000 根原生 RTH K_30M（QFQ）；2026-09-28 有界一次性采集，评测截止 09-25。名单、行业、日历在采分钟前锁定，全部158个成员验签通过，未扣历史额度；**P5 已验证一次且失败**，见[报告](../studies/us_0dte_picks/reports/P5_RESULTS_CN.md) | `f5f8541994749f63708e000e2d0eb941bb2d624c0ad8f3649c6c04be81ba7f0b` |
+| `data/p5-parity-raw` | 10 只个股各 1000 根 5／30 分钟原始 K；用于跨周期口径审计，30 分钟有 76 个完整日、共同完整日 12 个；成交量近似相等、存在少数异常，见[比对报告](../studies/archive/us_0dte_picks/P5_PARITY_CN.md)。没有原采集 manifest，不补写成当时已有的参数凭证 | `1981ad1a712f73e702cd32a9543e0fdf6f9a0ef547daaf84678de15656e843f6` |
+| `data/p5-k30-validation-raw` | P5：145 只此前未有分钟数据的周度股、53 个细行业，每股 1000 根原生 RTH K_30M（QFQ）；2026-09-28 有界一次性采集，评测截止 09-25。名单、行业、日历在采分钟前锁定，全部158个成员验签通过，未扣历史额度；**P5 已验证一次且失败**，见[报告](../studies/archive/us_0dte_picks/P5_RESULTS_CN.md) | `f5f8541994749f63708e000e2d0eb941bb2d624c0ad8f3649c6c04be81ba7f0b` |
 | `data/human-top10-2026-09-28-090327` | 09-28 09:05 ET 盘前人工候选：11 股股票快照、各 1000 根 RTH K_30M、IV/HV、财报、期权量、当日到期及标准 Call／Put 链，冻结方法与完整排名；74 个成员校验通过，未用历史额度、订阅已释放。排序组合未经回测验证，见Top 10 报告（已归档）；本机采集脚本副本仅供复核，未来数据发布包不含源码 | `9f9ad51925e0bd36572dba6537c8e75047528c09600f35b84d7a896f1e9fabfe` |
 | `data/human-trial-2026-09-28` | 用户授权的有限只读盘中观察：10 股冻结 15／30 分钟量分母、开盘快照、真实期权报价、相对排名及 v3 预演，后纳入 AAPL 共 11 股；首次监测止于 09:44、无 09:45 结果，10:00 恢复，最后输出至 10:30、10:31:01 正常结束。仅人工候选试验，非独立验证、非成交记录，未调用历史 K 线请求；见试验报告（已归档）与全天复盘（已归档）。账户原始返回和含账户 ID 的人工启动脚本仅本机私有保存，未来发布时排除 | 观察已结束，父目录未整体封存或发布 |
 
@@ -371,7 +371,7 @@ cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train
 
 ## 附录：本机研究工作数据（未发布）
 
-2026-10-02 之后的 TS / FD 择时研究和历法研究都已归档（[失败经验](../studies/us_0dte_picks/notes/FAILED_TRIALS.md)、[历法归档](../studies/archive/calendar_weekly/README.md)），逐轮的数据登记不再保留。本机 `data/` 下仍有这些目录，都没进 git、没发布 Release：
+2026-10-02 之后的 TS / FD 择时研究和历法研究都已归档（[失败经验](../studies/archive/us_0dte_picks/FAILED_TRIALS.md)、[历法归档](../studies/archive/calendar_weekly/README.md)），逐轮的数据登记不再保留。本机 `data/` 下仍有这些目录，都没进 git、没发布 Release：
 
 | 目录 | 内容 | 状态 |
 |---|---|---|

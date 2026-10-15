@@ -62,4 +62,4 @@ W29 的强事件时点多数不同于原标注时点，直接均值差还混合�
 
 ## 当前落地状态
 
-统一版本入口已实现，仍解析为原冻结配置。R30 按[预登记](../studies/us_0dte_picks/notes/R30_PREREG.md)在开发集检验同向持有、反向退出及两者结合；组合只存在于隔离研究引擎，不改变注册资格、实时 Watch 显示、已注册策略的买卖行为或原评测常量。未使用新的独立验证数据。已有两种 mode 基线见 [R29](../studies/us_0dte_picks/reports/R29_BASELINES_CN.md)，组合事件结果见 [W29](../studies/watch_signal/reports/W29_RESULTS_CN.md)。
+统一版本入口已实现，仍解析为原冻结配置。R30 按[预登记](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/us_0dte_picks/notes/R30_PREREG.md)在开发集检验同向持有、反向退出及两者结合；组合只存在于隔离研究引擎，不改变注册资格、实时 Watch 显示、已注册策略的买卖行为或原评测常量。未使用新的独立验证数据。已有两种 mode 基线见 [R29](../studies/archive/us_0dte_picks/R29_BASELINES_CN.md)，组合事件结果见 [W29](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W29_RESULTS_CN.md)。

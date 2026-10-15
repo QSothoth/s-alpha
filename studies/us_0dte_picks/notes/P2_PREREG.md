@@ -1,6 +1,6 @@
 # P2：日 K 形态与财报事件 → 当天的末日期权机会（运行前登记）
 
-2026-09-26 登记，跑完不改。用户当天同意使用财报日历，并同意一次性拉取第 601–900 名个股做新截面。已试方向见 [SEARCH_MAP](https://github.com/QSothoth/s-alpha/blob/2b22787a7a26ac0aee5c85459706a07a94d9047f/studies/us_0dte_picks/notes/SEARCH_MAP.md)，本轮候选均不在其中。
+2026-09-26 登记，跑完不改。用户当天同意使用财报日历，并同意一次性拉取第 601–900 名个股做新截面。已试方向见 [SEARCH_MAP](SEARCH_MAP.md)，本轮候选均不在其中。
 
 ## 目标
 

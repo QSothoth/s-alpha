@@ -7,14 +7,14 @@
 | [opportunity-research](skills/opportunity-research/SKILL.md) | 从涨价、缺货、需求变化等线索研究机会，保留证据与反证 | 资料随 skill 保存 |
 | [daily-technical-review](skills/daily-technical-review/SKILL.md) | 指定股票的日 K 技术面、条件买点与多头退出计划 | `studies/daily_technical/` |
 | [trend-market-scan](skills/trend-market-scan/SKILL.md) | 三个市场的周线趋势候选、规则账户和持仓检查 | `studies/trend_breakout/` |
-| [market-watch](skills/market-watch/SKILL.md) | 港股 / A 股 / 美股盘中只读盯盘与信号解释 | `watch/`、`studies/watch_signal/` |
+| [market-watch](skills/market-watch/SKILL.md) | 港股 / A 股 / 美股盘中只读盯盘与信号解释 | `watch/`；历史研究见归档 |
 | [near-expiry-session](skills/near-expiry-session/SKILL.md) | 最近到期期权的筛选、许可、mock、持仓跟踪与复盘 | `studies/us_0dte_picks/`、`custody/` |
 
 ## 目录归属
 
 - `skills/<名称>/SKILL.md`：任务入口；使用说明和外部参考资料放同目录的 `references/`，按需读取。
 - `custody/`、`watch/`：共享执行与行情代码，保留现有 Python 模块和 CLI 路径。
-- `studies/`：研究实现、预登记、结果及失败记录；尚未形成使用流程的研究不单独建 skill。见 [研究索引](studies/AGENTS.md)。
+- `studies/`：共享实现与待完成验证；已结束研究的结论和固定 Git 版本统一见 [归档](studies/archive/README.md)。一次性研究脚本和逐 case 输出退出当前目录。见 [实现索引](studies/AGENTS.md)。
 - `docs/`：跨 skill 的执行、数据、评测与环境规范；`reports/` 保留注册策略的评测报告。
 - `data/`：本地行情和运行状态，不进 Git；数据发布见 [DATA](docs/DATA.md)。
 

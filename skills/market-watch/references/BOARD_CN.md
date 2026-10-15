@@ -24,7 +24,7 @@ A 股代码写成 `SZ.300795`、`SH.600519` 或 6 位数字。行情来自腾讯
 | `left` 余下预计振幅（W24 只在港股验证） | ✓ | `-` | `-` |
 | `~` 价位受限（W2 在港股验证） | ✓ | ✓（沿用） | ✓（沿用，大多数美股不会触发） |
 
-每个标的自己一块，当天信号从早到晚全留在这块里，不截断。刷新时只改有变化的行：报价变了就改这一行，新信号补在该标的自己的列表末尾，不会串到别的标的下面。`B`/`S` 后的数字是强度档 1–5（见下；`?` 表示输入未到，通常是日线还没拉到，几秒到一轮后补上）；不再加粗（[D2](../../../studies/watch_signal/notes/D2_NO_BOLD_CN.md)）。整行暗色并带 `~` 的是**价位受限**（不到 2 个价位）时的标注，照常显示。后面的 `1.4x` 是当根量与严格此前 20 根均量的比值；没有此前成交量基准时显示 `-`。`D+`/`D-` 是日线背景（见下）；档位后的 `#3` 表示同方向连续第 3 条（中间没有反向信号），对应「一直是 B / 一直是 S」——只是计数，W23 显示顺着累计方向做到收盘并不更好；个股与指数较昨收的涨跌只进管道 JSON（`stock_pct`、`hsi_pct`），已含在档位里，看板不再重复列出；`ref` 是结构参考位及距信号价，**不是止损**，已在信号价另一侧时显示 `crossed`。表头的 `tpb` 是当日至今平均每根 K 线跨几个价位。看板说明见 [D1](../../../studies/watch_signal/notes/D1_DISPLAY_CN.md)。窗口请拉高到能放下全部行，否则终端只会露出下面几只。
+每个标的自己一块，当天信号从早到晚全留在这块里，不截断。刷新时只改有变化的行：报价变了就改这一行，新信号补在该标的自己的列表末尾，不会串到别的标的下面。`B`/`S` 后的数字是强度档 1–5（见下；`?` 表示输入未到，通常是日线还没拉到，几秒到一轮后补上）；不再加粗（[D2](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/notes/D2_NO_BOLD_CN.md)）。整行暗色并带 `~` 的是**价位受限**（不到 2 个价位）时的标注，照常显示。后面的 `1.4x` 是当根量与严格此前 20 根均量的比值；没有此前成交量基准时显示 `-`。`D+`/`D-` 是日线背景（见下）；档位后的 `#3` 表示同方向连续第 3 条（中间没有反向信号），对应「一直是 B / 一直是 S」——只是计数，W23 显示顺着累计方向做到收盘并不更好；个股与指数较昨收的涨跌只进管道 JSON（`stock_pct`、`hsi_pct`），已含在档位里，看板不再重复列出；`ref` 是结构参考位及距信号价，**不是止损**，已在信号价另一侧时显示 `crossed`。表头的 `tpb` 是当日至今平均每根 K 线跨几个价位。看板说明见 [D1](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/notes/D1_DISPLAY_CN.md)。窗口请拉高到能放下全部行，否则终端只会露出下面几只。
 
 **先看 `left`**：每只港股第二行开头的 `left ±0.60% (0.42-0.98) @11:00` 表示从 11:00 到收盘，预计还会走出约 ±0.60% 的振幅（最高减最低的一半），大约八成情况落在括号区间内。它说的是**还能走多远，不是往哪走**——方向在 1m 线上测不出来（W22–W24，见下）。用法：目标超过 `left` 的基本不现实；止损宽度、仓位按它缩放；`left` 小到成本（约 0.1%）占一大截时就不做。
 
@@ -68,11 +68,11 @@ HK.00700   腾讯      502.70   -205bp  vwap-80  rsi34.5 1.3x   tpb2.8 n126
 
 港股两段本地数据上预登记门槛全部通过：各档占比偏离目标不超过 1 个百分点；三项都随档位单调上升；价位粗细三层、上午 / 下午 5 档都在 3%–6%；99% 以上的标的出现过 5 档。
 W27 最初按 0.2 / 0.4 / 0.6 / 0.8 切档时 4、5 档合计占 34%，用户认为太容易出现高档，W31 只改界线、不改算法。
-A 股、美股没有历史分钟数据可查，刻度相同、含义相同；看板日志满 20 个交易日后按同样门槛检查一次（[W27](../../../studies/watch_signal/notes/W27_PREREG.md)）。
+A 股、美股没有历史分钟数据可查，刻度相同、含义相同；看板日志满 20 个交易日后按同样门槛检查一次（[W27](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/notes/W27_PREREG.md)）。
 
-**它是描述，不能指导买卖或仓位**（[W32](../../../studies/watch_signal/reports/W32_RESULTS_CN.md)：档位对后续幅度只有 1.06 倍的增量，方向与收益不稳定）：价位不受限的港股信号，W22 规则（2R/1R）下各档先到目标都在 26%–29%；5 档到收盘一段 −16bp、另一段 +33bp，方向不稳定。详见 [W27](../../../studies/watch_signal/reports/W27_RESULTS_CN.md)、[W31](../../../studies/watch_signal/reports/W31_RESULTS_CN.md)。
+**它是描述，不能指导买卖或仓位**（[W32](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W32_RESULTS_CN.md)：档位对后续幅度只有 1.06 倍的增量，方向与收益不稳定）：价位不受限的港股信号，W22 规则（2R/1R）下各档先到目标都在 26%–29%；5 档到收盘一段 −16bp、另一段 +33bp，方向不稳定。详见 [W27](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W27_RESULTS_CN.md)、[W31](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W31_RESULTS_CN.md)。
 
-**历史上各档之后发生了什么**（港股、价位不受限，两段数据前 / 后，单位为信号根的 1m ATR14，[W33](../../../studies/watch_signal/reports/W33_EXPLORE_CN.md)）：
+**历史上各档之后发生了什么**（港股、价位不受限，两段数据前 / 后，单位为信号根的 1m ATR14，[W33](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W33_EXPLORE_CN.md)）：
 
 | 档 | 30 分钟后顺向 | 30 分钟内最大顺向 / 逆向 | 先到 +1 ATR |
 |---|---|---|---|
@@ -97,7 +97,7 @@ A 股、美股没有历史分钟数据可查，刻度相同、含义相同；看
 
 同一轮研究里，方向全部不成立：B/S 当 2R/1R 交易毛期望约 0R、成本约 0.36R（W22）；当天累计 B/S 跟到收盘为负，不优于日内动量（W23）；
 11 个价量、累计信号、恒指特征对 30 分钟 / 60 分钟 / 到收盘都在 ±7bp 内，收盘前回吐在验证段反号（W24）。所以 **B/S 只是结构事件提示，不是买卖点**。
-详见 [W22](../../../studies/watch_signal/reports/W22_RESULTS_CN.md)、[W23](../../../studies/watch_signal/reports/W23_RESULTS_CN.md)、[W24](../../../studies/watch_signal/reports/W24_RESULTS_CN.md)。
+详见 [W22](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W22_RESULTS_CN.md)、[W23](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W23_RESULTS_CN.md)、[W24](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W24_RESULTS_CN.md)。
 
 ## 规则
 
@@ -111,11 +111,11 @@ A 股、美股没有历史分钟数据可查，刻度相同、含义相同；看
 | `FVG` | 三根公允价值缺口，宽度 > 0.25 × ATR14；这里 ATR14 沿用最近 14 根高低差均值 |
 | `SWEEP` | 影线扫穿确认摆动点后收回（流动性狩猎） |
 
-**价位闸**（2026-09-24，研究 W2，见 [studies/watch_signal](../../../studies/watch_signal/README.md)）：
+**价位闸**（2026-09-24，研究 W2，见 [studies/watch_signal](../../../studies/archive/watch_signal/README.md)）：
 
 `tpb` = 当日至今平均每根 1m K 线的高低差 ÷ 当时价位（港股按 K 线日期对应的交易所价位表，A 股 0.01），首根不算。港股价位包含区间上界，并应用 2025-08-04、2026-08-03 两阶段调整。
 
-**2026-09-28 纠错（W12）**：此前港股一直使用旧价位表，量比也错误包含当根。下文 W2–W11 的数字保留为原实现历史结果，不能直接作为修正后分组的效果保证。修正和候选研究见 [W12 预登记](../../../studies/watch_signal/notes/W12_PREREG.md) 与 [W12 报告](../../../studies/watch_signal/reports/W12_RESULTS_CN.md)。
+**2026-09-28 纠错（W12）**：此前港股一直使用旧价位表，量比也错误包含当根。下文 W2–W11 的数字保留为原实现历史结果，不能直接作为修正后分组的效果保证。修正和候选研究见 [W12 预登记](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/notes/W12_PREREG.md) 与 [W12 报告](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W12_RESULTS_CN.md)。
 
 W12 在原选择段逐日评估 23,224 个标的日，主口径是下一根收盘入场、再过 30 根退出、多空等权毛收益。`tpb >= 2` 修正后原规则为 −0.595bp（t=−1.34）；只报首次 BOS 为 −0.721bp；再统一同方向去重为 −0.789bp。两个候选减少约 7% / 13% 的标注，收益反而更差，**均未启用**。这是旧选择段诊断，不是新样本外验证，未证明当前信号能盈利。
 
@@ -147,7 +147,7 @@ W12 在原选择段逐日评估 23,224 个标的日，主口径是下一根收�
 **唯一信号强度 `S00`–`S100`**（研究 W19）：只用于港股。个股和恒指分别计算
 `side × (信号分钟收盘 / 昨收 − 1)`，各自转成训练历史相同 30 分钟时段的经验百分位，再取较弱一项并统一校准；12:00 午间收市归入 11:30 时段。`S80` 表示个股与大盘共同支持该方向的整体力度强于约 80% 的同时间历史信号。任一对应分钟或昨收缺失、以及未验证的 A 股为 `null`。
 
-全新 2024H1 共 188,122 条标注：全段平均 52.87；恒指最大上涨 10 日 BUY/SELL 为 83.74/8.53，最大下跌 10 日 SELL/BUY 为 85.92/7.64，极端 20 日全部逐日通过。冻结后的实时整数实现与这 188,122 条研究结果逐条一致。详见 [W19 报告](../../../studies/watch_signal/reports/W19_RESULTS_CN.md)。
+全新 2024H1 共 188,122 条标注：全段平均 52.87；恒指最大上涨 10 日 BUY/SELL 为 83.74/8.53，最大下跌 10 日 SELL/BUY 为 85.92/7.64，极端 20 日全部逐日通过。冻结后的实时整数实现与这 188,122 条研究结果逐条一致。详见 [W19 报告](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/watch_signal/reports/W19_RESULTS_CN.md)。
 
 `Sxx` **不是胜率或预期收益**，只表示信号发生时的整体方向力度；W13–W16 的未来 30 分钟概率方案在跨时期验证中失败，未上线。D1 曾将看板分数替换为个股/恒指较昨收 %；当前看板已统一显示前述 1–5 档，也不再重复列这两个涨跌幅。旧分数仍在管道输出 `MARK.strength`，原始输入为 `MARK.stock_pct`、`MARK.hsi_pct`（百分比）；`~`、`D+`/`D-` 的显示按本文当前规则。
 

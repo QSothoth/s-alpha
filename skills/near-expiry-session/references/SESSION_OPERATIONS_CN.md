@@ -1,6 +1,6 @@
 # 最近到期期权运行细则
 
-2026-10-02工程新增一次许可协调器：`session authorize`预览/保存，`auto_watch`按范围接受新鲜卡；精确步骤及撤销见[WORKFLOW_CN](WORKFLOW_CN.md)。预检后重查授权，最晚入场取卡片/许可的较早截止；协调器失败不停止已有custody管理。 `STOPPED_REQUIRES_REVIEW`返回命令行退出码1，许可正常到期返回0，具体原因查看`auto/final.json`。TS1–TS67均未通过（见[失败记录](../../../studies/us_0dte_picks/notes/FAILED_TRIALS.md)），不得以工程测试替代收益证据。
+2026-10-02工程新增一次许可协调器：`session authorize`预览/保存，`auto_watch`按范围接受新鲜卡；精确步骤及撤销见[WORKFLOW_CN](WORKFLOW_CN.md)。预检后重查授权，最晚入场取卡片/许可的较早截止；协调器失败不停止已有custody管理。 `STOPPED_REQUIRES_REVIEW`返回命令行退出码1，许可正常到期返回0，具体原因查看`auto/final.json`。TS1–TS67均未通过（见[失败记录](../../../studies/archive/us_0dte_picks/FAILED_TRIALS.md)），不得以工程测试替代收益证据。
 
 工程根目录是 `/opt/opend-us-options`。所有模块命令在该目录执行；连接 OpenD 使用 `/opt/futu-opend/venv/bin/python`。先读根 `AGENTS.md`，按任务读 `studies/AGENTS.md` 或 `custody/AGENTS.md`。
 
@@ -104,7 +104,7 @@ python3 -m studies.us_0dte_picks.session status --session SESSION
 - 真实买入成本和可卖 bid 估值要标时间、新鲜度及手续费口径；观察峰值不是可实现最高收益，数据断档不是完整最大回撤。写明观察峰值、最终结果和期间是否有退出保护触发。
 - 报告输入→卡片→预检→交接→成交→退出的耗时与失败点，再判断应补工程约束、agent 操作规则还是策略研究。
 - 运行证据按阶段统计：无效报价标记分持仓期与平仓后；分钟记录的最大间隔不能证明两次采样之间行情无缺失；worker 日志的 tick、成交与错误事件数用来判断是否卡死。
-- 先核对实际 DTE。最近到期执行已支持，不代表 v6.6 的估值模型已适配 1DTE／3DTE；但当日到期合约的亏损不能归因于期限适配，模型价与实际期权盈亏的偏差在 0DTE 也存在（见 [OH3_EXIT_AUDIT_CN.md](../../../studies/us_0dte_picks/reports/OH3_EXIT_AUDIT_CN.md)，同一估值模型）。注册表是当前策略状态依据。
+- 先核对实际 DTE。最近到期执行已支持，不代表 v6.6 的估值模型已适配 1DTE／3DTE；但当日到期合约的亏损不能归因于期限适配，模型价与实际期权盈亏的偏差在 0DTE 也存在（见 [OH3_EXIT_AUDIT_CN.md](../../../studies/archive/us_0dte_picks/OH3_EXIT_AUDIT_CN.md)，同一估值模型）。注册表是当前策略状态依据。
 - 复盘按"规则本身"评价：每天记下两边各自是否出信号、出信号的一边结果如何、没出信号的日子当天的走势；不按单笔调参数。前向证据按 [STANDARD](../../../docs/STANDARD.md) 的口径累计（随机入场对照 G13、账户视角的回撤与连亏、分行情），满 20 个交易日再评测；这需要每日收盘后 `custody freeze`，属持续采集，须用户同意。
 - 可选实际成本／bid金额退出是独立运行保护，仅dryrun/paper、默认关闭，尚无收益验证；不能热改已有持仓规则或从单日峰值倒推阈值。
 - agent 自己的操作问题（跟进安排、汇报口径、恢复时未对时）单独记录，与策略问题分开。
