@@ -44,6 +44,12 @@ of a volatility squeeze seen within the last N bars (the current one included): 
 (the usual TTM squeeze). A buyer pays least for premium while realized volatility is
 compressed, and a break out of the compression tends to come with expansion.
 
+``entry_confirm_minutes`` (default 1) requires the entire entry predicate to hold on
+consecutive completed minutes; a failed predicate or a missing minute resets it.
+``min_close_location`` (off by default) requires the close to lie at least that fraction
+of the bar range toward the favourable end; zero-range bars fail this optional filter.
+These research options do not change any previously registered strategy parameters.
+
 Optional exit rules (they need the contract strike)
 ---------------------------------------------------
 * ``charm_exit_before_close_minutes``: that close to the close, an out-of-the-money
@@ -121,6 +127,8 @@ OPTIONAL = {
     'min_breakout_volume_ratio': ((float, 0.1, 5.0), None),  # current volume / prior breakout window mean
     'squeeze_lookback': ((int, 1, 60), None),        # entry needs a volatility squeeze within the last N bars
     'must_enter_by_minute': ((int, 1, 389), None),   # deadline: buy anyway if no signal has fired by then
+    'entry_confirm_minutes': ((int, 1, 10), 1),    # consecutive full entry signals, not just VWAP persistence
+    'min_close_location': ((float, 0.0, 1.0), None),  # close location toward the favourable end of the bar
 }
 OTM_STOP_FLOOR = 0.5
 SQUEEZE_PERIOD, SQUEEZE_BAND_SD, SQUEEZE_CHANNEL_ATR = 20, 2.0, 1.5
@@ -187,6 +195,8 @@ class ZeroDteTiming:
         self.sigma = self.entry_value = self.peak_return = None
         self.squeeze_closes = deque(maxlen=SQUEEZE_PERIOD)
         self.bars_since_squeeze = None  # None until the first squeeze of the session
+        self.entry_signal_streak = 0
+        self.last_entry_signal_minute = None
 
     # ------------------------------------------------------------ helpers
     def _hi(self, bar):
@@ -280,6 +290,17 @@ class ZeroDteTiming:
 
     # ------------------------------------------------------------ rules
     def _entry_reason(self, bar, minute):
+        reason = self._raw_entry_reason(bar, minute)
+        if reason is None:
+            self.entry_signal_streak = 0
+            self.last_entry_signal_minute = None
+            return None
+        self.entry_signal_streak = (self.entry_signal_streak + 1
+                                    if self.last_entry_signal_minute == minute - 1 else 1)
+        self.last_entry_signal_minute = minute
+        return reason if self.entry_signal_streak >= self.p['entry_confirm_minutes'] else None
+
+    def _raw_entry_reason(self, bar, minute):
         p, ind, s = self.p, self.ind, self.sign
         if minute < p['opening_minutes'] or ind.prev_ema_fast is None:
             return None
@@ -290,6 +311,10 @@ class ZeroDteTiming:
         if p['min_breakout_volume_ratio'] is not None:
             mean_volume = sum(b.volume for b in prior) / len(prior)
             if mean_volume <= 0 or bar.volume <= 0 or bar.volume < p['min_breakout_volume_ratio'] * mean_volume:
+                return None
+        if p['min_close_location'] is not None:
+            width = bar.high - bar.low
+            if width <= 0 or (close - self._lo(bar)) / width < p['min_close_location']:
                 return None
         if self.vwap_side_bars < p['persist_minutes']:
             return None

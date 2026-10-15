@@ -20,6 +20,17 @@ import hashlib
 import json
 
 STATUSES = ('candidate', 'accepted', 'retired')
+STRATEGY_VERSIONS = {
+    'V6.6': {'selective': 'zero_dte_timing_v6.6', 'required': 'open_hold_v3'},
+}
+
+
+def add_strategy_arguments(parser):
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--strategy', default=None, help='legacy registered strategy_id')
+    group.add_argument('--strategy-version', default=None, help='unified version, e.g. V6.6')
+    parser.add_argument('--strategy-mode', choices=('selective', 'required'), default=None,
+                        help='required with --strategy-version; separate from paper/live')
 
 
 class Registry:
@@ -62,3 +73,20 @@ class Registry:
 
     def list(self):
         return [{k: v for k, v in item.items() if k != 'config'} for item in self._items.values()]
+
+    def resolve_id(self, strategy_id=None, version=None, strategy_mode=None):
+        if version is None and strategy_mode is None:
+            return self.get(strategy_id or self.default_id)['strategy_id']
+        if strategy_id is not None or version is None or strategy_mode is None:
+            raise ValueError('use --strategy OR both --strategy-version and --strategy-mode')
+        try:
+            target = STRATEGY_VERSIONS[version.upper()][strategy_mode]
+        except KeyError as exc:
+            raise ValueError('unknown strategy version or mode') from exc
+        return self.get(target)['strategy_id']
+
+    def versions(self):
+        return {version: {mode: {k: self.get(sid)[k] for k in ('strategy_id', 'sha256', 'status')}
+                          for mode, sid in modes.items()}
+                for version, modes in STRATEGY_VERSIONS.items()
+                if all(sid in self._items for sid in modes.values())}

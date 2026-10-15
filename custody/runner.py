@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 from .controller import Controller
 from .models import ET, Frame, OrderUpdate, instant, symbol as normalize_symbol
 from .opend import OpenDContractResolver, OpenDMarket, OpenDTradingCalendar
-from .registry import Registry
+from .registry import Registry, add_strategy_arguments
 from .service import ACTIVE, CustodyService, ExecutionPolicy
 from .strategy import build_strategy
 
@@ -285,7 +285,7 @@ def build_argument_parser(command):
     else:
         parser.add_argument('--account', default='opend-dryrun')
         parser.add_argument('--intent-only', action='store_true', help='do not mark intents as simulated fills')
-    parser.add_argument('--strategy', default=None, help='registered strategy_id (default: registry default)')
+    add_strategy_arguments(parser)
     parser.add_argument('--symbol', required=True, help='underlying, e.g. US.QQQ')
     parser.add_argument('--direction', choices=['LONG', 'SHORT'], required=True)
     parser.add_argument('--contract', required=True, help='exact upstream-selected option code')
@@ -337,9 +337,15 @@ def _operate(command, args):
 
 
 def main(command, argv=None):
-    args = build_argument_parser(command).parse_args(argv)
+    parser = build_argument_parser(command)
+    args = parser.parse_args(argv)
     if command in ('status', 'stop'):
         return _operate(command, args)
+    registry = Registry()
+    try:
+        strategy_id = registry.resolve_id(args.strategy, args.strategy_version, args.strategy_mode)
+    except ValueError as exc:
+        parser.error(str(exc))
     mode = args.mode if command == 'run' else 'dryrun'
     if mode == 'live' and args.trade_action == 'sell_only':
         raise SystemExit('sell_only position_pnl_v1 has no independent validation; use dryrun/paper')
@@ -348,7 +354,6 @@ def main(command, argv=None):
     market = OpenDMarket(host=args.host, port=args.port)
     broker, subscribed = None, False
     try:
-        registry = Registry()
         calendar = OpenDTradingCalendar(market)
         if command == 'run':
             from .broker import OpenDBroker, trade_password_present
@@ -361,7 +366,7 @@ def main(command, argv=None):
                                  OpenDContractResolver(market), calendar, registry=registry, mode=mode,
                                  policy=ExecutionPolicy(frame_max_age_seconds=60, max_spread_fraction=.10)
                                  if args.entry_valid_until else None)
-        payload = {'strategy_id': args.strategy or registry.default_id, 'symbol': args.symbol,
+        payload = {'strategy_id': strategy_id, 'symbol': args.symbol,
                                   'direction': args.direction, 'contract': args.contract,
                                   'max_qty': args.max_qty, 'max_entry_premium': args.max_entry_premium,
                                   'max_loss_usd': args.max_loss_usd,
@@ -394,6 +399,7 @@ def main(command, argv=None):
                         interval=args.interval, wxpusher_spt=args.wxpusher_spt,
                         simulate_fills=command == 'dryrun' and not args.intent_only)
         _json_logger('start', command=command, mode=mode, account=service.account, db=service.path, job_id=job['id'],
+                     strategy_version=args.strategy_version, strategy_mode=args.strategy_mode,
                      strategy_id=job['strategy']['strategy_id'], strategy_status=job['strategy']['status'],
                      symbol=underlying, direction=args.direction, contract=args.contract, state=job['state'],
                      flatten_at=job['flatten_at'], orders_to=broker.env if broker else None)

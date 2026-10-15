@@ -24,7 +24,8 @@ def main(argv=None):
     if command == 'strategies':
         from .registry import Registry
         registry = Registry()
-        print(json.dumps({'default': registry.default_id, 'strategies': registry.list()}, indent=2, ensure_ascii=False))
+        print(json.dumps({'default': registry.default_id, 'versions': registry.versions(),
+                          'strategies': registry.list()}, indent=2, ensure_ascii=False))
         return 0
     if command == 'check':
         from .dataset import main as entry

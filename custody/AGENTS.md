@@ -23,10 +23,12 @@
 ## 策略与评测
 
 - 策略 = `engines/<engine>.py` + 不可变参数文件。改参数用新 `strategy_id` 和新文件，在 [strategies/index.json](strategies/index.json) 登记 SHA256；小改动升小版本（v6 → v6.1）。
+- 2026-10-14 用户澄清：后续对外使用「策略名称 + 统一版本 + selective/required mode」，同一新版本同时包含两种 mode 的冻结配置和评价；模式不同不能用两条版本号冒充版本先后。现有历史 ID、SHA 和分配置资格保留，不通过改名传递 live 资格。组合信号需按空仓/同向持仓/反向持仓定义动作、按完整交易配对评价；设计及尚未实现的边界见 [统一版本与组合评价](../docs/STRATEGY_MODES_AND_SIGNALS.md)。
 - 状态只写在 `index.json`，只有评测 ACCEPT 才能改 `accepted`。不留废弃策略、旧报告或兼容分支；历史查 Git，不复活已删除的策略。
 - 候选用完整标准（含 G8–G10）评测：先比未通过门槛数，再比综合分（判为优于基线还要求上游命中率 60% 时综合分也更高）；选择做留一天交叉验证并报告样本外估计；全部候选与失败记入 [STRATEGY](../docs/STRATEGY.md)。
 - 唯一评测入口：`python3 -m custody evaluate --strategy <id> --dataset <目录> --out reports/<id>/<dataset>/`。主口径方向对称加权、主指标盈亏比；结论只看门槛；比较版本用综合分（收益分 80%、完成分 20%，见 [STANDARD](../docs/STANDARD.md) 第 10 节）；整体比较保留全部 case，未入场按 0 收益计。
 - 两边不全、场景不足或样本外交易日不足 20 个都不能 ACCEPT。
+- 2026-10-14 用户要求：后续日内新机制同时预登记、评测自由择时（`selective`，无信号可不买）和必须交易（`required`，有入场及日内退出兜底），各自只做一次买入、一次卖出；必须分别报告 CALL/PUT、完整买卖覆盖、入场/退出原因和持有时长。不能用一个 mode 或一个方向的收益掩盖另一个的失败。两者是策略研究口径，不等于执行环境或 `trade-action`；基线及账户一天一笔尚需固定上游选择的边界见 [R29](../studies/us_0dte_picks/reports/R29_BASELINES_CN.md)。未成交和到期结算不算完成卖出，不删亏损 case，不重复扣减已反映在真实期权价格里的时间损耗。
 
 ## 运行
 

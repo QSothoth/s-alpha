@@ -31,7 +31,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from .dataset import CaseData, Dataset
-from .registry import Registry
+from .registry import Registry, add_strategy_arguments
 from .strategy import Decision, build_strategy, flatten_minute, session_minute
 
 SCENARIOS = ('trend_with', 'reversal_with', 'chop', 'reversal_against', 'trend_against')
@@ -1047,8 +1047,11 @@ def render_markdown(report):
     right = counts['trend_with'] + counts['reversal_with']
     example = next((c for c in report['cases'] if c['net_return'] is not None and c['benchmark_net_return'] is not None), None)
     fill = report['fill_model']
+    release = report.get('release')
+    title = ('日内期权择时 %s / %s' % (release['version'], release['mode'])
+             if release else report['strategy']['strategy_id'])
     lines = [
-        '# 评测报告：%s' % report['strategy']['strategy_id'],
+        '# 评测报告：%s' % title,
         '',
         '**结论：%s** —— %s。' % (report['verdict'], VERDICT_TEXT[report['verdict']]),
         '',
@@ -1249,12 +1252,21 @@ REASON_ZH = {
 def main(argv=None):
     parser = argparse.ArgumentParser(prog='custody evaluate', description=__doc__.splitlines()[0])
     parser.add_argument('--dataset', required=True, help='extracted dataset directory (e.g. Release custody-0dte-v5)')
-    parser.add_argument('--strategy', default=None, help='registered strategy_id (default: registry default)')
+    add_strategy_arguments(parser)
     parser.add_argument('--out', required=True, help='directory for report.json and REPORT.md')
     parser.add_argument('--null-draws', type=int, default=NULL_DRAWS)
     parser.add_argument('--random-entry-draws', type=int, default=RANDOM_ENTRY_DRAWS)
     args = parser.parse_args(argv)
-    report = evaluate(args.dataset, args.strategy, null_draws=args.null_draws, random_entry_draws=args.random_entry_draws)
+    registry = Registry()
+    try:
+        strategy_id = registry.resolve_id(args.strategy, args.strategy_version, args.strategy_mode)
+    except ValueError as exc:
+        parser.error(str(exc))
+    report = evaluate(args.dataset, strategy_id, registry=registry,
+                      null_draws=args.null_draws, random_entry_draws=args.random_entry_draws)
+    if args.strategy_version:
+        report['release'] = {'family': 'intraday_options', 'version': args.strategy_version.upper(),
+                             'mode': args.strategy_mode}
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / 'report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False, allow_nan=False) + '\n', encoding='utf-8')
