@@ -8,7 +8,7 @@
 |---|---|---|
 | [daily_technical/](daily_technical/README.md) | 独立 `daily-technical-review` 技能：沪深 / 美 / 港日 K 的 Cycle、SMC、CMF/MFI 参考 | 按需只读，辅助模型和人审视介入条件，不做策略收益认证或交易 |
 | [us_0dte_picks/](us_0dte_picks/README.md) | 近到期个股名单研究与盘中人工会话流程（v6.6 择时，只做 mock） | 方向规则全部未过（A4 在 P5 失败，TS1–TS67 失败，教训见 notes/FAILED_TRIALS.md）；只有大波动名单成立；SV1 待评测 |
-| [watch_signal/](watch_signal/README.md) | 盯盘信号研究 W1–W19 | 通过的结论已进 `watch/` |
+| [watch_signal/](watch_signal/README.md) | 盯盘信号研究 W1–W33 | 通过的结论已进 `watch/`（价位闸、`D±`、余下振幅 `left`、强度档）；1m 方向与收益始终不稳定（W22–W24、W28、W29、W32 失败）；2024H1 是最后一段未用分钟数据 |
 | [us_opening_range/](us_opening_range/README.md) | 仅剩 SV1 收盘采集工具 `capture.py` | 研究已结束；模块路径被定时任务引用，勿移动 |
 | [auction_strength/](auction_strength/README.md) | 竞价最后一分钟强弱打分（港股 09:19、A 股 09:24） | 只有 3 天样本，门槛未校准 |
 

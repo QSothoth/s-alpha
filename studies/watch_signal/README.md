@@ -37,6 +37,15 @@
 | [notes/W17_PREREG.md](notes/W17_PREREG.md) / [reports/W17_RESULTS_CN.md](reports/W17_RESULTS_CN.md) | 改定义为因果恒指市场支持百分位；极端日行为通过，仅孤立 12:00 桶样本不足 |
 | [notes/W18_PREREG.md](notes/W18_PREREG.md) / [reports/W18_RESULTS_CN.md](reports/W18_RESULTS_CN.md) | 合并午间收市桶，在第二个全新半年通过全部门槛 |
 | [notes/W19_PREREG.md](notes/W19_PREREG.md) / [reports/W19_RESULTS_CN.md](reports/W19_RESULTS_CN.md) | 个股与恒指最弱环节合成唯一总体强度；全新 2024H1 全部门槛通过 |
+| [notes/W22_PREREG.md](notes/W22_PREREG.md) / [reports/W22_RESULTS_CN.md](reports/W22_RESULTS_CN.md) | 每条 B/S 当 2R/1R 交易（R=2×ATR14）：五个候选毛期望都≈0，成本约 0.36R，选择段全部失败 |
+| [notes/W23_PREREG.md](notes/W23_PREREG.md) / [reports/W23_RESULTS_CN.md](reports/W23_RESULTS_CN.md) | 当天累计 B/S 跟随到收盘：毛 −3～−12bp，不优于日内动量（本身也为负），失败 |
+| [notes/W24_PREREG.md](notes/W24_PREREG.md) / [reports/W24_RESULTS_CN.md](reports/W24_RESULTS_CN.md) | 1m 方向全面探索为 0；余下预计振幅验证通过（样本外 R² 0.55、覆盖 77.5%、高低五分位 3.7×）；收盘前回吐跨期反号失败 |
+| [notes/W25_PREREG.md](notes/W25_PREREG.md) / [reports/W25_RESULTS_CN.md](reports/W25_RESULTS_CN.md) | 跨标的强度档 1–5（历史分位表）：描述性门槛全部通过；已被 W27 取代 |
+| [notes/W26_PREREG.md](notes/W26_PREREG.md) | 美股强度档（拉历史分钟线）：用户叫停，未扣新额度，未出结果 |
+| [notes/W27_PREREG.md](notes/W27_PREREG.md) / [reports/W27_RESULTS_CN.md](reports/W27_RESULTS_CN.md) | 固定刻度强度档（日 K 归一化，不需历史分钟线）：港股两段门槛全过，取代 W25，看板三地通用 |
+| [notes/W31_PREREG.md](notes/W31_PREREG.md) / [reports/W31_RESULTS_CN.md](reports/W31_RESULTS_CN.md) | 强度档界线改为 30/30/25/10/5%（0.40/0.57/0.73/0.86），4、5 档稀少；门槛全过，已进看板 |
+| [notes/W32_PREREG.md](notes/W32_PREREG.md) / [reports/W32_RESULTS_CN.md](reports/W32_RESULTS_CN.md) | 强度档能否指导交易：幅度增量仅 1.06×、方向与收益为负，选择段全部失败；2024H1 仍未用 |
+| [reports/W33_EXPLORE_CN.md](reports/W33_EXPLORE_CN.md) | 探索：各强度档之后的走势分布在两段数据里几乎相同 |
 | [reports/DATA_SHA256.txt](reports/DATA_SHA256.txt) | 数据文件哈希（数据本身在 `data/`，不进 git） |
 | `code/` | 研究脚本（numpy，只用于研究；盯盘运行时仍只用标准库） |
 
