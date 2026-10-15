@@ -2,7 +2,7 @@
 
 2026-09-29 用户要求今天运行，并允许使用最近到期合约。以下是人工确认后交给 custody 的试运行流程。研究 A4、P5 和原 0DTE 评测不变；盘前组合排序与近到期收益均未经独立验证。
 
-交互入口为 [near-expiry-session skill](../skills/near-expiry-session/SKILL.md)，可用 `$near-expiry-session` 调用。skill 负责授权上下文、候选解释、异常处理与复盘，以下 CLI 负责确定性检查与执行；不会因加载 skill 自动启动交易或采集。
+交互入口为 [near-expiry-session skill](../SKILL.md)，可用 `$near-expiry-session` 调用。skill 负责授权上下文、候选解释、异常处理与复盘，以下 CLI 负责确定性检查与执行；不会因加载 skill 自动启动交易或采集。
 
 ## 1. 盘前一条命令
 
@@ -91,7 +91,7 @@ PYTHONUTF8=1 python3 -m studies.us_0dte_picks.session status \
 
 **2026-10-02 起的择时（用户决定）**：策略为 `zero_dte_timing_v6.6`，不再是 `open_hold_v3`。每只候选的 CALL 与 PUT 各取最近五档行权价，分别从开盘起按自己的方向重放 v6.6；哪一边首次出入场信号，卡片就给那一边。不按开盘以来涨跌定方向，也没有开盘一小时兜底入场。v6.6 是 candidate，只用于 dryrun（mock）；`live` 会被 custody 拒绝。
 
-`ENTER_REVIEW` 只包含本分钟首次出现的入场意图。核对方向、到期日、报价和有效期；`WAIT` 不操作。不凭图形否决信号（见 [agent 审卡评测](../../archive/README.md)）。报价要求乘数 100、Delta 绝对值至少 0.30、成交至少 100 张、价差不超过 10%、报价不超过 30 秒。仅检查每只 CALL、PUT 各最近五档行权价，不声称穷尽全链。
+`ENTER_REVIEW` 只包含本分钟首次出现的入场意图。核对方向、到期日、报价和有效期；`WAIT` 不操作。不凭图形否决信号（见 [agent 审卡评测](../../../studies/archive/README.md)）。报价要求乘数 100、Delta 绝对值至少 0.30、成交至少 100 张、价差不超过 10%、报价不超过 30 秒。仅检查每只 CALL、PUT 各最近五档行权价，不声称穷尽全链。
 
 ## 3. 按唯一合约确认
 

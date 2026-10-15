@@ -14,7 +14,7 @@
 
 ## 池子
 
-23 只：14 只核心 SPY、QQQ、IWM、AAPL、MSFT、NVDA、TSLA、META、AMZN、GOOGL、AMD、MU、INTC、AVGO，加 9 只 ETF DIA、EEM、GLD、SLV、SMH、TLT、XLE、XLF、XLU。它们都出现在 2026 年已冻结的真实 0DTE 记录中；历史上逐日是否有 0DTE 无法核实（见 [合约身份审计](../../us_opening_range/notes/OPTION_IDENTITY_COVERAGE.md)），回测不按星期筛选，只检验排序能力。实盘工具逐日查询真实到期链。XLI、XLV、XLY 没有 IV 历史，SNDK、SKHY 只在验证段有 5 分钟 K，都不进池。
+23 只：14 只核心 SPY、QQQ、IWM、AAPL、MSFT、NVDA、TSLA、META、AMZN、GOOGL、AMD、MU、INTC、AVGO，加 9 只 ETF DIA、EEM、GLD、SLV、SMH、TLT、XLE、XLF、XLU。它们都出现在 2026 年已冻结的真实 0DTE 记录中；历史上逐日是否有 0DTE 无法核实（见 [合约身份审计](https://github.com/QSothoth/s-alpha/blob/d881ab62d0256c37ab64485a9a99d95d58943202/studies/us_opening_range/notes/OPTION_IDENTITY_COVERAGE.md)），回测不按星期筛选，只检验排序能力。实盘工具逐日查询真实到期链。XLI、XLV、XLY 没有 IV 历史，SNDK、SKHY 只在验证段有 5 分钟 K，都不进池。
 
 数据（均为本地已有，不发起新请求、不扣额度）：
 

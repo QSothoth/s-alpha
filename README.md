@@ -1,30 +1,40 @@
 # s-alpha
 
-美股期权日内执行（custody）、港股 / A 股 / 美股盯盘（watch）与只读研究（studies）。
+按 skill 使用的股票研究、盯盘与美股期权协作工具。先按任务选入口，再读取该 skill 所需的资料和实现。
 
-| 入口 | 内容 |
-|---|---|
-| [custody](custody/AGENTS.md) | 美股近到期期权单笔执行：上游给定标的、方向和合约，按当日正股 1m K 线择时，按期权成交价计盈亏；唯一会下单的部分 |
-| [watch](watch/README.md) | A / H 股实时盯盘，只读行情与标注 |
-| [近到期选标的与盘中会话](studies/us_0dte_picks/README.md) | 当前在用的上游：人工选候选 + v6.6 择时，只做 mock。方向规则全部失败，只有大波动名单成立；教训见 `notes/FAILED_TRIALS.md` |
-| [其他研究](studies/AGENTS.md) | 竞价、盯盘信号，以及已失败、只供查阅的切片 |
+| Skill | 用途 | 实现与研究 |
+|---|---|---|
+| [opportunity-research](skills/opportunity-research/SKILL.md) | 从涨价、缺货、需求变化等线索研究机会，保留证据与反证 | 资料随 skill 保存 |
+| [daily-technical-review](skills/daily-technical-review/SKILL.md) | 指定股票的日 K 技术面、条件买点与多头退出计划 | `studies/daily_technical/` |
+| [trend-market-scan](skills/trend-market-scan/SKILL.md) | 三个市场的周线趋势候选、规则账户和持仓检查 | `studies/trend_breakout/` |
+| [market-watch](skills/market-watch/SKILL.md) | 港股 / A 股 / 美股盘中只读盯盘与信号解释 | `watch/`、`studies/watch_signal/` |
+| [near-expiry-session](skills/near-expiry-session/SKILL.md) | 最近到期期权的筛选、许可、mock、持仓跟踪与复盘 | `studies/us_0dte_picks/`、`custody/` |
 
-`custody` 是唯一会下单的部分。默认策略仍为 `zero_dte_timing_v6.6`（`candidate`）；现有注册表中 `zero_dte_timing_v6.5` 与 `open_hold_v3` 为 `accepted`。`run --mode live` 只接受 `accepted`，因此默认策略不能直接用于实盘；状态以 [注册表](custody/strategies/index.json) 为准。注册状态不等于研究通过，已提交报告没有评测结论 ACCEPT。历史策略与报告保留原位，供运行依赖、对照及审计使用。
+## 目录归属
 
-数据尽量沿用 OpenD、Yahoo 与腾讯；真实到期日、期权合约及期权成交资料以可核验的行情源为准。只用真实行情，数据不进 Git，已发布数据按 tag 与 SHA256 固定；不因新研究自动启动长期采集或消耗新标的历史 K 线额度。4GB VPS 上按标的 / 日期分块处理，避免无界加载。
+- `skills/<名称>/SKILL.md`：任务入口；使用说明和外部参考资料放同目录的 `references/`，按需读取。
+- `custody/`、`watch/`：共享执行与行情代码，保留现有 Python 模块和 CLI 路径。
+- `studies/`：研究实现、预登记、结果及失败记录；尚未形成使用流程的研究不单独建 skill。见 [研究索引](studies/AGENTS.md)。
+- `docs/`：跨 skill 的执行、数据、评测与环境规范；`reports/` 保留注册策略的评测报告。
+- `data/`：本地行情和运行状态，不进 Git；数据发布见 [DATA](docs/DATA.md)。
 
-项目规范见 [AGENTS.md](AGENTS.md)。数据与 Release 见 [DATA](docs/DATA.md)，执行命令见 [RUNTIME](docs/RUNTIME.md)，评测口径见 [STANDARD](docs/STANDARD.md)，历史策略研究见 [STRATEGY](docs/STRATEGY.md)，OpenD 环境见 [OPEND_SETUP](docs/OPEND_SETUP.md)。
+使用资料只维护一份，代码目录 README 指向所属 skill；研究记录保留原结论，不因目录整理重新评测或改变资格。项目规范见 [AGENTS.md](AGENTS.md)。
+
+## 本机使用
+
+本仓库的 skill 依赖同一 checkout 的代码和资料；安装时链接整个 skill 目录，相对引用按真实路径解析。已有技能链接迁移到 `skills/`，不要复制出第二份。单个技能的链接示例：
 
 ```bash
-# 查看现有策略；不连接交易账户
-python3 -m custody strategies
-
-# 检查已下载的真实期权数据
-python3 -m custody check --dataset data/custody-0dte-v6.1
+mkdir -p ~/.codex/skills
+ln -s /opt/opend-us-options/skills/market-watch ~/.codex/skills/market-watch
 ```
 
-测试命令以 [AGENTS.md](AGENTS.md)「修改与验证」为准。
+命令从仓库根目录运行；连接 OpenD 使用 `/opt/futu-opend/venv/bin/python`。只查看策略、不连接交易账户：
 
-行情与策略研究入口不下单；只有 `custody/broker.py` 可使用 OpenD 交易接口。密码、令牌、运行数据库不提交。
+```bash
+python3 -m custody strategies
+```
 
-代码采用 MIT 许可；Release 行情小样本用于个人研究和离线复现。
+`custody/broker.py` 是唯一会下单的部分。默认策略 `zero_dte_timing_v6.6` 为 `candidate`，只能 dryrun/mock；`run --mode live` 只接受注册表中的 `accepted`。注册状态不等于评测结论 ACCEPT，当前状态和历史报告见 [注册表](custody/strategies/index.json) 与 [策略记录](docs/STRATEGY.md)。
+
+跨技能细则：[执行](docs/RUNTIME.md)、[评测](docs/STANDARD.md)、[OpenD 环境](docs/OPEND_SETUP.md)。测试命令见 [AGENTS.md](AGENTS.md)「修改与验证」。代码采用 MIT 许可；Release 行情小样本用于个人研究和离线复现。

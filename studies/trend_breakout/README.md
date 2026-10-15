@@ -13,7 +13,7 @@
 | 文件 | 作用 |
 |---|---|
 | [final.py](final.py) | 三个市场的最终方案：取本地数据、股票池、周 K 买点、排序、仓位、回放、Alpha、数据末端的持仓与候选 |
-| [scan.py](scan.py) | 全市场周扫描：按需取最新日 K，列下周候选、规则账户持仓、用户持仓止损/离场；技能 [trend-market-scan](skills/trend-market-scan/SKILL.md) |
+| [scan.py](scan.py) | 全市场周扫描：按需取最新日 K，列下周候选、规则账户持仓、用户持仓止损/离场；技能 [trend-market-scan](../../skills/trend-market-scan/SKILL.md) |
 | [run_final.py](run_final.py) | 回放一个市场并写 `reports/final_<market>.json`，与研究结果核对 |
 | [chan.py](chan.py) | 周 K 聚合与简化缠论（包含、分型、笔、中枢、二买/三买），不追高账户 |
 | [chips.py](chips.py) | 换手率、成本线、筹码分布获利盘（A 股，研究中未入选，保留为工具） |
@@ -29,6 +29,6 @@ OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.t
 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m unittest discover -s studies/trend_breakout/tests
 ```
 
-全市场扫描见 [trend-market-scan](skills/trend-market-scan/SKILL.md)：`-m studies.trend_breakout.scan refresh|run cn|hk|us|all`，`refresh` 前台按需取数（美港 OpenD 不扣历史额度，A 股新浪），不做后台采集。
+全市场扫描见 [trend-market-scan](../../skills/trend-market-scan/SKILL.md)：`-m studies.trend_breakout.scan refresh|run cn|hk|us|all`，`refresh` 前台按需取数（美港 OpenD 不扣历史额度，A 股新浪），不做后台采集。
 
 A 股一次约 2–3 分钟、峰值内存约 1.2 GB；港美各约 1 分钟。数据在 GitHub Release（见 [docs/DATA.md](../../docs/DATA.md)），解压到 `data/` 即可，只读本地文件，不连 OpenD、不下单。

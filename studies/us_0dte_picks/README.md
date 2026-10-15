@@ -6,11 +6,11 @@
 
 先读 [notes/FAILED_TRIALS.md](notes/FAILED_TRIALS.md) 开头的「总教训」。2026-10-12 清理时，TS / FD 系列的代码、预登记和报告都移出了仓库，只在失败记录里留了结论。
 
-发现投资机会可用 [opportunity-research skill](skills/opportunity-research/SKILL.md)：从异常现象追查利润受益者、市场预期和反证，输出少量人工判断的观察候选。它不提供已验证的选股信号；中长期逻辑不自动转为最近到期期权，符合当前范围且用户决定参与后才交给会话流程。
+发现投资机会可用 [opportunity-research skill](../../skills/opportunity-research/SKILL.md)：从异常现象追查利润受益者、市场预期和反证，输出少量人工判断的观察候选。它不提供已验证的选股信号；中长期逻辑不自动转为最近到期期权，符合当前范围且用户决定参与后才交给会话流程。
 
 ## 人工候选的盘中监测
 
-**2026-09-29 更新：用户允许最近到期，不再只限 0DTE。** 运行入口见 [操作流程](notes/WORKFLOW_CN.md)。`prepare_watch --launch` 生成当天排名、15／30 分钟基准并启动观察；`session status` 汇总；`session accept` 按当前卡先 dryrun、再人工明确选择执行模式。旧研究工具 `daily_list` 的 0DTE 口径不变。
+**2026-09-29 更新：用户允许最近到期，不再只限 0DTE。** 运行入口见 [操作流程](../../skills/near-expiry-session/references/WORKFLOW_CN.md)。`prepare_watch --launch` 生成当天排名、15／30 分钟基准并启动观察；`session status` 汇总；`session accept` 按当前卡先 dryrun、再人工明确选择执行模式。旧研究工具 `daily_list` 的 0DTE 口径不变。
 
 用户于 2026-09-28 确认先从当日候选里选相对最好的 1–2 个机会，盘中观察后交给既有执行策略。[live_watch.py](live_watch.py) 接收当日盘前排名和已冻结的 15／30 分钟量基准，在每个整分钟结束后约 3 秒更新候选、真实合约报价、预算检查与择时策略的状态（2026-10-02 起为 `zero_dte_timing_v6.6`，CALL、PUT 两边独立判断；此前为 `open_hold_v3`）。只输出供人工审视的草稿，不发送订单，也不调用历史 K 线接口。
 
@@ -44,7 +44,7 @@ PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.live_watch
 
 当前 v6.6 使用20根1m收盘的压缩过滤，因此正常信号最早09:50；09:45可先准备候选和合约。没有强制入场兜底，模型翻倍止盈和锁盈仍保留；TS1–TS7的更早入场及趋势持有实验均未通过，未替换运行策略。若监测在 10:00 后才启动，只要求实际使用的 30 分钟量基准；更早启动必须同时具备 15／30 分钟基准，缺失时不估造。监测截至指定时刻后结束，持仓管理由用户启动的 custody 任务负责。
 
-交互 skill 已缩为 [两层策略与许可](skills/near-expiry-session/SKILL.md)，细节在 [运行细则](notes/SESSION_OPERATIONS_CN.md)。先准备冻结名单，让人类选好，再用 `launch_watch --symbols AAPL,NVDA` 预览和启动，只扫描所选范围；省略范围仍观察全池。明确当天许可后，用`session authorize`预览/保存，再以`auto_watch`自动接受新鲜信号，沿用原custody预检、预算锁与去重；预检后重查撤销/过期，任务最晚入场取卡片与许可的较早截止。当前仅mock许可，不自动切换paper/live。期权检查起点跟随注册策略的 `opening_minutes`，量比信息仍在15/30分钟完成后补充，不承担额外入场门槛。
+交互 skill 已缩为 [两层策略与许可](../../skills/near-expiry-session/SKILL.md)，细节在 [运行细则](../../skills/near-expiry-session/references/SESSION_OPERATIONS_CN.md)。先准备冻结名单，让人类选好，再用 `launch_watch --symbols AAPL,NVDA` 预览和启动，只扫描所选范围；省略范围仍观察全池。明确当天许可后，用`session authorize`预览/保存，再以`auto_watch`自动接受新鲜信号，沿用原custody预检、预算锁与去重；预检后重查撤销/过期，任务最晚入场取卡片与许可的较早截止。当前仅mock许可，不自动切换paper/live。期权检查起点跟随注册策略的 `opening_minutes`，量比信息仍在15/30分钟完成后补充，不承担额外入场门槛。
 
 ## 当前结论
 
@@ -80,7 +80,7 @@ PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.live_watch
 
 ## 文件
 
-- 会话流程：[prepare_watch.py](prepare_watch.py)（盘前名单与量基准）、[launch_watch.py](launch_watch.py) / [live_watch.py](live_watch.py)（受管盘中观察）、[session.py](session.py)（状态、许可、交接）、[auto_watch.py](auto_watch.py)（许可范围内自动接受新鲜卡）、[mock_watch.py](mock_watch.py)；运行见 [WORKFLOW_CN](notes/WORKFLOW_CN.md)、[运行细则](notes/SESSION_OPERATIONS_CN.md)、[skill](skills/near-expiry-session/SKILL.md)
+- 会话流程：[prepare_watch.py](prepare_watch.py)（盘前名单与量基准）、[launch_watch.py](launch_watch.py) / [live_watch.py](live_watch.py)（受管盘中观察）、[session.py](session.py)（状态、许可、交接）、[auto_watch.py](auto_watch.py)（许可范围内自动接受新鲜卡）、[mock_watch.py](mock_watch.py)；运行见 [WORKFLOW_CN](../../skills/near-expiry-session/references/WORKFLOW_CN.md)、[运行细则](../../skills/near-expiry-session/references/SESSION_OPERATIONS_CN.md)、[skill](../../skills/near-expiry-session/SKILL.md)
 - SV1 / SV2：[fetch_sv1.py](fetch_sv1.py) / [sv1.py](sv1.py)（会话验证取数与评分）、[fetch_sv2.py](fetch_sv2.py) / [sv2.py](sv2.py) / [sv2_calibrate.py](sv2_calibrate.py) / [proxy.py](proxy.py)（正股分钟推算期权代理与校准）
 - 名单工具依赖：[daily_k.py](daily_k.py)、[p3.py](p3.py)。P1、P4、P5 与 OH3 审计的代码、一次性取数脚本和原始 JSON 输出已移出仓库（见 [archive](../archive/README.md)），结论保留在 `reports/*_CN.md`
 - [daily_list.py](daily_list.py)：每日 A4 名单研究工具（标注 `P5_FAILED`）

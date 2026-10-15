@@ -5,7 +5,7 @@ description: 每周收盘后扫描沪深 A 股、港股、美股全市场，按�
 
 # 趋势全市场周扫描
 
-工程为 `/opt/opend-us-options`，沿用根及 `studies/AGENTS.md`。方案、检验和局限见 [CONCLUSIONS_CN.md](../../reports/CONCLUSIONS_CN.md)；代码为 `studies/trend_breakout/scan.py`（规则来自 `final.py`）。
+工程为 `/opt/opend-us-options`，沿用根及 `studies/AGENTS.md`。方案、检验和局限见 [CONCLUSIONS_CN.md](../../studies/trend_breakout/reports/CONCLUSIONS_CN.md)；代码为 `studies/trend_breakout/scan.py`（规则来自 `final.py`）。
 
 结论只在同一段历史里择优并做过区间内检验，没有样本外验证。输出是"规则此刻会怎么做"，不是投资建议或订单；按研究约定只建议模拟或小资金跟踪。单只股票的介入判断交给 daily-technical-review。
 

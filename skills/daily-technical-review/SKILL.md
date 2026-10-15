@@ -22,7 +22,7 @@ cd /opt/opend-us-options
 
 沪深 A 股默认腾讯公开前复权日线，美港默认 OpenD 最近日 K，港股有腾讯备用；OpenD 仍需已有行情权限，但脚本不会调用消耗历史 K 线额度的接口或购买数据。默认每只 300 根，仅接纳已完成日 K。无 OpenD 时，沪深/港股可用系统 Python 加 `--source tencent`。接口错误或数据不足时报告缺口，不编造技术面，不改用付费接口。
 
-支持单标的 `--csv PATH --csv-adjustment qfq` 离线运行。只在确认输入确为前复权时声明 qfq；默认未知。详细数据口径、公式、阈值、CLI 和局限见[运行说明](../../README.md)，解释具体形态或异常时按需阅读。
+支持单标的 `--csv PATH --csv-adjustment qfq` 离线运行。只在确认输入确为前复权时声明 qfq；默认未知。详细数据口径、公式、阈值、CLI 和局限见[运行说明](references/TECHNICAL_CN.md)，解释具体形态或异常时按需阅读。
 
 ## 怎样判断
 

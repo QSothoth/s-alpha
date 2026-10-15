@@ -1,14 +1,20 @@
 # 项目规范
 
-> 先读本文件，再读要改的目录的 `AGENTS.md`；细节在 `docs/` 和各目录 README，不抄回规范。每个 `CLAUDE.md` 只有一行 `@AGENTS.md`（测试强制）。
+> 先读本文件，再读要改的目录的 `AGENTS.md`；使用细节在各 skill 的 `references/`，共用规范在 `docs/`，代码目录 README 指路。每个 `CLAUDE.md` 只有一行 `@AGENTS.md`（测试强制）。
 
-## 能力地图
+## 按 skill 组织
 
-| 层级 | 能力 | 规范 |
-|---|---|---|
-| 核心 | 美股期权日内单笔交易（主要是 0DTE）：上游给定标的、方向、合约，本仓库只做时机；唯一会下单的部分 | [custody/AGENTS.md](custody/AGENTS.md) |
-| 核心 | 港股 / A 股 / 美股实时盯盘：只读、只标注 | [watch/AGENTS.md](watch/AGENTS.md) |
-| 研究切片 | 近到期选标的与盘中会话、盯盘信号、竞价打分；已结束的研究只留结论——**不成熟，不当生产能力用** | [studies/AGENTS.md](studies/AGENTS.md) |
+入口统一放 `skills/<名称>/SKILL.md`，使用说明与外部资料放各自 `references/`；共享代码保留原模块路径，研究预登记与结果保留在 `studies/`。使用资料不在代码目录重复维护，跨技能规范留在 `docs/`。新增能力优先扩展所属 skill，不为每个脚本或失败研究单建 skill。
+
+| 任务入口 | 实现规范 |
+|---|---|
+| [opportunity-research](skills/opportunity-research/SKILL.md)：机会与反证研究 | [studies/AGENTS.md](studies/AGENTS.md) |
+| [daily-technical-review](skills/daily-technical-review/SKILL.md)：单股日 K 多头评估 | [studies/AGENTS.md](studies/AGENTS.md) |
+| [trend-market-scan](skills/trend-market-scan/SKILL.md)：全市场周线规则扫描 | [studies/AGENTS.md](studies/AGENTS.md) |
+| [market-watch](skills/market-watch/SKILL.md)：盘中只读盯盘 | [watch/AGENTS.md](watch/AGENTS.md) |
+| [near-expiry-session](skills/near-expiry-session/SKILL.md)：近到期期权会话 | [custody/AGENTS.md](custody/AGENTS.md)、[studies/AGENTS.md](studies/AGENTS.md) |
+
+Skill 是任务入口，不改变实现的成熟度、策略资格或交易权限。研究切片不当生产能力用；交易接口仍只属于 custody。
 
 ## 安全
 
@@ -30,6 +36,7 @@
 
 ## 修改与验证
 
+- 本机是 4GB VPS；大规模回测、因子研究和回归前先查内存，按标的 / 日期分块处理，不构造大规模 N×N 矩阵或无界加载全量数据。
 - 文档中文；代码、标识符、提交信息英文。运行时只用标准库（连 OpenD 的入口需 `futu-api`；研究脚本可用 numpy）。
 - 改哪里跑哪里的测试，`custody/tests` 每次都跑（含规范结构检查）：
   `python3 -m unittest discover -s custody/tests` · `python3 watch/test_watch.py` ·

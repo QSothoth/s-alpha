@@ -89,7 +89,7 @@ python3 -m custody stop --db data/retained-dryrun.sqlite --job '<只卖任务ID>
 默认执行参数（`ExecutionPolicy`）：报价最长 30 秒、帧最长 15 秒、入场 / 出场超时 30 秒、最大相对点差 30%。
 这些是工程默认值，没有用历史买卖价校准过。带 `--entry-valid-until` 的 CLI 任务改用帧最长 60 秒、入场价差最多 10%，报价仍最长 30 秒。
 
-可选 `--entry-valid-until <带时区时间>` 将审视卡有效期随任务持久保存：新任务不能在截止后创建，截止后不再买入，未成交买单请求撤销；已成交持仓继续由策略管理。既有同任务可在截止后恢复管理，不能修改该截止时间重新抢入。`--stream-only` 禁止分钟缺口触发历史 K 线回补，缺口会明确报错并等待。人工候选的统一交接与跨任务预算限制见 [操作流程](../studies/us_0dte_picks/notes/WORKFLOW_CN.md)。
+可选 `--entry-valid-until <带时区时间>` 将审视卡有效期随任务持久保存：新任务不能在截止后创建，截止后不再买入，未成交买单请求撤销；已成交持仓继续由策略管理。既有同任务可在截止后恢复管理，不能修改该截止时间重新抢入。`--stream-only` 禁止分钟缺口触发历史 K 线回补，缺口会明确报错并等待。人工候选的统一交接与跨任务预算限制见 [操作流程](../skills/near-expiry-session/references/WORKFLOW_CN.md)。
 
 ## 3. 策略帧从哪来
 
