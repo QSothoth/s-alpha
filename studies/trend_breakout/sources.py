@@ -26,6 +26,11 @@ COLUMNS = ('code', 'date', 'open', 'high', 'low', 'close', 'volume', 'turnover')
 ACTION_COLUMNS = ('code', 'ex_date', 'factor_a', 'factor_b')
 
 
+def in_days(day, n):
+    from datetime import date, timedelta
+    return (date.fromisoformat(day) + timedelta(days=n)).isoformat()
+
+
 def in_window(day, start, end):
     return start <= day <= end
 
@@ -34,6 +39,7 @@ class OpenDSource:
     """US / HK through OpenD: stock filter for the universe, subscribed K_DAY for bars (no history quota)."""
     FILTERS = {'us': ('US', 5.0, 50e6), 'hk': ('HK', None, 20e6)}  # futu market, min price, min avg turnover/day
     BATCH, HOLD, WARMUP = 200, 61.0, 8.0  # 300 subscriptions in total; leave 100 for other tools
+    LOAD_WAIT = 60.0  # seconds to wait for one stock's history to finish loading
     UNLISTED = ('US_PINK', 'US_OTC')
 
     def __init__(self, market, host='127.0.0.1', port=11111):
@@ -84,8 +90,40 @@ class OpenDSource:
         return [(r.code, r.time_key[:10], r.open, r.high, r.low, r.close, r.volume, r.turnover)
                 for r in df.itertuples() if in_window(r.time_key[:10], start, end)]
 
+    def listing_dates(self):
+        if not hasattr(self, '_listed'):
+            ret, info = self.q.get_stock_basicinfo(getattr(self.ft.Market, self.FILTERS[self.market][0]),
+                                                   self.ft.SecurityType.STOCK)
+            if ret != self.ft.RET_OK:
+                raise RuntimeError(f'get_stock_basicinfo: {info}')
+            self._listed = {c: str(d)[:10] for c, d in zip(info.code, info.listing_date)}
+        return self._listed
+
+    def full_kline(self, code, au, expect=None):
+        """get_cur_kline once the subscription has loaded the whole history: 1000 bars, bars back to the listing
+        date, or ``expect`` bars (the raw history already accepted). HK loads in stages after subscribing: 60,
+        then a few hundred, then all. Without a usable listing date, the count must stay unchanged over 3 polls
+        spanning 4 s. None if it never completes within LOAD_WAIT."""
+        ft = self.ft
+        listed = self.listing_dates().get(code, '')
+        listed = listed if listed[:2] in ('19', '20') and listed > '1970-01-01' else ''  # 1970-01-01: unknown
+        deadline, seen = time.time() + self.LOAD_WAIT, []
+        while True:
+            ret, df = self.q.get_cur_kline(code, 1000, ft.SubType.K_DAY, au)
+            if ret != ft.RET_OK:
+                return None
+            n = len(df)
+            if n >= 1000 or n == expect or (listed and n and df.time_key.iloc[0][:10] <= in_days(listed, 10)):
+                return df
+            seen.append((time.time(), n))
+            if not listed and len(seen) >= 3 and len({c for _, c in seen[-3:]}) == 1 and seen[-1][0] - seen[-3][0] >= 4:
+                return df
+            if time.time() > deadline:
+                return None
+            time.sleep(2)
+
     def bars(self, codes, start, end):
-        """Yield (code, raw, qfq); raw/qfq is None when OpenD returned nothing usable."""
+        """Yield (code, raw, qfq); raw/qfq is None when OpenD returned nothing usable or only part of the history."""
         ft = self.ft
         for b in range(0, len(codes), self.BATCH):
             batch = list(codes[b:b + self.BATCH])
@@ -93,16 +131,14 @@ class OpenDSource:
             if ret != ft.RET_OK:
                 raise RuntimeError(f'subscribe: {err}')
             t0 = time.time()
-            time.sleep(self.WARMUP)  # HK returned only 60 bars right after subscribing
+            time.sleep(self.WARMUP)
             try:
                 for code in batch:
                     got = {}
-                    for au, key in ((ft.AuType.NONE, 'raw'), (ft.AuType.QFQ, 'qfq')):
-                        ret, df = self.q.get_cur_kline(code, 1000, ft.SubType.K_DAY, au)
-                        if ret == ft.RET_OK and len(df) < 1000:  # warm-up or a recent listing: ask once more
-                            time.sleep(2)
-                            ret, df = self.q.get_cur_kline(code, 1000, ft.SubType.K_DAY, au)
-                        got[key] = self._rows(df, start, end) if ret == ft.RET_OK else None
+                    raw = self.full_kline(code, ft.AuType.NONE)
+                    qfq = self.full_kline(code, ft.AuType.QFQ, expect=len(raw)) if raw is not None else None
+                    for df, key in ((raw, 'raw'), (qfq, 'qfq')):
+                        got[key] = self._rows(df, start, end) if df is not None else None
                     yield code, got['raw'], got['qfq']
             finally:
                 time.sleep(max(0.0, self.HOLD - (time.time() - t0)))  # OpenD holds a subscription >= 1 minute

@@ -1,7 +1,9 @@
 """Synthetic-data checks for the trend-breakout sources, fetch and panel helpers (no network, no OpenD)."""
 import gzip
 import tempfile
+import types
 import unittest
+from unittest import mock
 from pathlib import Path
 
 import numpy as np
@@ -46,6 +48,56 @@ class Sources(unittest.TestCase):
                 {'symbol': 'bj830799', 'name': 'B', 'mktcap': '9000000', 'amount': '1'},
                 {'symbol': 'sz000002', 'name': 'C', 'mktcap': '500000', 'amount': '1'}]
         self.assertEqual([r['code'] for r in sources.select_cn(rows, 100e8)], ['SH.600519'])
+
+
+class FakeFrame:
+    def __init__(self, days):
+        self.time_key = FakeColumn([d + ' 00:00:00' for d in days])
+
+    def __len__(self):
+        return len(self.time_key.values)
+
+
+class FakeColumn:
+    def __init__(self, values):
+        self.values = values
+        self.iloc = values
+
+
+class FakeQuote:
+    """get_cur_kline that serves a growing history, the way OpenD loads HK bars after subscribing."""
+    def __init__(self, stages):
+        self.stages, self.calls = stages, 0
+
+    def get_cur_kline(self, code, num, ktype, au):
+        days = self.stages[min(self.calls, len(self.stages) - 1)]
+        self.calls += 1
+        return 0, FakeFrame(days)
+
+
+class LoadingWait(unittest.TestCase):
+    def source(self, stages, listed):
+        src = sources.OpenDSource.__new__(sources.OpenDSource)
+        src.ft = types.SimpleNamespace(RET_OK=0, SubType=types.SimpleNamespace(K_DAY='K_DAY'))
+        src.q, src._listed = FakeQuote(stages), {'HK.1': listed}
+        return src
+
+    def test_partial_history_is_not_accepted_before_it_reaches_the_listing_date(self):
+        full = ['2019-01-02', '2024-01-02', '2026-10-15']
+        src = self.source([full[-1:], full[-2:], full], '2019-01-02')
+        with mock.patch.object(sources.time, 'sleep'):
+            self.assertEqual(len(src.full_kline('HK.1', 'raw')), 3)
+        self.assertEqual(src.q.calls, 3)
+
+    def test_unknown_listing_needs_a_stable_count_and_a_timeout_gives_none(self):
+        clock = iter(range(0, 1000, 2))
+        with mock.patch.object(sources.time, 'sleep'), mock.patch.object(sources.time, 'time', lambda: next(clock)):
+            src = self.source([['2026-10-14'], ['2026-10-14', '2026-10-15']], '1970-01-01')
+            self.assertEqual(len(src.full_kline('HK.1', 'raw')), 2)
+            src = self.source([['2026-10-15']], '2019-01-02')
+            self.assertIsNone(src.full_kline('HK.1', 'raw'))  # never reaches the listing date
+            src = self.source([['2026-10-15']], '2019-01-02')
+            self.assertEqual(len(src.full_kline('HK.1', 'qfq', expect=1)), 1)  # matches the accepted raw history
 
 
 class Actions(unittest.TestCase):

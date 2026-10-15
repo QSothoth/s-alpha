@@ -277,34 +277,6 @@ class MarketRules(unittest.TestCase):
 
 
 
-class Scoring(unittest.TestCase):
-    def test_concentration_is_measured_on_r_and_on_excess_r(self):
-        from studies.trend_breakout import run_tf1
-        tr = {'r': np.array([1.0, 1.0, -0.5, 2.0]), 'ret': np.array([0.1, 0.1, -0.05, 0.2]),
-              'buy': np.full(4, 10.0), 'risk': np.full(4, 1.0), 'entry': np.array([0, 1, 2, 3]),
-              'exit': np.array([5, 6, 7, 8]), 'at_end': np.zeros(4)}
-        dates = np.array(['2024-10-01', '2025-01-02', '2025-04-01', '2025-07-01'])
-        s = run_tf1.summarize(tr, np.array([0.0, 0.1, 0.0, 0.0]), dates)
-        self.assertAlmostEqual(s['quarter_max_share'], 2.0 / 3.5)
-        # excess R = (ret - ew) * buy / risk = 1, 0, -0.5, 2 -> largest quarter 2 / 2.5
-        self.assertAlmostEqual(s['xq_max_share'], 2.0 / 2.5)
-        self.assertAlmostEqual(s['mean_xr'], 2.5 / 4)
-
-
-class EventStudy(unittest.TestCase):
-    def test_excess_is_signal_return_minus_the_pool_over_the_same_window(self):
-        from studies.trend_breakout import run_tf1
-        o = np.array([[10, 10], [10, 20], [11, 20], [12, 21]], float)
-        c = o.copy()
-        c[2] = [12, 22]
-        p = {'open': o, 'close': c, 'dates': np.array(['2025-01-01', '2025-01-02', '2025-01-03', '2025-01-06'])}
-        entry = np.array([[True, False], [False, False], [False, False], [False, False]])
-        ev = run_tf1.event_study(p, entry, np.ones((4, 2), bool), 1, 3, horizons=(2,))
-        # buy row 1 open, sell row 2 close: stock 0 +20%, pool mean (+20% +10%)/2 = +15%
-        self.assertEqual(ev[2]['n'], 1)
-        self.assertAlmostEqual(ev[2]['mean_excess'], 0.05)
-
-
 class PointInTime(unittest.TestCase):
     def test_shares_in_force_are_the_latest_change_on_or_before_the_day(self):
         from studies.trend_breakout import pit
@@ -333,53 +305,11 @@ class Defensive(unittest.TestCase):
                                           signals.defensive_entry(head, pool[:330], rule))
 
 
-class IndexTiming(unittest.TestCase):
-    def test_always_long_equals_buy_and_hold_minus_one_entry_cost(self):
-        from studies.trend_breakout import run_tf9
-        rng = np.random.default_rng(2)
-        c = 100 * np.exp(np.cumsum(rng.normal(0, 0.01, 400)))
-        o = c * np.exp(rng.normal(0, 0.003, 400))
-        d = np.array(['2020-%03d' % i for i in range(400)])
-        pos = np.ones(400)
-        pos[:300] = 0  # flat; the first long signal is at row 300's close -> bought at row 301's open
-        r, b, tr, _, _ = run_tf9.simulate(d, o, c, pos, d[302], d[-1])
-        np.testing.assert_allclose(r, b)  # long the whole span after the entry day: same as holding
-        r2, b2, tr2, _, _ = run_tf9.simulate(d, o, c, pos, d[301], d[-1])
-        self.assertAlmostEqual(r2[0], c[301] / o[301] - 1 - run_tf9.COST)  # entry day: open to close, minus cost
-        self.assertEqual(len(tr2), 1)
-
-    def test_targets_use_no_future_bar(self):
-        from studies.trend_breakout import run_tf9
-        rng = np.random.default_rng(3)
-        c = 100 * np.exp(np.cumsum(rng.normal(0.0003, 0.012, 600)))
-        h, l = c * 1.01, c * 0.99
-        for rule in run_tf9.RULES:
-            np.testing.assert_array_equal(run_tf9.target(rule, h, l, c)[:450],
-                                          run_tf9.target(rule, h[:450], l[:450], c[:450]))
-
-
-class MonthT(unittest.TestCase):
-    def test_monthly_means_and_first_signal_dedup(self):
-        from studies.trend_breakout import run_tf6
-        T, N = 50, 3
-        o = np.ones((T, N)) * 10
-        c = o.copy()
-        c[:, 0] = 11  # stock 0 always 10% above its open, the others flat
-        dates = np.array(['2025-01-%02d' % (i + 1) if i < 25 else '2025-02-%02d' % (i - 24) for i in range(T)])
-        p = {'open': o, 'close': c, 'dates': dates}
-        entry = np.zeros((T, N), bool)
-        entry[[0, 1, 30], 0] = True
-        got = run_tf6.month_t(p, entry, np.ones((T, N), bool), 1, T - 1, h=5)
-        self.assertEqual(got['months'], 2)
-        self.assertAlmostEqual(got['month_mean'], 0.1 - 0.1 / 3)
-        self.assertEqual(got['dedup_n'], 2)  # rows 0 and 1 are within 5 days: only the first counts
-
-
 class Universe(unittest.TestCase):
     def test_only_a_share_risk_warning_names_count_as_st(self):
-        from studies.trend_breakout import run_tf1
-        self.assertTrue(run_tf1.is_st('*ST闻泰') and run_tf1.is_st('ST人福'))
-        self.assertFalse(run_tf1.is_st('First Solar') or run_tf1.is_st('贵州茅台'))
+        from studies.trend_breakout import final
+        self.assertTrue(final.is_st('*ST闻泰') and final.is_st('ST人福'))
+        self.assertFalse(final.is_st('First Solar') or final.is_st('贵州茅台'))
 
 
 if __name__ == '__main__':

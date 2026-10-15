@@ -27,14 +27,24 @@ def limit_price(prev_raw_close, pct, up):
 
 
 def run(p, entry, line, ratchet, eligible, atr22, lo, hi, cost=(0.0, 0.0), limit=None, max_hold=None, use_stop=True,
-        fail_level=None, fail_days=0):
+        fail_level=None, fail_days=0, account=None, initial_line=None, profit_line=None, profit_trigger=2.,
+        exit_rows=None):
     """Return (trades as a dict of arrays, skipped-signal counts). ``limit``: per-stock fraction, NaN = none.
     ``max_hold``: also exit once the position has been held that many trading days (the buy day is day 1),
     confirmed at that day's close; ``use_stop=False`` keeps the line only for the R unit (time exit only).
     ``fail_level`` (dates x stocks, e.g. the breakout price known at the signal close) with ``fail_days``: within
-    the first ``fail_days`` held days (buy day = 1), a close below the signal day's level exits (failed breakout)."""
+    the first ``fail_days`` held days (buy day = 1), a close below the signal day's level exits (failed breakout).
+    ``account`` optionally allocates cash/slots and records daily NAV (PB1); in this mode a limit-down OPEN
+    blocks a sale, without consulting the later day's high. The legacy default reproduces old reports.
+    ``initial_line`` optionally fixes entry risk separately from the subsequent trailing line (PB2).
+    ``profit_line`` replaces subsequent trailing levels after a close first reaches ``profit_trigger`` R;
+    the old stop still governs that close and ratcheting never lowers it (PB4).
+    A staged account may add at the open after exits and return combined trade fields on close (PB7).
+    ``exit_rows`` (bool per row): a held stock whose row-t close is traded exits at the next open when exit_rows[t]
+    (a market-wide condition known at that close, PB17+)."""
     T, N = p['close'].shape
     o, c = p['open'], p['close']
+    initial_line = line if initial_line is None else initial_line
     lim = np.full(N, np.nan) if limit is None else np.asarray(limit, float)
     has_lim = ~np.isnan(lim)
     hold = np.zeros(N, bool)
@@ -49,6 +59,7 @@ def run(p, entry, line, ratchet, eligible, atr22, lo, hi, cost=(0.0, 0.0), limit
     stop = np.zeros(N)
     stop0 = np.zeros(N)
     risk = np.zeros(N)
+    profit_phase = np.zeros(N, bool)
     sig_row = np.zeros(N, int)
     in_row = np.zeros(N, int)
     last_close = np.full(N, np.nan)
@@ -59,12 +70,19 @@ def run(p, entry, line, ratchet, eligible, atr22, lo, hi, cost=(0.0, 0.0), limit
     rows = []
     skipped = {'suspended': 0, 'below_stop': 0, 'limit_up': 0}
     buy_cost, sell_cost = cost
+    add_positions = getattr(account, 'add_positions', None)
+    if account is not None and tuple(account.cost) != tuple(cost):
+        raise ValueError('account and execution costs must match')
 
     def close_out(idx, t, px, at_end):
         for j in np.flatnonzero(idx):
             net = px[j] * (1 - sell_cost) - buy[j] * (1 + buy_cost)
             rows.append((j, sig_row[j], in_row[j], t, buy[j], px[j], stop0[j], risk[j], net / risk[j],
                          net / (buy[j] * (1 + buy_cost)), at_end))
+            if account is not None:
+                combined = account.close(dict(zip(TRADE_FIELDS, rows[-1])))
+                if combined is not None:  # A staged account returns its combined cost/risk ledger (PB7).
+                    rows[-1] = tuple(combined[k] for k in TRADE_FIELDS)
 
     for t in range(max(lo - 1, 0), hi + 1):
         traded = ~np.isnan(c[t])
@@ -73,12 +91,15 @@ def run(p, entry, line, ratchet, eligible, atr22, lo, hi, cost=(0.0, 0.0), limit
                 up_px = limit_price(prev_raw, lim, True)
                 dn_px = limit_price(prev_raw, lim, False)
                 stuck_up = has_lim & (p['raw_open'][t] >= up_px - 1e-9)
-                stuck_dn = has_lim & (p['raw_high'][t] <= dn_px + 1e-9)
+                sell_check = p['raw_open'][t] if account is not None else p['raw_high'][t]
+                stuck_dn = has_lim & (sell_check <= dn_px + 1e-9)
             # exits at the open
             go = hold & want_out & traded & ~stuck_dn & (in_row < t)
             close_out(go, t, o[t], False)
             hold &= ~go
             want_out &= ~go
+            if add_positions is not None:
+                add_positions(t, o[t], stop, ~traded | stuck_up | want_out)
             # entries at the open
             if pend.any():
                 susp = pend & ~traded
@@ -88,8 +109,11 @@ def run(p, entry, line, ratchet, eligible, atr22, lo, hi, cost=(0.0, 0.0), limit
                 skipped['suspended'] += int(susp.sum())
                 skipped['below_stop'] += int(below.sum())
                 skipped['limit_up'] += int(capped.sum())
+                if account is not None:
+                    fill = account.allocate(t, fill, o[t], pend_stop, pend_atr, pend_sig)
                 buy[fill], stop[fill], stop0[fill] = o[t][fill], pend_stop[fill], pend_stop[fill]
                 risk[fill] = np.fmax(o[t][fill] - pend_stop[fill], pend_atr[fill])
+                profit_phase[fill] = False
                 sig_row[fill], in_row[fill] = pend_sig[fill], t
                 fail_at[fill] = pend_fail[fill]
                 hold |= fill
@@ -102,15 +126,23 @@ def run(p, entry, line, ratchet, eligible, atr22, lo, hi, cost=(0.0, 0.0), limit
                     want_out |= hold & traded & (t - in_row + 1 >= max_hold)
                 if fail_days:
                     want_out |= hold & traded & (t - in_row + 1 <= fail_days) & (c[t] < fail_at)
-            move = hold & traded & ~np.isnan(line[t])
-            stop[move] = np.fmax(stop[move], line[t][move]) if ratchet else line[t][move]
+                if exit_rows is not None and exit_rows[t]:
+                    want_out |= hold & traded
+            levels = line[t]
+            if profit_line is not None:
+                profit_phase |= hold & traded & (c[t] >= buy + profit_trigger * risk)
+                levels = np.where(profit_phase, profit_line[t], levels)
+            move = hold & traded & ~np.isnan(levels)
+            stop[move] = np.fmax(stop[move], levels[move]) if ratchet else levels[move]
+            if account is not None:
+                account.mark(t)
         last_close[traded] = c[t][traded]
         prev_raw[traded] = p['raw_close'][t][traded]
         # new signals at the close, filled at the next open
         if t < hi:
-            new = entry[t] & eligible[t] & traded & ~hold & ~np.isnan(line[t])
+            new = entry[t] & eligible[t] & traded & ~hold & ~np.isnan(initial_line[t])
             pend[new] = True
-            pend_sig[new], pend_stop[new], pend_atr[new] = t, line[t][new], atr22[t][new]
+            pend_sig[new], pend_stop[new], pend_atr[new] = t, initial_line[t][new], atr22[t][new]
             if fail_level is not None:
                 pend_fail[new] = np.nan_to_num(fail_level[t][new], nan=-np.inf)
     close_out(hold, hi, last_close, True)

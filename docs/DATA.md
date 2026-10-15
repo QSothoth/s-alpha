@@ -307,7 +307,7 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 已用过的验证数据（以后不能再当样本外）：test 段 2025-10-01 → 2026-10-09（TF5）；A 股 2019-03 → 2023-08（TF6 B，W4）；A 股点时 2022-07 → 2026-10（TF12 验证，K1）；指数 2016–2026（TF9 的 Z3、TF11 的春节前效应）。
 
-逐笔交易和各轮中间输出在本机 `data/trend-breakout-v1-results/`，可由各轮的 `run_tf*.py` 重算，不发布。
+各轮逐笔交易和中间输出（原 `data/trend-breakout-v1-results/`、`data/trend-breakout-pb*/`）已于 2026-10-15 随研究收敛移到 `/root/opend-us-options-archive-20261015/data/`，不发布；最终方案可用 `run_final.py` 从上述 Release 数据重算。
 
 ## 附录：盯盘信号研究数据（非 custody Release）
 
@@ -341,7 +341,7 @@ cd data && sha256sum -c watch-hk1m-train-v1.zip.sha256 && unzip watch-hk1m-train
 |---|---|---|---|---|
 | `preopen-us-train-v1` | 选择段 | 16 只：日 K（2022-06 起）、单标的期权成交量 / Put/Call / 持仓与 IV / HV（2023-06 起）、每日卖空量（2022-05 起）、全市场期权统计，全部截止 2025-06-30 | `5cb028da09d597f2cf5301a59496c7dfbc06a25760b4fed9fa40440eda0934e8` | `dca1d6241507d48a1bf917af483acee6ca130afac72895f1c319955458d5f3bb` |
 | `preopen-us-valid-v1` | 验证段（S1–S5 已用过一次，之后只作选择） | 同样的表 2025-07-01 → 2026-09-23，另含日级资金流（只有 2025-09-24 起）；特征热身需与训练 Release 一起加载 | `851a3efa588226e3228409c4a79d1b45040fee767abc5099987e0c4d17203bbc` | `6be1052129e17dfdb94e6a6a93e67b7035d4b1315f11ae511e90a278b271fbf4` |
-| `preopen-us-holdout-2016-v1` | 日 K 留出段 | 14 只日 K 2015-06-01 → 2022-05-31（2020-02 → 2023-07 已被 S9 留出段用过一次；2016-01 → 2020-01 未用） | `86be1b66851c522f2af9c3ab7fbc3cc11eaf9a761d60e8018e21c37599a757d0` | `64383dc75c60e3bf8eef6c87b96a319e86b67e32d61849f9e82d4742225912d7` |
+| `preopen-us-holdout-2016-v1` | 原日 K 留出段，后续部分已暴露 | 14 只日 K 2015-06-01 → 2022-05-31。S1–S10 旧台账称 2016-01 → 2020-01 未用，但 S18 已使用 2018-12 → 2019-12 的重叠分钟段，AH1 又引用该包的 2019-11 起预热与后续日线；不能整体称未见样本，细分边界见已归档的趋势研究数据盘点（`/root/opend-us-options-archive-20261015/studies/trend_breakout/reports/PB_RESEARCH_STATUS_CN.md`） | `86be1b66851c522f2af9c3ab7fbc3cc11eaf9a761d60e8018e21c37599a757d0` | `64383dc75c60e3bf8eef6c87b96a319e86b67e32d61849f9e82d4742225912d7` |
 | `preopen-us-ext30-select-v1` | 选择段 | 16 只延长时段 30 分钟 K 线（只含盘前 ≤ 09:30、盘后 > 16:00，time_key 为 K 线收盘，美东），2023-06-01 → 2026-09-23 | `f36b7985cc37b9dad17bf877b2edb723a93aae070c0e4b1390b300852ef792ba` | `2360ff1584010aeede834a8d011a72944e129338190803fef0738fbb27b63df7` |
 | `preopen-s21-select-v1` | 每日多空名单选择段（S21 / S22） | 34 只热门中小盘（AI / 创新药 / 资源，规则见 `notes/universe_smallmid.json`）：日 K、期权统计、IV / HV、卖空量、资金流、盘前盘后 30 分钟 K、不复权日 K，2025-01-01 之前；日收盘与 Yahoo / 腾讯交叉核对一致 | `762850fb79ec7b95f10cb87be99452b624d45d01e5b3df8acf22bac915fe85ff` | `9fd9ece38757cfe115512b7c94d78ee7da2930ef3cdbf1448072484587e7f1a0` |
 | `preopen-s21-valid-v1` | 每日多空名单验证段（S22 已用一次） | 声明窗口2025-01-01→2026-09-24；daily／option_stats实际01/02→09/23共432日，部分辅助表到09/24；09/26旧口径审计未补齐或新增验证 | `f200246fb99bbc729f9b12b16c3990c471d86e89592fe10b09d90f215c097d74` | `42b8a0b53c69cac1152696de25e61660ff79f036b4e1534b343ec2b88c55e677` |

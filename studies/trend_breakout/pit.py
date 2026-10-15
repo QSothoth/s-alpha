@@ -100,7 +100,9 @@ def load(parts, meta, keep=None):
     out['names'] = {c: info[c].get('name', '') for c in code_list}
     if keep is not None:
         cols = np.asarray(keep(out), bool)
-        for k, v in list(out.items()):
+        # Do not pin every original matrix while allocating the filtered copies.
+        for k in out:
+            v = out[k]
             if isinstance(v, np.ndarray) and v.ndim == 2:
                 out[k] = np.ascontiguousarray(v[:, cols])
         out['codes'] = code_list[cols]
