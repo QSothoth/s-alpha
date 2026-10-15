@@ -43,6 +43,8 @@
 | [notes/W25_PREREG.md](notes/W25_PREREG.md) / [reports/W25_RESULTS_CN.md](reports/W25_RESULTS_CN.md) | 跨标的强度档 1–5（历史分位表）：描述性门槛全部通过；已被 W27 取代 |
 | [notes/W26_PREREG.md](notes/W26_PREREG.md) | 美股强度档（拉历史分钟线）：用户叫停，未扣新额度，未出结果 |
 | [notes/W27_PREREG.md](notes/W27_PREREG.md) / [reports/W27_RESULTS_CN.md](reports/W27_RESULTS_CN.md) | 固定刻度强度档（日 K 归一化，不需历史分钟线）：港股两段门槛全过，取代 W25，看板三地通用 |
+| [notes/W28_PREREG.md](notes/W28_PREREG.md) / [reports/W28_RESULTS_CN.md](reports/W28_RESULTS_CN.md) | 将期权 R28 的双 3 分钟确认迁回 Watch：主分层覆盖 13.54%，毛均值 +0.1193bp、改善 t=0.9324，BUY 略差；选择未过，未改看板，未读取收益留出段 |
+| [notes/W29_PREREG.md](notes/W29_PREREG.md) / [reports/W29_RESULTS_CN.md](reports/W29_RESULTS_CN.md) | 原 B/S 全保留，独立强 B/S 的五种组合：选择段全未过；相对最好 W3 毛 -0.4788bp、改善 t=0.5596，未上线，未读取收益留出段 |
 | [notes/W31_PREREG.md](notes/W31_PREREG.md) / [reports/W31_RESULTS_CN.md](reports/W31_RESULTS_CN.md) | 强度档界线改为 30/30/25/10/5%（0.40/0.57/0.73/0.86），4、5 档稀少；门槛全过，已进看板 |
 | [notes/W32_PREREG.md](notes/W32_PREREG.md) / [reports/W32_RESULTS_CN.md](reports/W32_RESULTS_CN.md) | 强度档能否指导交易：幅度增量仅 1.06×、方向与收益为负，选择段全部失败；2024H1 仍未用 |
 | [reports/W33_EXPLORE_CN.md](reports/W33_EXPLORE_CN.md) | 探索：各强度档之后的走势分布在两段数据里几乎相同 |
