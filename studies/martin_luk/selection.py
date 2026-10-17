@@ -186,3 +186,109 @@ def r9():
 
 if __name__ == '__main__' and sys.argv[1] == 'r9':
     r9()
+
+
+def _past_any(x, k):
+    """True on day t if x was true on any of days t-k .. t-1 (never uses day t)."""
+    cs = np.vstack([np.zeros((1, x.shape[1]), np.int32), np.cumsum(x, axis=0, dtype=np.int32)])
+    t = np.arange(x.shape[0])
+    lo = np.clip(t - k, 0, None)
+    return (cs[t] - cs[lo]) > 0
+
+
+def r11():
+    b = broad()
+    days, codes = b['days'], b['codes']
+    c, o, h, l = (b[k].astype(float) for k in ('close', 'open', 'high', 'low'))
+    raw = b['raw_close'].astype(float)
+    to20 = luk.rolling_mean(b['turnover'].astype(float), 20)
+    adr = luk.rolling_mean(h / l - 1, 20) * 100
+    e9, e21, e50 = luk.ema(c, 9), luk.ema(c, 21), luk.ema(c, 50)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        pool = (raw >= 1) & (to20 >= 2e6)
+        nlist = np.zeros(c.shape, np.int8)
+        for hz in (21, 63, 126):
+            r = np.where(pool, c / luk.lag(c, hz) - 1, np.nan)
+            cut = np.nanquantile(r, .98, axis=1)
+            nlist += (pool & (r >= cut[:, None])).astype(np.int8)
+        listed = nlist >= 1
+        tradeable = (raw >= 5) & (to20 >= 20e6) & (adr >= 4)
+        stack = (e9 > e21) & (e21 > e50)
+        tight = ((h <= luk.lag(h)) & (l >= luk.lag(l))) | ((h / l - 1) * 100 <= .5 * adr)
+        e21p, e9p = luk.lag(e21), luk.lag(e9)
+        setup = (((l < e21p) & (c > e21p)) | ((l < e9p) & (c > e9p))
+                 | ((luk.lag(tight.astype(float)) == 1) & (c > luk.lag(h))))
+    fresh = listed & ~_past_any(listed, 60)
+    watch = {'W1': _past_any(listed, 20), 'W2': _past_any(nlist >= 2, 20), 'W4': _past_any(listed, 60),
+             'W5': _past_any(fresh, 20)}
+    union = sorted({str(codes[j]) for j in np.flatnonzero(listed.any(0))})
+    ind = industries(union)
+    gid = {}
+    col = np.array([gid.setdefault(ind.get(str(x), ''), len(gid)) if ind.get(str(x), '') else -1 for x in codes])
+    fresh5 = _past_any(fresh, 5)                       # newly listed within the past 5 days
+    theme = np.zeros_like(fresh5)
+    for t in range(len(days)):
+        js = np.flatnonzero(fresh5[t] & (col >= 0))
+        if len(js) >= 3:
+            g, cnt = np.unique(col[js], return_counts=True)
+            hot = set(g[cnt >= 3])                     # this stock plus at least 2 others
+            if hot:
+                theme[t] = np.isin(col, list(hot))
+    watch['W3'] = watch['W1'] & theme
+    T = len(days)
+    o1 = np.full_like(c, np.nan)
+    o1[:-1] = o[1:]
+    fwd = np.full_like(c, np.nan)
+    hi = np.full_like(c, np.nan)
+    lo = np.full_like(c, np.nan)
+    for t in range(T - 10):
+        fwd[t] = c[t + 10] / o1[t] - 1
+        hi[t] = np.nanmax(h[t + 1:t + 11], axis=0) / o1[t] - 1
+        lo[t] = np.nanmin(l[t + 1:t + 11], axis=0) / o1[t] - 1
+    ev = tradeable & stack & setup & ~np.isnan(fwd) & ~np.isnan(adr)
+    m = (days >= '2024-01-02') & (days <= '2026-10-16')
+    dec = np.full(c.shape, -1, np.int8)
+    for t in np.flatnonzero(m):
+        a = np.where(tradeable[t], adr[t], np.nan)
+        if np.isfinite(a).sum() >= 20:
+            edges = np.nanquantile(a, np.linspace(0, 1, 11)[1:-1])
+            dec[t] = np.where(tradeable[t], np.searchsorted(edges, np.nan_to_num(adr[t])), -1)
+    out = {}
+    for name in ('W1', 'W2', 'W3', 'W4', 'W5'):
+        w = watch[name]
+        rows = []
+        for t in np.flatnonzero(m):
+            inside, outside = ev[t] & w[t], ev[t] & ~w[t]
+            if not inside.any():
+                continue
+            diffs, wts, dz, ups, dns = [], [], [], [], []
+            for k in range(10):
+                a, z = inside & (dec[t] == k), outside & (dec[t] == k)
+                if a.any() and z.any():
+                    diffs.append(fwd[t, a].mean() - fwd[t, z].mean())
+                    dz.append((fwd[t, a] / adr[t, a]).mean() * 100 - (fwd[t, z] / adr[t, z]).mean() * 100)
+                    ups.append((hi[t, a] >= .2).mean() - (hi[t, z] >= .2).mean())
+                    dns.append((lo[t, a] <= -.2).mean() - (lo[t, z] <= -.2).mean())
+                    wts.append(a.sum())
+            if wts:
+                wv = np.array(wts, float)
+                rows.append((days[t], float(np.average(diffs, weights=wv)), float(np.average(dz, weights=wv)),
+                             float(np.average(ups, weights=wv)), float(np.average(dns, weights=wv)), int(inside.sum()),
+                             float(fwd[t, inside].mean())))
+        ex = np.array([r[1] for r in rows])
+        boots = np.random.default_rng(0).choice(ex, (2000, len(ex))).mean(axis=1)
+        seg = {k: float(np.mean([r[1] for r in rows if (r[0] < '2025') == (k == '2024')])) for k in ('2024', '2025-26')}
+        out[name] = dict(days=len(rows), events_per_day=float(np.mean([r[5] for r in rows])),
+                         fwd10_inside=float(np.mean([r[6] for r in rows])), fwd10_excess=float(ex.mean()),
+                         ci=[float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))], segments=seg,
+                         fwd10_per_adr_excess=float(np.mean([r[2] for r in rows])),
+                         up20_excess=float(np.mean([r[3] for r in rows])), down20_excess=float(np.mean([r[4] for r in rows])),
+                         passed=bool(np.percentile(boots, 2.5) > 0 and min(seg.values()) > 0))
+        print(name, {k: (round(v, 4) if isinstance(v, float) else v) for k, v in out[name].items()}, flush=True)
+    out['outside_fwd10'] = float(np.nanmean(np.where(ev & m[:, None] & ~watch['W1'], fwd, np.nan)))
+    print('outside W1 setups fwd10', round(out['outside_fwd10'], 4))
+    (I.OUT / 'r11_selection.json').write_text(json.dumps(out, indent=1))
+
+
+if __name__ == '__main__' and sys.argv[1] == 'r11':
+    r11()
