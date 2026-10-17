@@ -112,6 +112,7 @@ class Cfg:
     short_br: bool = False         # K2 failed bounce at a falling EMA21
     borrow_rate: float = .05
     ep_cap: float = 0.0            # R6: fixed stop cap for EP entries (0 = use min(stop_cap, 0.5 x ADR))
+    min_stop: float = 0.0          # R8 sensitivity: skip entries whose stop is narrower than this fraction
 
 
 CANDIDATES = {
@@ -367,7 +368,7 @@ def simulate(P, cfg, start, end, placebo=None, keep=None):
                         b, fill, hod = e
                         cap = min(cfg.stop_cap, .005 * P['adr'][d - 1, j])
                         stop = hod if (hod - fill) / fill <= cap else h5[j, d, b]
-                        if not (0 < (stop - fill) / fill <= cap):
+                        if not (max(0, cfg.min_stop) < (stop - fill) / fill <= cap):
                             continue
                         events.append((b, -prio[j], j, float(fill), float(stop), kind))
                         continue
@@ -385,7 +386,7 @@ def simulate(P, cfg, start, end, placebo=None, keep=None):
                     if kind == 'ep' and cfg.ep_cap:
                         cap = cfg.ep_cap
                     stop = lod if (fill - lod) / fill <= cap else l5[j, d, b]
-                    if not (0 < (fill - stop) / fill <= cap):
+                    if not (max(0, cfg.min_stop) < (fill - stop) / fill <= cap):
                         continue
                     events.append((b, prio[j], j, float(fill), float(stop), kind))
         events.sort(key=lambda x: (x[0], x[1]))

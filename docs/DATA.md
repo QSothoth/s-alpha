@@ -283,6 +283,14 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 11 只会话池股票 8 个交易日（09-21、09-23 仅 AAPL、09-25 留出、10-02 → 10-12 收盘采集）的当天到期平值 CALL/PUT 1m，本机 `data/sv1-*`，未发布。2026-10-16 用户放弃 SV1，代码移出（见 [archive](../studies/archive/README.md)）；数据从未用于评测，仍可作验证段。
 
+### Martin Luk 复刻 R8 新取数据（本机，未发布）
+
+用户 2026-10-17 同意取数，见 [PREREG_R8](../studies/martin_luk/notes/PREREG_R8.md)。
+
+- `data/martin-luk-universe-us/us`：现价 ≥ 1 美元、20 日均成交额 ≥ 200 万美元的美股 3433 只（取到 3424）日 K 1000 根，`get_cur_kline` 订阅接口，不扣历史额度，141MB。只用于按当时条件抽样。
+- `data/martin-luk-k5-r8`：按当时领涨条件随机抽出的 200 只（`sample.json` 记录候选池、种子与名单）常规时段前复权 5 分钟 K，2023-10-02 → 2026-10-16，`request_history_kline` 扣历史额度 200（18/282 → 218/82），212MB。R8 已评测一次（样本外，未通过）。
+- `data/martin-luk-cache`：本研究的 npz 缓存，可由上述及既有 5 分钟数据重建。
+
 ## 附录：日 K 突破趋势跟随研究数据（已发布 Release）
 
 [studies/trend_breakout/](../studies/trend_breakout/README.md) TF1–TF14 用到的数据，2026-10-12～13 一次性前台取数（不是后台或定时采集），2026-10-13 发布到 `QSothoth/s-alpha`。研究已结束，结论为负，见该切片 README。
