@@ -1,0 +1,77 @@
+[
+  {
+    "study": "trader_common",
+    "exit_code": 0,
+    "output": "test_no_same_bar_reentry_from_prior_high (test_execution.BatchAdversarialTests.test_no_same_bar_reentry_from_prior_high) ... ok\ntest_requested_size_independent_of_other_future_volume (test_execution.BatchAdversarialTests.test_requested_size_independent_of_other_future_volume) ... ok\ntest_accounting (test_execution.ExecutionTests.test_accounting) ... ok\ntest_batch_order_invariance (test_execution.ExecutionTests.test_batch_order_invariance) ... ok\ntest_duplicate (test_execution.ExecutionTests.test_duplicate) ... ok\ntest_entry_bar_ambiguity (test_execution.ExecutionTests.test_entry_bar_ambiguity) ... ok\ntest_future_low_not_entry_filter (test_execution.ExecutionTests.test_future_low_not_entry_filter) ... ok\ntest_gap_entry_and_stop (test_execution.ExecutionTests.test_gap_entry_and_stop) ... ok\ntest_no_precreation_fill (test_execution.ExecutionTests.test_no_precreation_fill) ... ok\ntest_noncausal_order (test_execution.ExecutionTests.test_noncausal_order) ... ok\ntest_partial_target_remaining (test_execution.ExecutionTests.test_partial_target_remaining) ... ok\ntest_single_stream_global_guard (test_execution.ExecutionTests.test_single_stream_global_guard) ... ok\ntest_zero_volume_no_fill (test_execution.ExecutionTests.test_zero_volume_no_fill) ... ok\ntest_clement_layers (test_execution.RuleTests.test_clement_layers) ... ok\ntest_deepak_pit (test_execution.RuleTests.test_deepak_pit) ... ok\ntest_future_vcp (test_execution.RuleTests.test_future_vcp) ... ok\ntest_jlaw_unknown_not_weak (test_execution.RuleTests.test_jlaw_unknown_not_weak) ... ok\ntest_future_filing_not_visible (test_minute_rules.MinuteRuleTests.test_future_filing_not_visible) ... ok\ntest_jlaw_unknown_not_swing (test_minute_rules.MinuteRuleTests.test_jlaw_unknown_not_swing) ... ok\ntest_known_negative_is_swing (test_minute_rules.MinuteRuleTests.test_known_negative_is_swing) ... ok\ntest_residual_ma_only_after_target (test_minute_rules.MinuteRuleTests.test_residual_ma_only_after_target) ... ok\n\n----------------------------------------------------------------------\nRan 21 tests in 0.011s\n\nOK\n"
+  },
+  {
+    "study": "sean_ryan",
+    "exit_code": 0,
+    "output": "test_be_only_next_bar (test_research.ResearchTests.test_be_only_next_bar) ... ok\ntest_capacity_zero_volume (test_research.ResearchTests.test_capacity_zero_volume) ... ok\ntest_cash_identity (test_research.ResearchTests.test_cash_identity) ... ok\ntest_entry_bar_stop_not_skipped (test_research.ResearchTests.test_entry_bar_stop_not_skipped) ... ok\ntest_fees_not_free (test_research.ResearchTests.test_fees_not_free) ... ok\ntest_gap_can_exceed_risk (test_research.ResearchTests.test_gap_can_exceed_risk) ... ok\ntest_known_split_preserves_ledger (test_research.ResearchTests.test_known_split_preserves_ledger) ... ok\ntest_next_open_not_signal_close (test_research.ResearchTests.test_next_open_not_signal_close) ... ok\ntest_no_future_entry_without_next_bar (test_research.ResearchTests.test_no_future_entry_without_next_bar) ... ok\ntest_pierpont_requires_long_warmup (test_research.ResearchTests.test_pierpont_requires_long_warmup) ... ok\ntest_rsi_flat_and_up (test_research.ResearchTests.test_rsi_flat_and_up) ... ok\ntest_signal_prefix_causal (test_research.ResearchTests.test_signal_prefix_causal) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.005s\n\nOK\n"
+  },
+  {
+    "study": "ryan_pierpont",
+    "exit_code": 0,
+    "output": "test_future_snapshot_inaccessible (test_long_base.FundamentalTests.test_future_snapshot_inaccessible) ... ok\ntest_missing_is_unknown (test_long_base.FundamentalTests.test_missing_is_unknown) ... ok\ntest_63_and_126_distinct (test_long_base.LongBaseTest.test_63_and_126_distinct) ... ok\ntest_weekend_levels_fixed (test_long_base.LongBaseTest.test_weekend_levels_fixed) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.006s\n\nOK\n"
+  },
+  {
+    "study": "vibha_jha",
+    "exit_code": 0,
+    "output": "test_higher_low_needs_two_right_bars (test_etf.ETFTest.test_higher_low_needs_two_right_bars) ... ok\ntest_market_gate_blocks (test_etf.ETFTest.test_market_gate_blocks) ... ok\ntest_not_growth_ticker (test_etf.ETFTest.test_not_growth_ticker) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n"
+  },
+  {
+    "study": "goverdhan_gajjala",
+    "exit_code": 0,
+    "output": "test_positive_prefix_nonvacuous (test_rules.PositiveFixtureTest.test_positive_prefix_nonvacuous) ... ok\ntest_concurrent_future_close_cannot_resize (test_rules.ReplayBatchTest.test_concurrent_future_close_cannot_resize) ... ok\ntest_future_stops_cannot_close_daily_gate (test_rules.ReplayBatchTest.test_future_stops_cannot_close_daily_gate) ... ok\ntest_future_zero_volume_does_not_release_budget (test_rules.ReplayBatchTest.test_future_zero_volume_does_not_release_budget) ... ok\ntest_known_open_invalidation (test_rules.ReplayBatchTest.test_known_open_invalidation) ... ok\ntest_no_reentry_after_future_stop (test_rules.ReplayBatchTest.test_no_reentry_after_future_stop) ... ok\ntest_zero_volume_cannot_fill (test_rules.ReplayBatchTest.test_zero_volume_cannot_fill) ... ok\ntest_adverse_order (test_rules.RulesTest.test_adverse_order) ... ok\ntest_complete_only (test_rules.RulesTest.test_complete_only) ... ok\ntest_float_fail_closed (test_rules.RulesTest.test_float_fail_closed) ... ok\ntest_gap_reject (test_rules.RulesTest.test_gap_reject) ... ok\ntest_invalidate (test_rules.RulesTest.test_invalidate) ... ok\ntest_prefix (test_rules.RulesTest.test_prefix) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 0.041s\n\nOK\n"
+  },
+  {
+    "study": "erchi",
+    "exit_code": 0,
+    "output": "test_actions_censor_without_erasing_signal (test_rules.RulesTests.test_actions_censor_without_erasing_signal) ... ok\ntest_complete_repair (test_rules.RulesTests.test_complete_repair) ... ok\ntest_exit_open_does_not_use_exit_day_future (test_rules.RulesTests.test_exit_open_does_not_use_exit_day_future) ... ok\ntest_missing_entry_cancels (test_rules.RulesTests.test_missing_entry_cancels) ... ok\ntest_missing_ma (test_rules.RulesTests.test_missing_ma) ... ok\ntest_next_open_and_t1 (test_rules.RulesTests.test_next_open_and_t1) ... ok\ntest_no_cash_or_odd_lot (test_rules.RulesTests.test_no_cash_or_odd_lot) ... ok\ntest_open_selection_does_not_use_entry_day_future (test_rules.RulesTests.test_open_selection_does_not_use_entry_day_future) ... ok\ntest_prefix_invariance_and_three_day_delay (test_rules.RulesTests.test_prefix_invariance_and_three_day_delay) ... ok\ntest_t1_locked_and_reconcile (test_rules.RulesTests.test_t1_locked_and_reconcile) ... ok\ntest_ten_percent_sizing (test_rules.RulesTests.test_ten_percent_sizing) ... ok\ntest_unknown_eligibility (test_rules.RulesTests.test_unknown_eligibility) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.001s\n\nOK\n"
+  },
+  {
+    "study": "zhang_qi",
+    "exit_code": 0,
+    "output": "test_cash_reconciliation_lots_and_t1 (test_replay.ReplayTests.test_cash_reconciliation_lots_and_t1) ... ok\ntest_fees_reserved_and_reconciled (test_replay.ReplayTests.test_fees_reserved_and_reconciled) ... ok\ntest_future_split_does_not_revise_earlier (test_replay.ReplayTests.test_future_split_does_not_revise_earlier) ... ok\ntest_missing_next_open_cancels (test_replay.ReplayTests.test_missing_next_open_cancels) ... ok\ntest_no_full_day_open_selection (test_replay.ReplayTests.test_no_full_day_open_selection) ... ok\ntest_no_same_open_proceeds_in_buy_budget (test_replay.ReplayTests.test_no_same_open_proceeds_in_buy_budget) ... ok\ntest_pending_buy_signal_low_is_split_scaled (test_replay.ReplayTests.test_pending_buy_signal_low_is_split_scaled) ... ok\ntest_prefix_invariance (test_replay.ReplayTests.test_prefix_invariance) ... ok\ntest_reverse_split_ceil_credit (test_replay.ReplayTests.test_reverse_split_ceil_credit) ... ok\ntest_split_preserves_cost_and_nav (test_replay.ReplayTests.test_split_preserves_cost_and_nav) ... ok\ntest_causal_prior_return (test_rules.ETFTests.test_causal_prior_return) ... ok\ntest_decile_before_confirmation (test_rules.ETFTests.test_decile_before_confirmation) ... ok\ntest_exit (test_rules.ETFTests.test_exit) ... ok\ntest_index_cannot_be_etf (test_rules.ETFTests.test_index_cannot_be_etf) ... ok\ntest_verified_product_does_not_require_cash_dividend_or_nav (test_rules.ETFTests.test_verified_product_does_not_require_cash_dividend_or_nav) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.062s\n\nOK\n"
+  },
+  {
+    "study": "gemy_zhou",
+    "exit_code": 0,
+    "output": "test_children_capped (test_architecture.ArchitectureTests.test_children_capped) ... ok\ntest_future_features (test_architecture.ArchitectureTests.test_future_features) ... ok\ntest_idempotent_and_residual (test_architecture.ArchitectureTests.test_idempotent_and_residual) ... ok\ntest_model_never_faked (test_architecture.ArchitectureTests.test_model_never_faked) ... ok\ntest_overnight_not_erased (test_architecture.ArchitectureTests.test_overnight_not_erased) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.000s\n\nOK\n"
+  },
+  {
+    "study": "ty_rajnus",
+    "exit_code": 0,
+    "output": "test_first_causal_event_missing_horizon (test_events.EventTests.test_first_causal_event_missing_horizon) ... ok\ntest_future_does_not_change_event (test_events.EventTests.test_future_does_not_change_event) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+  },
+  {
+    "study": "li666",
+    "exit_code": 0,
+    "output": "test_nominal (test_invariants.Invariants.test_nominal) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+  },
+  {
+    "study": "xushi",
+    "exit_code": 0,
+    "output": "test_future_reject (test_invariants.Invariants.test_future_reject) ... ok\ntest_revision (test_invariants.Invariants.test_revision) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+  },
+  {
+    "study": "zhegu_youdu",
+    "exit_code": 0,
+    "output": "test_conversion_wait (test_invariants.Invariants.test_conversion_wait) ... ok\ntest_deposit_not_profit (test_invariants.Invariants.test_deposit_not_profit) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+  },
+  {
+    "study": "guiyin",
+    "exit_code": 0,
+    "output": "test_deposit (test_invariants.Invariants.test_deposit) ... ok\ntest_reconcile (test_invariants.Invariants.test_reconcile) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+  },
+  {
+    "study": "didiao_kekeyuan",
+    "exit_code": 0,
+    "output": "test_bound (test_invariants.Invariants.test_bound) ... ok\ntest_future_theme (test_invariants.Invariants.test_future_theme) ... ok\ntest_unknown_actions (test_invariants.Invariants.test_unknown_actions) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n"
+  },
+  {
+    "study": "touzi_ru_rensheng",
+    "exit_code": 0,
+    "output": "test_invalid (test_invariants.Invariants.test_invalid) ... ok\ntest_locked_inventory (test_invariants.Invariants.test_locked_inventory) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+  }
+]

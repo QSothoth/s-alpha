@@ -1,0 +1,5 @@
+rule_id,source_concept,url,source_date,implementation,scope_and_H_assumptions
+S_V1,TQQQ重夺50日/10周、较高低点、Nasdaq恢复,https://traderlion.com/investing-champions/vibha-jha-tqqq/,2024-12-19,strategy.py:signal,H选择50日收盘确认、左右2日低点、QQQ50日门槛；并非完整原算法
+S_V2,分销日4–5个/缩量新高/阻力拒绝减仓,https://traderlion.com/investing-champions/vibha-jha-tqqq/,2024-12-19,strategy.py:signal,H跌0.2%量增20日计4次且全退；缩量高点/阻力裁量未实现
+S_V3,长期成长股与ETF获利后轮换,https://podcasts.apple.com/us/podcast/%241-000-000-tqqq-swing-trading-strategy-vibha-jha/id1586336923?i=1000644665596,2024-02-08,growth.py / rotation_audit.py,growth已接SEC收入/净利润；统一轮换缺同窗ETF，ETF不是全部方法
+S_V4,成长季度盈利/收入25%–35%、核心持仓约6–8只,https://traderlion.com/investing-champions/vibha-jha-tqqq/,2024-12-19,growth.py,原文规则未闭合，EPS/净利口径必须另标H

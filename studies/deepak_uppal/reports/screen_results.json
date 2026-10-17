@@ -1,0 +1,78 @@
+{
+  "counts": {
+    "technical_pass": 26330
+  },
+  "data_audit": {
+    "source_files": [
+      {
+        "path": "us/bars_raw.csv.gz",
+        "sha256": "31a7246b7792f9ab11badf87fcbfbfa77b791e36266e36a98f6e05d0df500755",
+        "size": 24786449
+      },
+      {
+        "path": "us/bars_qfq.csv.gz",
+        "sha256": "7f0b3f50fdeb6cc5c29f89b5131eaa804f2abd06ca90e09556627b761fe54fce",
+        "size": 33311396
+      },
+      {
+        "path": "us/actions.csv.gz",
+        "sha256": "b55225bdaf7e901d67abc798402aafd0a9da02ac0ac2be5d8571d7fcb8d80cc9",
+        "size": 459797
+      },
+      {
+        "path": "us/universe.json",
+        "sha256": "5c4e2e47a9f2b52ca50eb24379cb6e05093e80490096a7628c17fbfa4f5c022b",
+        "size": 121525
+      }
+    ],
+    "universe_snapshot": "2026-10-12T09:44:40+00:00",
+    "symbols_all": 1439,
+    "symbols_no_registered_actions": 512,
+    "first": "2023-09-01",
+    "last": "2026-10-09",
+    "limitations": [
+      "current surviving/liquid snapshot",
+      "retrospective action-free selection",
+      "no quotes/minute capacity/PIT sector or quality in daily sub-study",
+      "no independent OOS",
+      "security type not independently verified"
+    ],
+    "price_semantics": "raw shares on action-free subset; qfq indicators for scanner diagnostics only",
+    "code_prereg_hashes": [
+      {
+        "path": "trader_common/run_swing.py",
+        "sha256": "0d9d9ced300bba7aeac47c0d4ddcb69c611022de468ec4e6cc8a586272fb9ebf"
+      },
+      {
+        "path": "trader_common/daily.py",
+        "sha256": "3e12460798e34fdd9bfba24a41fa6c97497974ad2e1a3f02f96f69d265742bfd"
+      },
+      {
+        "path": "trader_common/data.py",
+        "sha256": "0ec7ca945f051828e6c4699bceeddd66899052bc7575d4b2d59bf373b261a9e2"
+      },
+      {
+        "path": "trader_common/metrics.py",
+        "sha256": "1dcb92de2cd41efcfc2abd56b9f5f33e270bf4dec6d961fd2b49bd729387537b"
+      },
+      {
+        "path": "christian_flanders/notes/PREREG_R1.md",
+        "sha256": "122b53026ffadde4fcbef7b004c2f8aa1185cda762199733de9e58aaa6ffc194"
+      },
+      {
+        "path": "mark_minervini/notes/PREREG_R1.md",
+        "sha256": "4064cdf6726ca5edcc29f30b760de48478c76b553d4ff82c00de7e242bfad63d"
+      },
+      {
+        "path": "christian_flanders/signals.py",
+        "sha256": "43a789476aa392cef9c6aaba08e92a2bdd9f88b13e065727d41f348bbca7aa06"
+      },
+      {
+        "path": "mark_minervini/signals.py",
+        "sha256": "f773aa0dfb4f53ff73ad59cbe7ab6d4a55369dea49849fc1897c862f27a2d326"
+      }
+    ]
+  },
+  "source_strategy_return": null,
+  "reason": "source-required missing inputs are not treated as passes"
+}

@@ -1,0 +1,178 @@
+{
+  "status": "COMPLETED_MINUTE_TECHNICAL_HYPOTHESIS",
+  "source_full_strategy_replicated": false,
+  "data": [
+    {
+      "path": "data/trader-data/opend_us_options_eval_v2/klines_day.csv.gz",
+      "sha256": "974a09436e08b869d38741f8716e3751be5bc28044a440240e1fb5c852d9aeff",
+      "status": "LOCAL_RESEARCH_NOT_RELEASED_DERIVED"
+    },
+    {
+      "path": "data/trader-data/opend_us_options_eval_v2/klines_1m.csv.gz",
+      "sha256": "ead8241a6d49c012aafe6ca75a3da04373450b1f599dba7ad5943fce75c81a96",
+      "status": "LOCAL_RESEARCH_NOT_RELEASED_DERIVED"
+    },
+    {
+      "path": "data/salpha-champion-replication/data/trend-breakout-v1/us/bars_raw.csv.gz",
+      "sha256": "31a7246b7792f9ab11badf87fcbfbfa77b791e36266e36a98f6e05d0df500755",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "data/sec-pit-fundamentals/pit_snapshots.jsonl",
+      "sha256": "7e1f8d998aee8425119331b14e463fab390551e2a6c68b52e27efd87f9b7f494",
+      "status": "SOURCE_INPUT"
+    }
+  ],
+  "period": [
+    "2026-05-14",
+    "2026-09-11"
+  ],
+  "symbols": [
+    "US.AAPL",
+    "US.AMD",
+    "US.META",
+    "US.MSFT",
+    "US.MU",
+    "US.NVDA",
+    "US.TSLA"
+  ],
+  "results": [
+    {
+      "main": {
+        "variant": "CM1",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 10,
+        "per_adjusted_unit_fee": 0.005,
+        "final_accounting_equity": 98467.29097036502,
+        "net_accounting_return": -0.015327090296349821,
+        "MDD": -0.08573905841944796,
+        "closed_trades": 49,
+        "open_positions": 0,
+        "win_rate": 0.2653061224489796,
+        "mean_R": -0.3061252960709266,
+        "fees_accounting_units": 1711.575543757985,
+        "best10_removed_pnl": -8934.628809691767,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 5
+        }
+      },
+      "stress": {
+        "variant": "CM1",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 25,
+        "per_adjusted_unit_fee": 0.005,
+        "final_accounting_equity": 96083.87826322802,
+        "net_accounting_return": -0.039161217367719825,
+        "MDD": -0.10203993193867111,
+        "closed_trades": 49,
+        "open_positions": 0,
+        "win_rate": 0.20408163265306123,
+        "mean_R": -0.5970026359217931,
+        "fees_accounting_units": 4199.8638508949625,
+        "best10_removed_pnl": -10835.26829153842,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 5
+        }
+      },
+      "gross": {
+        "variant": "CM1",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 0,
+        "per_adjusted_unit_fee": 0,
+        "final_accounting_equity": 100171.11841412298,
+        "net_accounting_return": 0.0017111841412298379,
+        "MDD": -0.07418071211677335,
+        "closed_trades": 49,
+        "open_positions": 0,
+        "win_rate": 0.2857142857142857,
+        "mean_R": -0.11261778059933665,
+        "fees_accounting_units": 0.0,
+        "best10_removed_pnl": -7617.978441293999,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 5
+        }
+      }
+    },
+    {
+      "main": {
+        "variant": "CM0",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 10,
+        "per_adjusted_unit_fee": 0.005,
+        "final_accounting_equity": 98842.068266665,
+        "net_accounting_return": -0.011579317333350048,
+        "MDD": -0.0791522824285753,
+        "closed_trades": 53,
+        "open_positions": 0,
+        "win_rate": 0.2641509433962264,
+        "mean_R": -0.2738036651098864,
+        "fees_accounting_units": 1873.406547457985,
+        "best10_removed_pnl": -9243.291129791765,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 5
+        }
+      },
+      "stress": {
+        "variant": "CM0",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 25,
+        "per_adjusted_unit_fee": 0.005,
+        "final_accounting_equity": 96207.31868722802,
+        "net_accounting_return": -0.03792681312771984,
+        "MDD": -0.09693138333848528,
+        "closed_trades": 53,
+        "open_positions": 0,
+        "win_rate": 0.20754716981132076,
+        "mean_R": -0.5753692933610627,
+        "fees_accounting_units": 4595.565026894962,
+        "best10_removed_pnl": -11354.913600038417,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 5
+        }
+      },
+      "gross": {
+        "variant": "CM0",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 0,
+        "per_adjusted_unit_fee": 0,
+        "final_accounting_equity": 100657.93651412301,
+        "net_accounting_return": 0.006579365141230031,
+        "MDD": -0.06731946994973426,
+        "closed_trades": 53,
+        "open_positions": 0,
+        "win_rate": 0.2830188679245283,
+        "mean_R": -0.07447223349834212,
+        "fees_accounting_units": 0.0,
+        "best10_removed_pnl": -7802.399541293998,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 5
+        }
+      }
+    }
+  ],
+  "benchmark_price_returns": {
+    "US.QQQ": 0.001463828584643112,
+    "US.AAPL": 0.10918740572840169,
+    "US.AMD": 0.17142532909668629,
+    "US.META": 0.0529717619264547,
+    "US.MSFT": 0.23031676800249445,
+    "US.MU": 0.2384271312146804,
+    "US.NVDA": -0.04812285398302674,
+    "US.TSLA": -0.18152702188178904
+  },
+  "equal_weight_seven_price_return": 0.08181121715770025,
+  "cash_return": 0,
+  "statistical_gate": "NOT_PASSED: no matched randomized control yet; short reused window; source omissions and adjusted-unit realism block full acceptance"
+}

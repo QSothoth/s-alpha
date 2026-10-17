@@ -1,0 +1,206 @@
+{
+  "evidence_scope": "factor-unit H price-path diagnostics; not verified actual historical shares/cash or original trader returns; reused and survivor-selected sample, not OOS",
+  "candidate": "S4_second_be_rsi",
+  "calendar_periods": {
+    "2023": {
+      "return": 0.005551326900000264,
+      "max_drawdown": -0.006758527942856474,
+      "mean_exposure": 0.03741262907033066
+    },
+    "2024": {
+      "return": 0.0009473884150610346,
+      "max_drawdown": -0.040899182466480166,
+      "mean_exposure": 0.11695123374151292
+    },
+    "2025": {
+      "return": -0.015261319879501523,
+      "max_drawdown": -0.07212167507411404,
+      "mean_exposure": 0.10961545177205917
+    },
+    "2026": {
+      "return": 0.03721267783198701,
+      "max_drawdown": -0.032678059197914555,
+      "mean_exposure": 0.07300238898620921
+    }
+  },
+  "longest_losing_streak": 6,
+  "holding_calendar_days": {
+    "median": 11,
+    "max": 67
+  },
+  "quarter_entry_counts": {
+    "2023Q4": 5,
+    "2024Q1": 12,
+    "2024Q2": 4,
+    "2024Q3": 4,
+    "2024Q4": 8,
+    "2025Q1": 7,
+    "2025Q2": 7,
+    "2025Q3": 9,
+    "2025Q4": 10,
+    "2026Q2": 2,
+    "2026Q3": 8,
+    "2026Q4": 1
+  },
+  "gap_stop_count": 1,
+  "realized_loss_below_minus1R": 12,
+  "terminal_liquidation_count": 1,
+  "terminal_liquidation_pnl": -530.5345299999972,
+  "weekend_technical_counts": {},
+  "fundamental_gate_counts": {},
+  "worst_five_trades": [
+    {
+      "basis": "8324.496",
+      "dividends": "0.0",
+      "entry_date": "2024-02-12",
+      "entry_price": "231.23099999999997",
+      "exit_date": "2024-02-29",
+      "exit_price": "180.98882999999998",
+      "planned_risk": "978.5159999999984",
+      "pnl": "-1809.0781200000001",
+      "quantity_exit": "36",
+      "realized_r": "-1.8487976895625653",
+      "reason": "gap_stop",
+      "signal_date": "2024-02-09",
+      "symbol": "SNOW"
+    },
+    {
+      "basis": "10144.213759999999",
+      "dividends": "0.0",
+      "entry_date": "2026-08-14",
+      "entry_price": "158.49833999999998",
+      "exit_date": "2026-09-01",
+      "exit_price": "141.9580998",
+      "planned_risk": "1049.480959999999",
+      "pnl": "-1059.2153727999976",
+      "quantity_exit": "64",
+      "realized_r": "-1.0092754544112916",
+      "reason": "intraday_stop_conservative",
+      "signal_date": "2026-08-13",
+      "symbol": "SHOP"
+    },
+    {
+      "basis": "10183.79835",
+      "dividends": "0.0",
+      "entry_date": "2026-09-04",
+      "entry_price": "185.15497",
+      "exit_date": "2026-09-16",
+      "exit_price": "165.94389",
+      "planned_risk": "1047.4733499999988",
+      "pnl": "-1057.1593999999986",
+      "quantity_exit": "55",
+      "realized_r": "-1.0092470610350133",
+      "reason": "intraday_stop_conservative",
+      "signal_date": "2026-09-03",
+      "symbol": "COIN"
+    },
+    {
+      "basis": "8393.159249999999",
+      "dividends": "0.0",
+      "entry_date": "2025-02-18",
+      "entry_price": "79.92984999999999",
+      "exit_date": "2025-03-11",
+      "exit_price": "70.05986999999999",
+      "planned_risk": "1028.984249999999",
+      "pnl": "-1037.3979",
+      "quantity_exit": "105",
+      "realized_r": "-1.0081766557651402",
+      "reason": "intraday_stop_conservative",
+      "signal_date": "2025-02-14",
+      "symbol": "UBER"
+    },
+    {
+      "basis": "9172.06755",
+      "dividends": "0.0",
+      "entry_date": "2025-02-19",
+      "entry_price": "129.17905",
+      "exit_date": "2025-02-24",
+      "exit_price": "114.5854998",
+      "planned_risk": "1027.9983499999996",
+      "pnl": "-1036.8520641999994",
+      "quantity_exit": "71",
+      "realized_r": "-1.0086125762750493",
+      "reason": "intraday_stop_conservative",
+      "signal_date": "2025-02-18",
+      "symbol": "SHOP"
+    }
+  ],
+  "best_five_trades": [
+    {
+      "basis": "8742.983999999999",
+      "dividends": "0.0",
+      "entry_date": "2026-05-27",
+      "entry_price": "174.85467999999997",
+      "exit_date": "2026-07-30",
+      "exit_price": "284.715",
+      "planned_risk": "983.2339999999988",
+      "pnl": "5492.516",
+      "quantity_exit": "50",
+      "realized_r": "5.5861737897591075",
+      "reason": "H_RSI14_simple_bearish_divergence",
+      "signal_date": "2026-05-26",
+      "symbol": "SNOW"
+    },
+    {
+      "basis": "7898.039999999999",
+      "dividends": "0.0",
+      "entry_date": "2025-05-23",
+      "entry_price": "263.263",
+      "exit_date": "2025-07-11",
+      "exit_price": "389.794815",
+      "planned_risk": "953.189999999999",
+      "pnl": "3795.654450000002",
+      "quantity_exit": "30",
+      "realized_r": "3.9820544172725327",
+      "reason": "H_RSI14_simple_bearish_divergence",
+      "signal_date": "2025-05-22",
+      "symbol": "COIN"
+    },
+    {
+      "basis": "16425.28377",
+      "dividends": "0.0",
+      "entry_date": "2024-11-07",
+      "entry_price": "782.1513699999999",
+      "exit_date": "2024-12-04",
+      "exit_price": "897.1519499999999",
+      "planned_risk": "964.3487699999981",
+      "pnl": "2414.8021800000024",
+      "quantity_exit": "21",
+      "realized_r": "2.504075553495036",
+      "reason": "H_RSI14_simple_bearish_divergence",
+      "signal_date": "2024-11-06",
+      "symbol": "NFLX"
+    },
+    {
+      "basis": "6935.27824",
+      "dividends": "0.0",
+      "entry_date": "2024-10-11",
+      "entry_price": "315.23492",
+      "exit_date": "2024-12-17",
+      "exit_price": "386.36325",
+      "planned_risk": "936.42604",
+      "pnl": "1564.6032599999999",
+      "quantity_exit": "22",
+      "realized_r": "1.6708241688793704",
+      "reason": "H_RSI14_simple_bearish_divergence",
+      "signal_date": "2024-10-10",
+      "symbol": "CRWD"
+    },
+    {
+      "basis": "18579.52064",
+      "dividends": "0.0",
+      "entry_date": "2026-05-08",
+      "entry_price": "290.03003099069997",
+      "exit_date": "2026-06-03",
+      "exit_price": "313.86082500000003",
+      "planned_risk": "988.1542399999998",
+      "pnl": "1525.9502479257753",
+      "quantity_exit": "64.05957540512676",
+      "realized_r": "1.544242979644327",
+      "reason": "H_RSI14_simple_bearish_divergence",
+      "signal_date": "2026-05-07",
+      "symbol": "AAPL"
+    }
+  ],
+  "top_trade_removal_warning": "arithmetical PnL sensitivity only; no capital/selection rerun, not counterfactual portfolio"
+}

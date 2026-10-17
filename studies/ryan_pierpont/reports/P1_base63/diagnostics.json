@@ -1,0 +1,210 @@
+{
+  "evidence_scope": "factor-unit H price-path diagnostics; not verified actual historical shares/cash or original trader returns; reused and survivor-selected sample, not OOS",
+  "candidate": "P1_base63",
+  "calendar_periods": {
+    "2023": {
+      "return": 0.0003118692061121475,
+      "max_drawdown": -0.004197784946075589,
+      "mean_exposure": 0.030068491972794053
+    },
+    "2024": {
+      "return": 0.09676216984425734,
+      "max_drawdown": -0.023267108273913872,
+      "mean_exposure": 0.22591726268273177
+    },
+    "2025": {
+      "return": 0.02226448567236572,
+      "max_drawdown": -0.025283201000542488,
+      "mean_exposure": 0.14716228624175462
+    },
+    "2026": {
+      "return": -0.02361826822068558,
+      "max_drawdown": -0.028701072593031673,
+      "mean_exposure": 0.02665718552212613
+    }
+  },
+  "longest_losing_streak": 6,
+  "holding_calendar_days": {
+    "median": 31.0,
+    "max": 121
+  },
+  "quarter_entry_counts": {
+    "2023Q4": 4,
+    "2024Q1": 7,
+    "2024Q2": 12,
+    "2024Q3": 3,
+    "2024Q4": 11,
+    "2025Q1": 2,
+    "2025Q2": 6,
+    "2025Q3": 6,
+    "2025Q4": 7,
+    "2026Q1": 1,
+    "2026Q2": 4,
+    "2026Q3": 3,
+    "2026Q4": 2
+  },
+  "gap_stop_count": 3,
+  "realized_loss_below_minus1R": 9,
+  "terminal_liquidation_count": 2,
+  "terminal_liquidation_pnl": -302.46224999999686,
+  "weekend_technical_counts": {
+    "True": 749,
+    "False": 1968
+  },
+  "fundamental_gate_counts": {},
+  "worst_five_trades": [
+    {
+      "basis": "6467.125569999998",
+      "dividends": "0.0",
+      "entry_date": "2026-07-28",
+      "entry_price": "340.37002999999993",
+      "exit_date": "2026-07-31",
+      "exit_price": "304.50519",
+      "planned_risk": "540.7405699999981",
+      "pnl": "-681.6219599999977",
+      "quantity_exit": "19",
+      "realized_r": "-1.2605341596618136",
+      "reason": "gap_stop",
+      "signal_date": "2026-07-27",
+      "symbol": "AAPL"
+    },
+    {
+      "basis": "6606.154459999999",
+      "dividends": "0.0",
+      "entry_date": "2026-02-03",
+      "entry_price": "347.68733999999995",
+      "exit_date": "2026-02-05",
+      "exit_price": "311.90778",
+      "planned_risk": "538.3752599999985",
+      "pnl": "-680.0016399999986",
+      "quantity_exit": "19",
+      "realized_r": "-1.2630625708915384",
+      "reason": "gap_stop",
+      "signal_date": "2026-02-02",
+      "symbol": "GOOGL"
+    },
+    {
+      "basis": "3747.4736399999992",
+      "dividends": "0.0",
+      "entry_date": "2025-10-29",
+      "entry_price": "208.18797999999995",
+      "exit_date": "2025-11-21",
+      "exit_price": "176.58324",
+      "planned_risk": "565.7036399999993",
+      "pnl": "-569.0653199999997",
+      "quantity_exit": "18",
+      "realized_r": "-1.005942475462948",
+      "reason": "intraday_stop_conservative",
+      "signal_date": "2025-10-28",
+      "symbol": "NVDA"
+    },
+    {
+      "basis": "7845.997994999999",
+      "dividends": "0.0",
+      "entry_date": "2025-09-10",
+      "entry_price": "237.75251499999996",
+      "exit_date": "2025-09-23",
+      "exit_price": "220.59918",
+      "planned_risk": "558.7729949999989",
+      "pnl": "-566.3900549999989",
+      "quantity_exit": "33",
+      "realized_r": "-1.0136317611412127",
+      "reason": "intraday_stop_conservative",
+      "signal_date": "2025-09-09",
+      "symbol": "AMZN"
+    },
+    {
+      "basis": "3773.940075",
+      "dividends": "0.0",
+      "entry_date": "2025-10-30",
+      "entry_price": "198.623425",
+      "exit_date": "2025-11-07",
+      "exit_price": "169.25057999999999",
+      "planned_risk": "554.8650750000002",
+      "pnl": "-558.2740549999999",
+      "quantity_exit": "19",
+      "realized_r": "-1.0061437999138794",
+      "reason": "intraday_stop_conservative",
+      "signal_date": "2025-10-29",
+      "symbol": "PLTR"
+    }
+  ],
+  "best_five_trades": [
+    {
+      "basis": "4720.85109",
+      "dividends": "0.0",
+      "entry_date": "2024-01-09",
+      "entry_price": "524.5077832994999",
+      "exit_date": "2024-04-05",
+      "exit_price": "867.79134",
+      "planned_risk": "462.0060899999998",
+      "pnl": "3089.616493379169",
+      "quantity_exit": "9.000450022501125",
+      "realized_r": "6.687393435396426",
+      "reason": "H_structure_low10",
+      "signal_date": "2024-01-08",
+      "symbol": "NVDA"
+    },
+    {
+      "basis": "8966.892689999999",
+      "dividends": "0.0",
+      "entry_date": "2025-07-15",
+      "entry_price": "182.828116471",
+      "exit_date": "2025-10-13",
+      "exit_price": "239.96979000000002",
+      "planned_risk": "551.87769",
+      "pnl": "2801.9740000210204",
+      "quantity_exit": "49.044139725753176",
+      "realized_r": "5.077164833427168",
+      "reason": "H_structure_low10",
+      "signal_date": "2025-07-14",
+      "symbol": "GOOGL"
+    },
+    {
+      "basis": "5188.958699999999",
+      "dividends": "0.0",
+      "entry_date": "2023-12-19",
+      "entry_price": "345.5588988852",
+      "exit_date": "2024-04-18",
+      "exit_price": "499.32018",
+      "planned_risk": "483.98369999999915",
+      "pnl": "2308.7165357498943",
+      "quantity_exit": "15.015916871884196",
+      "realized_r": "4.770236137601119",
+      "reason": "H_structure_low10",
+      "signal_date": "2023-12-18",
+      "symbol": "META"
+    },
+    {
+      "basis": "10950.18918",
+      "dividends": "0.0",
+      "entry_date": "2024-11-07",
+      "entry_price": "782.1513699999999",
+      "exit_date": "2024-12-19",
+      "exit_price": "907.2718199999999",
+      "planned_risk": "530.4791799999991",
+      "pnl": "1751.5463",
+      "quantity_exit": "14",
+      "realized_r": "3.301819121346106",
+      "reason": "H_structure_low10",
+      "signal_date": "2024-11-06",
+      "symbol": "NFLX"
+    },
+    {
+      "basis": "9577.06239",
+      "dividends": "0.0",
+      "entry_date": "2025-05-20",
+      "entry_price": "456.04558999999995",
+      "exit_date": "2025-08-19",
+      "exit_price": "514.485",
+      "planned_risk": "540.2991919919981",
+      "pnl": "1227.0176100000008",
+      "quantity_exit": "21",
+      "realized_r": "2.270996566691466",
+      "reason": "H_structure_low10",
+      "signal_date": "2025-05-19",
+      "symbol": "MSFT"
+    }
+  ],
+  "top_trade_removal_warning": "arithmetical PnL sensitivity only; no capital/selection rerun, not counterfactual portfolio"
+}

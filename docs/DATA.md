@@ -377,3 +377,13 @@ cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train
 | `data/calendar-*`（81 个） | 历法研究的指数日线、HKO 历表、封存的预测包 | 研究已归档；NA2 的前向预测在 `data/calendar-najia-na2` |
 
 各目录自带 `CHECKSUMS.sha256` 或 manifest。需要发布的，先固定 zip 和 SHA256，发布后不改。
+
+
+## 2026-10-17逐人研究：临时公开输入状态
+
+新逐人研究采用的外部公开市场数据与SEC文件放在仓库外，仅标记 `LOCAL_RESEARCH_NOT_RELEASED`，输入来源/原始响应哈希与本地导出清单见 `studies/trader_common/DATA_INPUTS.json`。它们没有自动取得本仓库已注册Release基准资格；未发布新Release，未上传原始数据到Git。本地复现输入包（如交付）保留原公开来源与限制，不宣称拥有逐日PIT价格版本、历史借券或完整证券池。
+
+
+## 逐人研究公开出版版
+
+独立分支保留代码与汇总；详细派生研究结果与SEC冻结输入子集分开打包。原始商业行情不再次分发；许可未确认的数据也未打包。详见 [发布范围与复现边界](../studies/trader_common/REDISTRIBUTION_CN.md) 和相邻输入/结果发布清单。仅SEC子集不足以运行原全量复现器。原上述“未发布”文字描述历史研究冻结时的状态，不作为本次发布后状态。

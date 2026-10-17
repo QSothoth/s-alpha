@@ -1,0 +1,5 @@
+rule_id,source_concept,url,source_date,implementation,scope_and_H_assumptions
+S_S1,首轮量价上涨、整理、第二次启动,https://www.businessinsider.com/stock-market-investor-indicators-profitable-trader-huge-returns-2023-2,2023-02-11,strategy.py:signal,H20日首破/1.5倍量、整理3–20日、回撤20%，非本人精确阈值
+S_S2,计划每笔账户风险≤1%，上涨10%保护成本,https://www.businessinsider.com/stock-market-investor-indicators-profitable-trader-huge-returns-2023-2,2023-02-11,daily_engine.py:run,S上界和10%；H收盘激活次bar、技术低点止损；跳空可突破预算
+S_S3,价格走高但RSI变弱考虑退出,https://www.businessinsider.com/stock-market-investor-indicators-profitable-trader-huge-returns-2023-2,2023-02-11,strategy.py:signal,H简单RSI14、5点差、5–30日参考，不声称原版RSI14
+S_S4,讨论加仓和杠杆ETF,https://podcasts.apple.com/au/podcast/multiple-100-years-after-blowing-out-an-account-sean-ryan/id1586336923?i=1000642129705,2024-01-18,未实现,章节不是精确规则；不假造加仓

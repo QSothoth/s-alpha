@@ -1,0 +1,49 @@
+{
+  "audited_utc": "2026-10-17T11:07:51.438057+00:00",
+  "status": "LIMITED_STUDIES_QUALIFIED_NOT_FULL_REPLICATION",
+  "independent_test_counts": {
+    "trader_common": 21,
+    "goverdhan_gajjala": 13,
+    "erchi": 12,
+    "sean_ryan": 12,
+    "vibha_jha": 3,
+    "ryan_pierpont": 4,
+    "zhang_qi": 15,
+    "ty_rajnus": 2,
+    "gemy_zhou": 5
+  },
+  "full_study_rerun_by_auditor": false,
+  "independent_checks": [
+    "cash_from_fill_rows",
+    "remaining_quantity_from_fill_rows",
+    "reported_source_hashes",
+    "70_locked_S2_ticket_PnL_and_exit_dates",
+    "830_symbol_days_minute_contiguity",
+    "adversarial_future_volume_order_reservation",
+    "one_share_partial_close",
+    "DQ_direct_quarter_EPS_fact_operands_available_before_all_9_signals",
+    "Zhang_daily_cash_quantity_and_split_ledger_all_3_branches",
+    "Zhang_all_9_cost_paths_cash_PnL_and_final_runtime_source_hashes"
+  ],
+  "source_sha256": {
+    "studies/trader_common/execution.py": "6536b449a787389e1eafe861992b595d8f132d409406ebfaefe7fef23eec0dfa",
+    "studies/trader_common/daily.py": "3e12460798e34fdd9bfba24a41fa6c97497974ad2e1a3f02f96f69d265742bfd",
+    "studies/trader_common/run_minute.py": "0780ec623a94ef3604150110d2e60257a182a48657982b7d790ca5cf6dd18206",
+    "studies/goverdhan_gajjala/replay.py": "1c31f1f860ab372f053f1da50b10e2db9525bb6b8ff12687ac3139acb0c6d69b",
+    "studies/goverdhan_gajjala/rules.py": "f13645a8cf9ac347f2ea027ed6de2cb154cb9c13f81afb794e1235aca17f7db1",
+    "studies/sean_ryan/daily_engine.py": "4231e419568ad31e4e52781f9fd407d145d2499dad2821af0d25dfc6a51bb79e",
+    "studies/ryan_pierpont/fundamentals.py": "5735bc8ec10bb1119b3e1f95efe1bcc71bb834c7fad9d43587bd9eb2b8e3208f",
+    "studies/erchi/replay.py": "712078ffc95b89765bffc53ce4d1fbf898edf004885964a1ffe1df19a84c93b5",
+    "studies/erchi/rules.py": "cce298b067b006c193534f4ea7c997334a1dd1caaebce93234f0edf0844239da",
+    "studies/zhang_qi/replay.py": "8b53557f096b08741d28960d8b5135039c4e5f0bd438bcf092cafec5b86724e9",
+    "studies/zhang_qi/rules.py": "0bfb58394919d0a5f919c83a6f6c32502c40e05d1614f32699c1f9fd7a9448b7",
+    "studies/ty_rajnus/events.py": "932a2a32b611d856dff352820bd9042f22dfdb03c76b3a04e49ef172aec25ef8",
+    "studies/gemy_zhou/architecture.py": "0c1288d8bc6b3c3c79cf4ae476693cb71c4c83c9442e34fbc351b9b73a15bf13"
+  },
+  "unqualified_claims": [
+    "full_original_strategy_replication",
+    "out_of_sample_alpha",
+    "raw_share_cash_dividend_realism",
+    "quote_order_book_execution_feasibility"
+  ]
+}

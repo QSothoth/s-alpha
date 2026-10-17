@@ -1,0 +1,25 @@
+{
+  "ETF_period": [
+    "2010-02-11",
+    "2022-11-18"
+  ],
+  "stock_period": [
+    "2023-09-01",
+    "2026-10-09"
+  ],
+  "SEC_snapshot_period": [
+    "2023-09-01",
+    "2026-09-11"
+  ],
+  "ETF_stock_common_sessions": 0,
+  "status": "BLOCKED_NO_FULL_HISTORY_OVERLAP",
+  "actual_rotations_executed": 0,
+  "capital_double_counted": false,
+  "why": "Old TQQQ/QQQ daily history ends2022; stock/SEC study starts2023. Recent TQQQ60session minute file does not close QQQ50day recovery warmup. Separate sleeve results cannot be added or called a combined account.",
+  "next_input": "actual TQQQ and QQQ daily/corporate-action history overlapping stock/PIT SEC window; freeze rotation trigger and reduction schedule before first combined PnL",
+  "files": {
+    "data/trader-data/public-daily/xjcarter_TQQQ.csv": "517ba83fa662ad81a548ae117f72b32e12c8ca268e0d2ec75718e47a25f1b847",
+    "data/salpha-champion-replication/data/trend-breakout-v1/us/bars_raw.csv.gz": "31a7246b7792f9ab11badf87fcbfbfa77b791e36266e36a98f6e05d0df500755",
+    "data/sec-pit-fundamentals/pit_snapshots.jsonl": "7e1f8d998aee8425119331b14e463fab390551e2a6c68b52e27efd87f9b7f494"
+  }
+}

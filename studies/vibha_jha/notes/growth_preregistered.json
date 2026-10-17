@@ -1,0 +1,41 @@
+{
+  "frozen_utc": "2026-10-17T10:38:20.788036+00:00",
+  "candidates": [
+    "G1_technical_control",
+    "G2_growth_revenue_netincome25",
+    "G3_growth_cost25"
+  ],
+  "symbols": [
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "AMZN",
+    "META",
+    "GOOGL",
+    "TSLA",
+    "AMD",
+    "AVGO",
+    "NFLX",
+    "PLTR",
+    "MU",
+    "CRM",
+    "SHOP",
+    "CRWD",
+    "PANW",
+    "SNOW",
+    "COIN",
+    "UBER"
+  ],
+  "initial_cash": 100000,
+  "cost_bps": 10,
+  "commission_per_share": 0.005,
+  "risk_fraction": 0.02,
+  "max_weight": 0.1,
+  "participation": 0.01,
+  "signal": "completed daily close only; execute next observed session open; no intraday attribution",
+  "selection": "Report all; no chosen winner; reused data not OOS",
+  "test_period": "all available after warmup; report calendar subperiods",
+  "status": "researcher mechanical hypotheses, not original strategy",
+  "max_positions": 8,
+  "scope": "separate growth sleeve; quarterly net-income H proxy not EPS; no time stop; RS missing; no ETF rotation"
+}

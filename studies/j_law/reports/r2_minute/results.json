@@ -1,0 +1,549 @@
+{
+  "status": "COMPLETED_MINUTE_TECHNICAL_HYPOTHESIS",
+  "source_full_strategy_replicated": false,
+  "data": [
+    {
+      "path": "data/trader-data/opend_us_options_eval_v2/klines_day.csv.gz",
+      "sha256": "974a09436e08b869d38741f8716e3751be5bc28044a440240e1fb5c852d9aeff",
+      "status": "LOCAL_RESEARCH_NOT_RELEASED_DERIVED"
+    },
+    {
+      "path": "data/trader-data/opend_us_options_eval_v2/klines_1m.csv.gz",
+      "sha256": "ead8241a6d49c012aafe6ca75a3da04373450b1f599dba7ad5943fce75c81a96",
+      "status": "LOCAL_RESEARCH_NOT_RELEASED_DERIVED"
+    },
+    {
+      "path": "data/salpha-champion-replication/data/trend-breakout-v1/us/bars_raw.csv.gz",
+      "sha256": "31a7246b7792f9ab11badf87fcbfbfa77b791e36266e36a98f6e05d0df500755",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "data/sec-pit-fundamentals/pit_snapshots.jsonl",
+      "sha256": "7e1f8d998aee8425119331b14e463fab390551e2a6c68b52e27efd87f9b7f494",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/trader_common/run_minute.py",
+      "sha256": "0780ec623a94ef3604150110d2e60257a182a48657982b7d790ca5cf6dd18206",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/trader_common/execution.py",
+      "sha256": "6536b449a787389e1eafe861992b595d8f132d409406ebfaefe7fef23eec0dfa",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/trader_common/data.py",
+      "sha256": "0ec7ca945f051828e6c4699bceeddd66899052bc7575d4b2d59bf373b261a9e2",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/trader_common/metrics.py",
+      "sha256": "1dcb92de2cd41efcfc2abd56b9f5f33e270bf4dec6d961fd2b49bd729387537b",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "data/sec-pit-fundamentals/facts.csv",
+      "sha256": "9650a056830ac638c11d7db3f659884aa9dc68766658f079a1c2850e0965a824",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "data/sec-pit-fundamentals/download_manifest.json",
+      "sha256": "9efe9c452a0a3cefb8ab7cb03ab432c708c8ad5e4a1d0138db127c6e412656eb",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/clement_ang/notes/PREREG_R2_MINUTE.md",
+      "sha256": "c5dc84a2b3dd0e0d851d579f11a849b71137fb434c335699f57f5705f906133a",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/j_law/notes/PREREG_R2_MINUTE.md",
+      "sha256": "c5dc84a2b3dd0e0d851d579f11a849b71137fb434c335699f57f5705f906133a",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/deepak_uppal/notes/PREREG_R2_MINUTE.md",
+      "sha256": "4e35f0a73de020d8461760d0fc5874c895aab0a02e47545ad10585def6c2e8ce",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/deepak_uppal/notes/PREREG_R3_QUARTER_EPS.md",
+      "sha256": "876e297fe5c3c5727333344f35e16b661fd930525170eace2c7867cf4688e52f",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/clement_ang/signals.py",
+      "sha256": "e99ad40aa0691f6f2d99fb62d570b52200f61f832dc71866585101fb505f857d",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/j_law/signals.py",
+      "sha256": "19b58ceeb0a32c98742eb934e561cba80f680d2e7cea2a04212ba5e734966c67",
+      "status": "SOURCE_INPUT"
+    },
+    {
+      "path": "./studies/deepak_uppal/signals.py",
+      "sha256": "d54873a98fbea49c16b0e023b53e29650e453e9fe91091da7e6a6f601b668ae7",
+      "status": "SOURCE_INPUT"
+    }
+  ],
+  "period": [
+    "2026-05-14",
+    "2026-09-11"
+  ],
+  "symbols": [
+    "US.AAPL",
+    "US.AMD",
+    "US.META",
+    "US.MSFT",
+    "US.MU",
+    "US.NVDA",
+    "US.TSLA"
+  ],
+  "results": [
+    {
+      "main": {
+        "variant": "JL1",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 10,
+        "per_adjusted_unit_fee": 0.005,
+        "final_accounting_equity": 99487.8220311765,
+        "net_accounting_return": -0.0051217796882350175,
+        "MDD": -0.007384904466415043,
+        "closed_trades": 4,
+        "open_positions": 1,
+        "win_rate": 0.0,
+        "mean_R": -0.4706339451030937,
+        "fees_accounting_units": 20.59502172149,
+        "best10_removed_pnl": null,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 3
+        },
+        "distribution": {
+          "count": 4,
+          "wins": 0,
+          "losses": 4,
+          "flat": 0,
+          "win_rate": 0.0,
+          "mean_win_pnl": null,
+          "mean_loss_pnl": -122.96896470587245,
+          "realized_payoff_pnl": null,
+          "mean_win_R": null,
+          "mean_loss_R": -0.4706339451030937,
+          "realized_payoff_R": null,
+          "expectancy_pnl": -122.96896470587245,
+          "expectancy_R": -0.4706339451030937,
+          "profit_factor": 0.0,
+          "window_sessions": 83,
+          "first_session": "2026-05-14",
+          "last_session": "2026-09-11",
+          "annualized_trade_count_252_session_rate": 12.144578313253012,
+          "annualized_count_not_prediction": true,
+          "holding_sessions_median": 17.5,
+          "holding_sessions_max": 24,
+          "holding_sessions_p90": 22.5,
+          "average_exposure": 0.01322685919636567,
+          "max_exposure": 0.0701397155620148,
+          "max_single_position_weight": 0.056355495455461584,
+          "best_1_positive_pnl_share": null,
+          "best_5_positive_pnl_share": null,
+          "best_10_positive_pnl_share": null,
+          "by_symbol": {
+            "US.AAPL": {
+              "trades": 2,
+              "pnl": -182.88558451509175,
+              "mean_R": -0.32171180372119557
+            },
+            "US.AMD": {
+              "trades": 1,
+              "pnl": -61.21704999999994,
+              "mean_R": -0.2800157808068794
+            },
+            "US.MU": {
+              "trades": 1,
+              "pnl": -247.7732243083981,
+              "mean_R": -0.9590963921631044
+            }
+          },
+          "capacity_qualification": "NOT_VERIFIED: no opening quotes or full order book; volume upper-bound/sizing hypothesis only"
+        },
+        "realized_pnl_all_exit_units": -491.8758588234898,
+        "unrealized_net_unit_pnl": -20.302110000000027,
+        "net_reconciliation_error": -6.650680006714538e-12
+      },
+      "stress": {
+        "variant": "JL1",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 25,
+        "per_adjusted_unit_fee": 0.005,
+        "final_accounting_equity": 99457.34199859427,
+        "net_accounting_return": -0.0054265800140572695,
+        "MDD": -0.007575844534690956,
+        "closed_trades": 4,
+        "open_positions": 1,
+        "win_rate": 0.0,
+        "mean_R": -0.4963895287809391,
+        "fees_accounting_units": 51.075054303725,
+        "best10_removed_pnl": null,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 3
+        },
+        "distribution": {
+          "count": 4,
+          "wins": 0,
+          "losses": 4,
+          "flat": 0,
+          "win_rate": 0.0,
+          "mean_win_pnl": null,
+          "mean_loss_pnl": -130.0013066014312,
+          "realized_payoff_pnl": null,
+          "mean_win_R": null,
+          "mean_loss_R": -0.4963895287809391,
+          "realized_payoff_R": null,
+          "expectancy_pnl": -130.0013066014312,
+          "expectancy_R": -0.4963895287809391,
+          "profit_factor": 0.0,
+          "window_sessions": 83,
+          "first_session": "2026-05-14",
+          "last_session": "2026-09-11",
+          "annualized_trade_count_252_session_rate": 12.144578313253012,
+          "annualized_count_not_prediction": true,
+          "holding_sessions_median": 17.5,
+          "holding_sessions_max": 24,
+          "holding_sessions_p90": 22.5,
+          "average_exposure": 0.013228308564785312,
+          "max_exposure": 0.07015550595574727,
+          "max_single_position_weight": 0.056366827548842646,
+          "best_1_positive_pnl_share": null,
+          "best_5_positive_pnl_share": null,
+          "best_10_positive_pnl_share": null,
+          "by_symbol": {
+            "US.AAPL": {
+              "trades": 2,
+              "pnl": -204.85540623172975,
+              "mean_R": -0.36017965082067016
+            },
+            "US.AMD": {
+              "trades": 1,
+              "pnl": -64.40762499999994,
+              "mean_R": -0.29460993962126053
+            },
+            "US.MU": {
+              "trades": 1,
+              "pnl": -250.7421951739951,
+              "mean_R": -0.9705888738611557
+            }
+          },
+          "capacity_qualification": "NOT_VERIFIED: no opening quotes or full order book; volume upper-bound/sizing hypothesis only"
+        },
+        "realized_pnl_all_exit_units": -520.0052264057248,
+        "unrealized_net_unit_pnl": -22.652775000000027,
+        "net_reconciliation_error": -5.613287612504791e-13
+      },
+      "gross": {
+        "variant": "JL1",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 0,
+        "per_adjusted_unit_fee": 0,
+        "final_accounting_equity": 99508.41705289799,
+        "net_accounting_return": -0.0049158294710200945,
+        "MDD": -0.0072558695731209655,
+        "closed_trades": 4,
+        "open_positions": 1,
+        "win_rate": 0.0,
+        "mean_R": -0.45322962708600273,
+        "fees_accounting_units": 0.0,
+        "best10_removed_pnl": null,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 3
+        },
+        "distribution": {
+          "count": 4,
+          "wins": 0,
+          "losses": 4,
+          "flat": 0,
+          "win_rate": 0.0,
+          "mean_win_pnl": null,
+          "mean_loss_pnl": -118.21573677549995,
+          "realized_payoff_pnl": null,
+          "mean_win_R": null,
+          "mean_loss_R": -0.45322962708600273,
+          "realized_payoff_R": null,
+          "expectancy_pnl": -118.21573677549995,
+          "expectancy_R": -0.45322962708600273,
+          "profit_factor": 0.0,
+          "window_sessions": 83,
+          "first_session": "2026-05-14",
+          "last_session": "2026-09-11",
+          "annualized_trade_count_252_session_rate": 12.144578313253012,
+          "annualized_count_not_prediction": true,
+          "holding_sessions_median": 17.5,
+          "holding_sessions_max": 24,
+          "holding_sessions_p90": 22.5,
+          "average_exposure": 0.013225881829319417,
+          "max_exposure": 0.0701290587449811,
+          "max_single_position_weight": 0.05634784441668999,
+          "best_1_positive_pnl_share": null,
+          "best_5_positive_pnl_share": null,
+          "best_10_positive_pnl_share": null,
+          "by_symbol": {
+            "US.AAPL": {
+              "trades": 2,
+              "pnl": -168.00903670399975,
+              "mean_R": -0.29566381031245653
+            },
+            "US.AMD": {
+              "trades": 1,
+              "pnl": -59.069999999999936,
+              "mean_R": -0.27019485865885995
+            },
+            "US.MU": {
+              "trades": 1,
+              "pnl": -245.7839103980001,
+              "mean_R": -0.951396029060238
+            }
+          },
+          "capacity_qualification": "NOT_VERIFIED: no opening quotes or full order book; volume upper-bound/sizing hypothesis only"
+        },
+        "realized_pnl_all_exit_units": -472.8629471019998,
+        "unrealized_net_unit_pnl": -18.720000000000027,
+        "net_reconciliation_error": -1.1709744285326451e-11
+      }
+    },
+    {
+      "main": {
+        "variant": "JL0",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 10,
+        "per_adjusted_unit_fee": 0.005,
+        "final_accounting_equity": 99726.89944646349,
+        "net_accounting_return": -0.002731005535365094,
+        "MDD": -0.004574488349392114,
+        "closed_trades": 4,
+        "open_positions": 1,
+        "win_rate": 0.25,
+        "mean_R": -0.2401201880255031,
+        "fees_accounting_units": 20.834338453508998,
+        "best10_removed_pnl": null,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 3
+        },
+        "distribution": {
+          "count": 4,
+          "wins": 1,
+          "losses": 3,
+          "flat": 0,
+          "win_rate": 0.25,
+          "mean_win_pnl": 3.7022945899320994,
+          "mean_loss_pnl": -85.5002460421469,
+          "realized_payoff_pnl": 0.043301566502008344,
+          "mean_win_R": 0.013332897824687093,
+          "mean_loss_R": -0.32460454997556654,
+          "realized_payoff_R": 0.041074278920892146,
+          "expectancy_pnl": -63.199610884127154,
+          "expectancy_R": -0.2401201880255031,
+          "profit_factor": 0.014433855500669448,
+          "window_sessions": 83,
+          "first_session": "2026-05-14",
+          "last_session": "2026-09-11",
+          "annualized_trade_count_252_session_rate": 12.144578313253012,
+          "annualized_count_not_prediction": true,
+          "holding_sessions_median": 10.0,
+          "holding_sessions_max": 10,
+          "holding_sessions_p90": 10.0,
+          "average_exposure": 0.008280630398629035,
+          "max_exposure": 0.05620943674685694,
+          "max_single_position_weight": 0.05620943674685697,
+          "best_1_positive_pnl_share": 1.0,
+          "best_5_positive_pnl_share": 1.0,
+          "best_10_positive_pnl_share": 1.0,
+          "by_symbol": {
+            "US.AAPL": {
+              "trades": 2,
+              "pnl": -129.88676541006754,
+              "mean_R": -0.22493331530811006
+            },
+            "US.AMD": {
+              "trades": 1,
+              "pnl": -49.53873999999988,
+              "mean_R": -0.22659747507089886
+            },
+            "US.MU": {
+              "trades": 1,
+              "pnl": -73.37293812644116,
+              "mean_R": -0.2840166464148935
+            }
+          },
+          "capacity_qualification": "NOT_VERIFIED: no opening quotes or full order book; volume upper-bound/sizing hypothesis only"
+        },
+        "realized_pnl_all_exit_units": -252.7984435365086,
+        "unrealized_net_unit_pnl": -20.302110000000027,
+        "net_reconciliation_error": -2.5295321393059567e-12
+      },
+      "stress": {
+        "variant": "JL0",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 25,
+        "per_adjusted_unit_fee": 0.005,
+        "final_accounting_equity": 99696.06043878321,
+        "net_accounting_return": -0.0030393956121678167,
+        "MDD": -0.004849557253097325,
+        "closed_trades": 4,
+        "open_positions": 1,
+        "win_rate": 0.0,
+        "mean_R": -0.26622188845571726,
+        "fees_accounting_units": 51.6733461337725,
+        "best10_removed_pnl": null,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 3
+        },
+        "distribution": {
+          "count": 4,
+          "wins": 0,
+          "losses": 4,
+          "flat": 0,
+          "win_rate": 0.0,
+          "mean_win_pnl": null,
+          "mean_loss_pnl": -70.32169655419301,
+          "realized_payoff_pnl": null,
+          "mean_win_R": null,
+          "mean_loss_R": -0.26622188845571726,
+          "realized_payoff_R": null,
+          "expectancy_pnl": -70.32169655419301,
+          "expectancy_R": -0.26622188845571726,
+          "profit_factor": 0.0,
+          "window_sessions": 83,
+          "first_session": "2026-05-14",
+          "last_session": "2026-09-11",
+          "annualized_trade_count_252_session_rate": 12.144578313253012,
+          "annualized_count_not_prediction": true,
+          "holding_sessions_median": 10.0,
+          "holding_sessions_max": 10,
+          "holding_sessions_p90": 10.0,
+          "average_exposure": 0.008281742917028035,
+          "max_exposure": 0.05622092899842029,
+          "max_single_position_weight": 0.056220928998420315,
+          "best_1_positive_pnl_share": null,
+          "best_5_positive_pnl_share": null,
+          "best_10_positive_pnl_share": null,
+          "by_symbol": {
+            "US.AAPL": {
+              "trades": 2,
+              "pnl": -151.93616493316952,
+              "mean_R": -0.2635464754532499
+            },
+            "US.AMD": {
+              "trades": 1,
+              "pnl": -52.74684999999988,
+              "mean_R": -0.2412718415515502
+            },
+            "US.MU": {
+              "trades": 1,
+              "pnl": -76.60377128360267,
+              "mean_R": -0.29652276136481914
+            }
+          },
+          "capacity_qualification": "NOT_VERIFIED: no opening quotes or full order book; volume upper-bound/sizing hypothesis only"
+        },
+        "realized_pnl_all_exit_units": -281.2867862167721,
+        "unrealized_net_unit_pnl": -22.652775000000027,
+        "net_reconciliation_error": -1.426059270670521e-11
+      },
+      "gross": {
+        "variant": "JL0",
+        "price_semantics": "QFQ_ACCOUNTING_UNITS_NOT_RAW_SHARES",
+        "cost_bps": 0,
+        "per_adjusted_unit_fee": 0,
+        "final_accounting_equity": 99747.73378491697,
+        "net_accounting_return": -0.0025226621508303015,
+        "MDD": -0.004388522328538702,
+        "closed_trades": 4,
+        "open_positions": 1,
+        "win_rate": 0.25,
+        "mean_R": -0.222485125506833,
+        "fees_accounting_units": 0.0,
+        "best10_removed_pnl": null,
+        "ambiguities": {},
+        "bootstrap": {
+          "status": "insufficient_months",
+          "months": 3
+        },
+        "distribution": {
+          "count": 4,
+          "wins": 1,
+          "losses": 3,
+          "flat": 0,
+          "win_rate": 0.25,
+          "mean_win_pnl": 7.6128342720001,
+          "mean_loss_pnl": -80.3863497849999,
+          "realized_payoff_pnl": 0.09470307200614621,
+          "mean_win_R": 0.027415738817994768,
+          "mean_loss_R": -0.3057854136151089,
+          "realized_payoff_R": 0.08965679066857933,
+          "expectancy_pnl": -58.3865537707499,
+          "expectancy_R": -0.222485125506833,
+          "profit_factor": 0.0315676906687154,
+          "window_sessions": 83,
+          "first_session": "2026-05-14",
+          "last_session": "2026-09-11",
+          "annualized_trade_count_252_session_rate": 12.144578313253012,
+          "annualized_count_not_prediction": true,
+          "holding_sessions_median": 10.0,
+          "holding_sessions_max": 10,
+          "holding_sessions_p90": 10.0,
+          "average_exposure": 0.008279880083873294,
+          "max_exposure": 0.05620167952687824,
+          "max_single_position_weight": 0.05620167952687827,
+          "best_1_positive_pnl_share": 1.0,
+          "best_5_positive_pnl_share": 1.0,
+          "best_10_positive_pnl_share": 1.0,
+          "by_symbol": {
+            "US.AAPL": {
+              "trades": 2,
+              "pnl": -114.95716572799955,
+              "mean_R": -0.19878844653559413
+            },
+            "US.AMD": {
+              "trades": 1,
+              "pnl": -47.37999999999988,
+              "mean_R": -0.21672308114536595
+            },
+            "US.MU": {
+              "trades": 1,
+              "pnl": -71.20904935500016,
+              "mean_R": -0.27564052781077775
+            }
+          },
+          "capacity_qualification": "NOT_VERIFIED: no opening quotes or full order book; volume upper-bound/sizing hypothesis only"
+        },
+        "realized_pnl_all_exit_units": -233.5462150829996,
+        "unrealized_net_unit_pnl": -18.720000000000027,
+        "net_reconciliation_error": -2.9615421226480976e-11
+      }
+    }
+  ],
+  "benchmark_price_returns": {
+    "US.QQQ": 0.001463828584643112,
+    "US.AAPL": 0.10918740572840169,
+    "US.AMD": 0.17142532909668629,
+    "US.META": 0.0529717619264547,
+    "US.MSFT": 0.23031676800249445,
+    "US.MU": 0.2384271312146804,
+    "US.NVDA": -0.04812285398302674,
+    "US.TSLA": -0.18152702188178904
+  },
+  "equal_weight_seven_price_return": 0.08181121715770025,
+  "cash_return": 0,
+  "statistical_gate": "NOT_PASSED: no matched randomized control yet; short reused window; source omissions and adjusted-unit realism block full acceptance"
+}

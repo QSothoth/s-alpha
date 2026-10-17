@@ -1,0 +1,40 @@
+{
+  "frozen_utc": "2026-10-17T10:30:06.994156+00:00",
+  "candidates": [
+    "P1_base63",
+    "P2_base126",
+    "P3_no_base_control",
+    "P4_base63_cost25"
+  ],
+  "symbols": [
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "AMZN",
+    "META",
+    "GOOGL",
+    "TSLA",
+    "AMD",
+    "AVGO",
+    "NFLX",
+    "PLTR",
+    "MU",
+    "CRM",
+    "SHOP",
+    "CRWD",
+    "PANW",
+    "SNOW",
+    "COIN",
+    "UBER"
+  ],
+  "initial_cash": 100000,
+  "cost_bps": 10,
+  "commission_per_share": 0.005,
+  "risk_fraction": 0.005,
+  "max_weight": 0.2,
+  "participation": 0.01,
+  "signal": "completed daily close only; execute next observed session open; no intraday attribution",
+  "selection": "Report all; no chosen winner; reused data not OOS",
+  "test_period": "all available after warmup; report calendar subperiods",
+  "status": "researcher mechanical hypotheses, not original strategy"
+}

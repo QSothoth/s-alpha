@@ -1,0 +1,78 @@
+{
+  "global_bar_batching": true,
+  "signal_before_entry": true,
+  "ledger_identity_every_bar": true,
+  "cash_nonnegative": true,
+  "integer_units_not_actual_shares": true,
+  "shape_and_distance_source_fields_preserved": false,
+  "PIT_missing_blocks_not_swing": false,
+  "raw_share_execution_verified": false,
+  "unrealized_positions": {
+    "US.MU": {
+      "id": "DN0:US.MU:2026-09-04T09:35:00-04:00:0",
+      "entry": 994.34,
+      "qty": 2,
+      "stop": 887.595,
+      "initial_stop": 887.595,
+      "entry_fee_per_share": 0.99934,
+      "target": 1314.575,
+      "target_done": false,
+      "fraction": 0.5,
+      "breakeven": false
+    }
+  },
+  "ordinary_trade_sample": [
+    {
+      "client_id": "DN0:US.AMD:2026-05-22T09:31:00-04:00:0",
+      "symbol": "US.AMD",
+      "entry_date": "2026-05-22",
+      "exit_date": "2026-06-08",
+      "entry_at": "2026-05-22T09:31:00-04:00",
+      "exit_at": "2026-06-08T09:30:00-04:00",
+      "qty": 3,
+      "entry": 475.605,
+      "stop": 393.35,
+      "planned_risk": 246.765,
+      "pnl": 25.27318499999995,
+      "R": 0.10241802929913055,
+      "mode": "swing",
+      "entry_fee": 1.441815,
+      "exit_fees": 1.47
+    },
+    {
+      "client_id": "DN0:US.MU:2026-06-15T14:43:00-04:00:0",
+      "symbol": "US.MU",
+      "entry_date": "2026-06-15",
+      "exit_date": "2026-06-30",
+      "entry_at": "2026-06-15T14:43:00-04:00",
+      "exit_at": "2026-06-30T09:30:00-04:00",
+      "qty": 1,
+      "entry": 1090.45230845,
+      "stop": 854.208636852,
+      "planned_risk": 236.24367159799988,
+      "pnl": 51.85667385694618,
+      "R": 0.2195050284571738,
+      "mode": "swing",
+      "entry_fee": 1.0954523084499999,
+      "exit_fees": 1.149553988604
+    },
+    {
+      "client_id": "DN0:US.MU:2026-08-13T09:51:00-04:00:0",
+      "symbol": "US.MU",
+      "entry_date": "2026-08-13",
+      "exit_date": "2026-08-27",
+      "entry_at": "2026-08-13T09:51:00-04:00",
+      "exit_at": "2026-08-27T09:30:00-04:00",
+      "qty": 1,
+      "entry": 939.43,
+      "stop": 770.09,
+      "planned_risk": 169.33999999999992,
+      "pnl": 25.66356000000004,
+      "R": 0.15155049013818384,
+      "mode": "swing",
+      "entry_fee": 0.9444299999999999,
+      "exit_fees": 0.97201
+    }
+  ],
+  "sample_method": "first20 deterministic automatic ledger checks; not manual bar replay"
+}

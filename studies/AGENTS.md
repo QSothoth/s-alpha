@@ -12,6 +12,10 @@
 | [martin_luk/](martin_luk/README.md) | 复刻 Martin Luk 动量波段的研究（2026-10-16）；区间内结论、无样本外，不接 custody、不当生产能力 |
 | [auction_strength/](auction_strength/README.md) | 既有竞价例程接口；仅 3 天样本、门槛未校准，不新增独立 skill 或宣传为已验证能力 |
 
+## 新增逐人研究入口
+
+[trader_common/README.md](trader_common/README.md) 列出33对象的独立状态、实际运行假设与数据/来源门禁。共享底座不是共享信号；公开来源不足的对象不得产出冒名策略收益。分钟QFQ单位诊断、原始报价日线子样本和非交易事件研究不可混称实盘净收益。原martin_luk保持基线不修改。
+
 ## 归档与新研究
 
 已结束研究的结论、失败经验与固定版本入口见 [archive/](archive/README.md)。W 系列、P/TS/FD、R27–R30 已归档；历史 TF/PB 已收敛。新研究前先查这些记录，归档不重置数据是否已使用，也不改写预登记、源码指纹或失败结论。
