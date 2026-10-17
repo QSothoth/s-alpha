@@ -381,7 +381,7 @@ cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train
 | `data/sv2-stock-raw` | SV2（已放弃）重拉的 12 只股票真实不复权日 K、原生 RTH 1m、IV/HV、财报辅助数据（已扣费标的，没有扣新额度） | 有用；TS 系列的开发集，已经用烂了，不能再当验证 |
 | `data/ux1-stock-raw` | 扩展的 8 只（BA、BAC、COIN、NFLX、ORCL、PLTR、SOFI、WMT）日 K 和 1m；ORCL 有 11 个异常股票日 | 有用；用过 TS5 起的开发，同样不能再当验证 |
 | `data/sv1-*`、`data/fd2-capture-2026-10-02` | 真实 0DTE 期权 1m 采集，见上文 SV1 | 有用；未评测过的验证段 |
-| `data/ts*-*`、`data/fd*-*`、`data/me*-*`、其余以研究代号开头的目录 | TS / FD 各轮的回放单位、模型、宏观日历、外部来源原件（SEC、BLS、Fed、Cboe 等） | 中间产物，研究已归档；是否删除由用户决定 |
-| `data/calendar-*`（81 个） | 历法研究的指数日线、HKO 历表、封存的预测包 | 研究已归档；NA2 的前向预测在 `data/calendar-najia-na2` |
+| `data/ts*-*`、`data/fd*-*`、`data/me*-*`、其余以研究代号开头的目录 | TS / FD 各轮的回放单位、模型、宏观日历、外部来源原件（SEC、BLS、Fed、Cboe 等） | 中间产物，研究已归档；其中 `data/ts<编号>-*` 已于 2026-10-17 按用户决定删除，fd / me 与 `tsu1-upstream-monthly-source`（归属未确认）仍在 |
+| `data/calendar-*`（81 个） | 历法研究的指数日线、HKO 历表、封存的预测包 | 研究已归档；2026-10-17 用户决定删除（含 NA2 前向预测） |
 
 各目录自带 `CHECKSUMS.sha256` 或 manifest。需要发布的，先固定 zip 和 SHA256，发布后不改。

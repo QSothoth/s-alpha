@@ -184,6 +184,9 @@ def masks(P, cfg):
         laggard = (tradeable & (P['adr'] >= cfg.adr_min) & (mom_dn <= -cfg.mom)
                    & (P['e9'] < P['e21']) & (P['e21'] < P['e50']))
         sbd = laggard & (inside | (rng * 100 <= .5 * P['adr'])) & (d['close'] <= P['e21'])
+    if '_allow' in P:                       # R10: only names his scan selected (point-in-time, whole market)
+        allow = P['_allow']
+        tradeable, leader, setup, burst, fp = (x & allow for x in (tradeable, leader, setup, burst, fp))
     P['_burst'], P['_fp'], P['_lag'], P['_sbd'] = burst, fp, laggard, sbd
     return tradeable, leader, setup
 
