@@ -113,6 +113,10 @@ class Cfg:
     borrow_rate: float = .05
     ep_cap: float = 0.0            # R6: fixed stop cap for EP entries (0 = use min(stop_cap, 0.5 x ADR))
     min_stop: float = 0.0          # R8 sensitivity: skip entries whose stop is narrower than this fraction
+    stop_floor_adr: float = 0.0    # R16: stop at least this many ADRs below the fill (capped by stop_cap)
+    stop_pdl: bool = False         # R16: stop at the prior day's low
+    close_stop_day0: bool = False  # R16: no intraday stop on the entry day, exit at its close if below the stop
+    nft: bool = True               # exit at the entry day's close when it is below the fill
 
 
 CANDIDATES = {
@@ -140,6 +144,11 @@ CANDIDATES.update({
     'L3': dict(_J4, ep_cap=.05, adr_min=4.0),
     'L4': dict(_J4, ep_cap=.05, adr_min=4.0, confirm_close=True),
     'L5': dict(_J4, ep_cap=.05, adr_min=4.0, risk=.01, max_gross=2.8),
+    'X1': dict(_J4, ep_cap=.05, adr_min=4.0, stop_floor_adr=.5),
+    'X2': dict(_J4, ep_cap=.05, adr_min=4.0, stop_floor_adr=.3),
+    'X3': dict(_J4, ep_cap=.05, adr_min=4.0, stop_pdl=True),
+    'X4': dict(_J4, ep_cap=.05, adr_min=4.0, close_stop_day0=True),
+    'X5': dict(_J4, ep_cap=.05, adr_min=4.0, stop_floor_adr=.5, nft=False),
 })
 
 
@@ -389,7 +398,14 @@ def simulate(P, cfg, start, end, placebo=None, keep=None):
                     if kind == 'ep' and cfg.ep_cap:
                         cap = cfg.ep_cap
                     stop = lod if (fill - lod) / fill <= cap else l5[j, d, b]
-                    if not (max(0, cfg.min_stop) < (fill - stop) / fill <= cap):
+                    if cfg.stop_pdl:
+                        stop = P['d']['low'][d - 1, j]
+                        cap = cfg.stop_cap
+                    if cfg.stop_floor_adr:
+                        floor = min(cfg.stop_cap, cfg.stop_floor_adr * P['adr'][d - 1, j] / 100)
+                        stop = min(stop, fill * (1 - floor))
+                        cap = max(cap, floor)
+                    if not (max(0, cfg.min_stop) < (fill - stop) / fill <= cap + 1e-9):
                         continue
                     events.append((b, prio[j], j, float(fill), float(stop), kind))
         events.sort(key=lambda x: (x[0], x[1]))
@@ -407,7 +423,8 @@ def simulate(P, cfg, start, end, placebo=None, keep=None):
             gross += value
             q = Pos(j, kind, d, b, fill, stop, value / fill, value / fill, cash_in=flow, side=side)
             pos[j] = q
-            manage(q, d, b + 1)
+            if not (cfg.close_stop_day0 and side > 0):
+                manage(q, d, b + 1)
         for q in list(pos.values()):
             j = q.j
             if np.isnan(C[d, j]):
@@ -421,7 +438,10 @@ def simulate(P, cfg, start, end, placebo=None, keep=None):
                     q.below9 = q.below9 or C[d, j] < P['e9'][d, j]
                 continue
             if q.d0 == d:
-                if C[d, j] < q.fill:
+                if cfg.close_stop_day0 and C[d, j] <= q.stop:
+                    sell(q, q.shares, C[d, j], d, 'close_stop')
+                    continue
+                if cfg.nft and C[d, j] < q.fill:
                     sell(q, q.shares, C[d, j], d, 'nft')
                     continue
             elif q.above9 and C[d, j] < P['e9'][d, j]:

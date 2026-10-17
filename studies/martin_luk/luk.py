@@ -42,6 +42,9 @@ class Config:
     trim_frac: float = .15
     conservative: bool = True      # entry-day low <= stop counts as stopped
     d4: bool = False               # R4-B: close-confirmed breakout / continuation / EP / first pullback
+    g: str = ''                    # R17: W2-gated close entries ('G1'..'G5'); needs ind['leader'] = W2 watchlist
+    adr_cap_mult: float = .5       # stop width cap = min(stop_cap, adr_cap_mult x ADR20)
+    trail: str = 'e9'              # trailing EMA after the first close above it
 
 
 def load(market):
@@ -117,6 +120,8 @@ def signals(p, ind, cfg):
     """
     if cfg.d4:
         return d4_signals(p, ind, cfg)
+    if cfg.g:
+        return g_signals(p, ind, cfg)
     o, h, l, c = p['open'], p['high'], p['low'], p['close']
     T = len(c)
     prio = np.nan_to_num(-ind['r63'], nan=0.0)
@@ -178,6 +183,33 @@ def d4_signals(p, ind, cfg):
         for kind, m in today.items():
             for j in np.flatnonzero(m[d]):
                 closes[d].append((prio[d, j], j, c[d, j], l[d, j], 'c' + kind))
+        closes[d].sort(key=lambda x: x[0])
+    return orders, closes
+
+
+def g_signals(p, ind, cfg):
+    """R17: close entries on base setups for names on the watchlist (ind['leader'], as of the previous close)."""
+    o, h, l, c = p['open'], p['high'], p['low'], p['close']
+    T = len(c)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        tight = ((h <= lag(h)) & (l >= lag(l))) | ((h / l - 1) * 100 <= .5 * ind['adr'])
+        e21p, e9p = lag(ind['e21']), lag(ind['e9'])
+        setup = (((l < e21p) & (c > e21p)) | ((l < e9p) & (c > e9p))
+                 | ((lag(tight.astype(float)) == 1) & (c > lag(h))))
+        ok = (lag(ind['leader'].astype(float)) == 1) & ind['tradeable'] & (ind['e9'] > ind['e21']) & (ind['e21'] > ind['e50'])
+        go = setup & ok
+        if cfg.g == 'G2':
+            vol = p['turnover'] / np.where(c > 0, c, np.nan)
+            go &= lag(rolling_mean(vol, 5)) <= .7 * lag(rolling_mean(vol, 50))
+    stop = l.copy()
+    if cfg.g == 'G3':
+        stop = c * (1 - np.fmin(ind['adr'] / 100, cfg.stop_cap))
+    prio = np.nan_to_num(-ind['r63'], nan=0.0)
+    orders = [[] for _ in range(T)]
+    closes = [[] for _ in range(T)]
+    for d in range(1, T):
+        for j in np.flatnonzero(go[d]):
+            closes[d].append((prio[d, j], j, c[d, j], stop[d, j], 'g'))
         closes[d].sort(key=lambda x: x[0])
     return orders, closes
 
@@ -245,7 +277,7 @@ def simulate(p, ind, cfg, start, end, orders, closes, placebo=None):
     def buy(j, fill, stop, kind, d, equity):
         nonlocal cash, gross_ref
         risk = (fill - stop) / fill
-        if not (0 < risk <= min(cfg.stop_cap, .005 * ind['adr'][d - 1 if kind == 'bo' else d, j])):
+        if not (0 < risk <= min(cfg.stop_cap, cfg.adr_cap_mult / 100 * ind['adr'][d - 1 if kind == 'bo' else d, j]) + 1e-9):
             return None
         frac = cfg.risk * (.5 if cfg.dd_halving and equity < .9 * peak else 1)
         value = min(frac * equity / risk, cfg.max_position * equity)
@@ -334,10 +366,11 @@ def simulate(p, ind, cfg, start, end, orders, closes, placebo=None):
                         continue
                 q.above9 = c[d, j] > ind['e9'][d, j]
                 continue
-            if q.above9 and c[d, j] < ind['e9'][d, j]:
+            trail = ind[cfg.trail]
+            if q.above9 and c[d, j] < trail[d, j]:
                 sell(q, q.shares, c[d, j], d, 'ema9')
                 continue
-            q.above9 = q.above9 or c[d, j] > ind['e9'][d, j]
+            q.above9 = q.above9 or c[d, j] > trail[d, j]
         # 4) close entries (pullback reclaim, or placebo replacements of every entry)
         if allow_close:
             items = closes[d] if rng is None else (_placebo(closes[d], d, ind, rng, 'pb')
@@ -348,7 +381,7 @@ def simulate(p, ind, cfg, start, end, orders, closes, placebo=None):
                     continue
                 q = buy(j, price, stop, kind, d, equity)
                 if q is not None:
-                    q.above9 = c[d, j] > ind['e9'][d, j]
+                    q.above9 = c[d, j] > ind[cfg.trail][d, j]
         # 5) financing and mark
         gross = sum(q.shares * last_close(q.j, d) for q in pos.values())
         eq = cash + gross

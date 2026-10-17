@@ -292,3 +292,28 @@ def r11():
 
 if __name__ == '__main__' and sys.argv[1] == 'r11':
     r11()
+
+
+def concepts(codes):
+    """CONCEPT plates per code from OpenD get_owner_plate (no quota), cached."""
+    path = luk.CACHE / 'concepts.json'
+    have = json.loads(path.read_text()) if path.exists() else {}
+    todo = [c for c in codes if c not in have]
+    if todo:
+        import time
+        import futu as ft
+        q = ft.OpenQuoteContext(host='127.0.0.1', port=11111)
+        try:
+            for k in range(0, len(todo), 200):
+                batch = todo[k:k + 200]
+                ret, df = q.get_owner_plate(batch)
+                if ret != ft.RET_OK:
+                    raise RuntimeError(str(df))
+                cc = df[df.plate_type == 'CONCEPT']
+                for c in batch:
+                    have[c] = sorted(set(cc[cc.code == c].plate_name.tolist()))
+                time.sleep(3.5)
+        finally:
+            q.close()
+        path.write_text(json.dumps(have, ensure_ascii=False, indent=0))
+    return have

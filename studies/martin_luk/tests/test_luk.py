@@ -123,5 +123,22 @@ class D4(unittest.TestCase):
         self.assertEqual([(d, x[2], x[3], x[4]) for d in range(T) for x in closes[d]], [(26, 113.5, 111.0, 'cburst')])
 
 
+class G(unittest.TestCase):
+    def test_watchlist_gated_close_entry_and_wider_atr_stop(self):
+        rows = [(100, 101, 99, 100)] * 25 + [(100, 101.5, 99.8, 101), (101, 103, 100.5, 102.8), (103, 104, 102, 103)]
+        p = panel(rows)
+        p['turnover'] = np.full((len(rows), 1), 1e8)
+        T = len(rows)
+        ind = ind_for(p)
+        lead = np.zeros((T, 1), bool)
+        lead[25] = True                                  # on the watchlist as of day 25's close
+        ind.update(e9=np.full((T, 1), 101.2), e21=np.full((T, 1), 100.6), e50=np.full((T, 1), 99.0),
+                   r63=np.zeros((T, 1)), tradeable=np.ones((T, 1), bool), adr=np.full((T, 1), 6.0), leader=lead)
+        _, closes = luk.g_signals(p, ind, luk.Config(g='G1'))
+        self.assertEqual([(d, x[2], x[3]) for d in range(T) for x in closes[d]], [(26, 102.8, 100.5)])
+        _, closes = luk.g_signals(p, ind, luk.Config(g='G3'))
+        self.assertAlmostEqual(closes[26][0][3], 102.8 * .95, places=6)   # 1 x 6% ADR capped at 5%
+
+
 if __name__ == '__main__':
     unittest.main()

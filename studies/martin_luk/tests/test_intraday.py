@@ -136,6 +136,21 @@ class Simulate(unittest.TestCase):
         sold = .15 * 101.1 + .85 * 100.4
         self.assertAlmostEqual(tr[0]['ret'], (sold * .999 - 100.5 * 1.001) / 100.5, places=6)
 
+    def test_adr_floor_moves_the_stop_below_a_too_close_day_low(self):
+        o, h, l, c = flat(100.4)
+        l[0] = 100.3                       # LOD 100.3 is only 0.2% below the 100.5 fill
+        h[1], l[6] = 100.6, 99.5           # 99.5 would hit the LOD stop but not a 0.5 x 8% ADR = 4% floor
+        _, _, tr = self.run_bo([(o, h, l, c)], stop_floor_adr=.5)
+        self.assertAlmostEqual(tr[0]['stop'], 100.5 * .96, places=4)
+        self.assertNotEqual(tr[0]['why'], 'stop')
+
+    def test_close_stop_ignores_the_entry_day_wick(self):
+        o, h, l, c = flat(100.45)
+        l[0] = 100.3
+        h[1], l[6], c[-1] = 100.6, 100.0, 100.55   # wick under the 100.3 stop, close back above the fill
+        _, _, tr = self.run_bo([(o, h, l, c)], close_stop_day0=True)
+        self.assertEqual(tr[0]['why'], 'end')
+
     def test_overnight_gap_below_stop_exits_at_next_open(self):
         o, h, l, c = flat(100.45)
         l[0] = 100.3
