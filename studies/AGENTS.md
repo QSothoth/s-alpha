@@ -7,9 +7,9 @@
 | 目录 | 归属与保留理由 |
 |---|---|
 | [daily_technical/](daily_technical/README.md) | `daily-technical-review` 的日 K 计算实现 |
-| [us_0dte_picks/](us_0dte_picks/README.md) | `near-expiry-session` 的会话及共享计算；SV1/SV2 验证尚未完成，不能按日历推定通过 |
+| [us_0dte_picks/](us_0dte_picks/README.md) | `near-expiry-session` 的会话及共享计算 |
 | [trend_breakout/](trend_breakout/README.md) | `trend-market-scan` 的最终方案、扫描、复算与测试；同段择优、无独立样本外资格 |
-| [us_opening_range/](us_opening_range/README.md) | SV1 的兼容采集路径，被已登记定时任务引用，保留模块名 |
+| [martin_luk/](martin_luk/README.md) | 复刻 Martin Luk 动量波段的研究（2026-10-16）；区间内结论、无样本外，不接 custody、不当生产能力 |
 | [auction_strength/](auction_strength/README.md) | 既有竞价例程接口；仅 3 天样本、门槛未校准，不新增独立 skill 或宣传为已验证能力 |
 
 ## 归档与新研究
