@@ -11,6 +11,7 @@
 | [opportunity-research](skills/opportunity-research/SKILL.md)：机会与反证研究 | [studies/AGENTS.md](studies/AGENTS.md) |
 | [daily-technical-review](skills/daily-technical-review/SKILL.md)：单股日 K 多头评估 | [studies/AGENTS.md](studies/AGENTS.md) |
 | [trend-market-scan](skills/trend-market-scan/SKILL.md)：全市场周线规则扫描 | [studies/AGENTS.md](studies/AGENTS.md) |
+| [trader-replication](skills/trader-replication/SKILL.md)：按环节逼近一位公开交易员 | [studies/AGENTS.md](studies/AGENTS.md) |
 | [market-watch](skills/market-watch/SKILL.md)：盘中只读盯盘 | [watch/AGENTS.md](watch/AGENTS.md) |
 | [near-expiry-session](skills/near-expiry-session/SKILL.md)：近到期期权会话 | [custody/AGENTS.md](custody/AGENTS.md)、[studies/AGENTS.md](studies/AGENTS.md) |
 
@@ -40,6 +41,6 @@ Skill 是任务入口，不改变实现的成熟度、策略资格或交易权�
 - 文档中文；代码、标识符、提交信息英文。运行时只用标准库（连 OpenD 的入口需 `futu-api`；研究脚本可用 numpy）。
 - 改哪里跑哪里的测试，`custody/tests` 每次都跑（含规范结构检查）：
   `python3 -m unittest discover -s custody/tests` · `python3 watch/test_watch.py` ·
-  `python3 -m unittest discover -s studies/<切片>/tests`（有 `tests/` 的切片：us_0dte_picks、auction_strength；trend_breakout、martin_luk 需要 numpy，用 `/opt/futu-opend/venv/bin/python`）
+  `python3 -m unittest discover -s studies/<切片>/tests`（有 `tests/` 的切片：us_0dte_picks、auction_strength；trend_breakout、martin_luk、trader_replication 需要 numpy，用 `/opt/futu-opend/venv/bin/python`）
 - 改文档前核对代码、CLI 和已提交报告；不把约定写成尚未实现的自动保证。
 - 其余文档：[README.md](README.md)（概览）、[docs/OPEND_SETUP.md](docs/OPEND_SETUP.md)（OpenD 环境）。

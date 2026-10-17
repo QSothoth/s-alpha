@@ -9,7 +9,8 @@
 | [daily_technical/](daily_technical/README.md) | `daily-technical-review` 的日 K 计算实现 |
 | [us_0dte_picks/](us_0dte_picks/README.md) | `near-expiry-session` 的会话及共享计算 |
 | [trend_breakout/](trend_breakout/README.md) | `trend-market-scan` 的最终方案、扫描、复算与测试；同段择优、无独立样本外资格 |
-| [martin_luk/](martin_luk/README.md) | 复刻 Martin Luk 动量波段的研究（2026-10-16）；区间内结论、无样本外，不接 custody、不当生产能力 |
+| [martin_luk/](martin_luk/README.md) | 复刻 Martin Luk 动量波段的研究（2026-10-16）及 `trader-replication` 的第一个例子（R19–R28）；区间内结论、无样本外，不接 custody、不当生产能力 |
+| [trader_replication/](trader_replication/README.md) | `trader-replication` 的通用代码：交易台账、命中率、同日同波动组超额、多空日 K 组合与安慰剂 |
 | [auction_strength/](auction_strength/README.md) | 既有竞价例程接口；仅 3 天样本、门槛未校准，不新增独立 skill 或宣传为已验证能力 |
 
 ## 归档与新研究
