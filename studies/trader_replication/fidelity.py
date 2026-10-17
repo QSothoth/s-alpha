@@ -41,7 +41,8 @@ def recall(mask, located, pool=None):
     per, base = {}, []
     for t, j, a, b in located:
         per[t.id] = bool(mask[a:b + 1, j].any())
-        base.append(1 - np.prod(1 - share[a:b + 1]))
+        here = pool[a:b + 1, j]                    # a random draw can only pick the stock on days it is in the pool
+        base.append(1 - np.prod(1 - share[a:b + 1][here]))
     hits = sum(per.values())
     r, rb = hits / len(located), float(np.mean(base))
     return dict(n=len(located), hits=hits, recall=r, random=rb, lift=r / rb if rb > 0 else float('nan'),

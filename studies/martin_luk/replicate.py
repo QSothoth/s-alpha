@@ -100,7 +100,8 @@ def setup_close(A):
 
 
 def setup_intraday(A):
-    """Day t triggers knowable intraday: PDH break after a tight day, a touch of EMA9/21 that holds, or a 10% gap."""
+    """R19's report-only P4': PDH break after a tight day, a touch of EMA9/21 that holds into the close, or a 10% gap
+    (the 'holds' part uses the day's close, so this is a daily description, not an intraday trigger)."""
     o, c, h, l = A['open'], A['close'], A['high'], A['low']
     e9p, e21p = prev(A['e9']), prev(A['e21'])
     with np.errstate(invalid='ignore', divide='ignore'):
@@ -238,9 +239,23 @@ def strength_lists(A, pool):
         k3 = np.zeros_like(k1)
         for hz in (21, 63, 126):
             k3 |= c / luk.lag(c, hz) - 1 >= .30
+        k7 = (A['pr21'] >= .95) | (A['pr63'] >= .95) | (A['pr126'] >= .95)
     rp = A['rank_pool']
     return {'K0': w2_mask(A), 'K1': S._past_any(k1 & rp, 20), 'K2': S._past_any(k2 & rp, 20),
-            'K3': S._past_any(k3 & rp, 20), 'K4': S._past_any((k1 & rp) | top1, 20)}
+            'K3': S._past_any(k3 & rp, 20), 'K4': S._past_any((k1 & rp) | top1, 20),
+            # R21b: one-week retention (his weekend leader scan) or a higher bar
+            'K5': S._past_any(k1 & rp, 5), 'K6': S._past_any(k2 & rp, 5), 'K7': S._past_any(k7 & rp, 20),
+            'K8': S._past_any(k3 & rp, 5), 'K9': S._past_any((k1 & rp) | top1, 5)}
+
+
+def strength_choice():
+    """R21b when it passed, else R21 when it passed, else the reference W2."""
+    for name in ('r21b_strength.json', 'r21_strength.json'):
+        if (I.OUT / name).exists():
+            res = json.loads((I.OUT / name).read_text())
+            if res.get('passed'):
+                return res['chosen']
+    return 'K0'
 
 
 def r21():
@@ -249,7 +264,20 @@ def r21():
     pool = stage_inputs(A, 21)['pool']
     ev, res = pdh_events(A, pool)
     grp = E.groups(prev(A['adr']), pool, A['days'] >= '2024-01-02')
-    round_lists(A, pool, strength_lists(A, pool), ls, lv, ev, res, grp, seg, 'K0', 150, 'r21_strength.json', 'R21')
+    lists = strength_lists(A, pool)
+    round_lists(A, pool, {k: lists[k] for k in ('K0', 'K1', 'K2', 'K3', 'K4')}, ls, lv, ev, res, grp, seg, 'K0', 150,
+                'r21_strength.json', 'R21')
+
+
+def r21b():
+    A = us_arrays()
+    ls, lv, seg = common(A)
+    pool = stage_inputs(A, 21)['pool']
+    ev, res = pdh_events(A, pool)
+    grp = E.groups(prev(A['adr']), pool, A['days'] >= '2024-01-02')
+    lists = strength_lists(A, pool)
+    round_lists(A, pool, {k: lists[k] for k in ('K0', 'K5', 'K6', 'K7', 'K8', 'K9')}, ls, lv, ev, res, grp, seg,
+                'K0', 150, 'r21b_strength.json', 'R21b')
 
 
 def stage_inputs(A, upto):
@@ -257,10 +285,10 @@ def stage_inputs(A, upto):
     pool = pool_mask(A, *POOLS[chosen('r20_pool.json', 'U0')])
     out = dict(pool=pool)
     if upto > 21:
-        k = chosen('r21_strength.json', 'K0')
+        k = strength_choice()
         out['k'] = pool & strength_lists(A, pool)[k]
     if upto > 22:
-        v = chosen('r22_watchlist.json', 'V0')
+        v = watch_choice()
         out['w'] = out['k'] & watch_lists(A)[v]
     return out
 
@@ -273,7 +301,20 @@ def watch_lists(A):
     with np.errstate(invalid='ignore'):
         above50 = prev(A['close'] > A['e50'])
     ones = np.ones_like(stack)
-    return {'V0': stack, 'V1': stack | wk, 'V2': above50, 'V3': stack & not_before, 'V4': ones}
+    with np.errstate(invalid='ignore'):
+        big = prev(A['to20'] >= 100e6)                          # R22b: he only adds $100M+ names to watchlists
+        fast = prev(A['adr'] >= 5)
+    return {'V0': stack, 'V1': stack | wk, 'V2': above50, 'V3': stack & not_before, 'V4': ones,
+            'V5': (stack | wk) & big, 'V6': stack & big, 'V7': above50 & big, 'V8': (stack | wk) & fast, 'V9': big}
+
+
+def watch_choice():
+    for name in ('r22b_watchlist.json', 'r22_watchlist.json'):
+        if (I.OUT / name).exists():
+            res = json.loads((I.OUT / name).read_text())
+            if res.get('passed'):
+                return res['chosen']
+    return 'V0'
 
 
 def round_lists(A, base, lists, ls, lv, ev, res, grp, seg, ref, cap, file, kind):
@@ -324,7 +365,20 @@ def r22():
     st = stage_inputs(A, 22)
     ev, res = pdh_events(A, st['pool'])
     grp = E.groups(prev(A['adr']), st['pool'], A['days'] >= '2024-01-02')
-    round_lists(A, st['k'], watch_lists(A), ls, lv, ev, res, grp, seg, 'V0', 100, 'r22_watchlist.json', 'R22')
+    lists = watch_lists(A)
+    round_lists(A, st['k'], {k: lists[k] for k in ('V0', 'V1', 'V2', 'V3', 'V4')}, ls, lv, ev, res, grp, seg, 'V0',
+                100, 'r22_watchlist.json', 'R22')
+
+
+def r22b():
+    A = us_arrays()
+    ls, lv, seg = common(A)
+    st = stage_inputs(A, 22)
+    ev, res = pdh_events(A, st['pool'])
+    grp = E.groups(prev(A['adr']), st['pool'], A['days'] >= '2024-01-02')
+    lists = watch_lists(A)
+    round_lists(A, st['k'], {k: lists[k] for k in ('V0', 'V5', 'V6', 'V7', 'V8', 'V9')}, ls, lv, ev, res, grp, seg,
+                'V0', 100, 'r22b_watchlist.json', 'R22b')
 
 
 def setups(A):
@@ -339,7 +393,52 @@ def setups(A):
     return {'E1': e1, 'E2': e2, 'E3': e3, 'E4': e4, 'E5': e2 | e3 | e4}
 
 
-def r23():
+def top_per_day(m, score, n=10):
+    """Keep, per day, the n flagged names with the highest score."""
+    out = np.zeros_like(m)
+    for t in np.flatnonzero(m.any(1)):
+        js = np.flatnonzero(m[t])
+        if len(js) > n:
+            js = js[np.argsort(-np.nan_to_num(score[t, js], nan=-np.inf))[:n]]
+        out[t, js] = True
+    return out
+
+
+def setup_families(A, w):
+    """Candidate setups as {name: {trigger kind: mask}}; the kind tells the 5-minute trigger what to wait for
+    ('E2' break of the prior-day high, 'E3' opening-range high after a gap, 'E4' dip into EMA9 then a bar breakout)."""
+    s = setups(A)
+    o, h, l, c = A['open'], A['high'], A['low'], A['close']
+    ph, pl, pc, e9p = prev(h), prev(l), prev(c), prev(A['e9'])
+    with np.errstate(invalid='ignore', divide='ignore'):
+        near = prev(np.abs(A['close'] / A['e9'] - 1) <= .03)       # R23b: prior close within 3% of the 9 EMA
+        # R23c
+        handshake = (o > pc * 1.01) & (l <= np.fmax(ph, e9p)) & (c > np.fmin(ph, e9p))
+        wick = (o >= pl + .5 * (ph - pl)) & (o <= ph) & (h > ph)
+        r3 = prev(c / luk.lag(c, 3) - 1)
+        strong_close = prev((c - l) >= .5 * (h - l))
+    e10 = s['E1'] & near | s['E4'] & near
+    top10 = top_per_day(w & e10, prev(A['pr21']), 8)
+    return {
+            'E11': {'E11': handshake}, 'E12': {'E2': wick}, 'E13': {'E2': top_per_day(w & s['E1'], r3)},
+            'E14': {'E2': top10 & s['E1'], 'E4': top10 & s['E4']},
+            'E15': {'E2': s['E1'] & near & strong_close},'E1': {'E2': s['E1']}, 'E2': {'E2': s['E2']}, 'E3': {'E3': s['E3']}, 'E4': {'E4': s['E4']},
+            'E5': {'E2': s['E2'], 'E3': s['E3'], 'E4': s['E4']},
+            'E6': {'E2': s['E1'] & near},
+            'E7': {'E2': s['E2'] & near, 'E3': s['E3'] & near, 'E4': s['E4'] & near},
+            'E8': {'E2': top_per_day(w & s['E1'], prev(A['pr21']))},
+            'E9': {'E2': top_per_day(w & s['E1'], prev(A['to20']))},
+            'E10': {'E2': s['E1'] & near, 'E4': s['E4'] & near}}
+
+
+def union(fam):
+    out = None
+    for m in fam.values():
+        out = m.copy() if out is None else out | m
+    return out
+
+
+def setup_round(names, file, tag, ref='E2'):
     A = us_arrays()
     trades = L.load(LEDGER)
     sel, val = L.split(trades, CUTOFF)
@@ -354,46 +453,65 @@ def r23():
     with np.errstate(invalid='ignore', divide='ignore'):
         res[:-10] = c[10:] / c[:-10] - 1                          # buy the signal day's close, 10 closes later
     grp = E.groups(prev(A['adr']), w, days >= '2024-01-02')
-    sets = setups(A)
+    fams = setup_families(A, w)
+    sets = {k: union(fams[k]) for k in set(names) | {ref}}
     out = {'select': {}, 'validate': {}}
-    for k, m in sets.items():
-        mm = w & m
+    for k in names:
+        mm = w & sets[k]
         r = F.recall(mm, ls, A['has'])
         rw = F.recall(mm, ls, w)                                  # random baseline drawn from the watchlist itself
         out['select'][k] = dict(hits=r['hits'], n=r['n'], recall=r['recall'], random_in_watchlist=rw['random'],
                                 lift_in_watchlist=rw['lift'], width=F.width(mm, days, '2024-01-02', '2026-03-31'),
-                                edge=E.excess(res, grp, w, m, seg['select']),
+                                edge=E.excess(res, grp, w, sets[k], seg['select']),
                                 lost=[i for i, ok in r['per_trade'].items() if not ok])
-        print('R23 select', k, {a: b for a, b in out['select'][k].items() if a != 'lost'}, flush=True)
+        print(tag, 'select', k, {a: b for a, b in out['select'][k].items() if a != 'lost'}, flush=True)
     ok = {k: v for k, v in out['select'].items() if v['width']['median'] <= 15 and v['edge'].get('excess', -1) >= 0}
     best = max(ok, key=lambda k: (ok[k]['hits'], -ok[k]['width']['median'])) if ok else None
-    for k in ['E2'] + ([best] if best and best != 'E2' else []):
+    for k in [ref] + ([best] if best and best != ref else []):
         mm = w & sets[k]
         r, rw = F.recall(mm, lv, A['has']), F.recall(mm, lv, w)
         out['validate'][k] = dict(hits=r['hits'], n=r['n'], recall=r['recall'], random_in_watchlist=rw['random'],
                                   lift_in_watchlist=rw['lift'], edge=E.excess(res, grp, w, sets[k], seg['validate']),
                                   lost=[i for i, ok_ in r['per_trade'].items() if not ok_])
-        print('R23 validate', k, {a: b for a, b in out['validate'][k].items() if a != 'lost'}, flush=True)
+        print(tag, 'validate', k, {a: b for a, b in out['validate'][k].items() if a != 'lost'}, flush=True)
     out['chosen'] = best
     if best:
-        v, v0 = out['validate'][best], out['validate']['E2']
+        v, v0 = out['validate'][best], out['validate'][ref]
         out['closer'] = bool(v['lift_in_watchlist'] > 1 and v['recall'] >= v0['recall'])
         out['edge_passed'] = bool(v['edge'].get('ci', [-1])[0] > 0)
         out['passed'] = out['closer']
-    print('R23 chosen', best, {k: out.get(k) for k in ('closer', 'edge_passed')})
-    (I.OUT / 'r23_setup.json').write_text(json.dumps(out, indent=1))
+    print(tag, 'chosen', best, {k: out.get(k) for k in ('closer', 'edge_passed')})
+    (I.OUT / file).write_text(json.dumps(out, indent=1))
+
+
+def r23():
+    setup_round(['E1', 'E2', 'E3', 'E4', 'E5'], 'r23_setup.json', 'R23')
+
+
+def r23b():
+    setup_round(['E6', 'E7', 'E8', 'E9', 'E10'], 'r23b_setup.json', 'R23b')
+
+
+def r23c():
+    setup_round(['E11', 'E12', 'E13', 'E14', 'E15'], 'r23c_setup.json', 'R23c', ref='E10')
+
+
+def setup_choice():
+    for name in ('r23c_setup.json', 'r23b_setup.json', 'r23_setup.json'):
+        if (I.OUT / name).exists():
+            res = json.loads((I.OUT / name).read_text())
+            if res.get('passed'):
+                return res['chosen']
+    return 'E5'
 
 
 RULES = Y.Rules(risk=.005, max_position=.30, max_gross=2.0, trims=(3, 5), trim_frac=.15, trail='e9')
 
 
 def signal_inputs(A):
-    """Watchlist W* and the chosen setup masks per kind (R23 choice, E5 when R23 did not pass)."""
+    """Watchlist W* and the chosen setup's masks per trigger kind (R23b, else R23, else E5)."""
     w = stage_inputs(A, 23)['w']
-    sets = setups(A)
-    pick = chosen('r23_setup.json', 'E5')
-    kinds = {'E5': ('E2', 'E3', 'E4')}.get(pick, (pick,))
-    return w, {k: w & sets[k] for k in kinds}
+    return w, {k: w & m for k, m in setup_families(A, w)[setup_choice()].items()}
 
 
 def stop_cap(A):
@@ -436,30 +554,55 @@ def entries_next_open(A, sig, cols=None):
     return out
 
 
-def first_trigger(o5, h5, l5, kind, pdh, e9p):
-    """(bar, fill, lod) of the first 5-minute trigger of one setup kind on one day, or None."""
+def first_trigger(o5, h5, l5, kind, pdh, e9p, b_start=0):
+    """(bar, fill, lod) of the first 5-minute trigger of one setup kind on one day, or None; the trigger bar is
+    at or after `b_start` (R24b skips the first half hour), the low of day always counts from the open."""
     from .intraday import NB
     if np.isnan(o5[0]):
         return None
     if kind in ('E2', 'E3'):
         trig, b0 = (h5[0], 1) if kind == 'E3' or o5[0] > pdh else (pdh, 0)
-        for b in range(b0, NB):
+        for b in range(max(b0, b_start), NB):
             if np.isfinite(h5[b]) and h5[b] >= trig:
                 return b, max(trig, o5[b]), np.nanmin(l5[:b + 1])
         return None
+    support = max(pdh, e9p) if kind == 'E11' else e9p           # handshake: the gap fades into the prior high or EMA9
     dipped = False
     for b in range(NB):
         if np.isnan(h5[b]):
             continue
-        if dipped and b and np.isfinite(h5[b - 1]) and h5[b] > h5[b - 1]:
+        if dipped and b >= max(b_start, 1) and np.isfinite(h5[b - 1]) and h5[b] > h5[b - 1]:
             return b, max(h5[b - 1], o5[b]), np.nanmin(l5[:b + 1])
-        dipped |= l5[b] <= e9p
+        dipped |= l5[b] <= support
     return None
 
 
-def entries_intraday(A, sig, P):
+def pre_open_masks(A, w, pick):
+    """The chosen setup reduced to what is known before its 5-minute trigger (previous days and today's open);
+    the dip, the break and the close are left to the trigger itself, so intraday entries never see the day's end."""
+    o, pc, ph, pl = A['open'], prev(A['close']), prev(A['high']), prev(A['low'])
+    e9p, e21p, adrp = prev(A['e9']), prev(A['e21']), prev(A['adr'])
+    with np.errstate(invalid='ignore', divide='ignore'):
+        near = prev(np.abs(A['close'] / A['e9'] - 1) <= .03)
+        up = e9p > e21p
+        gap = o >= pc * (1 + np.fmax(.05, adrp / 100))
+        tight = prev(A['tight'])
+        upper_open = (o >= pl + .5 * (ph - pl)) & (o <= ph)
+        strong = prev((A['close'] - A['low']) >= .5 * (A['high'] - A['low']))
+    table = {'E1': {'E2': w}, 'E2': {'E2': w & tight}, 'E3': {'E3': w & gap}, 'E4': {'E4': w & up},
+             'E5': {'E2': w & tight, 'E3': w & gap, 'E4': w & up},
+             'E6': {'E2': w & near}, 'E7': {'E2': w & tight & near, 'E3': w & gap & near, 'E4': w & up & near},
+             'E10': {'E2': w & near, 'E4': w & up & near}, 'E11': {'E11': w & (o > pc * 1.01)},
+             'E12': {'E2': w & upper_open}, 'E15': {'E2': w & near & strong}}
+    if pick not in table:
+        raise SystemExit(f'{pick}: per-day rankings need the day-t set; no pre-open version for 5-minute entries')
+    return table[pick]
+
+
+def entries_intraday(A, sig, P, b_start=0, day_ok=None):
     """N3 on the R8 sample: first 5-minute trigger, stop at the low of day so far; a later break of that low the
-    same day exits at the stop.  Prices are mapped onto the daily panel through the day's 5-minute close."""
+    same day exits at the stop.  Prices are mapped onto the daily panel through the day's 5-minute close.
+    `sig` must hold pre-open masks (pre_open_masks), never conditions on the day's own high, low or close."""
     o5, h5, l5, c5 = P['arr'][:4]
     col = {str(x): j for j, x in enumerate(A['codes'])}
     di = {str(x): i for i, x in enumerate(P['days'])}
@@ -471,6 +614,8 @@ def entries_intraday(A, sig, P):
         if j is None:
             continue
         for d in np.flatnonzero(np.any([m[:, j] for m in sig.values()], axis=0)):
+            if day_ok is not None and not day_ok[d]:
+                continue
             dd = di.get(str(A['days'][d]))
             if dd is None:
                 continue
@@ -481,7 +626,8 @@ def entries_intraday(A, sig, P):
             best = None
             for kind, m in sig.items():
                 if m[d, j]:
-                    e = first_trigger(o5[s, dd], h5[s, dd], l5[s, dd], kind, ph[d, j] / k, e9p[d, j] / k)
+                    e = first_trigger(o5[s, dd], h5[s, dd], l5[s, dd], kind, ph[d, j] / k, e9p[d, j] / k,
+                                      b_start)
                     if e and (best is None or e[0] < best[0]):
                         best = e
             if best is None:
@@ -508,30 +654,50 @@ def run_system(A, entries, seg, pool, placebo=100):
     return st
 
 
-def r24():
+def entry_round(build, file, tag, full_market=True):
+    """R24-style loop on the R8 random sample: build(A, w, sig, P, r8) -> {name: entries}."""
     from . import intraday as I5
     A = us_arrays()
     w, sig = signal_inputs(A)
     P = I5.prepare_r8('new')
     r8 = np.isin(np.array([str(x) for x in A['codes']]), ['US.' + str(s) for s in P['syms']])
-    cands = {'N1': entries_close(A, sig, r8), 'N2': entries_next_open(A, sig, r8), 'N3': entries_intraday(A, sig, P)}
+    cands = build(A, w, sig, P, r8)
     del P
     pool = w & r8[None, :]
     segs = {'select': ('2024-01-02', '2024-12-31'), 'validate': ('2025-01-02', '2026-10-16')}
     out = {'select': {}, 'validate': {}, 'full_market': {}}
     for k, e in cands.items():
         out['select'][k] = run_system(A, e, segs['select'], pool)
-        print('R24 select', k, {a: b for a, b in out['select'][k].items() if a != 'by_year'}, flush=True)
+        print(tag, 'select', k, {a: b for a, b in out['select'][k].items() if a != 'by_year'}, flush=True)
     best = max(cands, key=lambda k: out['select'][k]['total'] - out['select'][k]['placebo']['median'])
     v = out['validate'][best] = run_system(A, cands[best], segs['validate'], pool)
-    print('R24 validate', best, {a: b for a, b in v.items() if a != 'by_year'}, flush=True)
+    print(tag, 'validate', best, {a: b for a, b in v.items() if a != 'by_year'}, flush=True)
     out['chosen'] = best
     out['passed'] = bool(v['total'] > v['placebo']['p90'] and v['ci_r'][0] > 0)
-    for k, fn in (('N1', entries_close), ('N2', entries_next_open)):
-        out['full_market'][k] = run_system(A, fn(A, sig), ('2024-01-02', '2026-10-16'), w)
-        print('R24 full market', k, {a: b for a, b in out['full_market'][k].items() if a != 'by_year'}, flush=True)
-    print('R24 chosen', best, 'passed', out['passed'])
-    (I.OUT / 'r24_entry.json').write_text(json.dumps(out, indent=1))
+    if full_market:
+        for k, fn in (('N1', entries_close), ('N2', entries_next_open)):
+            out['full_market'][k] = run_system(A, fn(A, sig), ('2024-01-02', '2026-10-16'), w)
+            print(tag, 'full market', k, {a: b for a, b in out['full_market'][k].items() if a != 'by_year'},
+                  flush=True)
+    print(tag, 'chosen', best, 'passed', out['passed'])
+    (I.OUT / file).write_text(json.dumps(out, indent=1))
+
+
+def r24():
+    def build(A, w, sig, P, r8):
+        pre = pre_open_masks(A, w, setup_choice())
+        return {'N1': entries_close(A, sig, r8), 'N2': entries_next_open(A, sig, r8),
+                'N3': entries_intraday(A, pre, P)}
+    entry_round(build, 'r24_entry.json', 'R24')
+
+
+def r24b():
+    def build(A, w, sig, P, r8):
+        pre = pre_open_masks(A, w, setup_choice())
+        up21 = ew_index_up(A, stage_inputs(A, 21)['pool'], 21)
+        return {'N4': entries_intraday(A, pre, P, b_start=6), 'N5': entries_intraday(A, pre, P, b_start=12),
+                'N6': entries_intraday(A, pre, P, b_start=6, day_ok=up21)}
+    entry_round(build, 'r24b_entry.json', 'R24b', full_market=False)
 
 
 EXITS = {'X0': {}, 'X1': dict(trims=()), 'X2': dict(trail='e21'), 'X3': dict(stop_ema_buffer=.01),
@@ -565,12 +731,11 @@ def pick_and_validate(A, cands, pool, file, tag):
         out['select'][k] = run_rules(A, e, SEGS['select'], pool, rules)[0]
         print(tag, 'select', k, {a: b for a, b in out['select'][k].items() if a != 'by_year'}, flush=True)
     best = max(cands, key=lambda k: out['select'][k]['total'] - out['select'][k]['placebo']['median'])
-    v, tr = run_rules(A, *cands[best], SEGS['validate'], pool)
+    v = run_rules(A, cands[best][0], SEGS['validate'], pool, cands[best][1])[0]
     out['validate'][best] = v
     print(tag, 'validate', best, {a: b for a, b in v.items() if a != 'by_year'}, flush=True)
     out['chosen'] = best
     out['passed'] = bool(v['total'] > v['placebo']['p90'] and v['ci_r'][0] > 0)
-    out['validate_trades'] = tr
     print(tag, 'chosen', best, 'passed', out['passed'])
     (I.OUT / file).write_text(json.dumps(out, indent=1))
     return out
@@ -608,13 +773,9 @@ def r26():
     e = system_entries(A, sig)
     base = replace(RULES, **EXITS[chosen('r25_exits.json', 'X0')])
     st = stage_inputs(A, 21)
-    up21 = ew_index_up(A, st['pool'], 21)
-    lead = (w & prev(A['stack'])).sum(1).astype(float)
-    med50 = np.array([np.median(lead[max(0, t - 50):t]) if t else np.nan for t in range(len(lead))])
-    breadth = prev((lead >= med50)[:, None])[:, 0]
     cands = {k: (e, replace(base, **x)) for k, x in SIZING.items()}
-    cands['S3'] = (filter_days(e, up21), base)
-    cands['S4'] = (filter_days(e, breadth), base)
+    cands['S3'] = (filter_days(e, ew_index_up(A, st['pool'], 21)), base)
+    cands['S4'] = (filter_days(e, breadth_ok(A, w)), base)
     pick_and_validate(A, cands, w, 'r26_sizing.json', 'R26')
 
 
@@ -664,6 +825,67 @@ def r27():
     (I.OUT / 'r27_shorts.json').write_text(json.dumps(out, indent=1))
 
 
+def breadth_ok(A, w):
+    """R26 S4: yesterday's count of watchlist names in a daily EMA stack is at least its 50-day median."""
+    lead = (w & prev(A['stack'])).sum(1).astype(float)
+    med50 = np.array([np.median(lead[max(0, t - 50):t]) if t else np.nan for t in range(len(lead))])
+    return prev((lead >= med50)[:, None])[:, 0]
+
+
+def leader_shorts(A, pool):
+    """R27b: shorts on former leaders right after their first break below the 21 EMA."""
+    o, h, c = A['open'], A['high'], A['close']
+    e9, e9p, e21p = A['e9'], prev(A['e9']), prev(A['e21'])
+    k9 = strength_lists(A, pool)['K9']
+    with np.errstate(invalid='ignore'):
+        was_leader = S._past_any(k9, 40)
+        cross = prev(A['close'] > A['e21']) & (A['close'] < A['e21'])        # close moves from above to below EMA21
+        fresh = S._past_any(cross, 5)
+        base = pool & was_leader & fresh
+        z6 = base & (h >= e9p) & (c < e9p) & (e9 < e9p)
+        z8 = base & (o > prev(c)) & (h >= e21p) & (c < e9p)
+    return {'Z6': z6, 'Z8': z8, 'Z9': z6 | z8}
+
+
+def short_entries_for(A, pool, w, name):
+    """Entries for any R27 / R27b short candidate."""
+    if name in ('Z1', 'Z2', 'Z3', 'Z4', 'Z5'):
+        z = short_signals(A, pool)
+        e = entries_short(A, z[{'Z3': 'Z1', 'Z4': 'Z2'}.get(name, name)])
+        return filter_days(e, ~ew_index_up(A, pool, 50)) if name in ('Z3', 'Z4', 'Z5') else e
+    z = leader_shorts(A, pool)
+    if name == 'Z7':
+        return filter_days(entries_short(A, z['Z6']), ~ew_index_up(A, pool, 21))
+    if name == 'Z10':
+        return filter_days(entries_short(A, z['Z9']), ~breadth_ok(A, w))
+    return entries_short(A, z[name])
+
+
+def short_choice():
+    for name in ('r27b_shorts.json', 'r27_shorts.json'):
+        if (I.OUT / name).exists():
+            res = json.loads((I.OUT / name).read_text())
+            if res.get('passed'):
+                return res['chosen']
+    return None
+
+
+def r27b():
+    A = us_arrays()
+    pool = stage_inputs(A, 21)['pool']
+    w = stage_inputs(A, 23)['w']
+    rules = replace(chosen_rules(), trims=(3,), trail='e9', max_days=3)
+    cands = {k: (short_entries_for(A, pool, w, k), rules) for k in ('Z6', 'Z7', 'Z8', 'Z9', 'Z10')}
+    out = pick_and_validate(A, cands, pool, 'r27b_shorts.json', 'R27b')
+    trades = L.load(LEDGER)
+    shorts = [t for t in trades if t.side == 'short' and t.dated]
+    loc, _ = F.locate(shorts, A['days'], A['codes'], has=A['has'])
+    z = leader_shorts(A, pool)
+    out['fidelity'] = {k: {a: b for a, b in F.recall(m, loc, A['has']).items()} for k, m in z.items()}
+    print('R27b fidelity', {k: (v['hits'], v['n']) for k, v in out['fidelity'].items()})
+    (I.OUT / 'r27b_shorts.json').write_text(json.dumps(out, indent=1))
+
+
 FLOOR = {'hk': 1.0, 'cn': 3.0}
 COSTS = {'us': (.0005, .0005), 'hk': (.0016, .0016), 'cn': (.00076, .00126)}
 
@@ -681,12 +903,9 @@ def pool_for(A):
 
 def system_signals(A):
     pool = pool_for(A)
-    k = pool & strength_lists(A, pool)[chosen('r21_strength.json', 'K0')]
-    w = k & watch_lists(A)[chosen('r22_watchlist.json', 'V0')]
-    sets = setups(A)
-    pick = chosen('r23_setup.json', 'E5')
-    kinds = {'E5': ('E2', 'E3', 'E4')}.get(pick, (pick,))
-    return pool, w, {x: w & sets[x] for x in kinds}
+    k = pool & strength_lists(A, pool)[strength_choice()]
+    w = k & watch_lists(A)[watch_choice()]
+    return pool, w, {x: w & m for x, m in setup_families(A, w)[setup_choice()].items()}
 
 
 def limit_up(A):
@@ -711,7 +930,8 @@ def r28():
     trades = L.load(LEDGER)
     _, val = L.split(trades, CUTOFF)
     full = ('2024-01-02', '2026-10-16')
-    shorts_on = chosen('r27_shorts.json', None)
+    shorts_on = short_choice()
+    sizing = chosen('r26_sizing.json', 'S0')
     for market in ('us', 'hk', 'cn'):
         A = market_arrays(market)
         pool, w, sig = system_signals(A)
@@ -719,15 +939,15 @@ def r28():
             lu = limit_up(A)
             sig = {k: m & ~lu for k, m in sig.items()}
         entries = system_entries(A, sig)
+        if sizing == 'S3':
+            entries = filter_days(entries, ew_index_up(A, pool, 21))
+        elif sizing == 'S4':
+            entries = filter_days(entries, breadth_ok(A, w))
         rules = replace(chosen_rules(), buy_cost=COSTS[market][0], sell_cost=COSTS[market][1],
                         short_trims=(3,), short_max_days=3)
-        res = {}
+        res = {'sizing': sizing}
         if market == 'us' and shorts_on:
-            z = short_signals(A, pool)
-            zs = {'Z3': 'Z1', 'Z4': 'Z2'}.get(shorts_on, shorts_on)
-            se = entries_short(A, z[zs])
-            if shorts_on in ('Z3', 'Z4', 'Z5'):
-                se = filter_days(se, ~ew_index_up(A, pool, 50))
+            se = short_entries_for(A, pool, w, shorts_on)
             entries = [a + b for a, b in zip(entries, se)]
             res['shorts'] = shorts_on
         for name, seg in (('full', full), ('2024', SEGS['select']), ('2025-26', SEGS['validate'])):
@@ -753,5 +973,5 @@ def r28():
 
 
 if __name__ == '__main__':
-    {'r19': r19, 'r20': r20, 'r21': r21, 'r22': r22, 'r23': r23, 'r24': r24, 'r25': r25, 'r26': r26,
-     'r27': r27, 'r28': r28}[sys.argv[1]]()
+    {'r19': r19, 'r20': r20, 'r21': r21, 'r21b': r21b, 'r22': r22, 'r22b': r22b, 'r23': r23, 'r23b': r23b, 'r23c': r23c, 'r24': r24, 'r24b': r24b, 'r25': r25, 'r26': r26,
+     'r27': r27, 'r27b': r27b, 'r28': r28}[sys.argv[1]]()

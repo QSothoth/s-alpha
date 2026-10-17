@@ -65,6 +65,17 @@ class FidelityTests(unittest.TestCase):
         self.assertAlmostEqual(r['random'], (exact + three_days) / 2)
         self.assertAlmostEqual(r['lift'], .5 / r['random'])
 
+    def test_random_baseline_only_counts_days_the_stock_is_in_the_pool(self):
+        loc, _ = F.locate(self.trades, self.days, self.codes)
+        pool = np.zeros((5, 4), bool)
+        pool[:, 2:] = True                # AAA and BBB are never in the pool
+        pool[2, 0] = True                 # ... except AAA on its trade day
+        m = pool.copy()
+        m[:, 3] = False                   # flag one name of the pool per day (CCC; AAA on 01-03 as well)
+        r = F.recall(m, loc, pool)
+        self.assertEqual(r['per_trade'], {'A1': True, 'A2': False})
+        self.assertAlmostEqual(r['random'], (2 / 3 + 0) / 2)
+
     def test_funnel_is_cumulative(self):
         loc, _ = F.locate(self.trades, self.days, self.codes)
         a = np.ones((5, 4), bool)

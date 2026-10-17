@@ -29,6 +29,18 @@ class TriggerTests(unittest.TestCase):
         # dip below e9 = 9.5 on bar 1; bar 2 does not exceed bar 1's high; bar 3 does
         self.assertEqual(R.first_trigger(o5, h5, l5, 'E4', pdh=11.0, e9p=9.5), (3, 9.7, 9.4))
 
+    def test_handshake_dips_to_the_higher_of_prior_high_and_ema9(self):
+        o5, h5, l5 = bars([(11.0, 11.2, 10.6), (10.6, 10.7, 10.45), (10.5, 10.8, 10.5)])
+        # gap above the prior high 10.5 (EMA9 9.8): the fade to 10.45 counts, bar 2 breaks bar 1's high
+        self.assertEqual(R.first_trigger(o5, h5, l5, 'E11', pdh=10.5, e9p=9.8), (2, 10.7, 10.45))
+        self.assertIsNone(R.first_trigger(o5, h5, l5, 'E4', pdh=10.5, e9p=9.8))
+
+    def test_skipping_the_first_bars_moves_the_trigger_but_not_the_low_of_day(self):
+        rows = [(10.0, 10.6, 9.8)] + [(10.4, 10.5, 10.3)] * 5 + [(10.4, 10.7, 10.35)]
+        o5, h5, l5 = bars(rows)
+        self.assertEqual(R.first_trigger(o5, h5, l5, 'E2', pdh=10.5, e9p=9.0), (0, 10.5, 9.8))
+        self.assertEqual(R.first_trigger(o5, h5, l5, 'E2', pdh=10.5, e9p=9.0, b_start=6), (6, 10.5, 9.8))
+
     def test_no_trigger_returns_none(self):
         o5, h5, l5 = bars([(10.0, 10.2, 9.9), (10.1, 10.3, 10.0)])
         self.assertIsNone(R.first_trigger(o5, h5, l5, 'E2', pdh=10.5, e9p=9.0))
