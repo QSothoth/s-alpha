@@ -279,14 +279,9 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 `human-trial-2026-09-28/day_after_review` 保存 09-29 有界只读补取的 09-28 全天材料：37 标的完整 RTH 30m、11 股完整 RTH 1m、四个既有合约完整 1m，META 717.5 Put 末 60 根 1m，另有五合约完整 15m；包括实际运行摘要、合约标价及盘中／盘后数据差异审计。只作描述性复盘，不接入 custody 正式评测，不把不完整的 1m 用 15m 伪补；未调用历史额度接口。详情见全天复盘（已归档）。
 
-### SV1 会话验证段（采集中，尚未评测）
+### SV1 会话验证段（已放弃，未评测）
 
-按 [SV1 预登记](../studies/us_0dte_picks/notes/SV1_PREREG.md)，11 只会话池股票的当天到期平值 CALL/PUT，角色 `validation/custody`，凑满 8 个交易日后评测一次。评分入口根据实际cases检查指定8日、验证角色和股票池，日期不足不加载行情或计算收益；不是只看manifest的日期声明。
-
-- `data/sv1-session-validation-work`：09-21 的 11 对（`fetch_sv1.py`，历史接口，合约代码按网格推算）。07-24、08-14 试探返回「未知股票」，没有扣额度；09-23 因期权历史额度满（60/60，7 天滚动）未取到，待释放后补取。
-- `data/sv1-0923-recovery-20261003-work`：沿原SV1的09-23补取授权，10-03有限前台先试AAPL再试余10股。AAPL标准同价CALL/PUT各390根，2case/5个冻结成员通过custody check；其余10股实际返回期权历史额度60/60已满，错误尝试保留，不改写为合约不存在。两进程均exit0且结束，普通额度193/107不变（不能据此推断期权额度释放）；CHECKSUMS自身SHA为`6e69c9d07d666e9565c0927073b0b5ca7f5a6816550af3e8aaa45ffa7eaa1d61`。角色仍validation/custody，未看收益、未评分、不用作新策略训练；工作产物未发布。
-
-- `data/sv1-capture-<日期>`：10-02、10-05、10-07、10-09、10-12 收盘后 16:30 ET 由一次性 systemd 定时器运行 `studies/us_opening_range/capture.py`（订阅接口，不扣历史额度），日志在 `data/sv1-capture-logs/`。用户 2026-10-02 同意，只采这 5 天，跑完即止。
+11 只会话池股票 8 个交易日（09-21、09-23 仅 AAPL、09-25 留出、10-02 → 10-12 收盘采集）的当天到期平值 CALL/PUT 1m，本机 `data/sv1-*`，未发布。2026-10-16 用户放弃 SV1，代码移出（见 [archive](../studies/archive/README.md)）；数据从未用于评测，仍可作验证段。
 
 ## 附录：日 K 突破趋势跟随研究数据（已发布 Release）
 
@@ -375,9 +370,9 @@ cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train
 
 | 目录 | 内容 | 状态 |
 |---|---|---|
-| `data/sv2-stock-raw` | [SV2](../studies/us_0dte_picks/notes/SV2_PREREG.md) 重拉的 12 只股票真实不复权日 K、原生 RTH 1m、IV/HV、财报辅助数据（已扣费标的，没有扣新额度） | 有用；TS 系列的开发集，已经用烂了，不能再当验证 |
+| `data/sv2-stock-raw` | SV2（已放弃）重拉的 12 只股票真实不复权日 K、原生 RTH 1m、IV/HV、财报辅助数据（已扣费标的，没有扣新额度） | 有用；TS 系列的开发集，已经用烂了，不能再当验证 |
 | `data/ux1-stock-raw` | 扩展的 8 只（BA、BAC、COIN、NFLX、ORCL、PLTR、SOFI、WMT）日 K 和 1m；ORCL 有 11 个异常股票日 | 有用；用过 TS5 起的开发，同样不能再当验证 |
-| `data/sv1-*`、`data/fd2-capture-2026-10-02` | 真实 0DTE 期权 1m 采集，见上文 SV1 | 有用；SV1 验证段，评测前不要看 |
+| `data/sv1-*`、`data/fd2-capture-2026-10-02` | 真实 0DTE 期权 1m 采集，见上文 SV1 | 有用；未评测过的验证段 |
 | `data/ts*-*`、`data/fd*-*`、`data/me*-*`、其余以研究代号开头的目录 | TS / FD 各轮的回放单位、模型、宏观日历、外部来源原件（SEC、BLS、Fed、Cboe 等） | 中间产物，研究已归档；是否删除由用户决定 |
 | `data/calendar-*`（81 个） | 历法研究的指数日线、HKO 历表、封存的预测包 | 研究已归档；NA2 的前向预测在 `data/calendar-najia-na2` |
 

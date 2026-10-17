@@ -5,7 +5,7 @@
 ## 2026-10-15：退出当前工作目录的研究
 
 - [盯盘 W1–W33](watch_signal/README.md)：保留结论索引；完整脚本、预登记、结果和测试在固定 Git 快照。当前实现继续在 `watch/`。
-- [近到期期权研究](us_0dte_picks/README.md)：保留 P 系列、OH3、R27–R29 的中文结果和失败经验；R27–R30 实验代码及逐 case 输出进入同一快照。SV1/SV2 和被会话调用的公共函数继续留在原路径。
+- [近到期期权研究](us_0dte_picks/README.md)：保留 P 系列、OH3、R27–R29 的中文结果和失败经验；R27–R30 实验代码及逐 case 输出进入同一快照。被会话调用的公共函数继续留在原路径。
 - 趋势 TF/PB 已在此前收敛，最终方案和当前扫描依赖继续留在 [trend_breakout](../trend_breakout/README.md)；未被 skill 调用的 [一次性指定名单扫描脚本](https://github.com/QSothoth/s-alpha/blob/63ab1aa27ae9a56b423ce2b57ac06729c5f96edc/studies/trend_breakout/scan_candidates.py) 一并归档。
 
 完整快照：`63ab1aa27ae9a56b423ce2b57ac06729c5f96edc`。需要复刻核对或查看旧研究测试时恢复独立 checkout，原模块、相对路径和指纹因此保持一致：
@@ -15,6 +15,14 @@ git worktree add --detach /tmp/s-alpha-research-20261015 63ab1aa27ae9a56b423ce2b
 ```
 
 数据不含在 checkout 中；按原登记与 SHA256 指定已有本地数据或 Release。恢复代码不代表获准重新跑已看过的验证段、拉新历史额度或启用旧策略。注册策略的资格报告仍在根 `reports/`，本轮不移动。
+
+## 2026-10-16：SV1/SV2 会话验证（未评测即放弃）
+
+用户认为盘中策略只作参考，验证 v6.6 会话改动没有实际用途，要求清理。
+
+- SV1：v6.6 两边独立 对 open_hold_v3 开盘缺口方向，8 个交易日真实 0DTE 期权 1m 已采齐，**从未评测、未看收益**。本机 `data/sv1-*`、`data/fd2-capture-2026-10-02` 保留，仍是没用过的验证段。
+- SV2：正股回放代理校准通过（k=0.46，w=0.04），第 2 步三年回放未跑。
+- 代码（`sv1.py`、`sv2*.py`、`fetch_sv*.py`、`proxy.py`、`us_opening_range/capture.py` 等）与预登记在快照 `ea9cf048c4c4d1ed1ad06dec89dc9566c3f7bd27`。v6.6 会话因此没有样本外证据，继续只做 mock。
 
 ## 此前归档
 
@@ -38,7 +46,7 @@ git worktree add --detach /tmp/s-alpha-research-20261015 63ab1aa27ae9a56b423ce2b
 - DS1（NR7、内包日对昨日高低突破）：都未稳定好过对照，未晋级。DS2（20 日边界突破、跳空守住／收回）：三项全败。
 - RG1（三 ETF 反向观察）：局部 30 分钟胜率 55.9%、盈亏比 1.90，但对照差值下限未过，约 80% 净标签收益来自两个日期——看过 DS2 后提出，未晋级。AH1（盘后背景 + 09:45 卖压确认）未晋级。
 - OM1（真实 0DTE 桥接）：77 个标的日只有 7 次提示，样本太小，不认证期权净收益。
-- OR1–OR4 开盘区间交易回放全部未过。SV1 仍在用的收盘采集 `capture.py`（及依赖 `scan.py`、`signals.py`）留在原路径 [studies/us_opening_range/](../us_opening_range/README.md)。`daily_scan` 只读扫描输出均为 `UNVALIDATED`，从未作选股依据。
+- OR1–OR4 开盘区间交易回放全部未过。收盘采集 `capture.py` 随 SV1 于 2026-10-16 移出。`daily_scan` 只读扫描输出均为 `UNVALIDATED`，从未作选股依据。
 - 已发布的 Release（RG1/OM1 图卡、信号快照等）照旧登记在 [DATA](../../docs/DATA.md)。归档时 RG1 图卡导出因冻结了 `custody/models.py` 的哈希（custody 2026-09-30 改过）已无法在当前代码上重跑，需从对应 Git 版本复现。
 
 ## agent_card_eval：agent 审择时卡片

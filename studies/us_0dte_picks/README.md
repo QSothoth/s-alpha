@@ -10,11 +10,7 @@
 - 冻结预登记仍引用的 `notes/FAILED_TRIALS.md` 与 `reports/P5_PARITY_CN.md` 只保留指向归档的符号链接，正文只维护一份。
 - `notes/DENOMINATORS.md`、股票池 JSON 与 P2/P3 冻结预登记：上述共享代码的输入和校验依据，保留原路径与指纹。
 
-## 尚未完成的验证
-
-[SV1](notes/SV1_PREREG.md) 与 [SV2](notes/SV2_PREREG.md) 保留预登记、取数与评测工具；已有 `reports/sv2_calibration.json` 是代理校准，不是会话收益通过。没有因为预定日期已到就自动认定评测完成，也不在整理仓库时执行评测。
-
-SV1 的兼容采集路径见 [us_opening_range](../us_opening_range/README.md)。数据使用状态见 [TEST_SETS](notes/TEST_SETS.md)。
+数据使用状态见 [TEST_SETS](notes/TEST_SETS.md)。SV1/SV2 会话验证已于 2026-10-16 放弃，见 [archive](../archive/README.md)。
 
 ## 已结束研究
 
