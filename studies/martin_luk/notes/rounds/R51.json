@@ -1,0 +1,13 @@
+{
+ "stage": "market",
+ "base": ["r50.json", "chosen"],
+ "ref": "R50",
+ "objective": "min_2024_2025",
+ "candidates": {
+  "FB1": {"filter": "NONE", "rule_opts": {"risk_low": 0.0025}},
+  "FB2": {"filter": "NONE", "rule_opts": {"risk_low": 0.001}},
+  "FB3": {"rule_opts": {"risk_low": 0.0025}},
+  "FB4": {"filter": "NONE", "rule_opts": {"risk_low": 0.0025, "feedback": 10}},
+  "FB5": {"filter": "NONE", "rule_opts": {"risk_low": 0.001, "feedback": 20}}
+ }
+}

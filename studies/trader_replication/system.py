@@ -32,6 +32,8 @@ class Rules:
     risk_high: float = 0.0          # > 0: risk per trade while the last `feedback` closed trades sum to > 0 R
     short_trims: tuple | None = None  # shorts' partial levels (None = same as longs)
     short_max_days: int = 0           # shorts' holding limit (0 = same as longs)
+    max_open: int = 0               # > 0: no new trade while this many are open
+    exit_signal: str = ''           # name of a boolean (days x codes) array in `ema`: longs exit at that close
     buy_cost: float = .0005
     sell_cost: float = .0005
     margin_rate: float = .07        # yearly, on long value above equity
@@ -64,6 +66,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
     o, h, l, c, dates = px['open'], px['high'], px['low'], px['close'], px['dates']
     d0, d1 = int(np.searchsorted(dates, start)), int(np.searchsorted(dates, end, side='right'))
     trail = ema.get(rules.trail) if rules.trail else None
+    sig_exit = ema[rules.exit_signal] if rules.exit_signal else None
     cash, pos, trades, curve = 1.0, {}, [], []
 
     def last(j, d):
@@ -103,6 +106,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
     def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None):
         nonlocal cash
         if j in pos or not np.isfinite(fill) or fill <= 0:
+            return
+        if rules.max_open and len(pos) >= rules.max_open:
             return
         risk = abs(fill - stop) / fill
         if not (0 < risk < 1) or (stop - fill) * side >= 0:
@@ -163,6 +168,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
                 if q.armed and rules.stop_ema_buffer >= 0:
                     level = trail[d, j] * (1 - s * rules.stop_ema_buffer)
                     q.stop = max(q.stop, level) if s > 0 else min(q.stop, level)
+            if sig_exit is not None and s > 0 and sig_exit[d, j]:
+                close_part(q, q.size, c[d, j], d, 'signal')
+                continue
             if rules.nft_days and d - q.d0 == rules.nft_days and (c[d, j] - q.fill) * s < 0:
                 close_part(q, q.size, c[d, j], d, 'no_follow')
                 continue

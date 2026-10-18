@@ -123,6 +123,24 @@ class SystemTests(unittest.TestCase):
         curve, _, _ = self.run_(rows, e, trims=(), max_position=.3)
         self.assertAlmostEqual(curve[-1], 1 + .2 * .10)
 
+    def test_open_count_cap_skips_the_second_name(self):
+        a = np.array([[10, 10, 10, 10], [10, 11, 10, 11]], float)
+        p = {'open': np.repeat(a[:, :1], 2, 1), 'high': np.repeat(a[:, 1:2], 2, 1), 'low': np.repeat(a[:, 2:3], 2, 1),
+             'close': np.repeat(a[:, 3:4], 2, 1), 'dates': np.array(['2025-01-01', '2025-01-02']),
+             'codes': np.array(['US.AAA', 'US.BBB'])}
+        e = [[(0, 0, 1, 10.0, 9.5, 'x'), (1, 1, 1, 10.0, 9.5, 'x')], []]
+        _, _, tr = Y.simulate(p, {}, Y.Rules(trail='', max_open=1, **NOCOST), e, '2025-01-01', '2025-01-02')
+        self.assertEqual([t['code'] for t in tr], ['US.AAA'])
+
+    def test_exit_signal_closes_a_long_at_that_close(self):
+        rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 12, 11, 12), (12, 13, 12, 13)]
+        sig = np.array([[False], [False], [True], [False]])
+        p = px(rows)
+        _, _, tr = Y.simulate(p, {'climax': sig}, Y.Rules(trail='', trims=(), exit_signal='climax', **NOCOST),
+                              one(4, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1])
+        self.assertEqual((tr[0]['why'], tr[0]['exit']), ('signal', '2025-01-03'))
+        self.assertAlmostEqual(tr[0]['ret'], .2)
+
     def test_placebo_draws_from_the_pool(self):
         a = np.array([[10, 10, 10, 10], [10, 11, 10, 11]], float)
         p = {'open': np.repeat(a[:, :1], 2, 1), 'high': np.repeat(a[:, 1:2], 2, 1), 'low': np.repeat(a[:, 2:3], 2, 1),

@@ -1,0 +1,13 @@
+{
+ "stage": "setup-ep",
+ "base": ["r44.json", "chosen"],
+ "ref": "R44",
+ "objective": "min_2024_2025",
+ "candidates": {
+  "P1": {"ep_opts": {"gap_min": 0.10}},
+  "P2": {"ep_opts": {"near_high": 0.10}},
+  "P3": {"ep_opts": {"gap_min": 0.10, "near_high": 0.10}},
+  "P4": {"ep_opts": {"vol_mult": 1.5}},
+  "P5": {"ep_opts": {"hold_open": false}}
+ }
+}

@@ -514,8 +514,8 @@ def signal_inputs(A):
     return w, {k: w & m for k, m in setup_families(A, w)[setup_choice()].items()}
 
 
-def stop_cap(A):
-    return np.fmin(.05, .5 * prev(A['adr']) / 100)
+def stop_cap(A, cap_max=.05):
+    return np.fmin(cap_max, .5 * prev(A['adr']) / 100)
 
 
 def entries_close(A, sig, cols=None):
@@ -715,7 +715,9 @@ def run_rules(A, entries, seg, pool, rules, placebo=100):
     px = dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'])
     if rules.trail == 'w9' and 'w9' not in A:
         A['w9'] = weekly_ema(A['close'], A['days'], 9)
-    ema = {k: A[k] for k in ('e9', 'e21', 'e50', 'w9') if k in A}
+    if rules.exit_signal and rules.exit_signal not in A:
+        A[rules.exit_signal] = climax(A, int(rules.exit_signal[len('climax'):]) / 100)
+    ema = {k: A[k] for k in ('e9', 'e21', 'e50', 'w9', rules.exit_signal) if k and k in A}
     curve, dates, tr = Y.simulate(px, ema, rules, entries, *seg)
     st = Y.stats(curve, dates, tr)
     r = np.array([t['r'] for t in tr]) if tr else np.zeros(1)
@@ -908,7 +910,9 @@ def system_signals(A, cfg=None):
     pool = pool_for(A)
     k = pool & strength_lists(A, pool)[cfg.get('strength') or strength_choice()]
     w = k & watch_lists(A)[cfg.get('watch') or watch_choice()]
-    return pool, w, {x: w & m for x, m in setup_families(A, w)[cfg.get('setup') or setup_choice()].items()}
+    fams = setup_families(A, w)
+    names = (cfg.get('setup') or setup_choice()).split('+')                # R46: 'E11+E2' is a union
+    return pool, w, {(f'{n}:{x}' if len(names) > 1 else x): w & m for n in names for x, m in fams[n].items()}
 
 
 def limit_up(A):
@@ -1072,22 +1076,47 @@ def r29():
     (I.OUT / 'r29_diagnosis.json').write_text(json.dumps(out, indent=1))
 
 
-def ep_signal(A, pool, gap_min=.05, gap_adr=1.0, vol_mult=2.0, hold_open=True):
+def prior_low(l, n):
+    """Lowest low of the previous n days (today excluded), NaN-aware."""
+    out = np.full_like(l, np.nan)
+    for k in range(1, n + 1):
+        out = np.fmin(out, luk.lag(l, k))
+    return out
+
+
+def prior_high(h, n):
+    """Highest high of the previous n days (today excluded), NaN-aware, one n-day pass at a time."""
+    out = np.full_like(h, np.nan)
+    for k in range(1, n + 1):
+        out = np.fmax(out, luk.lag(h, k))
+    return out
+
+
+def climax(A, gain):
+    """His sell-all-into-strength exit (lS9z@1:17:10): after a run of at least `gain` in 10 days, that day's dollar
+    volume is above every day of the prior 52 weeks; the long is sold at that close."""
+    c = A['close']
+    with np.errstate(invalid='ignore', divide='ignore'):
+        return (A['turnover'] > prior_high(A['turnover'], 252)) & (c / luk.lag(c, 10) - 1 >= gain)
+
+
+def ep_signal(A, pool, gap_min=.05, gap_adr=1.0, vol_mult=2.0, hold_open=True, near_high=0.0):
     """His pre-market gapper scan, without the leader list: gap >= max(gap_min, gap_adr x ADR), vol_mult x volume,
-    and (hold_open) a close at or above the open."""
+    (hold_open) a close at or above the open, and (near_high) an open within that fraction of the 126-day high."""
     o, c = A['open'], A['close']
     with np.errstate(invalid='ignore', divide='ignore'):
         gap = o >= prev(c) * (1 + np.fmax(gap_min, gap_adr * prev(A['adr']) / 100))
         vol = A['turnover'] >= vol_mult * prev(A['to20'])
         held = (c >= o) if hold_open else True
-        return pool & gap & vol & held
+        near = (o >= (1 - near_high) * prior_high(A['high'], 126)) if near_high else True
+        return pool & gap & vol & held & near
 
 
-def entries_close_stop(A, mask, mode, kind='n1'):
+def entries_close_stop(A, mask, mode, kind='n1', cap_max=.05, stop_min=0.0):
     """Close entries with the stop at the day's low; when that is wider than cap = min(5%, 0.5 ADR):
     'skip' drops the trade (R24 N1), 'cap' moves the stop up to the cap, 'half' to half the cap (R30)."""
     c, l = A['close'], A['low']
-    cap = stop_cap(A)
+    cap = stop_cap(A, cap_max)
     out = [[] for _ in range(len(c))]
     for d, j in zip(*np.nonzero(mask)):
         if not (np.isfinite(c[d, j]) and np.isfinite(l[d, j]) and c[d, j] > 0):
@@ -1099,6 +1128,8 @@ def entries_close_stop(A, mask, mode, kind='n1'):
         else:
             width = cap[d, j] if mode == 'cap' else cap[d, j] / 2
             stop = max(l[d, j], c[d, j] * (1 - width))
+        if stop_min and (c[d, j] - stop) / c[d, j] < stop_min:
+            stop = c[d, j] * (1 - stop_min)
         if stop < c[d, j]:
             out[d].append((-A['to20'][d - 1, j], j, 1, c[d, j], stop, kind))
     return out
@@ -1141,6 +1172,9 @@ EXITS['X5'] = dict(trims=(), trail='e21')
 EXITS.update({'X6': dict(trims=(5, 10), trail='e21'), 'X7': dict(trail='e50'), 'X8': dict(trail='w9'),
               'X9': dict(trims=(10,), trim_frac=.30, trail='e21'), 'X10': dict(trail='e21', max_days=30),
               'X11': dict(trims=(10,), trim_frac=.30, trail='e50')})
+EXITS.update({'X12': dict(EXITS['X9'], exit_signal='climax30'), 'X13': dict(EXITS['X9'], exit_signal='climax50'),
+              'X14': dict(trims=(8,), trim_frac=.30, trail='e21'), 'X15': dict(trims=(10,), trim_frac=.50, trail='e21'),
+              'X16': dict(trims=(10, 20), trim_frac=.30, trail='e21')})
 BASE_CONFIG = dict(signals='C2', stop='cap', exits='X0', small_cap=False, gap_size=False, gross=2.0, risk=.005,
                    filter='S4', rank=None, rank_n=0)
 CARRY = ['r31_exits_sizing.json', 'r32_exposure.json', 'r33_rotation.json', 'r34_base_path.json',
@@ -1156,6 +1190,22 @@ def system_config():
         if path.exists():
             cfg = json.loads(path.read_text())['chosen_config']
     return cfg
+
+
+def market_ok(A, pool, w, spec):
+    """Days that allow new longs: 'S4' (watchlist breadth), 'IDX<n>' (pool equal-weight index above its EMA n),
+    joined by '+' (all) or '|' (any)."""
+    def one(x):
+        return breadth_ok(A, w) if x == 'S4' else ew_index_up(A, pool, int(x[3:]))
+    if '|' in spec:
+        out = None
+        for x in spec.split('|'):
+            out = one(x) if out is None else out | one(x)
+        return out
+    out = None
+    for x in spec.split('+'):
+        out = one(x) if out is None else out & one(x)
+    return out
 
 
 def build_system(A, cfg):
@@ -1178,20 +1228,15 @@ def build_system(A, cfg):
         mask = mask & ~limit_up(A)
     if cfg.get('rank'):
         mask = top_per_day(mask, prev(A[cfg['rank']]), cfg['rank_n'])
-    entries = entries_close_stop(A, mask, cfg['stop'])
+    entries = entries_close_stop(A, mask, cfg['stop'], cap_max=cfg.get('stop_cap_max', .05),
+                                 stop_min=cfg.get('stop_min', 0.0))
     if cfg['small_cap'] or cfg['gap_size']:
         adrp, to20p = prev(A['adr']), prev(A['to20'])
         entries = [[e[:6] + (None, .5 * adrp[d, e[1]] / 100 if cfg['gap_size'] else None,
                              .20 if cfg['small_cap'] and to20p[d, e[1]] < 100e6 else None) for e in lst]
                    for d, lst in enumerate(entries)]
-    if cfg['filter'] == 'S4':
-        entries = filter_days(entries, breadth_ok(A, w))
-    elif cfg['filter'] == 'IDX50':
-        entries = filter_days(entries, ew_index_up(A, pool, 50))
-    elif cfg['filter'] == 'IDX21':
-        entries = filter_days(entries, ew_index_up(A, pool, 21))
-    elif cfg['filter'] == 'IDX50+S4':
-        entries = filter_days(entries, ew_index_up(A, pool, 50) & breadth_ok(A, w))
+    if cfg['filter'] and cfg['filter'] != 'NONE':
+        entries = filter_days(entries, market_ok(A, pool, w, cfg['filter']))
     if cfg.get('priority'):
         score = priority_score(A, cfg['priority'])
         entries = [[(-score[d, e[1]] if np.isfinite(score[d, e[1]]) else np.inf,) + e[1:] for e in lst]
@@ -1208,8 +1253,8 @@ def build_system(A, cfg):
                     risk_high=cfg.get('risk_high', 0.0), short_trims=(3,), short_max_days=3,
                     max_position=cfg.get('max_position', .30),
                     buy_cost=COSTS[A['market']][0], sell_cost=COSTS[A['market']][1])
-    if cfg.get('exit_opts'):
-        rules = replace(rules, **{k: tuple(v) if isinstance(v, list) else v for k, v in cfg['exit_opts'].items()})
+    if cfg.get('rule_opts'):
+        rules = replace(rules, **{k: tuple(v) if isinstance(v, list) else v for k, v in cfg['rule_opts'].items()})
     return entries, rules, mask, pool
 
 
@@ -1313,10 +1358,13 @@ def r33():
                 'r33_rotation.json', 'R33', ref='P5')
 
 
-def base_path(A, pool, top=.10, weekly='9>21', band=.03, lookback=60, adr_min=0.0, trigger='both'):
+def base_path(A, pool, top=.10, weekly='9>21', band=.03, lookback=60, adr_min=0.0, trigger='both',
+              close_stack=0.0, rising=False, higher_low=False):
     """R34 B path: a 6-month leader (top `top` on 126-day returns within `lookback` days) in a weekly uptrend
     ('9>21' weekly EMAs, or 'c>21' close above the weekly EMA21), sitting within `band` of its daily 9/21 EMA,
-    breaking the prior-day high or (trigger='both') touching and holding the EMA9 / EMA21 (R40 variants)."""
+    breaking the prior-day high or (trigger='both') touching and holding the EMA9 / EMA21 ('e21': EMA21 only)
+    (R40 variants).  R50: close_stack (daily 9 > 21 within that fraction), rising (21 and 50 EMA above their
+    values 5 days earlier), higher_low (the last 5 days' low above the low of the 15 days before)."""
     c, h, l = A['close'], A['high'], A['low']
     e9p, e21p = prev(A['e9']), prev(A['e21'])
     with np.errstate(invalid='ignore', divide='ignore'):
@@ -1327,8 +1375,17 @@ def base_path(A, pool, top=.10, weekly='9>21', band=.03, lookback=60, adr_min=0.
         trig = h > prev(h)
         if trigger == 'both':
             trig = trig | ((l <= e9p) & (c >= e9p)) | ((l <= e21p) & (c >= e21p))
+        elif trigger == 'e21':
+            trig = trig | ((l <= e21p) & (c >= e21p))
         fast = prev(A['adr'] >= adr_min) if adr_min else True
-    return pool & leader & prev(up) & near & trig & fast
+        extra = np.ones_like(pool)
+        if close_stack:
+            extra &= prev((A['e9'] > A['e21']) & (np.abs(A['e9'] / A['e21'] - 1) <= close_stack))
+        if rising:
+            extra &= prev((A['e21'] > luk.lag(A['e21'], 5)) & (A['e50'] > luk.lag(A['e50'], 5)))
+        if higher_low:
+            extra &= prior_low(l, 5) > luk.lag(prior_low(l, 15), 5)
+    return pool & leader & prev(up) & near & trig & fast & extra
 
 
 def r34():
@@ -1487,11 +1544,59 @@ def system_config_after(name):
     return json.loads((I.OUT / name).read_text())['chosen_config']
 
 
+HIS = {'2024': dict(ret=2.83, wins=104, losses=319, avg_win=.15, avg_loss=-.03),
+       '2025': dict(ret=9.698, wins=209, losses=731, avg_win=.141, avg_loss=-.021)}
+
+
+def year_trades(tr, y):
+    t = [x for x in tr if x['entry'][:4] == y]
+    win = [x['ret'] for x in t if x['ret'] > 0]
+    loss = [x['ret'] for x in t if x['ret'] <= 0]
+    return dict(n=len(t), wins=len(win), losses=len(loss), win=len(win) / len(t) if t else None,
+                avg_win=float(np.mean(win)) if win else None, avg_loss=float(np.mean(loss)) if loss else None,
+                exp_r=float(np.mean([x['r'] for x in t])) if t else None)
+
+
+def final(report):
+    """The configuration chosen in reports/<report> in all three markets: full period and calendar years against
+    same-pool random entries and equal-weight holding of the pool, trade counts by year, and (US) ledger hits."""
+    res = json.loads((I.OUT / report).read_text())
+    cfg = res['chosen_config']
+    trades = L.load(LEDGER)
+    sel, val = L.split(trades, CUTOFF)
+    out = {'report': report, 'chosen': res['chosen'], 'config': cfg, 'his': HIS}
+    for market in ('us', 'hk', 'cn'):
+        A = market_arrays(market)
+        entries, rules, mask, pool = build_system(A, cfg)
+        st, tr = run_rules(A, entries, FULL, pool, rules)
+        years = sorted(st['by_year'])
+        st['ew_hold_pool'] = ew_hold(A, pool, FULL)
+        st['ew_hold_by_year'] = {y: ew_hold(A, pool, (f'{y}-01-01', f'{y}-12-31')) for y in years}
+        st['trades_by_year'] = {y: year_trades(tr, y) for y in years}
+        st['why'] = {w: sum(t['why'] == w for t in tr) for w in sorted({t['why'] for t in tr})}
+        if market == 'us':
+            ls = [x for x in located_longs(A, sel) if x[0].dated]
+            lv = [x for x in located_longs(A, val) if x[0].dated]
+            rs, rv = F.recall(mask, ls, A['has']), F.recall(mask, lv, A['has'])
+            st['fidelity'] = {k: {a: b for a, b in r.items() if a != 'per_trade'} for k, r in (('select', rs),
+                                                                                                ('validate', rv))}
+            st['signals_per_day'] = F.width(mask, A['days'], *FULL)
+        out[market] = st
+        print('FINAL', market, f"full {st['total']:+.3f} dd {st['maxdd']:.2f} placebo median "
+              f"{st['placebo']['median']:+.3f} rank {st['placebo']['rank']:.2f} ew {st['ew_hold_pool']:+.3f}",
+              'years', {a: round(b, 3) for a, b in st['by_year'].items()},
+              'ew years', {a: round(b, 3) for a, b in st['ew_hold_by_year'].items()},
+              'trades', {y: (v['n'], v['win'] and round(v['win'], 3)) for y, v in st['trades_by_year'].items()},
+              flush=True)
+        del A
+    (I.OUT / 'final_system.json').write_text(json.dumps(out, indent=1, default=float))
+
+
 ROUNDS = Path(__file__).resolve().parent / 'notes' / 'rounds'
 
 
 def merged(base, change):
-    """A configuration with `change` applied; nested option dicts (bopts, ep_opts, exit_opts) are merged."""
+    """A configuration with `change` applied; nested option dicts (bopts, ep_opts, rule_opts) are merged."""
     out = dict(base)
     for k, v in change.items():
         out[k] = dict(base.get(k) or {}, **v) if isinstance(v, dict) and isinstance(base.get(k), dict) else v
@@ -1513,6 +1618,8 @@ def run_round(name):
 
 if __name__ == '__main__' and sys.argv[1] == 'round':
     run_round(sys.argv[2])
+elif __name__ == '__main__' and sys.argv[1] == 'final':
+    final(sys.argv[2])
 elif __name__ == '__main__':
     {'r19': r19, 'r20': r20, 'r21': r21, 'r21b': r21b, 'r22': r22, 'r22b': r22b, 'r23': r23, 'r23b': r23b, 'r23c': r23c, 'r24': r24, 'r24b': r24b, 'r25': r25, 'r26': r26,
      'r27': r27, 'r27b': r27b, 'r28': r28, 'r29': r29, 'r30': r30, 'r31': r31, 'r32': r32, 'r33': r33, 'r34': r34, 'r35': r35, 'r36': r36, 'r37': r37, 'r38': r38, 'r39': r39, 'r40': r40, 'r41': r41}[sys.argv[1]]()

@@ -71,6 +71,15 @@ class EntryTests(unittest.TestCase):
         (e,) = R.entries_close_stop(B, m, 'cap')[1]
         self.assertAlmostEqual(e[4], 9.8)
 
+    def test_stop_cap_ceiling_and_floor(self):
+        A = tiny([(9.5, 9.6, 9.4, 9.5), (9.0, 10.1, 9.0, 10.0)], adr=10.0)   # cap min(5%, 5%) = 5%
+        m = np.array([[False], [True]])
+        (e,) = R.entries_close_stop(A, m, 'cap', cap_max=.03)[1]
+        self.assertAlmostEqual(e[4], 9.7)                                   # ceiling 3%
+        B = tiny([(9.5, 9.6, 9.4, 9.5), (9.97, 10.1, 9.97, 10.0)], adr=10.0)  # the low is only 0.3% away
+        (e,) = R.entries_close_stop(B, m, 'cap', stop_min=.01)[1]
+        self.assertAlmostEqual(e[4], 9.9)                                   # floor 1%
+
     def test_short_stop_is_capped_and_can_be_sized_down(self):
         A = tiny([(10, 10, 10, 10), (11.0, 11.0, 9.9, 10.0)])      # high 10% above the close; cap 4%
         m = np.array([[False], [True]])
@@ -87,6 +96,23 @@ class EntryTests(unittest.TestCase):
         pool = np.ones((4, 1), bool)
         # day 1: gap 10% >= 5%, volume 3x, close >= open -> EP; day 3: gap from 10.1 to 11.5 but closes below the open
         self.assertEqual(R.ep_signal(A, pool)[:, 0].tolist(), [False, True, False, False])
+        self.assertEqual(R.ep_signal(A, pool, gap_min=.12)[:, 0].tolist(), [False] * 4)
+        self.assertEqual(R.ep_signal(A, pool, hold_open=False)[:, 0].tolist(), [False, True, False, True])
+
+    def test_climax_needs_the_run_and_a_52_week_dollar_volume_high(self):
+        T = 270
+        c = np.full(T, 10.0)
+        c[-10:] = np.linspace(11, 14, 10)                  # +40% over the last 10 days
+        to = np.full(T, 1e8)
+        to[-2], to[-1] = 3e8, 2e8                         # the 52-week high is the second-to-last day
+        A = {'close': c[:, None], 'turnover': to[:, None]}
+        self.assertEqual(np.flatnonzero(R.climax(A, .30)[:, 0]).tolist(), [T - 2])
+        self.assertFalse(R.climax(A, .50).any())
+
+    def test_prior_high_excludes_today(self):
+        h = np.array([[10.0], [12.0], [11.0], [np.nan], [9.0]])
+        self.assertEqual(R.prior_high(h, 2)[:, 0].tolist()[1:], [10.0, 12.0, 12.0, 11.0])
+        self.assertEqual(R.prior_low(h, 2)[:, 0].tolist()[1:], [10.0, 10.0, 11.0, 11.0])
 
 
 class RotationTests(unittest.TestCase):
