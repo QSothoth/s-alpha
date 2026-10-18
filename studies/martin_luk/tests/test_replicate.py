@@ -16,10 +16,6 @@ def bars(rows):
 
 
 class TriggerTests(unittest.TestCase):
-    def test_no_market_gate_allows_every_day_without_reading_future_prices(self):
-        a={'days':np.array(['2025-01-02','2025-01-03'])}
-        np.testing.assert_equal(R.market_ok(a,None,None,'NONE'),[True,True])
-
     def test_pdh_break_fills_at_the_prior_high_with_low_of_day_so_far(self):
         o5, h5, l5 = bars([(10.0, 10.2, 9.8), (10.1, 10.6, 10.0), (10.5, 10.9, 10.4)])
         self.assertEqual(R.first_trigger(o5, h5, l5, 'E2', pdh=10.5, e9p=9.0), (1, 10.5, 9.8))

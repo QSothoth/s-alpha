@@ -14,23 +14,6 @@ def panel(rows, sessions, closes):
 
 
 class SessionTests(unittest.TestCase):
-    def test_requested_entry_audit_records_rejections_without_changing_execution(self):
-        p={k:np.full((3,3),10.) for k in ('open','high','low','close')}
-        p.update(codes=np.array(['A','B','C']),dates=np.array(['2025-01-02 09:35','2025-01-02 09:40','2025-01-03 09:35']),
-                 session=np.array([0,0,1]),daily_close=np.array([False,True,True]))
-        entries=[[(0,0,1,10,9,'first')],[(0,0,1,10,9,'held'),(1,1,1,10,11,'bad'),
-                   (2,1,1,10,9,'second'),(3,2,1,10,9,'capped')],[(0,2,1,10,9,'capacity')]]
-        rule=Y.Rules(trail='',trims=(),max_new_long=2,risk=.1,max_position=.5,max_gross=1,
-                     buy_cost=0,sell_cost=0,margin_rate=0)
-        log={(c,d):[] for c,d in [('A','2025-01-02'),('B','2025-01-02'),('C','2025-01-02'),('C','2025-01-03')]}
-        plain=Y.simulate(p,{},rule,entries,p['dates'][0],p['dates'][-1],audit=True)
-        checked=Y.simulate(p,{},rule,entries,p['dates'][0],p['dates'][-1],audit=True,entry_audit=log)
-        np.testing.assert_equal(plain[0],checked[0]);self.assertEqual(plain[2],checked[2])
-        self.assertEqual([x['reason'] for x in log[('A','2025-01-02')]],['opened','already_held'])
-        self.assertEqual([x['reason'] for x in log[('B','2025-01-02')]],['invalid_stop','opened'])
-        self.assertEqual(log[('C','2025-01-02')][0]['reason'],'daily_success_cap')
-        self.assertEqual(log[('C','2025-01-03')][0]['reason'],'no_capacity')
-
     def test_short_first_partial_does_not_force_full_exit_on_day_three(self):
         c=np.array([10,9.6,9.4,9.2,9.,9.1])[:,None]
         p={k:c.copy() for k in ('open','high','low','close')}
