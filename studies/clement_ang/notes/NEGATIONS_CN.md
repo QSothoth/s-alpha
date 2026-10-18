@@ -40,3 +40,7 @@
 | R8 | rs_sizing | L3 | `{"rule_opts": {"feedback": 1, "risk_low": 0.0015}}` | r7.json:chosen | R7 | objective below R7；全区间 +48%（带入 +73%） | open |
 | R8 | rs_sizing | L4 | `{"rule_opts": {"month_loss_cap": 0.05, "month_cap_ladder": [0.025], "month_cap_basis": "opened"}}` | r7.json:chosen | R7 | gates: bought；全区间 +5%（带入 +73%） | open |
 | R8 | rs_sizing | L5 | `{"rule_opts": {"risk": 0.005, "feedback": 1, "risk_low": 0.0025}}` | r7.json:chosen | R7 | objective below R7；全区间 +68%（带入 +73%） | open |
+| R9 | exposure_exits | M1 | `{"rule_opts": {"max_gross": 1.5}}` | r8.json:chosen | M3 | objective below M3；全区间 +81%（带入 +184%） | open |
+| R9 | exposure_exits | M2 | `{"rule_opts": {"max_gross": 2.0}}` | r8.json:chosen | M3 | objective below M3；全区间 +72%（带入 +184%） | open |
+| R9 | exposure_exits | M4 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.1}}` | r8.json:chosen | M3 | objective below M3；全区间 +80%（带入 +184%） | open |
+| R9 | exposure_exits | M5 | `{"rule_opts": {"max_gross": 2.0, "trim_signal": "atr50x7", "trim_signal_frac": 0.1}}` | r8.json:chosen | M3 | objective below M3；全区间 +81%（带入 +184%） | open |

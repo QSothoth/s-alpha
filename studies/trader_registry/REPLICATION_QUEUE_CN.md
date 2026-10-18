@@ -63,11 +63,11 @@
 
 | 人物 | 规则 | 台账 | 模块 | 基线 | 轮次（已用 / 40） | 当前带入 | 状态 |
 |---|---|---|---|---|---|---|---|
-| Christian Flanders | RULES_CN | 66 笔（有日期 57），已冻结 | `studies/christian_flanders` | R7 精确入场下的诊断与三层对照 | 9 | R7 W2：全段 +54%（2024 +29% / 2025 +42% / 2026 −16%），买到他 10 笔 | A，第二阶段；R10 改上游选股 |
-| Clement Ang | RULES_CN | 49 笔（有日期 30），已冻结 | `studies/clement_ang` | D0c（初版 + 收盘买）：全段 −2%，没跑赢安慰剂；他的票 + 我们的执行 +5.5R | 1 | D0c | A，第一阶段；R2 先搭他的离场与容量 |
-| Qullamaggie | 整理中 | 直播字幕抽取中 | `studies/qullamaggie` | 待台账 | 0 | — | 待定级（≥ 30 笔为 A） |
-| Oliver Kell | 整理中 | 收集中 | `studies/oliver_kell` | 待台账 | 0 | — | B（待补台账） |
-| Mark Minervini | 整理中 | 收集中 | `studies/mark_minervini` | 待台账 | 0 | — | B（待补台账） |
+| Christian Flanders | RULES_CN | 66 笔（有日期 57），已冻结 | `studies/christian_flanders` | R7 精确入场下的诊断与三层对照 | 16 | R15 C4：全段 +48%（2024 +18% / 2025 +88% / 2026 −33%），买到他 11 笔 | A，第二阶段；R10–R16 上游 / 容量 / 加仓 / 离场多数否定 |
+| Clement Ang | RULES_CN | 49 笔（有日期 30），已冻结 | `studies/clement_ang` | D0c：全段 −2%，没跑赢安慰剂；他的票 + 我们的执行 +5.5R | 9 | R9 M3：全段 +184%（+14% / +80% / +39%），回撤 50%，买到他 7 笔 | A，进展最大，多给轮次 |
+| Qullamaggie | RULES_CN（9 场 2023 直播 + S01/S03/S04） | 37 笔（有日期 26），第 1 版已冻结 | `studies/qullamaggie` | R0：全段 −39%，没跑赢安慰剂；10 笔卡在收盘买时 EP 止损超 1.5 ADR；他的票 + 我们的执行 +7.2R | 0 | — | **B**：有日期不足 30。2023-01-26 直播字幕刚到待抽；另 6 场无字幕；2024 年后基本不再直播，要从 X 帖子补（直接访问被挡） |
+| Oliver Kell | 整理中（子代理因用量上限中断） | 收集中 | `studies/oliver_kell` | 待台账 | 0 | — | B（待补台账） |
+| Mark Minervini | 整理中（同上） | 收集中 | `studies/mark_minervini` | 待台账 | 0 | — | B（待补台账） |
 
 ## 可以冻结的人
 
