@@ -14,6 +14,68 @@ def panel(rows, sessions, closes):
 
 
 class SessionTests(unittest.TestCase):
+    def test_short_first_partial_does_not_force_full_exit_on_day_three(self):
+        c=np.array([10,9.6,9.4,9.2,9.,9.1])[:,None]
+        p={k:c.copy() for k in ('open','high','low','close')}
+        p.update(codes=np.array(['S']),dates=np.array([f'2025-01-{i+2:02d}' for i in range(6)]))
+        ema={'e9':np.array([10.1,9.8,9.6,9.4,9.2,9.05])[:,None]}
+        rules=Y.Rules(short_trims=(3,5),short_max_days=0,arm_trail_on_entry=True,
+                      management_by_kind={'short':dict(trim_frac=.15)})
+        _,_,tr=Y.simulate(p,ema,rules,[[(0,0,-1,10.,10.2,'short')]]+[[]]*5,
+                           p['dates'][0],p['dates'][-1],audit=True)
+        events=tr[0]['executions']; initial=events[0]['shares']
+        self.assertEqual([e['time'] for e in events if e['action']=='trim'],[p['dates'][2],p['dates'][4]])
+        for event in events:
+            if event['action']=='trim': self.assertAlmostEqual(event['shares']/initial,.15)
+        self.assertEqual((tr[0]['exit'],tr[0]['why']),(p['dates'][5],'trail'))
+
+    def test_entry_kind_keeps_its_partials_trail_and_add_policy_in_placebo(self):
+        p={k:np.repeat(np.array([10,16,13,13.])[:,None],2,axis=1) for k in ('open','high','low','close')}
+        p['open'][1]=10; p['low'][1]=10
+        p.update(codes=np.array(['A','B']),dates=np.array(['2025-01-02','2025-01-03','2025-01-06','2025-01-07']))
+        ema={'e9':np.array([[9,9],[14,14],[14,14],[14,14.]]),'e21':np.full((4,2),9.)}
+        rules=Y.Rules(trail='e21',trims=(10,),add_levels=(2,),risk=.1,max_position=.5,
+                      arm_trail_on_entry=True,buy_cost=0,sell_cost=0,margin_rate=0,
+                      management_by_kind={'thin':dict(max_position=.2,trims=(3,5),trim_frac=.15,
+                                                      trail='e9',add_r=0,add_levels=())})
+        entries=[[(0,0,1,10.,9.,'thin'),(1,1,1,10.,9.,'premier')],[],[],[]]
+        _,_,tr=Y.simulate(p,ema,rules,entries,p['dates'][0],p['dates'][-1],audit=True)
+        thin=next(t for t in tr if t['kind']=='thin'); premier=next(t for t in tr if t['kind']=='premier')
+        self.assertAlmostEqual(thin['executions'][0]['shares']*10,.2)
+        self.assertEqual([e['price'] for e in thin['executions'] if e['action']=='trim'],[13,15])
+        self.assertEqual((thin['why'],thin['exit'],thin['add_tries']),('trail',p['dates'][2],0))
+        self.assertEqual((premier['why'],premier['add_tries']),('end',1))
+        entries[0]=entries[0][:1]
+        _,_,tr=Y.simulate(p,ema,rules,entries,p['dates'][0],p['dates'][-1],audit=True,
+                         placebo=np.random.default_rng(1),pool=np.ones((4,2),bool))
+        self.assertEqual((tr[0]['kind'],tr[0]['why'],tr[0]['add_tries']),('thin','trail',0))
+
+    def test_opened_feedback_uses_prior_close_and_freezes_before_today_stop(self):
+        p={k:np.full((4,4),10.) for k in ('open','high','low','close')}
+        p.update(codes=np.array(['A','B','C','D']),dates=np.array(['2025-01-02','2025-01-03','2025-01-06','2025-01-07']))
+        for k in ('open','high','low','close'):
+            p[k][:,0]=[10,12,8,8]
+        entries=[[(0,0,1,10.,9.,'a')],[],[(0,1,1,10.,9.,'b'),(1,2,1,10.,9.,'c')],
+                 [(0,3,1,10.,9.,'d')]]
+        rules=Y.Rules(trail='',trims=(),feedback=1,feedback_opened=True,risk=.01,
+                      risk_low=.005,risk_high=.02,max_position=1,buy_cost=0,sell_cost=0,margin_rate=0)
+        curve,_,tr=Y.simulate(p,{},rules,entries,p['dates'][0],p['dates'][-1],audit=True)
+        by={t['code']:t for t in tr}
+        for name in ('B','C'):
+            self.assertAlmostEqual(by[name]['executions'][0]['shares']*10/curve[2],.2)
+        # Latest opening C, still flat at yesterday's close, supersedes the older stopped A.
+        self.assertAlmostEqual(by['D']['executions'][0]['shares']*10/curve[3],.1)
+
+    def test_opened_feedback_keeps_same_day_stop_until_next_session(self):
+        p=panel([(10,10,10,10)]*3,[0,0,1],[False,True,True])
+        entries=[[(0,0,1,10.,9.,'a',9.)],[(0,0,1,10.,9.,'b',9.)],[(0,0,1,10.,9.,'c')]]
+        rules=Y.Rules(trail='',trims=(),feedback=1,feedback_opened=True,risk=.01,
+                      risk_low=.005,risk_high=.02,buy_cost=0,sell_cost=0,margin_rate=0)
+        _,_,tr=Y.simulate(p,{},rules,entries,p['dates'][0],p['dates'][-1],audit=True)
+        self.assertAlmostEqual(tr[0]['executions'][0]['shares'],.01)
+        self.assertAlmostEqual(tr[1]['executions'][0]['shares'],.0099)
+        self.assertAlmostEqual(tr[2]['executions'][0]['shares'],.0049005)
+
     def test_entry_close_can_arm_first_next_day_break_without_looking_forward(self):
         p=panel([(10,10,10,10),(10,10,9.8,9.8),(9.8,9.8,9.8,9.8)], [0,1,2],[True]*3)
         e=[[(0,0,1,10.,9.,'x')],[],[]]

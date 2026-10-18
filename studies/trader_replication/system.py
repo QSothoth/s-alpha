@@ -11,7 +11,8 @@ unless the open is already beyond the partial level.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
+from collections import deque
 
 import numpy as np
 
@@ -29,6 +30,8 @@ class Rules:
     max_days: int = 0               # > 0: exit at the close after this many days
     nft_days: int = 0               # > 0: exit at that day's close if the trade is still on the wrong side of its fill
     feedback: int = 0               # > 0: risk_low per trade while the last `feedback` closed trades sum to < 0 R
+    feedback_opened: bool = False   # use latest opened positions, marked at the previous session close
+    management_by_kind: dict = field(default_factory=dict)  # entry kind -> position management overrides
     risk_low: float = .0025
     risk_high: float = 0.0          # > 0: risk per trade while the last `feedback` closed trades sum to > 0 R
     short_trims: tuple | None = None  # shorts' partial levels (None = same as longs)
@@ -49,6 +52,17 @@ class Rules:
     trail_alt: str = ''             # EMA name the close trail uses instead while the conditions below hold
     trail_alt_dd: float = 0.0       # > 0: ... while equity (as of the previous close) is this far below its peak
     trail_alt_days: str = ''        # 1-D bool array in `ema`: ... on these days (both set: both must hold)
+    trim_day: int = 0               # > 0: at the close this many sessions after entry a long sells trim_day_frac of
+    trim_day_frac: float = 0.0      # its original size, once (only when that close is above the fill if
+    trim_day_profit: bool = True    # trim_day_profit) ...
+    trim_day_breakeven: bool = False  # ... and then has its stop moved to the fill
+    add_signal: str = ''            # boolean (days x codes) array in `ema`: a held long buys add_signal_frac (0 =
+    add_signal_frac: float = 0.0    # add_frac) of its original size at that close, at most add_signal_max times
+    add_signal_max: int = 0         # (0 = no limit), not on its entry day; then the stop is kept ('keep'), moved to
+    add_signal_stop: str = 'keep'   # the original fill ('fill') or raised to the add day's low ('low')
+    month_loss_cap: float = 0.0     # > 0: no new trades for the rest of a calendar month once equity (as of the previous
+    month_cap_ladder: tuple = ()    # close) is this far below the month's opening equity; after 1, 2, ... losing
+                                    # months in a row the cap is month_cap_ladder[0], [1], ... (the last one repeats)
     buy_cost: float = .0005
     sell_cost: float = .0005
     margin_rate: float = .07        # yearly, on long value above equity
@@ -67,11 +81,14 @@ class Pos:
     size: float
     trims: int = 0
     adds: int = 0
+    sig_adds: int = 0
+    day_trimmed: bool = False
     armed: bool = False
     cash: float = 0.0               # signed cash flow of the trade so far
     exits: list = field(default_factory=list)
     invested: float = 0.0
     executions: list = field(default_factory=list)
+    management: Rules | None = None
 
 
 def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False):
@@ -96,8 +113,18 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     scale = ema[rules.risk_scale] if rules.risk_scale else None
     trail3 = ema[rules.trail_alt] if rules.trail_alt else None
     alt_days = ema[rules.trail_alt_days] if rules.trail_alt_days else None
+    sig_add = ema[rules.add_signal] if rules.add_signal else None
+    if rules.add_signal_stop not in ('keep', 'fill', 'low'):
+        raise ValueError('add_signal_stop')
     peak = 1.0
     cash, pos, trades, curve = 1.0, {}, [], []
+    recent_positions = deque(maxlen=rules.feedback or 1)
+    opened_feedback = None
+    allowed_management = {'max_position', 'trims', 'trim_frac', 'trail', 'add_r', 'add_levels'}
+    for overrides in rules.management_by_kind.values():
+        if set(overrides) - allowed_management:
+            raise ValueError('unsupported position management override')
+    management = {kind: replace(rules, **overrides) for kind, overrides in rules.management_by_kind.items()}
 
     def last(j, d):
         if mark is not None:
@@ -150,15 +177,18 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         if not (0 < risk < 1) or (stop - fill) * side >= 0:
             return
         frac = rules.risk
-        if rules.feedback and len(trades) >= rules.feedback:
-            recent = sum(t['r'] for t in trades[-rules.feedback:])
+        recent = opened_feedback if rules.feedback_opened else (
+            sum(t['r'] for t in trades[-rules.feedback:])
+            if rules.feedback and len(trades) >= rules.feedback else None)
+        if recent is not None:
             if recent < 0:
                 frac = rules.risk_low
             elif recent > 0 and rules.risk_high > 0:
                 frac = rules.risk_high
         if scale is not None and np.isfinite(scale[d]):
             frac *= scale[d]
-        cap = rules.max_position if max_pos is None else min(rules.max_position, max_pos)
+        policy = management.get(kind, rules)
+        cap = policy.max_position if max_pos is None else min(policy.max_position, max_pos)
         width = risk if size_risk is None else max(risk, size_risk)
         val = min(frac * equity / width, cap * equity, rules.max_gross * equity - gross(d))
         if val <= .001 * equity:
@@ -166,20 +196,25 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         size = val / fill
         flow = -val * (1 + rules.buy_cost) if side > 0 else val * (1 - rules.sell_cost)
         cash += flow
-        pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow, invested=val)
-        initial_trail = trail3 if alt else trail
+        pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow, invested=val, management=policy)
+        if rules.feedback_opened:
+            recent_positions.append(pos[j])
+        initial_trail = trail3 if alt else ema.get(policy.trail)
         if rules.arm_trail_on_entry and initial_trail is not None and np.isfinite(initial_trail[d,j]):
             pos[j].armed = (fill-initial_trail[d,j])*side > 0
         if audit:
             pos[j].executions.append(dict(time=str(dates[d]), action='entry', price=float(fill), shares=float(size)))
         return True
 
-    def add_pos(q, price, d):
+    def add_pos(q, price, d, frac=None, signal=False):
         nonlocal cash
         eq = cash + value(d)
-        val = min(rules.add_frac * q.size0 * price, rules.max_position * eq - q.size * price,
-                  rules.max_gross * eq - gross(d))
-        q.adds += 1
+        val = min((rules.add_frac if frac is None else frac) * q.size0 * price,
+                  q.management.max_position * eq - q.size * price, rules.max_gross * eq - gross(d))
+        if signal:
+            q.sig_adds += 1
+        else:
+            q.adds += 1
         if val <= .001 * eq:
             return
         flow = -val * (1 + rules.buy_cost)
@@ -189,32 +224,54 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         q.invested += val
         if audit:
             q.executions.append(dict(time=str(dates[d]), action='add', price=float(price), shares=float(val / price)))
-        q.stop = max(q.stop, q.fill)
+        if not signal:
+            q.stop = max(q.stop, q.fill)
+        elif rules.add_signal_stop == 'fill':
+            q.stop = max(q.stop, q.fill)
+        elif rules.add_signal_stop == 'low' and np.isfinite(l[d, q.j]):
+            q.stop = max(q.stop, l[d, q.j])
+        return True
 
+    month_open, month_losses, month_cap, month_blocked = 1.0, 0, rules.month_loss_cap, False
     for d in range(d0, d1):
         equity = cash + value(d - 1) if d > d0 else 1.0
+        if rules.month_loss_cap > 0:
+            if d > d0 and str(dates[d])[:7] != str(dates[d - 1])[:7]:     # a new month opens at the previous close
+                month_losses = month_losses + 1 if equity < month_open else 0
+                ladder = rules.month_cap_ladder
+                month_cap = ladder[min(month_losses, len(ladder)) - 1] if month_losses and ladder \
+                    else rules.month_loss_cap
+                month_open, month_blocked = equity, False
+            month_blocked = month_blocked or equity <= month_open * (1 - month_cap)
         peak = max(peak, equity)
         alt = trail3 is not None and (rules.trail_alt_dd > 0 or alt_days is not None) \
             and (rules.trail_alt_dd <= 0 or equity < peak * (1 - rules.trail_alt_dd)) \
             and (alt_days is None or bool(alt_days[d]))
         if d == d0 or session[d] != session[d - 1]:
             new_longs = 0
+            if rules.feedback_opened and rules.feedback and len(recent_positions) >= rules.feedback:
+                opened_feedback = sum(
+                    (q.cash + (q.side * q.size * last(q.j, d - 1) if q.size > 0 else 0))
+                    / (q.size0 * abs(q.fill - q.stop0)) for q in recent_positions)
+                if abs(opened_feedback) < 1e-10:
+                    opened_feedback = 0.0
             longs = sum(q.size * last(q.j, d - 1) for q in pos.values() if q.side > 0)
             cash -= rules.margin_rate / 252 * max(0.0, longs - equity)
         for q in list(pos.values()):
             j, s = q.j, q.side
+            policy = q.management
             if np.isnan(o[d, j]):
                 continue
             R = abs(q.fill - q.stop0)
             if (o[d, j] - q.stop) * s <= 0:                       # gap through the stop
                 close_part(q, q.size, o[d, j], d, 'gap_stop')
                 continue
-            trims = rules.trims if s > 0 or rules.short_trims is None else rules.short_trims
+            trims = policy.trims if s > 0 or rules.short_trims is None else rules.short_trims
             levels = [q.fill + s * k * R for k in trims[q.trims:]]
             worst, best = (l[d, j], h[d, j]) if s > 0 else (h[d, j], l[d, j])
             if (worst - q.stop) * s <= 0:
                 while levels and (o[d, j] - levels[0]) * s >= 0:
-                    close_part(q, rules.trim_frac * q.size0, o[d, j], d, 'trim')
+                    close_part(q, policy.trim_frac * q.size0, o[d, j], d, 'trim')
                     q.trims += 1
                     levels.pop(0)
                 if j in pos:
@@ -222,7 +279,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 continue
             while levels and (best - levels[0]) * s >= 0 and j in pos:
                 px_ = max(o[d, j], levels[0]) if s > 0 else min(o[d, j], levels[0])
-                close_part(q, rules.trim_frac * q.size0, px_, d, 'trim')
+                close_part(q, policy.trim_frac * q.size0, px_, d, 'trim')
                 q.trims += 1
                 levels.pop(0)
             if j not in pos:
@@ -231,7 +288,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 q.stop = max(q.stop, q.fill) if s > 0 else min(q.stop, q.fill)
             if daily_close is not None and not daily_close[d]:
                 continue
-            tr_ = trail3 if alt else (trail2 if trail2 is not None and q.trims else trail)
+            tr_ = trail3 if alt else (trail2 if trail2 is not None and q.trims else ema.get(policy.trail))
             if tr_ is not None and np.isfinite(tr_[d, j]):
                 if (c[d, j] - tr_[d, j]) * s > 0:
                     q.armed = True
@@ -245,9 +302,20 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 close_part(q, (rules.trim_signal_frac or rules.trim_frac) * q.size0, c[d, j], d, 'signal_trim')
                 if j not in pos:
                     continue
-            levels_add = rules.add_levels or ((rules.add_r,) if rules.add_r else ())
+            if rules.trim_day and s > 0 and not q.day_trimmed and session[d] - session[q.d0] == rules.trim_day:
+                q.day_trimmed = True
+                if not rules.trim_day_profit or c[d, j] > q.fill:
+                    close_part(q, rules.trim_day_frac * q.size0, c[d, j], d, 'day_trim')
+                    if j not in pos:
+                        continue
+                    if rules.trim_day_breakeven:
+                        q.stop = max(q.stop, q.fill)
+            levels_add = policy.add_levels or ((policy.add_r,) if policy.add_r else ())
             if s > 0 and q.adds < len(levels_add) and c[d, j] >= q.fill + levels_add[q.adds] * R:
                 add_pos(q, c[d, j], d)
+            if sig_add is not None and s > 0 and sig_add[d, j] and session[d] > session[q.d0] \
+                    and (not rules.add_signal_max or q.sig_adds < rules.add_signal_max):
+                add_pos(q, c[d, j], d, rules.add_signal_frac or rules.add_frac, signal=True)
             if sig_exit is not None and s > 0 and sig_exit[d, j]:
                 close_part(q, q.size, c[d, j], d, 'signal')
                 continue
@@ -268,10 +336,13 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     continue
                 k = int(placebo.choice(cand))
                 pct = abs(fill - stop) / fill
-                swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), 'placebo', None) + tuple(e[7:9]))
+                kind_ = kind if kind in management else 'placebo'
+                swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), kind_, None) + tuple(e[7:9]))
             todays = swapped
         for e in sorted(todays, key=lambda x: x[0]):
             pr, j, side, fill, stop, kind = e[:6]
+            if month_blocked:
+                break
             if side > 0 and rules.max_new_long and new_longs >= rules.max_new_long:
                 continue
             had = j in pos
