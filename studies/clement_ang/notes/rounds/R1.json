@@ -1,14 +1,61 @@
 {
  "stage": "setups",
- "base": ["", "base"],
- "ref": "D0",
+ "base": [
+  "",
+  "base"
+ ],
+ "ref": "D0c",
  "objective": "hits_select",
- "gates": ["placebo", "width<=30"],
+ "gates": [
+  "placebo",
+  "width<=30"
+ ],
  "candidates": {
-  "C1": {"setups": ["fine", "pb"]},
-  "C2": {"setups": ["fine", "ep"], "ep_pool": {"turnover": 5e6, "price": 2.0}},
-  "C3": {"setups": ["fine", "pb", "ep"], "ep_pool": {"turnover": 5e6, "price": 2.0}},
-  "C4": {"setups": ["pb"]},
-  "C5": {"setups": ["fine", "pb"], "pool": {"turnover": 20e6, "adr": 3.0, "above50": true}}
+  "C1": {
+   "setups": [
+    "fine",
+    "pb"
+   ]
+  },
+  "C2": {
+   "setups": [
+    "fine",
+    "ep"
+   ],
+   "ep_pool": {
+    "turnover": 5000000.0,
+    "price": 2.0
+   }
+  },
+  "C3": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "ep_pool": {
+    "turnover": 5000000.0,
+    "price": 2.0
+   }
+  },
+  "C4": {
+   "setups": [
+    "pb"
+   ]
+  },
+  "C5": {
+   "setups": [
+    "fine",
+    "pb"
+   ],
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 3.0,
+    "above50": true
+   }
+  }
+ },
+ "base_change": {
+  "entry": "close"
  }
 }

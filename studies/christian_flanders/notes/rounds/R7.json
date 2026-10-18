@@ -1,51 +1,15 @@
 {
- "stage": "phase2",
- "base": [
-  "r6.json",
-  "chosen"
- ],
- "ref": "R6",
+ "stage": "exact_entry",
+ "base": ["r6.json", "chosen"],
+ "base_change": {"entry": "close"},
+ "ref": "R6c",
  "objective": "his_years",
- "gates": [
-  "placebo",
-  "bought",
-  "width<=30"
- ],
+ "gates": ["placebo", "bought", "width<=30"],
  "candidates": {
-  "T1": {
-   "ep_first": true
-  },
-  "T2": {
-   "ep_first": true,
-   "rule_opts": {
-    "max_open": 12
-   }
-  },
-  "T3": {
-   "rule_opts": {
-    "month_loss_cap": 0.05,
-    "month_cap_ladder": [
-     0.03,
-     0.02,
-     0.01,
-     0.005
-    ],
-    "month_cap_basis": "opened"
-   }
-  },
-  "T4": {
-   "ep_first": true,
-   "rule_opts": {
-    "risk": 0.005
-   }
-  },
-  "T5": {
-   "ep_first": true,
-   "rule_opts": {
-    "feedback": 4,
-    "risk_low": 0.0025,
-    "risk_high": 0.0075
-   }
-  }
+  "W1": {"ep": {"rvol": 3.0}},
+  "W2": {"ep": {"near": 0.15}},
+  "W3": {"rule_opts": {"trail": "ema21", "trim_signal": "ext200_120", "trim_signal_frac": 0.5}},
+  "W4": {"stop_cap": 0.0},
+  "W5": {"ep_first": true}
  }
 }

@@ -6,9 +6,9 @@
  "gates": ["placebo", "bought", "width<=30"],
  "candidates": {
   "U1": {"rule_opts": {"trail": "ema21"}},
-  "U2": {"rule_opts": {"trim_signal": "ext200_120", "trim_signal_frac": 0.5}},
+  "U2": {"setups": ["brk52", "ep"], "pool": {"adr": 5.0}},
   "U3": {"rule_opts": {"trim_day": 5}},
   "U4": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low"}},
-  "U5": {"rule_opts": {"management_by_kind": {"ep": {"trail": "ema21"}}}}
+  "U5": {"setups": ["hi52", "ep", "pp", "vcp"]}
  }
 }

@@ -67,6 +67,11 @@ def main():
             # daily approximation
             fill_d, stop_d = o, min(F.l[d, j], o * .99)
             out_d = hold(A, d, j, fill_d, stop_d)
+            close_d = F.c[d, j]
+            out_p = stop_d if close_d < fill_d else out_d          # the pessimistic daily bound (level_pess)
+            stop_c = min(F.l[d, j], close_d * .99)                  # buy the close, stop at the day's low (exact)
+            out_c = hold(A, d, j, close_d, stop_c)
+            held = bool(close_d >= o)
             # 5-minute opening-range high
             first = np.flatnonzero(ok)[0]
             orh, entry = H[first], None
@@ -84,13 +89,18 @@ def main():
             rows.append(dict(sym=str(sym), day=str(day), gap=float(o / pc - 1),
                              daily_r=float((out_d - fill_d) / (fill_d - stop_d)), daily_ret=float(out_d / fill_d - 1),
                              daily_stop_pct=float(1 - stop_d / fill_d),
+                             close_ret=float(out_c / close_d - 1), held=held,
+                             pess_ret=float(out_p / fill_d - 1), pess_r=float((out_p - fill_d) / (fill_d - stop_d)),
                              min_r=float((out_m - fill_m) / (fill_m - stop_m)), min_ret=float(out_m / fill_m - 1),
                              min_stop_pct=float(1 - stop_m / fill_m), stopped_day0=stopped))
     n = len(rows)
     summ = dict(n=n, day0_stopped=float(np.mean([r['stopped_day0'] for r in rows])) if n else None,
                 **{f'{k}_mean': float(np.mean([r[k] for r in rows])) for k in
-                   ('daily_r', 'min_r', 'daily_ret', 'min_ret', 'daily_stop_pct', 'min_stop_pct')} if n else {},
+                   ('daily_r', 'min_r', 'pess_r', 'daily_ret', 'min_ret', 'pess_ret', 'close_ret', 'daily_stop_pct', 'min_stop_pct')} if n else {},
                 **{f'{k}_median': float(np.median([r[k] for r in rows])) for k in ('daily_r', 'min_r')} if n else {})
+    hr = [r for r in rows if r['held']]
+    summ['held_only'] = dict(n=len(hr), **{k: float(np.mean([r[k] for r in hr])) for k in
+                                           ('daily_ret', 'min_ret', 'close_ret')}) if hr else {}
     print(json.dumps(summ, indent=1))
     out = ROOT / 'studies' / 'christian_flanders' / 'reports' / 'ep_minutes.json'
     out.write_text(json.dumps(dict(summary=summ, rows=rows), indent=1))

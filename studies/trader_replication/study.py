@@ -323,7 +323,7 @@ class Study:
         that fail a gate or score below the reference go into the negation register."""
         spec = json.loads((self.rounds / f'{name}.json').read_text(encoding='utf-8'))
         report, key = spec['base']
-        base = self.config(report, key)
+        base = merged(self.config(report, key), spec.get('base_change', {}))   # a declared correction of the base
         cfgs = {k: merged(base, v) for k, v in spec['candidates'].items()}
         ref = spec['ref']
         cfgs[ref] = base
