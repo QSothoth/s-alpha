@@ -73,3 +73,8 @@
 | R16 | exits_2025 | D3 | `{"rule_opts": {"trim_signal": "atr50x5", "trim_signal_frac": 0.7}}` | r15.json:chosen | R15 | objective below R15；全区间 +42%（带入 +48%） | open |
 | R16 | exits_2025 | D4 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7, "trail": "ema21"}}` | r15.json:chosen | R15 | gates: bought；全区间 +34%（带入 +48%） | open |
 | R16 | exits_2025 | D5 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7}, "ep": {"far_low": 1.0}}` | r15.json:chosen | R15 | objective below R15；全区间 +49%（带入 +48%） | open |
+| R17 | retest_exposure | E1 | `{"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"]}` | r16.json:chosen | R16 | gates: bought；全区间 +123%（带入 +48%） | open |
+| R17 | retest_exposure | E2 | `{"rule_opts": {"risk": 0.0075}}` | r16.json:chosen | R16 | gates: bought；全区间 +25%（带入 +48%） | open |
+| R17 | retest_exposure | E3 | `{"rule_opts": {"max_gross": 2.0, "max_open": 12}}` | r16.json:chosen | R16 | gates: placebo；全区间 -8%（带入 +48%） | open |
+| R17 | retest_exposure | E4 | `{"rule_opts": {"max_gross": 2.0, "max_open": 12, "risk": 0.0075}}` | r16.json:chosen | R16 | gates: placebo；全区间 -28%（带入 +48%） | open |
+| R17 | retest_exposure | E5 | `{"rule_opts": {"trim_day": 5}}` | r16.json:chosen | R16 | objective below R16；全区间 +26%（带入 +48%） | open |

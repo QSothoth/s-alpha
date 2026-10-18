@@ -44,3 +44,8 @@
 | R9 | exposure_exits | M2 | `{"rule_opts": {"max_gross": 2.0}}` | r8.json:chosen | M3 | objective below M3；全区间 +72%（带入 +184%） | open |
 | R9 | exposure_exits | M4 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.1}}` | r8.json:chosen | M3 | objective below M3；全区间 +80%（带入 +184%） | open |
 | R9 | exposure_exits | M5 | `{"rule_opts": {"max_gross": 2.0, "trim_signal": "atr50x7", "trim_signal_frac": 0.1}}` | r8.json:chosen | M3 | objective below M3；全区间 +81%（带入 +184%） | open |
+| R10 | retest_after_exposure | N1 | `{"rule_opts": {"trail": "ema20"}}` | r9.json:chosen | R9 | gates: bought；全区间 +180%（带入 +184%） | open |
+| R10 | retest_after_exposure | N2 | `{"pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}}` | r9.json:chosen | R9 | gates: bought；全区间 +120%（带入 +184%） | open |
+| R10 | retest_after_exposure | N3 | `{"filter": "IDX20"}` | r9.json:chosen | R9 | gates: bought；全区间 +97%（带入 +184%） | open |
+| R10 | retest_after_exposure | N4 | `{"rule_opts": {"max_open": 30}}` | r9.json:chosen | R9 | objective below R9；全区间 +154%（带入 +184%） | open |
+| R10 | retest_after_exposure | N5 | `{"rule_opts": {"risk": 0.0075}}` | r9.json:chosen | R9 | gates: bought；全区间 +211%（带入 +184%） | open |
