@@ -230,6 +230,8 @@ class Flanders(study.Study):
             return -lag(self.rs(A))
         if p == 'rvol':
             return -(A['F'].turnover / lag(A['F'].to20))
+        if p == 'turnover':                              # the most liquid first (20-day turnover as of t-1)
+            return -lag(A['F'].to20)
         raise ValueError(p)
 
     def market_ok(self, A, cfg):

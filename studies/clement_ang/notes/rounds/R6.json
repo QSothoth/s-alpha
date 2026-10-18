@@ -1,0 +1,14 @@
+{
+ "stage": "order",
+ "base": ["r5.json", "chosen"],
+ "ref": "R5",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "I1": {"priority": "turnover"},
+  "I2": {"priority": "turnover", "setups": ["fine", "pb"], "pb": {"fine": true}},
+  "I3": {"priority": "turnover", "setups": ["fine", "pb"], "pb": {"fine": true}, "max_new": 5},
+  "I4": {"priority": "turnover", "fine": {"near": 0.25, "tight": 3.0}},
+  "I5": {"priority": "turnover", "setups": ["fine", "pb"], "pb": {"fine": true}, "filter": "IDX20"}
+ }
+}

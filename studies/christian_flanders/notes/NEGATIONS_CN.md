@@ -50,3 +50,7 @@
 | R11 | capacity_order | Y3 | `{"max_new": 3, "rule_opts": {"max_open": 12, "max_gross": 2.0}}` | r10.json:chosen | R10 | gates: placebo；全区间 -12%（带入 +77%） | open |
 | R11 | capacity_order | Y4 | `{"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0, "risk": 0.0025}}` | r10.json:chosen | R10 | gates: placebo；全区间 -5%（带入 +77%） | open |
 | R11 | capacity_order | Y5 | `{"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0}, "priority": "rvol", "ep_first": true}` | r10.json:chosen | R10 | gates: bought；全区间 +20%（带入 +77%） | open |
+| R12 | selection | Z1 | `{"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"]}` | r11.json:chosen | Z5 | gates: placebo, bought, width<=30；全区间 -6%（带入 +77%） | open |
+| R12 | selection | Z2 | `{"setups": ["hi52", "ep", "vcp"], "kind_order": ["ep", "hi52", "vcp"]}` | r11.json:chosen | Z5 | gates: bought；全区间 +10%（带入 +77%） | open |
+| R12 | selection | Z3 | `{"setups": ["hi52", "ep", "vcp", "pb"], "kind_order": ["ep", "hi52", "vcp", "pb"]}` | r11.json:chosen | Z5 | gates: placebo, bought, width<=30；全区间 +3%（带入 +77%） | open |
+| R12 | selection | Z4 | `{"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"], "pb": {"up": 1.0}}` | r11.json:chosen | Z5 | gates: placebo, bought, width<=30；全区间 -5%（带入 +77%） | open |

@@ -1,0 +1,14 @@
+{
+ "stage": "order",
+ "base": ["r12.json", "chosen"],
+ "ref": "R12",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "A1": {"priority": "turnover"},
+  "A2": {"priority": "turnover", "setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"]},
+  "A3": {"priority": "turnover", "rule_opts": {"max_open": 12}},
+  "A4": {"priority": "turnover", "max_new": 3},
+  "A5": {"priority": "turnover", "kind_order": ["ep", "hi52"]}
+ }
+}
