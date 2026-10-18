@@ -38,7 +38,7 @@ class Qullamaggie(CF.Flanders):
     id, name = 'qullamaggie', 'Qullamaggie'
     root = ROOT / 'studies' / 'qullamaggie'
     ledger = root / 'notes' / 'trades.csv'
-    cutoff = '2023-09-01'           # PREREG_R1: selection = trades whose window starts before this day
+    cutoff = '2023-06-01'           # PREREG_R0: selection = trades whose window starts before this day
     full = ('2023-02-01', '2026-10-16')     # 21 sessions in: the 1-month leg of his strength exists
     home = ('us',)
     his = {}                        # no audited year inside the data
