@@ -128,10 +128,8 @@ class Flanders(study.Study):
                     m &= F.turnover >= o['rvol'] * lag(F.to20)      # the whole day's turnover: known at the close
                 if o['near'] is not None:
                     m &= F.o >= (1 - o['near']) * lag(F.hi(252))   # gaps into (or near) the 52-week high
-                if o['far_low'] is not None:                         # not an EP near the lows (a new listing:
-                    low = np.fmin.accumulate(np.where(np.isnan(F.l), np.inf, F.l), axis=0)   # its lowest so far)
-                    low = np.where(np.isfinite(F.lo(252)), F.lo(252), low)
-                    m &= F.o >= (1 + o['far_low']) * lag(low)
+                if o['far_low'] is not None:                         # not an EP near the lows
+                    m &= F.o >= (1 + o['far_low']) * lag(self.low52(F))
                 m &= lag(self.ep_pool(A, cfg))
             out['ep'] = (m, F.o, F.l)
         with np.errstate(invalid='ignore', divide='ignore'):
@@ -149,6 +147,9 @@ class Flanders(study.Study):
             if 'pb' in names:                                       # pullback into the 10 / 20 EMA, then its high
                 e10, e20 = F.ema(10), F.ema(20)
                 ready = (F.l <= e10 * 1.01) & (F.c >= e20) & (e10 > e20) & (F.c > F.sma(50))
+                up = cfg.get('pb', {}).get('up')
+                if up is not None:                                  # only names up (1 + up)x from the 52-week low
+                    ready &= F.c >= (1 + up) * self.low52(F)
                 level = lag(F.h)
                 m = pool & lag(ready) & (F.h > level)
                 out['pb'] = (m, np.fmax(F.o, level), F.l)
@@ -159,6 +160,14 @@ class Flanders(study.Study):
                 m = pool & lag(ready) & (F.h > pivot)
                 out['vcp'] = (m, np.fmax(F.o, pivot), F.l)
         return out
+
+    @staticmethod
+    def low52(F):
+        """The 52-week low; a name listed less than a year: its lowest so far."""
+        def f():
+            low = np.fmin.accumulate(np.where(np.isnan(F.l), np.inf, F.l), axis=0)
+            return np.where(np.isfinite(F.lo(252)), F.lo(252), low)
+        return F.get('low52_or_listing', f)
 
     def ep_pool(self, A, cfg):
         """Names an EP can come from: the pool's turnover and price floors only (an EP may gap from below its
@@ -204,6 +213,9 @@ class Flanders(study.Study):
                     exit0 = s                                      # a fixed stop below the open: exact
                 pr = prio[d, j]
                 pr = pr if np.isfinite(pr) else 0.0
+                order = cfg.get('kind_order')
+                if order:                                       # the day's setups in this order, then priority
+                    pr = pr + 10.0 * (order.index(kind) if kind in order else len(order))
                 if cfg.get('ep_first'):
                     pr = pr - 10.0 * (kind == 'ep')             # the day's EPs before its breakouts
                 out[d].append((pr, int(j), 1, float(fill), float(s), kind, exit0))

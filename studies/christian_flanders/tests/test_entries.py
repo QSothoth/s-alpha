@@ -61,6 +61,17 @@ class EpEntryTests(unittest.TestCase):
         self.assertEqual(len(self.entries((11.2, 11.9, 11.0, 11.5), 'close', ep={'far_low': .20})), 0)
 
 
+class OrderTests(unittest.TestCase):
+    def test_kind_order_puts_the_listed_setups_first(self):
+        A = panel(BASE + [(11.2, 11.9, 11.0, 11.5)])
+        m = np.zeros(A['close'].shape, bool)
+        m[30, :2] = True
+        masks = {'pb': (m, np.full(m.shape, 11.0), A['low']), 'ep': (m, A['open'], A['low'])}
+        cfg = dict(R.DRAFT, entry='close', kind_order=['ep', 'hi52', 'pb'])
+        e = sorted(R.STUDY.entries(A, cfg, masks)[30], key=lambda x: x[0])
+        self.assertEqual([x[5] for x in e], ['ep', 'ep', 'pb', 'pb'])
+
+
 class PullbackTests(unittest.TestCase):
     def test_pullback_breaks_the_pullback_day_high(self):
         rows = [(10 + .05 * i, 10.2 + .05 * i, 9.9 + .05 * i, 10.1 + .05 * i) for i in range(80)]

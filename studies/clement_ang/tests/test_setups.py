@@ -37,6 +37,9 @@ class SetupTests(unittest.TestCase):
         T = len(rows) - 1
         self.assertTrue(m[T, 0])
         self.assertAlmostEqual(level[T, 0], c - .2)
+        m2 = R.STUDY.setups(A, dict(cfg, pb={'fine': True}))['pb'][0]       # no 200-day line yet: off
+        self.assertFalse(m2[T, 0])
+        self.assertTrue((m2 <= m).all())
 
 
 if __name__ == '__main__':

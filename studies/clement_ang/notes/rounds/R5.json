@@ -1,0 +1,14 @@
+{
+ "stage": "selection",
+ "base": ["r4.json", "chosen"],
+ "ref": "R4",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "H1": {"setups": ["fine", "pb"], "pb": {"fine": true}},
+  "H2": {"setups": ["fine", "pb"], "pb": {"fine": true, "rs": 80}},
+  "H3": {"setups": ["fine", "pb"], "pb": {"fine": true}, "max_new": 5},
+  "H4": {"setups": ["fine", "pb", "ep"], "pb": {"fine": true}},
+  "H5": {"setups": ["fine", "pb"], "pb": {"fine": true}, "fine": {"near": 0.25, "tight": 3.0}}
+ }
+}

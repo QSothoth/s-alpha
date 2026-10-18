@@ -1,0 +1,14 @@
+{
+ "stage": "selection",
+ "base": ["r11.json", "chosen"],
+ "ref": "R11",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "Z1": {"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"]},
+  "Z2": {"setups": ["hi52", "ep", "vcp"], "kind_order": ["ep", "hi52", "vcp"]},
+  "Z3": {"setups": ["hi52", "ep", "vcp", "pb"], "kind_order": ["ep", "hi52", "vcp", "pb"]},
+  "Z4": {"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"], "pb": {"up": 1.0}},
+  "Z5": {"pool": {"adr": 2.0}}
+ }
+}

@@ -45,3 +45,8 @@
 | R10 | selection | X3 | `{"ep": {"near": null, "far_low": 0.5}, "rule_opts": {"max_open": 12}}` | r9.json:chosen | X1 | objective below X1；全区间 +14%（带入 +77%） | open |
 | R10 | selection | X4 | `{"ep": {"near": null, "far_low": 0.5}, "setups": ["hi52", "ep", "pb"], "rule_opts": {"max_open": 12}}` | r9.json:chosen | X1 | gates: placebo, bought, width<=30；全区间 -1%（带入 +77%） | open |
 | R10 | selection | X5 | `{"ep": {"near": null, "far_low": 1.0}, "setups": ["hi52", "ep", "pb"], "rule_opts": {"max_open": 12}}` | r9.json:chosen | X1 | gates: placebo, bought, width<=30；全区间 -5%（带入 +77%） | open |
+| R11 | capacity_order | Y1 | `{"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0}}` | r10.json:chosen | R10 | gates: placebo；全区间 -18%（带入 +77%） | open |
+| R11 | capacity_order | Y2 | `{"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0}, "priority": "rvol"}` | r10.json:chosen | R10 | gates: placebo；全区间 +1%（带入 +77%） | open |
+| R11 | capacity_order | Y3 | `{"max_new": 3, "rule_opts": {"max_open": 12, "max_gross": 2.0}}` | r10.json:chosen | R10 | gates: placebo；全区间 -12%（带入 +77%） | open |
+| R11 | capacity_order | Y4 | `{"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0, "risk": 0.0025}}` | r10.json:chosen | R10 | gates: placebo；全区间 -5%（带入 +77%） | open |
+| R11 | capacity_order | Y5 | `{"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0}, "priority": "rvol", "ep_first": true}` | r10.json:chosen | R10 | gates: bought；全区间 +20%（带入 +77%） | open |

@@ -70,6 +70,13 @@ class Clement(CF.Flanders):
             e10, e20, s50 = F.ema(10), F.ema(20), F.sma(50)
             with np.errstate(invalid='ignore'):
                 ready = (F.l <= e10 * 1.01) & (F.c >= e20) & (e10 > e20) & (F.c > s50)
+                o = cfg.get('pb', {})
+                if o.get('fine'):                               # only names on his fine list: ADR, near the
+                    f = dict(FINE, **cfg.get('fine', {}))       # high, not extended from the 50-day
+                    ready &= ((F.c > F.sma(200)) & (F.adr >= f['adr']) & (F.c >= (1 - f['near']) * F.hi(252))
+                              & ((F.c - s50) < f['atr50'] * F.atr14))
+                if o.get('rs'):                                 # composite RS percentile at least this
+                    ready &= self.rs(A) >= o['rs'] / 100
                 pool = lag(self.pool(A, cfg))
                 level = lag(F.h)
                 m = pool & lag(ready) & (F.h > level)

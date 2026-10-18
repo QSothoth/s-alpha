@@ -17,3 +17,8 @@
 | R3 | selection | F3 | `{"fine": {"near": 0.25, "tight": 3.0}}` | r2.json:chosen | F1 | objective below F1；全区间 +43%（带入 +57%） | open |
 | R3 | selection | F4 | `{"fine": {"near": 0.25, "tight": 3.0}, "setups": ["fine", "pb"]}` | r2.json:chosen | F1 | gates: width<=30；全区间 +15%（带入 +57%） | open |
 | R3 | selection | F5 | `{"fine": {"near": 0.25, "tight": 3.0}, "setups": ["fine", "pb"], "filter": "IDX20"}` | r2.json:chosen | F1 | gates: width<=30；全区间 +15%（带入 +57%） | open |
+| R4 | selection_order | G1 | `{"setups": ["fine", "pb"], "fine": {"near": 0.25, "tight": 3.0}, "priority": "rs"}` | r3.json:chosen | R3 | gates: placebo, width<=30；全区间 -10%（带入 +57%） | open |
+| R4 | selection_order | G2 | `{"setups": ["fine", "pb"], "fine": {"near": 0.25, "tight": 3.0}, "max_new": 5}` | r3.json:chosen | R3 | gates: width<=30；全区间 +26%（带入 +57%） | open |
+| R4 | selection_order | G3 | `{"setups": ["fine", "pb"], "fine": {"near": 0.25, "tight": 3.0}, "priority": "rs", "max_new": 5}` | r3.json:chosen | R3 | gates: width<=30；全区间 +6%（带入 +57%） | open |
+| R4 | selection_order | G4 | `{"setups": ["fine", "pb", "ep"], "fine": {"near": 0.25, "tight": 3.0}, "priority": "rs", "max_new": 5}` | r3.json:chosen | R3 | gates: placebo, width<=30；全区间 -1%（带入 +57%） | open |
+| R4 | selection_order | G5 | `{"setups": ["fine", "pb"], "fine": {"near": 0.25, "tight": 3.0}, "priority": "rs", "max_new": 5, "filter": "IDX20"}` | r3.json:chosen | R3 | gates: width<=30；全区间 +27%（带入 +57%） | open |
