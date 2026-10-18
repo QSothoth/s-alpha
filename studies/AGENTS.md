@@ -13,6 +13,10 @@
 | [trader_replication/](trader_replication/README.md) | `trader-replication` 的通用代码：交易台账、命中率、同日同波动组超额、多空日 K 组合与安慰剂 |
 | [auction_strength/](auction_strength/README.md) | 既有竞价例程接口；仅 3 天样本、门槛未校准，不新增独立 skill 或宣传为已验证能力 |
 
+## 交易员资料索引
+
+[trader_registry/README.md](trader_registry/README.md) 提供35份来源档案、风格索引和只读代码注册表。实现状态以 main 的实际代码为准，历史研究分支单独注明；资料覆盖不是策略实现或验证资格。
+
 ## 归档与新研究
 
 已结束研究的结论、失败经验与固定版本入口见 [archive/](archive/README.md)。W 系列、P/TS/FD、R27–R30 已归档；历史 TF/PB 已收敛。新研究前先查这些记录，归档不重置数据是否已使用，也不改写预登记、源码指纹或失败结论。

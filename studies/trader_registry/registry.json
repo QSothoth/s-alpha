@@ -1,0 +1,1975 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-10-18",
+  "traders": [
+    {
+      "id": "martin_luk",
+      "name": "Martin Luk",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票"
+      ],
+      "styles": [
+        "高波动强势股趋势突破",
+        "趋势回撤与AVWAP（main有后期访谈自动字幕整理，适用版本仍需核对）",
+        "低胜率、尾部赢家与分批退出"
+      ],
+      "timeframes": [
+        "日线趋势背景",
+        "开盘早段1分钟、之后5分钟触发（main的访谈自动字幕整理；需保留版本）",
+        "波段持有；完整持仓分布unknown"
+      ],
+      "long_short_methods": [
+        "long: 强势股突破与趋势回撤",
+        "short: 下降均线/高点AVWAP阻力、前一小时低点破位或VWAP回测失败；属于分日期研究披露"
+      ],
+      "evidence_grade": "primary_rules_partial",
+      "dossier_path": "studies/trader_registry/dossiers/swing/martin_luk.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/swing/sources.json",
+        "studies/trader_registry/dossiers/swing/sources.csv"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2020/10/13/december-2019-final",
+        "https://financial-competitions.com/previousstandings/2021/1/13/december-2020-standings",
+        "https://financial-competitions.com/previousstandings/2022/1/18/december-31-standings",
+        "https://financial-competitions.com/previousstandings/2023/2/21/december-2022-standings",
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://financial-competitions.com/previousstandings/2025/2/12/december-final-standings-2024",
+        "https://financial-competitions.com/previousstandings/2026/1/24/december-standings-2025",
+        "https://financial-competitions.com",
+        "https://financial-competitions.com/previousstandings/",
+        "https://tradingresourcehub.substack.com/p/martin-luk-283-usic-2024-key-lessons",
+        "https://tradingresourcehub.substack.com/p/martin-luk-283-usic-2024-key-lessons/comment/91396123",
+        "https://tradingresourcehub.substack.com/p/martin-luk-283-usic-2024-key-lessons/comment/94073578",
+        "https://tradingresourcehub.substack.com/p/martin-luk-283-usic-2024-key-lessons/comment/90457733",
+        "https://tradingresourcehub.substack.com/p/martin-luk-study-process",
+        "https://www.youtube.com/watch?v=lS9zbnLi1Gg",
+        "https://youtubesummary.com/summary/lS9zbnLi1Gg",
+        "https://www.youtube.com/watch?v=VKNEJA5r8zw",
+        "https://share.snipd.com/episode/2ecc451e-3f05-4f2b-8ccd-83d2d741e3ad",
+        "https://www.youtube.com/watch?v=O1LZJYaMqnQ&t=820",
+        "https://github.com/QSothoth/s-alpha/blob/5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339/studies/martin_luk/notes/RULES_CN.md",
+        "https://github.com/QSothoth/s-alpha/blob/5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339/studies/martin_luk/notes/trades.csv"
+      ],
+      "missing_rules": [
+        "版本待对照：2025-02-06本人评论为首次>3×ADR、约10%、9或23EMA；历史9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2的luk.py/intraday.py基线为3/6/9/12R、初始股数15%。main较新R19–R74另有自动字幕规则及不同轮次配置，不由旧基线代表；需核原句/日期/setup，不能将不同版本合并或判所有R规则错误",
+        "ADR回看期、涨幅参照、10%分母、后续批次及不同setup适用性unknown",
+        "完整券商成交、资金流、真实容量及年度规则映射仍缺；main已有137笔公开材料台账，不等于全账户订单"
+      ],
+      "next_steps": [
+        "对照main已有自动字幕时间戳与原音，厘清2025-02评论及2025/2026访谈的版本/setup",
+        "明确ADR/R、10%/15%、23/21EMA和后续批次差异，不直接改参数宣布修复",
+        "在已有公开交易台账基础上核对券商订单/资金流，保持同段择优与独立样本外资格分离"
+      ],
+      "implementation": {
+        "status": "MAIN_EXECUTED_LIMITED_HYPOTHESES",
+        "code_paths": [
+          "studies/martin_luk/checks.py",
+          "studies/martin_luk/fetch_r8.py",
+          "studies/martin_luk/intraday.py",
+          "studies/martin_luk/luk.py",
+          "studies/martin_luk/onemin_check.py",
+          "studies/martin_luk/r1.py",
+          "studies/martin_luk/r10.py",
+          "studies/martin_luk/r12.py",
+          "studies/martin_luk/r16.py",
+          "studies/martin_luk/r17.py",
+          "studies/martin_luk/r3.py",
+          "studies/martin_luk/r8.py",
+          "studies/martin_luk/r8_checks.py",
+          "studies/martin_luk/replicate.py",
+          "studies/martin_luk/scale.py",
+          "studies/martin_luk/selection.py",
+          "studies/martin_luk/strength.py",
+          "studies/trader_replication/edge.py",
+          "studies/trader_replication/fidelity.py",
+          "studies/trader_replication/ledger.py",
+          "studies/trader_replication/system.py"
+        ],
+        "report_paths": [
+          "studies/martin_luk/reports/FINAL_CN.md",
+          "studies/martin_luk/reports/REPLICATION_CN.md",
+          "studies/martin_luk/reports/final_system.json",
+          "studies/martin_luk/reports/diagnose.json",
+          "studies/martin_luk/reports/robust.json"
+        ],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339已有R1–R18及R19–R74研究、replicate.py和通用trader_replication引擎；属于局部机械假设与同段择优，不是本人交易复刻、独立样本外或交易许可。main的RULES_CN.md另记录两场访谈自动字幕和3R/5R、15%退出的时间戳，较本次来源档案所审9bc6a6b历史基线更新；仍应分开2025-02本人>3×ADR评论、自动字幕解释和各轮代码，不能把版本差异宣判为所有R规则错误。本次未修改策略。原话整理：https://github.com/QSothoth/s-alpha/blob/5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339/studies/martin_luk/notes/RULES_CN.md"
+      }
+    },
+    {
+      "id": "mark_minervini",
+      "name": "Mark Minervini",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票"
+      ],
+      "styles": [
+        "SEPA成长股趋势",
+        "相对强度与VCP收缩突破",
+        "渐进风险和环境适应"
+      ],
+      "timeframes": [
+        "日/周线选股与结构",
+        "波段，历史上亦有较长持有；统一天数unknown",
+        "精确盘中触发频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 强势成长股低风险枢轴/收缩突破",
+        "short: unknown（未取得可重建独立空头系统的原始资料）"
+      ],
+      "evidence_grade": "primary_rules_partial",
+      "dossier_path": "studies/trader_registry/dossiers/swing/mark_minervini.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/swing/sources.json",
+        "studies/trader_registry/dossiers/swing/sources.csv"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2022/1/18/december-31-standings",
+        "https://financial-competitions.com",
+        "https://minerviniselect.com/strategy.php",
+        "https://michaelsincere.com/articles/my-marketwatch-interview-with-stock-market-wizard-mark-minervini",
+        "https://cdn.minervini.com/static/dist/mtp-review.1f8e8633.pdf",
+        "https://traderlion.com/investing-champions/mark-minervinis-risk-management/",
+        "https://playthetrade.com/screens/how-mark-minervini-uses-his-trend-templates/",
+        "https://github.com/obzva/trend-template-screener",
+        "https://github.com/phuazz/vcp-screener",
+        "https://www.reddit.com/r/swingtrading/comments/om09wm/mark_minervinis_performance_and_experience_with/",
+        "https://canslim.blog/2026/09/01/ai-trader-minervini-26-sepa-setups-senea-best-at-3-131/"
+      ],
+      "missing_rules": [
+        "不同趋势模板与cheat/power play等结构的完整可执行定义",
+        "逐年风险切换、加仓、退出优先级和真实触发频率",
+        "同口径完整订单及容量/费用"
+      ],
+      "next_steps": [
+        "合法核对原书及同期讲义，标明版本",
+        "把源规则扫描与冻结代理形态分开",
+        "补足失败案例、完整账本与风险变化记录"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行真实日线局部假设和源参数筛选，非SEPA完整复刻。当前存续池及事后公司行动排除有选择偏差；完整原版验收、可部署性及独立样本外均未通过。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/mark_minervini/signals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/mark_minervini/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "ryan_pierpont",
+      "name": "Ryan Pierpont",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票"
+      ],
+      "styles": [
+        "成长股中期底部突破",
+        "少量集中持仓",
+        "兼顾本职工作的观察表流程"
+      ],
+      "timeframes": [
+        "日/周线研究",
+        "3–6个月底部是经验范围",
+        "数周至数月持有；精确订单频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 成长强股整理后突破",
+        "short: unknown（无足够原始规则）"
+      ],
+      "evidence_grade": "interview_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/swing/ryan_pierpont.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/swing/sources.json",
+        "studies/trader_registry/dossiers/swing/sources.csv"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2021/1/13/december-2020-standings",
+        "https://financial-competitions.com/previousstandings/2022/1/18/december-31-standings",
+        "https://financial-competitions.com",
+        "https://www.businessinsider.com/trading-strategy-us-investing-championship-contender-outperformance-alpha-ryan-pierpoint-2021-8",
+        "https://podcasts.apple.com/us/podcast/10-steps-to-profitable-trading-in-2024-ryan-pierpont/id1586336923?i=1000640742389",
+        "https://youtu.be/KQRuUWSZvLE",
+        "https://traderlion.com/profile/clement-ang/influences-on-my-trading-clement-ang/"
+      ],
+      "missing_rules": [
+        "突破容差、下单时段、跳空和单据类型",
+        "初始/追踪止损、分批比例、总风险与相关性规则",
+        "63/126日、8–35%深度等既有代理不是本人已证参数"
+      ],
+      "next_steps": [
+        "核听2023-06-03大会完整原声并分清2024发行日期",
+        "补事前候选与排除记录及原始交易日志",
+        "核对资金连续性与后续亏损期"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行独立日线底部/成长性代理；共享会计引擎不等于共享信号。使用限定存续名单与复权因子单位账本，不是比赛账户或实际股数净收益。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/ryan_pierpont/fundamentals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/ryan_pierpont/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "afzal_lokhandwala",
+      "name": "Afzal Lokhandwala",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票（本人网站自述）",
+        "印度股票（本人网站自述）",
+        "其他市场（具体范围unknown）"
+      ],
+      "styles": [
+        "量价趋势",
+        "市场适应：顺境交易、逆境休息"
+      ],
+      "timeframes": [
+        "数周至数月波段（2023问答）",
+        "具体信号频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 寻找上升或即将上升的量价结构",
+        "short: unknown",
+        "衍生品方法: unknown（增强增长组与股票组分开）"
+      ],
+      "evidence_grade": "interview_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/afzal_lokhandwala.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/afzal_lokhandwala.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2023/2/21/december-2022-standings",
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://www.businesswire.com/news/home/20230125005300/en/",
+        "https://news.abplive.com/brand-wire/mastering-the-market-a-conversation-with-afzal-lokhandwala-the-first-indian-winner-of-the-united-states-investing-championship-1613491",
+        "https://www.moneycontrol.com/news/trends/features/stock-trading-simplified-by-afzal-lokhandwala-5560871.html/amp",
+        "https://afzallokhandwala.com/intl/",
+        "https://afzallokhandwala.com/success-stories/",
+        "https://www.reddit.com/r/IndianStockMarket/comments/1ap03be/anyone_who_took_course_of_ca_afzal_lokhandwala/"
+      ],
+      "missing_rules": [
+        "突破确认、止损、仓位预算、加仓和退出优先级",
+        "具体比赛交易市场与各账户工具映射",
+        "完整净值、费用和订单"
+      ],
+      "next_steps": [
+        "取得不同组别账户清单、月结及现金流",
+        "收集至少一胜一负的赛前计划与实际交易",
+        "冻结公开教学版本与赛时版本的对应关系"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：未发现专属策略目录或运行结果；仅覆盖/证据审查。新档案已补足持有期框架，不代表原版算法已闭合，不能用通用VCP冒名。"
+      }
+    },
+    {
+      "id": "gemy_zhou",
+      "name": "Gemy Zhou",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票（报道案例）",
+        "完整时点股票池unknown"
+      ],
+      "styles": [
+        "Python机器学习驱动",
+        "自动订单与人工隔夜覆盖"
+      ],
+      "timeframes": [
+        "盘中多笔，报道案例约十几至二十分钟",
+        "完整持有期分布unknown",
+        "可能隔夜，非已证每日强制平仓"
+      ],
+      "long_short_methods": [
+        "long: 模型驱动买入，精确信号unknown",
+        "short: 模型驱动卖空，精确信号及借券规则unknown"
+      ],
+      "evidence_grade": "interview_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/active/gemy_zhou.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/active/quant_short_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2022/12/19/november-2022-standings",
+        "https://financial-competitions.com/previousstandings/2023/2/21/december-2022-standings",
+        "https://financial-competitions.com/previousstandings/2023/7/21/june-2023-standings",
+        "https://financial-competitions.com/previousstandings/2023/10/23/september-2023-standings",
+        "https://financial-competitions.com/previousstandings/2023/11/24/ten-month-standings-2023",
+        "https://financial-competitions.com/previousstandings/2023/12/28/november-standings-2023",
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://www.tmcnet.com/usubmit/-united-states-investing-championship-ten-month-results-/2022/11/28/9720006.htm",
+        "https://www.financialcontent.com/article/bizwire-2023-7-24-united-states-investing-championship-first-half-results",
+        "https://www.businessinsider.es/economia/trader-gano-440-2022-explica-como-diseno-programa-1195890",
+        "https://en.bulios.com/status/86509",
+        "https://x.com/GemyZhou",
+        "https://www.sotwe.com/GemyZhou?lang=en",
+        "https://m.hk.investing.com/news/stock-market-news/article-276192?ampMode=1",
+        "https://test.elitetrader.com/et/threads/what-style-of-trading-would-you-teach-your-son.375171/"
+      ],
+      "missing_rules": [
+        "原始特征、标签、训练切分、模型权重和版本",
+        "证券池、报价事件、目标/止损公式、重训与人工覆盖政策",
+        "AFI日期冲突、逐笔订单和借券资料"
+      ],
+      "next_steps": [
+        "取得合法原模型/源码/哈希及特征时间映射",
+        "先核AFI原始日期、十月设置问题原帖与模型版本",
+        "继续以缺模型即拒绝的工程契约保持阻塞"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：仅输入可得时点、缺模型拒绝、父子单数量/去重/部分成交及人工隔夜状态的工程实现和合成测试；没有交易模型或金融回测结论。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/gemy_zhou/architecture.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/gemy_zhou/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "sean_ryan",
+      "name": "Sean Ryan",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票",
+        "美国ETF（含NUGT等杠杆产品）"
+      ],
+      "styles": [
+        "第一波后整理的第二波",
+        "图表与相对强弱",
+        "RSI背离辅助退出和风险管理"
+      ],
+      "timeframes": [
+        "日线结构与波段",
+        "原始触发粒度和统一持仓天数unknown"
+      ],
+      "long_short_methods": [
+        "long: 第一波后整理再启动",
+        "short: 已有弱市/房地产做空讨论，完整触发和止损unknown"
+      ],
+      "evidence_grade": "interview_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/swing/sean_ryan.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/swing/sources.json",
+        "studies/trader_registry/dossiers/swing/sources.csv"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2020/10/13/december-2019-final",
+        "https://financial-competitions.com/previousstandings/2021/1/13/december-2020-standings",
+        "https://financial-competitions.com/previousstandings/2022/1/18/december-31-standings",
+        "https://financial-competitions.com/previousstandings/2023/2/21/december-2022-standings",
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://financial-competitions.com/previousstandings/2026/1/24/december-standings-2025",
+        "https://financial-competitions.com",
+        "https://www.businessinsider.com/stock-market-investor-indicators-profitable-trader-huge-returns-2023-2",
+        "https://podcasts.apple.com/us/podcast/multiple-100-years-after-blowing-out-an-account-sean-ryan/id1586336923?i=1000642129705",
+        "https://completetradersedge.com/sean-ryan-usic-consistency-record/",
+        "https://github.com/mrseanryan",
+        "https://financial-competitions.com/previousstandings/2025/2/12/december-final-standings-2024"
+      ],
+      "missing_rules": [
+        "第二波机械边界、RSI周期/配对/容差",
+        "加仓比例、退出优先级、总杠杆及借券/强平规则",
+        "全量账本与爆仓/重启原声"
+      ],
+      "next_steps": [
+        "核听原访谈风险、失败及空头章节",
+        "保留RSI14等研究假设标签，分别审查第二波、保本和背离退出",
+        "补全借券、杠杆与容量记录"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行独立日线第二波、保本及RSI退出代理和退出锁定审计；不是本人全规则。限定名单、因子单位账本及非独立样本外限制保留。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/sean_ryan/daily_engine.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/sean_ryan/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "goverdhan_gajjala",
+      "name": "Goverdhan Gajjala",
+      "aliases": [
+        "GG",
+        "Gon"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "美国低流通小盘股票"
+      ],
+      "styles": [
+        "日内多头动量",
+        "自然回调与牛旗",
+        "EMA Kiss and Fly、Intraday VCP等教学结构分开"
+      ],
+      "timeframes": [
+        "5分钟为主，少量15分钟（本人问答）",
+        "日内；完整隔夜例外unknown"
+      ],
+      "long_short_methods": [
+        "long: 动量推进后自然回调/枢轴突破",
+        "short: unknown（已核方法以多头为主）"
+      ],
+      "evidence_grade": "primary_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/active/goverdhan_gajjala.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/active/active_source_ledger.json",
+        "studies/trader_registry/dossiers/active/active_claim_ledger.json"
+      ],
+      "source_urls": [
+        "https://www.businesswire.com/news/home/20240126217806/en/United-States-Investing-Championship-2023-Final-Results/",
+        "https://kagels-trading.com/blog/us-investing-championship/",
+        "https://traderlion.com/investing-champions/2023-us-investing-champion/",
+        "https://retailtradersrepository.substack.com/p/goverdhan-gajjala-question-and-answer",
+        "https://retailtradersrepository.substack.com/p/goverdhan-gajjala-a-deep-dive-into",
+        "https://retailtradersrepository.substack.com/p/bull-flag-breakout-pullback-setup",
+        "https://www.youtube.com/watch?v=10pHBNVi4Jc",
+        "https://www.momentumaccess.com/",
+        "https://tickerguard.com/articles/gajjala-daytrading-backtest-study",
+        "https://www.reddit.com/r/swingtrading/comments/1czhhns/paid_courses_are_not_wroth_it/"
+      ],
+      "missing_rules": [
+        "历史时点float、真实盘口/停牌/重开与全部候选及跳过记录",
+        "A+、自然回调、周期切换、风险轨迹和加仓规则",
+        "精确形态细节主要为二手课程笔记，未认证为比赛全年参数"
+      ],
+      "next_steps": [
+        "先补历史float和分钟/报价数据门禁",
+        "获取带日期的胜败样本、观察表和全年订单",
+        "将本人Q&A、二手形态与第三方代理反证分层"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行5分钟机制与域外诊断、小盘不完整子集及成本压力。strict因历史float缺失关闭；域外和极少样本不能验证本人小盘策略或可部署收益。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/goverdhan_gajjala/replay.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/goverdhan_gajjala/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "christian_flanders",
+      "name": "Christian Flanders",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票"
+      ],
+      "styles": [
+        "强势股突破与VCP",
+        "EP事件驱动",
+        "少数长赢家及成功后加仓"
+      ],
+      "timeframes": [
+        "日线结构与波段",
+        "赢单通常较输单持有更久（年度自报统计）",
+        "具体盘中频率与统一持仓期unknown"
+      ],
+      "long_short_methods": [
+        "long: 趋势/高点突破及EP",
+        "short: unknown（未取得完整原始空头系统）"
+      ],
+      "evidence_grade": "primary_rules_partial",
+      "dossier_path": "studies/trader_registry/dossiers/active/christian_flanders.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/active/active_source_ledger.json",
+        "studies/trader_registry/dossiers/active/active_claim_ledger.json"
+      ],
+      "source_urls": [
+        "https://www.businesswire.com/news/home/20250127956815/en/2024-United-States-Investing-Championship-Final-Results",
+        "https://financial-competitions.com/previousstandings/2026/1/24/december-standings-2025",
+        "https://kagels-trading.com/blog/us-investing-championship/",
+        "https://tradingresourcehub.substack.com/p/christian-flanders-usic-2024-outperformance",
+        "https://tradingresourcehub.substack.com/p/christian-flanders-2025-review",
+        "https://www.marawealth.com/christian-flanders/",
+        "https://smartstocksnewsletter.substack.com/p/interview-with-christian-flanders",
+        "https://www.linkedin.com/posts/businessinsider_a-poker-player-turned-trader-up-253-this-activity-7246633371529842688-erkv"
+      ],
+      "missing_rules": [
+        "A+与EP的完整选股、事件和入口定义",
+        "10DMA、少量20DMA计划与2026更小初始仓必须分版本",
+        "逐次加仓、保证金、成交滑点与订单取消确认"
+      ],
+      "next_steps": [
+        "按2024/2025复盘和2026计划分别建规则卡",
+        "补NVDA/CRWV/USAR/CSIQ订单与失败样本",
+        "审查尾部赢家、退出与订单幂等性"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行真实日线局部突破/退出及风险假设，非本人比赛复刻；未把NVDA单次220%曝光设为固定配置。现存池及事后行动筛选限制外推。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/christian_flanders/signals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/christian_flanders/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "j_law",
+      "name": "J Law",
+      "aliases": [
+        "Law Wai-Sum",
+        "@JLawStock"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票",
+        "ETF（含杠杆/反向产品；时期和账户分开）",
+        "香港股票（早年经历，不代表现方法专属港股）"
+      ],
+      "styles": [
+        "强行业强股与基本面/主题结合",
+        "swing与position分流",
+        "多空随环境切换及递减加仓"
+      ],
+      "timeframes": [
+        "数日至数月",
+        "熊市亦转日内减少隔夜",
+        "原始统一触发频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 强牛市强行业强股回撤；基本面决定短波段或长持",
+        "short: 熊市反弹做空弱行业弱股；借券及精确规则unknown"
+      ],
+      "evidence_grade": "primary_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/active/j_law.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/active/active_source_ledger.json",
+        "studies/trader_registry/dossiers/active/active_claim_ledger.json"
+      ],
+      "source_urls": [
+        "https://www.businesswire.com/news/home/20250127956815/en/2024-United-States-Investing-Championship-Final-Results",
+        "https://financial-competitions.com/previousstandings/2026/1/24/december-standings-2025",
+        "https://financial-competitions.com/rules",
+        "https://kagels-trading.com/blog/us-investing-championship/",
+        "https://traderlion.com/profile/j-law/11-lessons-from-j-law/",
+        "https://www.jlawstock.com/blog/20250905",
+        "https://www.prnewswire.com/apac/news-releases/j-law-sets-two-year-record-with-1-499-return-in-us-investing-championship-302698517.html",
+        "https://w.twstalker.com/JLawStock"
+      ],
+      "missing_rules": [
+        "日常约0.3%风险不等于比赛账户风险；比赛风险上限unknown",
+        "行业/题材、财务质量、多空切换、退出优先级及加仓阈值",
+        "空头库存/费用、所有账户映射与完整订单"
+      ],
+      "next_steps": [
+        "补带日期的完整入场—加仓—退出胜败链",
+        "取得赛时与日常账户规则及现金流分离记录",
+        "独立核查空头执行，禁止多头信号机械反转"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行20日阻力/同时间量与SEC时点财务分流的分钟局部假设，NI替EPS明确另立。QFQ单位账本不是实盘净美元。身份独立于Adrian Law及Judy Lai。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/j_law/signals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/j_law/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "vibha_jha",
+      "name": "Vibha Jha",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国成长股",
+        "美国杠杆指数ETF（TQQQ）"
+      ],
+      "styles": [
+        "成长股较长期持有",
+        "TQQQ市场恢复阶段波段",
+        "盈利后向个股轮换的自述流程"
+      ],
+      "timeframes": [
+        "成长股可超过一年",
+        "ETF日/周线恢复阶段波段",
+        "全年频率与平均持有期unknown"
+      ],
+      "long_short_methods": [
+        "long: 成长股及TQQQ恢复阶段",
+        "short: unknown（TQQQ多头不是做空）"
+      ],
+      "evidence_grade": "secondary_framework_only",
+      "dossier_path": "studies/trader_registry/dossiers/swing/vibha_jha.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/swing/sources.json",
+        "studies/trader_registry/dossiers/swing/sources.csv"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2021/1/13/december-2020-standings",
+        "https://financial-competitions.com/previousstandings/2022/1/18/december-31-standings",
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://financial-competitions.com/previousstandings/2025/2/12/december-final-standings-2024",
+        "https://financial-competitions.com",
+        "https://traderlion.com/investing-champions/vibha-jha-tqqq/",
+        "https://www.listennotes.com/podcasts/the-traderlion/1000000-tqqq-swing-trading-DHrK81nG_4R/",
+        "https://www.youtube.com/watch?v=aDRYV4mjlHA",
+        "https://podcasts.apple.com/ca/podcast/ep-309-how-to-achieve-huge-returns-with-these-buy-and/id1454868999?i=1000696389182",
+        "https://podcasts.apple.com/ch/podcast/from-corporate-exec-to-champion-trader-vibha-jha-on/id1812778005?i=1000733858533&l=fr-FR",
+        "https://www.linkedin.com/posts/vibha-jha-0748845_it-was-my-pleasure-dave-thank-you-for-everything-activity-7387877706379657217-ATFJ",
+        "https://www.reddit.com/r/TradersEdgeLabs/comments/1x3920w/vibha_jha_learning_to_trade_while_working_full/"
+      ],
+      "missing_rules": [
+        "更高低点、分布日、阻力失败的精确定义",
+        "两套系统的统一资金、风险和轮换账本",
+        "原始访谈音频、实际ETF订单及完整亏损期"
+      ],
+      "next_steps": [
+        "先核原访谈并分开成长股与ETF规则",
+        "补真实TQQQ产品路径、公司行动和同窗资金轮换",
+        "不将50日/10周或固定分布日代理写成本人全部条件"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行ETF、成长性及轮换审计的独立日线假设；两条线未形成同窗口完整统一资金轮换。使用真实产品价格而非指数收益乘三；部分因子单位账本非实际股数净收益。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/vibha_jha/exposure_control.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/vibha_jha/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "ty_rajnus",
+      "name": "Ty Rajnus",
+      "aliases": [
+        "Rajnus Capital LLC",
+        "@RajnusCapital"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "美国微小盘股票",
+        "SPX 0DTE期权（个人交易线索，非2025股票比赛账簿）"
+      ],
+      "styles": [
+        "系统化过热微小盘日内做空",
+        "融资稀释/流动性研究",
+        "2026做多微盘变化仅本人帖镜像线索"
+      ],
+      "timeframes": [
+        "日内为2025股票方法主线",
+        "全平时间及隔夜例外unknown"
+      ],
+      "long_short_methods": [
+        "short: 2025股票比赛据其介绍为全做空；精确触发unknown",
+        "long: 2026本人帖镜像提到微盘做多，规则unknown",
+        "不能扩写为终身只做空或从不做期权"
+      ],
+      "evidence_grade": "interview_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/active/ty_rajnus.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/active/quant_short_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2025/3/23/january-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/4/20/february-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/5/23/march-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/6/4/april-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/7/15/may-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/8/4/june-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/8/24/july-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/10/11/august-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/10/29/september-standings-2025",
+        "https://financial-competitions.com/previousstandings/2025/12/8/october-standings-2025",
+        "https://financial-competitions.com/previousstandings/2026/1/24/november-2025-standings",
+        "https://financial-competitions.com/previousstandings/2026/1/24/december-standings-2025",
+        "https://www.streetinsider.com/Business%2BWire/Multiple%2BWorld%2BRecords%2BSet%2Bin%2BInternational%2BInvesting%2BCompetition/25927718.html",
+        "https://getpodcast.com/podcast/the-traderlion-podcast/382-return-in-1-year-why-most-traders-fail-at-shorting-from-a-trading-_2f20d63a88",
+        "https://www.youtube.com/watch?v=bRXO6F_vGjM",
+        "https://traderlion.com/profile/ty-rajnus/ty-rajnus-returned-382/",
+        "https://share.snipd.com/episode/76030b42-ffd8-4aea-ab03-f23afcfc9ee5",
+        "https://share.snipd.com/chapter/935f45a1-ea6c-46ce-b580-42cc75bfc7b4",
+        "https://share.snipd.com/chapter/10a94276-9cbd-469a-aa45-ccc7d6744b6e",
+        "https://x.com/RajnusCapital",
+        "https://mobile.twstalker.com/RajnusCapital",
+        "https://mobile.twstalker.com/RajnusCapital/status/1909342663322800408",
+        "https://mobile.twstalker.com/RajnusCapital/status/1922812116794474881",
+        "https://mobile.twstalker.com/RajnusCapital/status/2064816179013906648",
+        "https://mobile.twstalker.com/RajnusCapital/status/1916269729205129588",
+        "https://mobile.twstalker.com/RajnusCapital/status/1911925563377524930",
+        "https://mobile.twstalker.com/RajnusCapital/status/1927065512644653145",
+        "https://mobile.twstalker.com/RajnusCapital/status/1908248716353679495",
+        "https://arxiv.org/abs/1903.11804"
+      ],
+      "missing_rules": [
+        "价格/流动性/摊薄概率的精确阈值与因果发布时间",
+        "locate数量/费用/有效期、召回、停牌、强平与保证金",
+        "入出场、宽止损、仓位、模型版本及账户映射"
+      ],
+      "next_steps": [
+        "核听原节目并核对CWD与亏损例的订单",
+        "补历史借券和融资事件时点后再研究可执行卖空",
+        "分开2025股票、期权及2026方法变化"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：仅真实5分钟过热事件价格路径，未模拟卖空成交或净利润；borrow未知，融资披露关联未完成。原模型与可实现净收益保持阻塞。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/ty_rajnus/events.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/ty_rajnus/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "clement_ang",
+      "name": "Clement Ang",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票",
+        "杠杆ETF（历史案例）"
+      ],
+      "styles": [
+        "动量波段与趋势收缩",
+        "model book人工识别",
+        "2026向position trading探索"
+      ],
+      "timeframes": [
+        "日/周线结构",
+        "2026常观察开盘30分钟，部分例外观察首15分钟",
+        "波段向较长持有探索；固定天数unknown"
+      ],
+      "long_short_methods": [
+        "long: 强势股收缩/回调，2026两层ADR筛选",
+        "short: 观察表有空头线索及早年尝试，完整成熟系统unknown"
+      ],
+      "evidence_grade": "primary_rules_partial",
+      "dossier_path": "studies/trader_registry/dossiers/active/clement_ang.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/active/active_source_ledger.json",
+        "studies/trader_registry/dossiers/active/active_claim_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2026/1/24/december-standings-2025",
+        "https://kagels-trading.com/blog/us-investing-championship/",
+        "https://traderlion.com/profile/clement-ang/clement-ang-qa/",
+        "https://tradingresourcehub.substack.com/p/6-lessons-from-competing-usic-2024-clement-ang",
+        "https://tradingresourcehub.substack.com/p/routine-of-part-time-trader-clement-ang",
+        "https://tradingresourcehub.substack.com/p/model-books-clement-ang",
+        "https://podcasts.apple.com/us/podcast/us-trading-champion-he-made-520-competing-against-the/id1780241706?i=1000793080369",
+        "https://hk.linkedin.com/in/clementang-17",
+        "https://github.com/traderwillhu/market_dashboard",
+        "https://www.moeasymmetry.com/articles/clement-ang-from-1m-to-zero-and-back",
+        "https://financial-competitions.com/previousstandings/2025/2/12/december-final-standings-2024"
+      ],
+      "missing_rules": [
+        "ADR/ATR算法、RS基准、主题/形态成熟及突破/回调切换",
+        "2024/2025比赛与2026AMA规则版本映射",
+        "初始止损、条件性撤止损例外、风险升降及完整账户对应"
+      ],
+      "next_steps": [
+        "分别冻结2024流程、2025模型书、2026AMA内容",
+        "核对宣传与官方参赛账户映射，不拼接收益",
+        "补失败订单及条件性风险例外的实际执行"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行两层数值筛选与分钟局部低点/转强触发代理。2026-10-06文字用于更早行情，属事后规则迁移；主题/收缩裁量未复制，QFQ单位非实盘净美元。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/clement_ang/signals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/clement_ang/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "deepak_uppal",
+      "name": "Deepak Uppal",
+      "aliases": [
+        "@duppal75"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "美国成长股",
+        "美国杠杆ETF"
+      ],
+      "styles": [
+        "强势成长股短波段",
+        "杯柄、旗形与支撑回踩",
+        "顺风反馈下渐进风险"
+      ],
+      "timeframes": [
+        "通常数日波段，亦有同日结束案例",
+        "具体原始信号频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 强势股技术支撑入场与约3R/情境提前退出",
+        "short: unknown（多资产经历不等于公开空头系统）"
+      ],
+      "evidence_grade": "secondary_framework_only",
+      "dossier_path": "studies/trader_registry/dossiers/active/deepak_uppal.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/active/active_source_ledger.json",
+        "studies/trader_registry/dossiers/active/active_claim_ledger.json"
+      ],
+      "source_urls": [
+        "https://www.businesswire.com/news/home/20240126217806/en/United-States-Investing-Championship-2023-Final-Results/",
+        "https://www.businesswire.com/news/home/20250127956815/en/2024-United-States-Investing-Championship-Final-Results",
+        "https://kagels-trading.com/blog/us-investing-championship/",
+        "https://traderlion.com/investing-champions/deepak-uppals-trading-strategy/",
+        "https://www.youtube.com/watch?v=q43pkYBo1hU",
+        "https://trading-tournaments.com/traders/deepak-uppal",
+        "https://www.ainvest.com/news/champion-259-return-priced-reality-asymmetric-payoffs-2602/"
+      ],
+      "missing_rules": [
+        "ATR周期/分母、EPS会计口径、RS期限及市场状态门槛",
+        "全/分批退出比例、总风险、保证金和加仓顺序",
+        "文章最高1%与未核视频1–1.5%风险差异"
+      ],
+      "next_steps": [
+        "先核访谈风险原句和年度统计口径",
+        "对齐NTES/NFLX/AVGO原始成交与拆股前报价",
+        "区分3R目标与实际均盈均亏"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行数值筛选、NI正盈利分钟代理、最新已披露单季EPS-sign分钟代理；两种分钟版本样本极少。QFQ单位非真实股数/净美元，完整原版未闭合。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/deepak_uppal/signals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/deepak_uppal/reports/FINAL_CN.md"
+      }
+    },
+    {
+      "id": "roy_mattox",
+      "name": "Roy Mattox",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票"
+      ],
+      "styles": [
+        "集中成长股",
+        "回调企稳转强",
+        "顺境加风险及浮盈保护"
+      ],
+      "timeframes": [
+        "波段框架",
+        "具体触发频率和平均持有天数unknown"
+      ],
+      "long_short_methods": [
+        "long: 强势成长股回调企稳后参与",
+        "short: unknown"
+      ],
+      "evidence_grade": "secondary_framework_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/roy_mattox.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/roy_mattox.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://www.businesswire.com/news/home/20220124005241/en/",
+        "https://financial-competitions.com/previousstandings/2023/2/21/december-2022-standings",
+        "https://tradingengineered.substack.com/p/10-keys-to-achieving-super-performance",
+        "https://metacast.app/podcast/the-traderlion-podcast/rXxhcWFL/how-to-identify-the-best-market-windows-for-maximum-returns-roy-and-wesley-mattox/0600Go81",
+        "https://www.linkedin.com/in/roy-mattox-13069312"
+      ],
+      "missing_rules": [
+        "入场细则、减仓/保护浮盈执行价格和时点",
+        "单笔账户风险、加仓/亏损串复位及组合相关性",
+        "全量订单、费用、资本和容量"
+      ],
+      "next_steps": [
+        "核听原演讲并获取同期胜败订单",
+        "将5%–8%股价止损与账户风险分开",
+        "分别研究分批止盈和浮盈保护，不用教学胜率作实测值"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果；现为来源/覆盖审查。公开框架可研究，尚不能构造本人精确策略或收益曲线。"
+      }
+    },
+    {
+      "id": "tanmay_khandelwal",
+      "name": "Tanmay Khandelwal",
+      "aliases": [
+        "TwoX Capital Management"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "印度股票"
+      ],
+      "styles": [
+        "BEST成长投资",
+        "基本面、盈利、相对强度与管理层研究"
+      ],
+      "timeframes": [
+        "通常持有超过五个月（原节目说明）",
+        "信号频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 印度成长股框架",
+        "short: unknown"
+      ],
+      "evidence_grade": "secondary_framework_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/tanmay_khandelwal.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/tanmay_khandelwal.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://twoxcapital.com/",
+        "https://getpodcast.com/podcast/the-traderlion-podcast/24-year-old-trading-champion-shares-million-dollar-strategy-129_2e4229b904",
+        "https://www.youtube.com/watch?v=eney0dClrpI",
+        "https://www.elearnmarkets.com/face2face/details/investing-championship-trading-strategies-revealed"
+      ],
+      "missing_rules": [
+        "Big/Trustworthy Management的时点研究定义",
+        "仓位、初始止损、卖出比例、杠杆与频率",
+        "2023比赛账户与后续基金边界"
+      ],
+      "next_steps": [
+        "核听成功/失败案例及卖出章节",
+        "冻结2023身份、规则和印度时点财报/管理层证据",
+        "迁移美股/A股/港股必须另立假设"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果；仅研究框架。不可与Aryan Khandelwal混同，不能把2023印度股票成绩写成美股方法验证。"
+      }
+    },
+    {
+      "id": "judy_lai",
+      "name": "Judy Lai",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "股票（比赛组别已核，具体市场unknown）"
+      ],
+      "styles": [
+        "unknown（关联方声称执行MYT计划，未取得本人完整方法）"
+      ],
+      "timeframes": [
+        "unknown（触发频率及持仓期未核）"
+      ],
+      "long_short_methods": [
+        "long: unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "identity_and_results_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/judy_lai.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/judy_lai.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2025/2/12/december-final-standings-2024",
+        "https://www.jlawstock.com/myt"
+      ],
+      "missing_rules": [
+        "本人选股范围、入出场、初始止损、仓位及加减仓",
+        "多空、财报、频率、净值和费用",
+        "两个参赛账户与MYT计划的逐时对应"
+      ],
+      "next_steps": [
+        "取得本人授权的2024规则版本与赛前计划",
+        "分别核对两个账户的现金流与胜败订单",
+        "保持Judy、J Law与Adrian三份独立身份"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略实现或运行结果；只有身份/成绩及关联方方法归因。不得复制J Law代码冠名Judy；MYT @JLawStock是赛事品牌标签，不是同一人证明。"
+      }
+    },
+    {
+      "id": "leos_mikulka",
+      "name": "Leos Mikulka",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "美国股票（ARM/SMR等二手访谈案例）"
+      ],
+      "styles": [
+        "成长主题波段",
+        "底部突破与集中持仓（事后采访整理，待原声核验）"
+      ],
+      "timeframes": [
+        "波段",
+        "赢家/输家持有差异为二手统计，原始频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 成长主题突破线索",
+        "short: unknown"
+      ],
+      "evidence_grade": "secondary_framework_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/leos_mikulka.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/leos_mikulka.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2025/2/12/december-final-standings-2024",
+        "https://financial-competitions.com/previousstandings/2025/1/18/november-standings-2024",
+        "https://podcasts.apple.com/us/podcast/300-return-in-the-us-investing-championship-leos/id1586336923?i=1000660792211",
+        "https://traderlion.com/profile/leos-mikulka/how-leos-mikulka-returned-409-in-the-2024/"
+      ],
+      "missing_rules": [
+        "具体入场、加仓顺序、分段止损与逐日杠杆",
+        "二手回顾465/960.4/46.6/52不同口径冲突",
+        "完整交易和连续资金记录"
+      ],
+      "next_steps": [
+        "核原始12月复盘及官方月度结单",
+        "对齐ARM/SMR订单与风险轨迹",
+        "先做集中度/回撤口径审查，再考虑规则研究"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果；风险轨迹可研究。高曝光个例不是固定配置，二手参数不能冒充已认证原版。"
+      }
+    },
+    {
+      "id": "adrian_law",
+      "name": "Adrian Law",
+      "aliases": [
+        "WhiteBear.trading"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "股票（比赛组别已核，具体市场unknown）"
+      ],
+      "styles": [
+        "unknown（未交叉认证访谈提供动量/市场状态线索）"
+      ],
+      "timeframes": [
+        "unknown（日内或波段均未可靠确认）"
+      ],
+      "long_short_methods": [
+        "long: unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "candidate_framework_unverified",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/adrian_law.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/adrian_law.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2026/1/24/december-standings-2025",
+        "https://trading-tournaments.com/traders/adrian-law",
+        "https://www.instagram.com/whitebear.trading/"
+      ],
+      "missing_rules": [
+        "访谈日期、本人确认和账户映射",
+        "工具、频率、持仓、止损、仓位、加仓及借券",
+        "具体执行规则和容量"
+      ],
+      "next_steps": [
+        "先取得本人原帖对访谈的确认",
+        "核比赛开始结单和带事前计划的一笔完整交易",
+        "保持与Law Wai-Sum/J Law及Judy Lai的身份区分"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果。官方姓名/品牌已核，方法仍阻塞；不能把来源编辑错误或TTP/个人挑战口径当比赛原版。"
+      }
+    },
+    {
+      "id": "pavel_sterba",
+      "name": "Pavel P. Sterba",
+      "aliases": [
+        "Pavel Sterba"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "股票（主办方披露，具体交易市场unknown）"
+      ],
+      "styles": [
+        "unknown（课程销售者有价格行为学习归因，未获本人确认）"
+      ],
+      "timeframes": [
+        "unknown"
+      ],
+      "long_short_methods": [
+        "long: unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "identity_and_results_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/pavel_sterba.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/pavel_sterba.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://www.businesswire.com/news/home/20220124005241/en/",
+        "https://course.zangertradingu.com/courses/priceaction"
+      ],
+      "missing_rules": [
+        "本人方法来源与赛时版本",
+        "股票池、触发、退出、风险、频率、做空和杠杆",
+        "起始金额/盈利精度差异、现金流和月结"
+      ],
+      "next_steps": [
+        "先找本人访谈确认方法而非移植Ryan Pierpont规则",
+        "取得连续券商月结及赛时计划",
+        "未公开时保留证据审查，不声称策略复刻"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果。官方成绩和部分资金/职业锚点不能导出可执行策略。"
+      }
+    },
+    {
+      "id": "hsiu_ping_peng",
+      "name": "Hsiu-Ping Peng",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "unknown（具体市场未核，不因姓名推断地区）"
+      ],
+      "styles": [
+        "unknown"
+      ],
+      "timeframes": [
+        "unknown"
+      ],
+      "long_short_methods": [
+        "long: unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "identity_and_results_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/hsiu_ping_peng.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/hsiu_ping_peng.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://www.businesswire.com/news/home/20220124005241/en/",
+        "https://financial-competitions.com/previousstandings/2020/10/13/december-2019-final",
+        "https://stockcharts.com/public?asc=true&category=Cycle+Analysis&sort="
+      ],
+      "missing_rules": [
+        "同名StockCharts作者与参赛者身份桥接",
+        "全部选股/入出场/仓位/风险和执行规则",
+        "2019 H.P.Peng与完整姓名/账户的对应"
+      ],
+      "next_steps": [
+        "先确认StockCharts作者身份",
+        "再取得赛前图表及订单",
+        "不用同名职业资料或栏目标题推导策略"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果。现有可靠证据为参赛身份/结果；同名短期指标目录仅候选线索。"
+      }
+    },
+    {
+      "id": "sam_bhatia",
+      "name": "Sam Bhatia",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "unknown（实际交易所与股票池未核）"
+      ],
+      "styles": [
+        "unknown"
+      ],
+      "timeframes": [
+        "unknown"
+      ],
+      "long_short_methods": [
+        "long: unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "identity_and_results_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/sam_bhatia.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/sam_bhatia.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2023/2/21/december-2022-standings",
+        "https://www.businesswire.com/news/home/20230125005300/en/"
+      ],
+      "missing_rules": [
+        "选股因子、触发/持仓周期、仓位和退出",
+        "止损/加减仓、杠杆、费用、净值路径与容量",
+        "赛事身份对应的本人方法材料"
+      ],
+      "next_steps": [
+        "先取得能绑定赛事身份的长访谈或机构资料",
+        "补账户月结、交易市场和代表订单",
+        "不从熊市正收益或投行背景推导对冲/量化风格"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果；主办披露职业背景与方法规则分开，规则仍阻塞。"
+      }
+    },
+    {
+      "id": "sean_goodsell",
+      "name": "Sean Goodsell",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "unknown（完整资产及交易市场未核）"
+      ],
+      "styles": [
+        "unknown（后期公司研究兴趣不能回填2022比赛方法）"
+      ],
+      "timeframes": [
+        "unknown"
+      ],
+      "long_short_methods": [
+        "long: unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "identity_and_results_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/sean_goodsell.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/sean_goodsell.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2023/2/21/december-2022-standings",
+        "https://financial-competitions.com/previousstandings/2020/10/13/december-2019-final",
+        "https://www.linkedin.com/in/sean-goodsell-aa0145133"
+      ],
+      "missing_rules": [
+        "两个比赛账户的映射与各自策略",
+        "入出场、持仓、频率、杠杆、止损及组合约束",
+        "全部订单、现金流与容量"
+      ],
+      "next_steps": [
+        "先取得本人确认账户映射及2022交易例",
+        "阅读日期化研究正文，区分观点与成交",
+        "排除同名创意工作者/房产人士"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果；搜索索引中的职业/研究入口不构成完整方法，两个参赛账户不得拼接。"
+      }
+    },
+    {
+      "id": "moritz_reinhart",
+      "name": "Moritz Reinhart",
+      "aliases": [
+        "AQS（机构关联）"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "unknown（个人比赛的实际市场未核）"
+      ],
+      "styles": [
+        "unknown（机构趋势跟踪/战术配置文章仅待连接线索）"
+      ],
+      "timeframes": [
+        "unknown"
+      ],
+      "long_short_methods": [
+        "long: unknown",
+        "short: unknown（文章摘要提及做空，不证明比赛采用）"
+      ],
+      "evidence_grade": "candidate_framework_unverified",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/moritz_reinhart.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/moritz_reinhart.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2023/2/21/december-2022-standings",
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://aqsinvestments.com/about",
+        "https://aqsinvestments.com/",
+        "https://aqsinvestments.com/author/moritz-reinhart/"
+      ],
+      "missing_rules": [
+        "趋势跟踪文章正文、作者/日期及是否赛时执行",
+        "市场/周期、组合、多空/衍生品边界、再平衡和风险",
+        "个人比赛与现行机构组合的账户及版本连接"
+      ],
+      "next_steps": [
+        "取得文章正文与实际执行参数",
+        "用2022订单确认方法关联",
+        "现行AQS组合另建时期与资产范围"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果；机构身份关联增强，但文章与比赛策略未连接，不能由机构奖项推断已验证规则。"
+      }
+    },
+    {
+      "id": "luis_carlos_tarin",
+      "name": "Luis Carlos Tarin",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "unknown"
+      ],
+      "styles": [
+        "unknown"
+      ],
+      "timeframes": [
+        "unknown"
+      ],
+      "long_short_methods": [
+        "long: unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "identity_and_results_only",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/luis_carlos_tarin.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/luis_carlos_tarin.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://financial-competitions.com/previousstandings/2025/2/12/december-final-standings-2024",
+        "https://www.idcrawl.com/luis-tarin"
+      ],
+      "missing_rules": [
+        "Luis与2024 Louis拼写是否同一人/账户尚未确认",
+        "@LuisTarin4与参赛者身份桥接",
+        "全部市场、选股、频率、仓位、退出、止损和账本"
+      ],
+      "next_steps": [
+        "先核主办方/本人的拼写及社交身份说明",
+        "再补市场、账户起始日和连续结单",
+        "不与David Tarin或同名公职/商业人士混同"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果；不把Louis Carlos Tarin列为已确认别名，不拼接跨年收益或同名人物资料。"
+      }
+    },
+    {
+      "id": "miguel_zambrano_sanchez",
+      "name": "Miguel Zambrano Sánchez",
+      "aliases": [
+        "Miguel Zambrano",
+        "Miguel Zambrano Sanchez",
+        "@ZambranoSMiguel"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "股票（具体交易市场/交易所unknown）"
+      ],
+      "styles": [
+        "裁量短线技术交易",
+        "波段技术与基本面结合"
+      ],
+      "timeframes": [
+        "日内分钟/小时，含盘前盘后",
+        "波段1–3周",
+        "67%/33%分配分母与平均持有说法未闭合"
+      ],
+      "long_short_methods": [
+        "long: unknown（方向未充分披露）",
+        "short: unknown"
+      ],
+      "evidence_grade": "interview_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/remaining/miguel_zambrano_sanchez.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/remaining/miguel_zambrano_sanchez.sources.json",
+        "studies/trader_registry/dossiers/remaining/source_ledger.json"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2024/1/23/december-standings-2023",
+        "https://www.businesswire.com/news/home/20220124005241/en/",
+        "https://www.escuelatraders.com/post/entrevista-a-miguel-zambrano-3er-puesto-united-states-investing-championship-2023"
+      ],
+      "missing_rules": [
+        "日内/波段精确触发与止损/止盈算法",
+        "67%/33%按资本或次数等分母、100%杠杆语义",
+        "各模式账户/时段/股票/成交和费用映射"
+      ],
+      "next_steps": [
+        "把盘前盘后日内与1–3周波段分开",
+        "两模式各补一胜一负的赛前计划和订单",
+        "核实杠杆、资金分配及市场范围"
+      ],
+      "implementation": {
+        "status": "SOURCE_INSUFFICIENT_NO_FAKE_IMPLEMENTATION",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：无专属策略代码或运行结果。新档案已取得本人短期/波段框架，不能继续称完全无方法；完整触发仍不足以实施，不能拿日线替代盘前盘后执行。"
+      }
+    },
+    {
+      "id": "zhang_qi",
+      "name": "张棋",
+      "aliases": [
+        "Zhang Qi"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "境内场内ETF",
+        "跨境指数敞口ETF"
+      ],
+      "styles": [
+        "技术超跌反转",
+        "产业/宏观困境反转",
+        "资金迁移与轮动"
+      ],
+      "timeframes": [
+        "隔日反弹至较长产业修复",
+        "统一持有天数及信号频率unknown"
+      ],
+      "long_short_methods": [
+        "long: ETF反转/轮动与风险时空仓",
+        "short: unknown"
+      ],
+      "evidence_grade": "interview_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/china/zhang_qi.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/china/source_ledger.json",
+        "studies/trader_registry/dossiers/china/source_ledger.md"
+      ],
+      "source_urls": [
+        "https://www.cls.cn/detail/1683118",
+        "https://www.cls.cn/detail/1406483"
+      ],
+      "missing_rules": [
+        "技术/基本面/资金流排序及入出场和风险预算",
+        "原比赛具体场次、账户和案例ETF代码",
+        "与叙市的实名绑定、全账本、现金流及真实执行"
+      ],
+      "next_steps": [
+        "补原始最终分场榜、结单及三个案例事前记录",
+        "分开技术价格机制与产业判断",
+        "核ETF可卖制度、分红、容量和真实撮合"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：现已完成E1真实行业ETF三分支价格机制及固定成本敏感性，E0仅历史。strict撮合未认证，现金分红不完整，不是本人完整策略、净总回报或独立样本外。与叙市身份暂独立，不计为两个独立成功样本。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/zhang_qi/checks.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/zhang_qi/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "xushi",
+      "name": "叙市",
+      "aliases": [
+        "叙市XushiETF",
+        "XushiETF"
+      ],
+      "cohort": "original_33",
+      "markets": [
+        "境内ETF",
+        "香港股票（明源云案例）",
+        "个股（范围未完整披露）"
+      ],
+      "styles": [
+        "ETF波段V2/V3专有指标",
+        "分钟与日线共振",
+        "支撑阻力、产业/宏观研究与人工裁量"
+      ],
+      "timeframes": [
+        "5分钟辅助触发",
+        "日线支撑阻力",
+        "波段；平均持有期unknown"
+      ],
+      "long_short_methods": [
+        "long: ETF/股票波段及已有底仓做T",
+        "short: unknown"
+      ],
+      "evidence_grade": "primary_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/china/xushi.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/china/source_ledger.json",
+        "studies/trader_registry/dossiers/china/source_ledger.md"
+      ],
+      "source_urls": [
+        "https://www.caiwennews.com/article/857353.shtml",
+        "https://caifuhao.eastmoney.com/news/20230605114141071686610",
+        "https://caifuhao.eastmoney.com/news/20230727153733250432530",
+        "https://poi.10jqka.com.cn/store/formula/detail/indexid/318635",
+        "https://xueqiu.com/1993371359/250594652",
+        "https://www.yinsfinance.com/article/832510.shtml"
+      ],
+      "missing_rules": [
+        "V2/V3公式、参数版本、重绘情况及全部历史信号",
+        "可卖库存、仓位、隔夜和退出规则",
+        "跨平台身份与实名/赛时版本绑定"
+      ],
+      "next_steps": [
+        "先取得合法原公式或日期化历史信号",
+        "核跨平台身份及获奖账户对应",
+        "保留人工覆盖与已有底仓/当日新买的执行区别"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：仅E0证据门禁；有evidence.py不代表信号策略实现。未取得专有公式/版本，不用60日突破替代；与张棋实名关系未闭合。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/xushi/evidence.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/xushi/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "li666",
+      "name": "Li666",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "中国A股（偏好300开头）"
+      ],
+      "styles": [
+        "企业研究与政策/商品背景",
+        "提前买入、低频持有"
+      ],
+      "timeframes": [
+        "低频持有",
+        "平均天数与买入触发周期unknown"
+      ],
+      "long_short_methods": [
+        "long: 研究后较早持有",
+        "short: unknown"
+      ],
+      "evidence_grade": "interview_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/china/li666.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/china/source_ledger.json",
+        "studies/trader_registry/dossiers/china/source_ledger.md"
+      ],
+      "source_urls": [
+        "https://app.dahecube.com/nweb/news/20211103/111301nca063cc1a56.htm",
+        "https://spds.ccnew.com.cn/introduce.shtml"
+      ],
+      "missing_rules": [
+        "企业研究标准、预期差和入场触发",
+        "集中度、融资、仓位调整、退出/止损及空仓",
+        "2021计分规则、IPO贡献和资金流"
+      ],
+      "next_steps": [
+        "补2021原榜和赛段规则及IPO剔除明细",
+        "获取本人愿意公开的股票代码、事前研究及全部胜败订单",
+        "不反向猜测约3元买入的大赢家"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：仅E1-screen真实名义价格/300前缀筛选；覆盖极窄且有当前存续池偏差。没有买入持有模拟或该交易者策略收益。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/li666/screen.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/li666/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "erchi",
+      "name": "二池",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "中国A股"
+      ],
+      "styles": [
+        "产业预期与市场反馈",
+        "主线反复交易/修复回踩",
+        "10/20日均线退出描述按日期分开"
+      ],
+      "timeframes": [
+        "日线框架",
+        "主线可反复跟踪半年以上",
+        "单笔平均持有期及完整频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 主线股修复/回踩及趋势跟随",
+        "short: unknown"
+      ],
+      "evidence_grade": "primary_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/china/erchi.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/china/source_ledger.json",
+        "studies/trader_registry/dossiers/china/source_ledger.md"
+      ],
+      "source_urls": [
+        "https://m.tgb.cn/a/2dVOWdW2Lpm?type=hot",
+        "https://m.tgb.cn/a/2err4uoNmhQ?type=hot",
+        "https://tgb.cn/user/blog/myspmath?userID=9435281",
+        "https://www.9db.com/user/7c156618-9ee7-4da6-af62-54a41a95dce3",
+        "https://www.tgb.cn/dialog/2eYbNKW3IVz_83172956_1",
+        "https://kdocs.cn/l/cntVsLnAM9Kn"
+      ],
+      "missing_rules": [
+        "事前产业池、修复/均线定义与仓位",
+        "三日修复原回复待逐句重核，不作为本轮新增确认",
+        "融资/现金流、真实订单、涨跌停/停牌及原始交割单"
+      ],
+      "next_steps": [
+        "合法取得已公开交割单并统一各赛事映射",
+        "将事前产业观点、失效日期与全部交易配对",
+        "核10/20日不同语境，不事后挑成功产业"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行E1四组真实A股价格事件及严格拒单账簿；严格账簿无成交。缺产业论据、历史ST/限价与费用，非完整策略、可成交组合或净收益。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/erchi/checks.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/erchi/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "zhegu_youdu",
+      "name": "这股有毒",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "中国股票",
+        "中国可转债/转股",
+        "逆回购"
+      ],
+      "styles": [
+        "情绪与竞价预期",
+        "板块回流",
+        "商品/业绩逻辑",
+        "转债负溢价转股与风险回避"
+      ],
+      "timeframes": [
+        "竞价/盘中/尾盘观察",
+        "波段与较长个股持有并存",
+        "固定持仓期unknown"
+      ],
+      "long_short_methods": [
+        "long: 股票、转债转股及板块轮动",
+        "short: unknown",
+        "风险回避: 空仓或逆回购"
+      ],
+      "evidence_grade": "primary_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/china/zhegu_youdu.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/china/source_ledger.json",
+        "studies/trader_registry/dossiers/china/source_ledger.md"
+      ],
+      "source_urls": [
+        "https://m.tgb.cn/a/25sBhQzDWpM?type=hot",
+        "https://www.tgb.cn/user/blog/myspmath?userID=1301470",
+        "https://www.tgb.cn/a/29WhTgXRnHh",
+        "https://www.bilibili.com/video/BV11S421R7ii/",
+        "https://www.youtube.com/watch?v=vGXywJUCUAY"
+      ],
+      "missing_rules": [
+        "竞价事前预期、入出场、分支归因和风险上限",
+        "转股资格/到账/可卖时间、费用与实际成交",
+        "全部现金流，特别是2024-04-18额外入金"
+      ],
+      "next_steps": [
+        "先核各赛事账户及完整入出金表",
+        "各模式分别收集订单与失败案例",
+        "取得转债和竞价执行证据后再定规则"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：仅E0-accounting资金流与工具边界实现；没有策略信号收益。入金不可计作回报，转股不是瞬时无风险套利。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/zhegu_youdu/accounting.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/zhegu_youdu/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "guiyin",
+      "name": "归因",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "中国A股（小盘题材案例）"
+      ],
+      "styles": [
+        "unknown（第三方产业/事件预判与低吸等仅工作假说）"
+      ],
+      "timeframes": [
+        "unknown（平均持有与实际频率未核）"
+      ],
+      "long_short_methods": [
+        "long: 第三方案例为多头交易，完整方法unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "secondary_framework_only",
+      "dossier_path": "studies/trader_registry/dossiers/china/guiyin.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/china/source_ledger.json",
+        "studies/trader_registry/dossiers/china/source_ledger.md"
+      ],
+      "source_urls": [
+        "https://www.tgb.cn/dialog/2eYbNKW3IVz_83172956_1",
+        "https://www.tgb.cn/a/2eB2qhDdRJg",
+        "https://www.tgb.cn/user/blog/myspmath?userID=8950857",
+        "https://www.9db.com/info/detail/A6FC95A7-BAF0-4F26-A3D2-4C81A947181D",
+        "https://www.9db.com/user/faa62429-9845-4158-8e44-032872dca4ab?type=blog",
+        "https://www.bilibili.com/video/BV1eDrpYaEJc/",
+        "https://kdocs.cn/l/cm5xnCnUZCIZ"
+      ],
+      "missing_rules": [
+        "本人完整方法、入场/加仓/退出和风险预算",
+        "第三方不打板说法与首板案例冲突",
+        "赛事/第三方口径、融资净资产、资金流及交割单"
+      ],
+      "next_steps": [
+        "优先合法读取原始公开交割单并映射赛事",
+        "核听完整原访谈并校对全部订单",
+        "不把单股三分之一等二次总结当固定规则"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：仅E0-accounting，原账本未读、审计未完成。没有低吸策略或净收益实现；本人核验声明与本研究核验状态分开。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/guiyin/accounting.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/guiyin/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "didiao_kekeyuan",
+      "name": "低调科科员",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "中国A股（赛事/点评范围）"
+      ],
+      "styles": [
+        "热点板块分仓波动（主办点评分类，非闭合规则）"
+      ],
+      "timeframes": [
+        "波段分类线索",
+        "具体周期/平均持有与频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 热点股票交易线索，完整规则unknown",
+        "short: unknown"
+      ],
+      "evidence_grade": "secondary_framework_only",
+      "dossier_path": "studies/trader_registry/dossiers/china/didiao_kekeyuan.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/china/source_ledger.json",
+        "studies/trader_registry/dossiers/china/source_ledger.md"
+      ],
+      "source_urls": [
+        "https://www.tgb.cn/user/blog/myspmath?userID=2167007",
+        "https://m.tgb.cn/a/1Uztryjrjrg?type=hot",
+        "https://k.sina.com.cn/article_5952915720_162d2490806704ihrc.html",
+        "https://m.tgb.cn/a/2iAfrtwEaD6",
+        "https://www.bilibili.com/video/BV1EFpNeZEeu/"
+      ],
+      "missing_rules": [
+        "本人完整原访谈及精确买卖/仓位规则",
+        "入出金、融资、资金规模与逐笔胜败",
+        "页面50%仓位/0股票等字段含义"
+      ],
+      "next_steps": [
+        "先核完整访谈和核验账本",
+        "查明期末/中途报单字段，不移植邻近作者交易",
+        "保留半年度与全年赛事区别"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：仅E0证据对象和不变量测试；无可执行热点轮动策略。半年度冠军不能写全年冠军，分仓不自动证明低风险。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/didiao_kekeyuan/evidence.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/didiao_kekeyuan/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "touzi_ru_rensheng",
+      "name": "投资如人生",
+      "aliases": [],
+      "cohort": "original_33",
+      "markets": [
+        "中国A股",
+        "融资股票账户（本人自述，账本待核）"
+      ],
+      "styles": [
+        "左侧潜伏",
+        "重组/产业预期",
+        "下行趋势减仓与融资风险控制"
+      ],
+      "timeframes": [
+        "日/周线及60/120分钟为第三方转述线索",
+        "实际平均持有期与信号频率unknown"
+      ],
+      "long_short_methods": [
+        "long: 左侧布局、反复交易与下跌减仓",
+        "short: unknown"
+      ],
+      "evidence_grade": "primary_framework_partial",
+      "dossier_path": "studies/trader_registry/dossiers/china/touzi_ru_rensheng.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/china/source_ledger.json",
+        "studies/trader_registry/dossiers/china/source_ledger.md"
+      ],
+      "source_urls": [
+        "https://m.tgb.cn/a/2eDSCQ6c6tL?type=hot",
+        "https://m.tgb.cn/a/2eDSCQ6c6tL-2?type=hot",
+        "https://www.tgb.cn/user/blog/myspmath?userID=856449",
+        "https://m.tgb.cn/a/2fF8HogWPXN",
+        "https://kdocs.cn/l/ch6JpoRINMOp",
+        "https://kdocs.cn/l/ctytoHFuRBps",
+        "https://m.tgb.cn/a/2rcSbfzmFSy-3?type=hot"
+      ],
+      "missing_rules": [
+        "精确入出场、加减仓、风险预算和模式版本",
+        "提款后本金、融资负债/利息、担保比例和强平线",
+        "全部订单、资金流与后续亏损段"
+      ],
+      "next_steps": [
+        "补合法可读月度交割单与资金流",
+        "核原访谈及真实融资尾部风险",
+        "将低点起算自述与比赛赛段保持分离"
+      ],
+      "implementation": {
+        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：仅E0-risk风险/融资压力工具与不变量测试；没有均值回归alpha。特定日期不足30%仓位不是固定择时阈值，完整策略仍阻塞。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/touzi_ru_rensheng/risk.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/touzi_ru_rensheng/reports/RESULTS.md"
+      }
+    },
+    {
+      "id": "qullamaggie",
+      "name": "Qullamaggie",
+      "aliases": [
+        "Kristjan Kullamägi",
+        "Kristjan Kullamagi",
+        "@Qullamaggie"
+      ],
+      "cohort": "additional_reference",
+      "markets": [
+        "美国股票",
+        "极端ETF/波动产品（历史个例）"
+      ],
+      "styles": [
+        "强动量收缩突破",
+        "Episodic Pivot",
+        "Parabolic short及极端下跌反向多头",
+        "低胜率、少数大赢家与紧风险"
+      ],
+      "timeframes": [
+        "日线选股/整理，1/3/6月强度",
+        "盘中开盘区间执行（1/5/60分钟需按版本定义）",
+        "波段数日至数周或更长，统一频率unknown"
+      ],
+      "long_short_methods": [
+        "long: Breakout与EP；另有极端下跌parabolic long",
+        "short: 加速上涨后ORL破位、转弱或VWAP反抽失败；借券必需"
+      ],
+      "evidence_grade": "primary_rules_partial",
+      "dossier_path": "studies/trader_registry/dossiers/qullamaggie/dossier.zh.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/qullamaggie/source-ledger.md"
+      ],
+      "source_urls": [
+        "https://qullamaggie.com/my-3-timeless-setups-that-have-made-me-tens-of-millions/",
+        "https://qullamaggie.com/about/",
+        "https://qullamaggie.com/faq/",
+        "https://qullamaggie.com/how-to-master-a-setup-episodic-pivots/",
+        "https://qullamaggie.com/some-good-tweetstorms/",
+        "https://twitter.com/Qullamaggie/status/1344675459934662657",
+        "https://twitter.com/Qullamaggie/status/1344626907573342208",
+        "https://chatwithtraders.com/episode/212-kristjan-kullamagi-breakouts-home-runs-exponential-returns",
+        "https://www.maoxian.com/thoughts/notes-for-chat-with-traders-episode-212",
+        "https://tradingresourcehub.substack.com/p/interview-qullamaggie-chat-with-traders-part1?open=false",
+        "https://podme.com/no/episode/935561/",
+        "https://www.daytrading.se/svenske-tradern-kristjan-kullamagi-i-chat-with-traders/",
+        "https://www.wsj.com/articles/short-selling-stocks-proves-costly-for-some-investors-11599645600",
+        "https://omni.se/borshaj-fran-arboga-drog-in-305-miljoner-pa-ett-ar/a/lVLKnk",
+        "https://nyheter205.rssing.com/chan-4974127/article43172.html",
+        "https://www.reddit.com/r/qullamaggie/comments/1buvei7/qullamaggie_tax_returns_since_2013_capital/",
+        "https://www.reddit.com/r/qullamaggie/comments/1o5tgpy/qullamaggie_tax_returns_2024/",
+        "https://www.panmacmillan.com/authors/jack-d-schwager/market-wizards-the-next-generation/9781804093641",
+        "https://completetradersedge.com/kristjan-kullamagi-qullamaggie/",
+        "https://www.reddit.com/r/qullamaggie/comments/13hjo2l",
+        "https://www.elitetrader.com/et/threads/how-do-famous-swing-traders-like-dan-zanger-size-up-so-fast.377082/page-22",
+        "https://qullamaggie.com/",
+        "https://www.youtube.com/qullamaggie",
+        "https://www.youtube.com/watch?v=K0F73Sq90j0",
+        "https://www.youtube.com/watch?v=KciAjkEFA6s",
+        "https://www.youtube.com/playlist?list=PLV4rgdMPi5CgtRwngmf79U2G5LA066LNa",
+        "https://youtu.be/VtBYmOR83oU?t=3755",
+        "https://stockbee.blogspot.com/2021/05/learn-to-make-money.html",
+        "https://stockbee.blogspot.com/2022/01/always-use-stops.html",
+        "https://github.com/axidzz/Qullamaggie-Setups/blob/main/Qullamaggie_Setups.pine",
+        "https://github.com/ycchew/CQ_breakout_strategy",
+        "https://github.com/udaydivvela/qullamaggie-strategies",
+        "https://github.com/VladPetrariu/Qullamaggie-breakout-scanner",
+        "https://github.com/HodlHook/momentum-breakout-postmortem",
+        "https://findasset.de/strategie/qullamaggie",
+        "https://www.kqscan.com/",
+        "https://www.reddit.com/r/Daytrading/comments/1bzze12",
+        "https://www.reddit.com/r/qullamaggie/comments/1ibzkm3",
+        "https://www.reddit.com/r/qullamaggie/comments/1gcqtzd",
+        "https://www.kristjankullamagi.com/",
+        "https://www.reddit.com/r/qullamaggie/comments/1vj2dh3/my_notes_on_qullamaggie_from_the_market_wizards/",
+        "https://uu.diva-portal.org/smash/get/diva2%3A1687559/FULLTEXT01.pdf",
+        "https://setupalpha.com/products/parabolic-short-realtest-qullamaggie-strategy",
+        "https://excessreturnspod.substack.com/p/full-transcript-jack-schwager-on",
+        "https://www.toptradersunplugged.com/podcast/inside-the-next-generation-market-wizards-ft-jack-schwager-george-coyle/"
+      ],
+      "missing_rules": [
+        "有序/紧凑形态、市场过滤、事件意外程度和候选拒绝定义",
+        "2021早期设置与11月EP风险范围、入口和退出版本",
+        "全账户净值/现金流/订单、容量、借券及后续规则变化"
+      ],
+      "next_steps": [
+        "合法核对原书章与作者核验范围",
+        "对官方视频建立逐段可验证索引",
+        "未来只选一个日期版本/setup/股票池先冻结定义，再决定研究"
+      ],
+      "implementation": {
+        "status": "REFERENCE_ONLY_NOT_IMPLEMENTED",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：追加参考，未新增本地策略代码或回测。本人教学、第三方实现及媒体/社区证据分层；第三方代码不是本人源码，未确认比赛冠军或完整独立审计交易记录。"
+      }
+    },
+    {
+      "id": "oliver_kell",
+      "name": "Oliver Kell",
+      "aliases": [],
+      "cohort": "additional_reference",
+      "markets": [
+        "美国股票"
+      ],
+      "styles": [
+        "价格循环",
+        "Wedge Pop与EMA Crossback",
+        "底部/趋势线突破",
+        "Wedge Drop与Downside EMA Crossback"
+      ],
+      "timeframes": [
+        "日线10/20EMA背景",
+        "65分钟执行/加仓（访谈文字）",
+        "数周至数月，非固定持有期"
+      ],
+      "long_short_methods": [
+        "long: Wedge Pop、首次EMA回踩和底部突破",
+        "short: Wedge Drop及下降EMA阻力回抽；完整借券规则unknown"
+      ],
+      "evidence_grade": "primary_rules_partial",
+      "dossier_path": "studies/trader_registry/dossiers/swing/oliver_kell.md",
+      "source_ledger_paths": [
+        "studies/trader_registry/dossiers/swing/sources.json",
+        "studies/trader_registry/dossiers/swing/sources.csv"
+      ],
+      "source_urls": [
+        "https://financial-competitions.com/previousstandings/2021/1/13/december-2020-standings",
+        "https://financial-competitions.com",
+        "https://www.tradingwithrayner.com/the-stock-trader-who-made-941-1-in-a-year-with-oliver-kell/",
+        "https://stockbsessed.substack.com/p/oliver-kell-interview-the-mind-and",
+        "https://www.global-bolsa.com/2021/05/grabacion-y-chat-conversatorio-con.html",
+        "https://traderlion.com/technical-analysis/chart-patterns/wedge-pop-the-money-pattern/",
+        "https://traderlion.com/technical-analysis/chart-patterns/ema-crossback/",
+        "https://traderlion.com/technical-analysis/chart-patterns/downside-ema-crossback-sell-short-into-resistance/",
+        "https://traderlion.com/technical-analysis/chart-patterns/wedge-drop-how-to-sell-short/",
+        "https://traderlion.com/profile/oliver-kell/mu-wedge-pop/",
+        "https://traderlion.com/profile/oliver-kell/amd-wedge-pop/",
+        "https://traderlion.com/profile/oliver-kell/cava-breakout/",
+        "https://traderlion.com/profile/oliver-kell/arm-reversal-extension/",
+        "https://github.com/passiontrader/oliver-kell-price-action-rulebook/blob/main/Oliver_Kell_Price_Action_Rulebook.md",
+        "https://github.com/wubo1992/signal-system-oliver/blob/main/docs/PRD_v_oliver_kell_2026-05-15.md",
+        "https://www.buzzsprout.com/1745226/episodes/11598278-2020-u-s-investing-champion-oliver-kell-tells-his-story"
+      ],
+      "missing_rules": [
+        "setup图形边界、10/20EMA选择、分批及加仓",
+        "1–3%风险说法分母未明确",
+        "MU/ARM/AMD回顾日期异常、完整成交与容量"
+      ],
+      "next_steps": [
+        "按setup和发布日期保留规则",
+        "对照原图/订单核日期及分批加权收益",
+        "合法核原书与原音，第三方规则书不作本人算法"
+      ],
+      "implementation": {
+        "status": "REFERENCE_ONLY_NOT_IMPLEMENTED",
+        "code_paths": [],
+        "report_paths": [],
+        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：追加参考，未新增本地策略代码或回测。访谈/署名教育文章构成局部规则证据，精选回顾非券商流水，第三方PRD不是本人系统。"
+      }
+    }
+  ]
+}

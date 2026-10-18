@@ -45,4 +45,7 @@ $PY -m unittest studies.martin_luk.tests.test_replicate
 
 ## 换一个交易员
 
+先查 [35人档案与风格注册表](../../studies/trader_registry/README.md)，读取个人档案、来源账本与缺失规则。注册表只是研究导航；历史分支中的实现不代表当前 main 已有同一实现，未知字段不可用相似交易员代填。
+
+
 新建 `studies/<名字>/`：`notes/RULES_CN.md`、`notes/trades.csv`、`notes/PREREG_R*.md`，再写一个像 `studies/martin_luk/replicate.py` 的环节模块（股票池、强度、名单、形态、入场、离场的掩码函数和各轮入口）；台账、命中率与漏斗、同日同波动组超额、多空组合与安慰剂直接用 `studies/trader_replication/` 的 `ledger`、`fidelity`、`edge`、`system`。新环节规则先写执行时点单测；分钟线入场只用触发前可知的条件。
