@@ -1,0 +1,14 @@
+{
+ "stage": "entry_capacity",
+ "base": ["r6.json", "chosen"],
+ "ref": "R6",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "J1": {"max_new": 8},
+  "J2": {"close_any": ["pb"]},
+  "J3": {"max_new": 8, "close_any": ["pb"]},
+  "J4": {"max_new": 8, "close_any": ["pb"], "setups": ["fine", "pb", "ep"]},
+  "J5": {"max_new": 8, "close_any": ["pb"], "rule_opts": {"max_open": 30}}
+ }
+}

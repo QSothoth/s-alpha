@@ -54,3 +54,8 @@
 | R12 | selection | Z2 | `{"setups": ["hi52", "ep", "vcp"], "kind_order": ["ep", "hi52", "vcp"]}` | r11.json:chosen | Z5 | gates: bought；全区间 +10%（带入 +77%） | open |
 | R12 | selection | Z3 | `{"setups": ["hi52", "ep", "vcp", "pb"], "kind_order": ["ep", "hi52", "vcp", "pb"]}` | r11.json:chosen | Z5 | gates: placebo, bought, width<=30；全区间 +3%（带入 +77%） | open |
 | R12 | selection | Z4 | `{"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"], "pb": {"up": 1.0}}` | r11.json:chosen | Z5 | gates: placebo, bought, width<=30；全区间 -5%（带入 +77%） | open |
+| R13 | order | A1 | `{"priority": "turnover"}` | r12.json:chosen | R12 | gates: placebo；全区间 -22%（带入 +77%） | open |
+| R13 | order | A2 | `{"priority": "turnover", "setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"]}` | r12.json:chosen | R12 | gates: bought, width<=30；全区间 +77%（带入 +77%） | open |
+| R13 | order | A3 | `{"priority": "turnover", "rule_opts": {"max_open": 12}}` | r12.json:chosen | R12 | gates: placebo；全区间 -14%（带入 +77%） | open |
+| R13 | order | A4 | `{"priority": "turnover", "max_new": 3}` | r12.json:chosen | R12 | gates: placebo；全区间 -18%（带入 +77%） | open |
+| R13 | order | A5 | `{"priority": "turnover", "kind_order": ["ep", "hi52"]}` | r12.json:chosen | R12 | gates: placebo；全区间 -22%（带入 +77%） | open |

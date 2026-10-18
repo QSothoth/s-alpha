@@ -2027,5 +2027,360 @@
     "near": 0.25
    }
   }
+ },
+ {
+  "round": "R6",
+  "stage": "order",
+  "candidate": "I1",
+  "change": {
+   "priority": "turnover"
+  },
+  "base": [
+   "r5.json",
+   "chosen"
+  ],
+  "chosen": "I3",
+  "reason": "objective below I3",
+  "objective": "bought",
+  "evidence": {
+   "total": 0.2645526914330576,
+   "by_year": {
+    "2024": 0.0193049120827411,
+    "2025": 0.355923427809373,
+    "2026": -0.08504939518734189
+   },
+   "win": 0.33049403747870526,
+   "per_year": 422.037089871612,
+   "behaviour_gap": 0.7830370535028118,
+   "year_gap": 0.568710278142053,
+   "placebo_median": -0.07248485792482134,
+   "bought": {
+    "select": [
+     2,
+     12
+    ],
+    "validate": [
+     0,
+     9
+    ]
+   },
+   "fidelity": {
+    "select": [
+     5,
+     12
+    ],
+    "validate": [
+     0,
+     9
+    ]
+   },
+   "best_total": 1.1701349697968637
+  },
+  "base_config": {
+   "setups": [
+    "fine"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.003,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 20,
+    "trail": "ema10",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   }
+  }
+ },
+ {
+  "round": "R6",
+  "stage": "order",
+  "candidate": "I2",
+  "change": {
+   "priority": "turnover",
+   "setups": [
+    "fine",
+    "pb"
+   ],
+   "pb": {
+    "fine": true
+   }
+  },
+  "base": [
+   "r5.json",
+   "chosen"
+  ],
+  "chosen": "I3",
+  "reason": "objective below I3",
+  "objective": "bought",
+  "evidence": {
+   "total": 0.7300564302837844,
+   "by_year": {
+    "2024": 0.1865993702628308,
+    "2025": 0.4734009300365767,
+    "2026": -0.010455758506604962
+   },
+   "win": 0.3483068417415342,
+   "per_year": 520.1768901569187,
+   "behaviour_gap": 0.7956342862203282,
+   "year_gap": 0.4511796903382682,
+   "placebo_median": -0.0193366006284294,
+   "bought": {
+    "select": [
+     2,
+     12
+    ],
+    "validate": [
+     1,
+     9
+    ]
+   },
+   "fidelity": {
+    "select": [
+     5,
+     12
+    ],
+    "validate": [
+     5,
+     9
+    ]
+   },
+   "best_total": 1.1701349697968637
+  },
+  "base_config": {
+   "setups": [
+    "fine"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.003,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 20,
+    "trail": "ema10",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   }
+  }
+ },
+ {
+  "round": "R6",
+  "stage": "order",
+  "candidate": "I4",
+  "change": {
+   "priority": "turnover",
+   "fine": {
+    "near": 0.25,
+    "tight": 3.0
+   }
+  },
+  "base": [
+   "r5.json",
+   "chosen"
+  ],
+  "chosen": "I3",
+  "reason": "objective below I3",
+  "objective": "bought",
+  "evidence": {
+   "total": 0.5918930186135589,
+   "by_year": {
+    "2024": 0.03939512419224478,
+    "2025": 0.5205283492986532,
+    "2026": 0.007253258892800707
+   },
+   "win": 0.3396358543417367,
+   "per_year": 513.3466476462197,
+   "behaviour_gap": 0.738851047193616,
+   "year_gap": 0.5016637030075313,
+   "placebo_median": -0.08070501977170752,
+   "bought": {
+    "select": [
+     1,
+     12
+    ],
+    "validate": [
+     1,
+     9
+    ]
+   },
+   "fidelity": {
+    "select": [
+     5,
+     12
+    ],
+    "validate": [
+     3,
+     9
+    ]
+   },
+   "best_total": 1.1701349697968637
+  },
+  "base_config": {
+   "setups": [
+    "fine"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.003,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 20,
+    "trail": "ema10",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   }
+  }
+ },
+ {
+  "round": "R6",
+  "stage": "order",
+  "candidate": "I5",
+  "change": {
+   "priority": "turnover",
+   "setups": [
+    "fine",
+    "pb"
+   ],
+   "pb": {
+    "fine": true
+   },
+   "filter": "IDX20"
+  },
+  "base": [
+   "r5.json",
+   "chosen"
+  ],
+  "chosen": "I3",
+  "reason": "objective below I3",
+  "objective": "bought",
+  "evidence": {
+   "total": 0.5959766480490085,
+   "by_year": {
+    "2024": 0.06452820075718657,
+    "2025": 0.5482402774784751,
+    "2026": -0.03165302509487611
+   },
+   "win": 0.3492779783393502,
+   "per_year": 398.31098430813125,
+   "behaviour_gap": 0.8421741026169215,
+   "year_gap": 0.48068676657093407,
+   "placebo_median": -0.08436096099229617,
+   "bought": {
+    "select": [
+     2,
+     12
+    ],
+    "validate": [
+     1,
+     9
+    ]
+   },
+   "fidelity": {
+    "select": [
+     5,
+     12
+    ],
+    "validate": [
+     5,
+     9
+    ]
+   },
+   "best_total": 1.1701349697968637
+  },
+  "base_config": {
+   "setups": [
+    "fine"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.003,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 20,
+    "trail": "ema10",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   }
+  }
  }
 ]

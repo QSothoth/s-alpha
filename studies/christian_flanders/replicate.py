@@ -194,8 +194,9 @@ class Flanders(study.Study):
                     fill, s = level[d, j], stop[d, j]
                 elif mode == 'close':
                     fill, s = c[d, j], l[d, j]
-                    if kind != 'ep' and not c[d, j] > level[d, j]:
-                        continue                                   # close-confirmed breakout
+                    if kind != 'ep' and kind not in cfg.get('close_any', ()) and not c[d, j] > level[d, j]:
+                        continue                                   # close-confirmed breakout (close_any: any
+                                                                   # close on a day the level traded)
                 elif mode == 'open_pct':
                     fill = max(o[d, j], level[d, j]) if kind != 'ep' else o[d, j]
                     s = fill * (1 - pct)

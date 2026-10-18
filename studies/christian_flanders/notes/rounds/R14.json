@@ -1,0 +1,18 @@
+{
+ "stage": "pyramid_exposure",
+ "base": ["r13.json", "chosen"],
+ "ref": "R13",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "B1": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low",
+                       "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01}},
+  "B2": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low",
+                       "max_gross": 2.0, "max_position": 0.5}},
+  "B3": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low",
+                       "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01, "max_gross": 2.0, "max_position": 0.5}},
+  "B4": {"rule_opts": {"add_levels": [1.0, 2.0], "add_frac": 0.5, "max_gross": 2.0, "max_position": 0.5}},
+  "B5": {"rule_opts": {"add_levels": [1.0, 2.0], "add_frac": 0.5, "max_gross": 2.0, "max_position": 0.5,
+                       "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01}}
+ }
+}

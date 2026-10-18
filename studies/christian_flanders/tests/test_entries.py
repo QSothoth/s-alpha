@@ -72,6 +72,17 @@ class OrderTests(unittest.TestCase):
         self.assertEqual([x[5] for x in e], ['ep', 'ep', 'pb', 'pb'])
 
 
+    def test_close_any_buys_a_close_below_the_level(self):
+        A = panel(BASE + [(10.0, 10.6, 9.9, 10.1)])
+        m = np.zeros(A['close'].shape, bool)
+        m[30, 0] = True
+        masks = {'pb': (m, np.full(m.shape, 10.3), A['low'])}
+        cfg = dict(R.DRAFT, entry='close')
+        self.assertEqual(R.STUDY.entries(A, cfg, masks)[30], [])
+        (e,) = R.STUDY.entries(A, dict(cfg, close_any=['pb']), masks)[30]
+        self.assertEqual((e[3], e[4]), (10.1, 9.9))
+
+
 class PullbackTests(unittest.TestCase):
     def test_pullback_breaks_the_pullback_day_high(self):
         rows = [(10 + .05 * i, 10.2 + .05 * i, 9.9 + .05 * i, 10.1 + .05 * i) for i in range(80)]
