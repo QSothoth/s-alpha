@@ -2,6 +2,29 @@
 
 USIC 2024 +283%、2025 +969.8% 的香港交易员，美股动量波段，紧止损、低胜率（2025 年 209 胜 731 负）。完整过程与数字见 [REPLICATION_CN](../../../studies/martin_luk/reports/REPLICATION_CN.md)，逐轮记录见 [ROUNDS_CN](../../../studies/martin_luk/notes/ROUNDS_CN.md)，R1–R18 的旧结论见 [FINAL_CN](../../../studies/martin_luk/reports/FINAL_CN.md)。
 
+## 运行
+
+```bash
+cd /opt/opend-us-options
+PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+# 第一阶段（逐环节像不像 + 超额）与第二阶段前半（带入规则）：按顺序，后一轮读前一轮报告里的 chosen
+for r in r19 r20 r21 r21b r22 r22b r23 r23b r23c r24 r24b r25 r26 r27 r27b r28 \
+         r29 r30 r31 r32 r33 r34 r35 r36 r37 r38 r39 r40 r41; do
+  $PY -m studies.martin_luk.replicate $r
+done
+# R42 起每轮写成 notes/rounds/R*.json（基础配置 + 候选改动），结果在 reports/r42.json 等
+for n in $(seq 42 74); do
+  $PY -m studies.martin_luk.replicate round R$n
+done
+$PY -m studies.martin_luk.replicate diagnose r74.json   # 他的每笔有日期多头卡在哪一步、头部交易
+$PY -m studies.martin_luk.replicate robust r74.json     # 邻近参数、起始日期、成本加倍（只报告）
+$PY -m studies.martin_luk.replicate final r74.json      # 带入配置在美 / 港 / A 股的完整结果
+$PY -m unittest discover -s studies/trader_replication/tests -t .
+$PY -m unittest studies.martin_luk.tests.test_replicate
+```
+
+每轮的预登记在 `studies/martin_luk/notes/PREREG_R*.md`，逐轮记录见 `notes/ROUNDS_CN.md`，结果写 `studies/martin_luk/reports/`。R24 系列读 5 分钟样本，第二阶段每轮（5 个候选 + 参照，各 100 次安慰剂）约 20 分钟。R74 之后的轮次以 `studies/martin_luk/README.md` 和 `notes/PROGRESS.md` 为准。冻结的配置登记在 `studies/trader_screens/frozen.py`，每日扫描见 trader-screens。
+
 ## 资料与台账
 
 - 原话：两场 TraderLion 长访谈（`lS9zbnLi1Gg`、`VKNEJA5r8zw`）和他本人频道 @martinlukkt 的 89 场直播字幕，按环节整理在 [RULES_CN](../../../studies/martin_luk/notes/RULES_CN.md)。
@@ -53,7 +76,8 @@ USIC 2024 +283%、2025 +969.8% 的香港交易员，美股动量波段，紧止�
 2. 宽度上限要从他的工作量推（扫描几百只、名单几十只、每天三四笔），第一次定窄了两轮都没有候选可选。
 3. 他说的数字要逐条量：“只把成交额 1 亿美元以上的加进名单”在我们的数据里不起作用；“跳空 10% 以上”“过度伸展时卖 15%”“最多 11 只”“单只 25%–35%”都让结果变差；“指数回调到 9/21 时最该进攻”“新仓顺利才加”“半年领涨股的回踩”是有用的。
 4. 盘中入场只能用触发前可知的信息（本例修正前的假结果是验证段 +56%）；随机基线要只在该股票那天在名单里时计。
-5. “像他”和“赚到他那样的钱”可能背离：本例赚钱的版本买的是每天成交额最大的动量股，按更像他的方式排序（当天涨幅、题材扎堆、放量）买到他的票更多，收益却是 −74%。他在高波动题材股上的优势很可能在盘中执行，日 K 系统复刻不了。
+5. “像他”和“赚到他那样的钱”可能背离：本例赚钱的版本买的是每天成交额最大的动量股，按更像他的方式排序（当天涨幅、题材扎堆、放量）买到他的票更多，收益却是 −74%。（2026-10-18 复查：原先写“他在高波动题材股上的优势很可能在盘中执行，日 K 系统复刻不了”，这条还不成立。R52 只改了排序，其余配置是围绕大成交额股票调出来的；要先用三层对照和他自己对小盘的仓位、离场复测，见 METHOD_CN 第 0 节。）
 6. 只改一处的逐轮搜索会卡在“一年好一年坏”，两两组合（R60、R69）才打破；但组合是看过结果挑的，要写明是同段择优。
 7. 最终数字要做稳健性：本例 2024 年的 +288% 主要来自 1–2 月开的三笔，晚两三个月开始跑只剩 +6%～+25%；每天笔数差一笔，全区间差几倍。
 8. 在一个市场调出来的高杠杆结构不能直接搬到别的市场（港股、A 股都亏）。
+9. 前期（R1–R28）一再得出“他的策略不行”，是方法的问题，不是他的问题：没量保真度就下结论，用平均收益和每笔 R 显著性去否决凸性策略，环节脱离上下文单测，只审查好结果。第二阶段补齐各环节后才逼近他的 2024 年。立场与做法已写进根 AGENTS.md 和 METHOD_CN 第 0 节。

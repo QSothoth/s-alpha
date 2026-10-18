@@ -7,7 +7,8 @@
 | [opportunity-research](skills/opportunity-research/SKILL.md) | 从涨价、缺货、需求变化等线索研究机会，保留证据与反证 | 资料随 skill 保存 |
 | [daily-technical-review](skills/daily-technical-review/SKILL.md) | 指定股票的日 K 技术面、条件买点与多头退出计划 | `studies/daily_technical/` |
 | [trend-market-scan](skills/trend-market-scan/SKILL.md) | 三个市场的周线趋势候选、规则账户和持仓检查 | `studies/trend_breakout/` |
-| [trader-replication](skills/trader-replication/SKILL.md) | 按环节逼近一位公开交易员：交易台账、命中率、同股票随机入场对照、三市场完整系统 | `studies/trader_replication/`、`studies/martin_luk/` |
+| [trader-replication](skills/trader-replication/SKILL.md) | 按环节逼近一位公开交易员：选人准入、交易台账、命中率、三层对照、同股票随机入场对照、三市场完整系统 | `studies/trader_replication/`、`studies/martin_luk/` |
+| [trader-screens](skills/trader-screens/SKILL.md) | 交易员看板：假设研究过的交易员此刻在美股 / 港股 / A 股交易，各人今天买了什么、卖了什么、持有什么，以及彼此的交集 | `studies/trader_screens/` |
 | [market-watch](skills/market-watch/SKILL.md) | 港股 / A 股 / 美股盘中只读盯盘与信号解释 | `watch/`；历史研究见归档 |
 | [near-expiry-session](skills/near-expiry-session/SKILL.md) | 最近到期期权的筛选、许可、mock、持仓跟踪与复盘 | `studies/us_0dte_picks/`、`custody/` |
 

@@ -9,6 +9,10 @@
 - [另外44个名字的原报告附录](dossiers/remaining/COVERAGE_ONLY_APPENDIX_CN.md)：仅保留名单，不计入35份档案，也不是44套实现
 - [Martin版本对照](dossiers/swing/MARTIN_VERSION_CROSSWALK.md)：ADR、R、价格幅度和账户风险不混用；保留冲突，不改历史代码或结果
 
+## main 上的筛选代码
+
+2026-10-18 起，Qullamaggie、Clement Ang、Christian Flanders、Oliver Kell、Mark Minervini 在 [studies/trader_screens](../trader_screens/README.md) 有按原话初版的日 K 筛选（[规则卡](../../skills/trader-screens/references/SCREENS_CN.md)），Martin Luk 有已复刻冻结的系统。初版未对照真实交易、未评测；registry.json 里的实现状态没有随之修改，以本节和代码为准。
+
 ## 代码查询
 
 运行环境仅需 Python 3.10+ 标准库，在仓库根执行：
