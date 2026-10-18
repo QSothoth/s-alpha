@@ -1,0 +1,178 @@
+{
+ "report": "r0.json",
+ "config": {
+  "setups": [
+   "pop",
+   "cross"
+  ],
+  "entry": "close",
+  "stop_min": 0.01,
+  "stop_cap": 0.0,
+  "priority": "strength",
+  "max_new": 2,
+  "strength": "",
+  "filter": "",
+  "pool": {
+   "turnover": 20000000.0,
+   "adr": 3.0,
+   "above50": false
+  },
+  "rule_opts": {
+   "risk": 0.005,
+   "max_position": 0.3,
+   "max_gross": 1.0,
+   "max_open": 8,
+   "trail": "ema20",
+   "arm_trail_on_entry": true,
+   "trims": [],
+   "risk_scale": "idxhalf20"
+  }
+ },
+ "layer1": {
+  "n": 7,
+  "wins": 7,
+  "losses": 0,
+  "r_known": [],
+  "published": {}
+ },
+ "layer2": {
+  "n": 5,
+  "mean_r": 4.042,
+  "median_r": 3.27,
+  "win": 0.8,
+  "mean_ret": 0.15960000000000002,
+  "behaviour": {
+   "trades": 5,
+   "per_year": 1.4173228346456694,
+   "per_day": 0.00562429696287964,
+   "win": 0.8,
+   "avg_win": 0.20717616413734302,
+   "avg_loss": -0.031004265884419627,
+   "days_win": 36.0,
+   "days_loss": 7.0,
+   "median_days_win": 35.5,
+   "median_days_loss": 7.0,
+   "top10_share": 0.3664127625385033,
+   "entry_weight_mean": 0.182579524731542,
+   "entry_weight_max": 0.46022137072727154,
+   "open_mean": 0.16985376827896512,
+   "open_max": 3
+  },
+  "sum_r": 20.209999999999997
+ },
+ "layer3": {
+  "n": 881,
+  "mean_r": 0.0554942690758214,
+  "total": -0.017259513668716808,
+  "by_year": {
+   "2023": 0.07759729024835549,
+   "2024": 0.0905498144052177,
+   "2025": 0.10277897195415986,
+   "2026": -0.2416872238062603
+  },
+  "behaviour": {
+   "trades": 881,
+   "per_year": 249.73228346456693,
+   "per_day": 0.9910011248593926,
+   "win": 0.21566401816118047,
+   "avg_win": 0.17745301608715033,
+   "avg_loss": -0.04198125612504264,
+   "days_win": 21.652631578947368,
+   "days_loss": 3.47178002894356,
+   "median_days_win": 19.0,
+   "median_days_loss": 2.0,
+   "top10_share": 0.9048812907794276,
+   "entry_weight_mean": 0.11043253830839653,
+   "entry_weight_max": 0.30511849470830915,
+   "open_mean": 7.32620922384702,
+   "open_max": 8
+  },
+  "bought": 0
+ },
+ "per_trade": [
+  {
+   "id": "K02",
+   "ticker": "AMD",
+   "date": "2023-11-01",
+   "setup": "wedge_pop",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 0.91,
+   "our_ret": 0.08,
+   "our_days": 24,
+   "our_why": "trail"
+  },
+  {
+   "id": "K03",
+   "ticker": "AMD",
+   "date": "2023-11-10",
+   "setup": "add",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": null,
+   "our_ret": null,
+   "our_days": null,
+   "our_why": null
+  },
+  {
+   "id": "K04",
+   "ticker": "AMD",
+   "date": "2023-12-21",
+   "setup": "other",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": -1.71,
+   "our_ret": -0.031,
+   "our_days": 7,
+   "our_why": "gap_stop"
+  },
+  {
+   "id": "K05",
+   "ticker": "CAVA",
+   "date": "2024-04-26",
+   "setup": "breakout",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 3.27,
+   "our_ret": 0.304,
+   "our_days": 49,
+   "our_why": "trail"
+  },
+  {
+   "id": "K06",
+   "ticker": "MU",
+   "date": "2024-05-03",
+   "setup": "wedge_pop",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 13.93,
+   "our_ret": 0.152,
+   "our_days": 37,
+   "our_why": "trail"
+  },
+  {
+   "id": "K07",
+   "ticker": "MU",
+   "date": "2024-06-03",
+   "setup": "other",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": null,
+   "our_ret": null,
+   "our_days": null,
+   "our_why": null
+  },
+  {
+   "id": "K08",
+   "ticker": "ARM",
+   "date": "2024-05-28",
+   "setup": "breakout",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 3.81,
+   "our_ret": 0.293,
+   "our_days": 34,
+   "our_why": "trail"
+  }
+ ]
+}
