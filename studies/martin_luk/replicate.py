@@ -169,7 +169,8 @@ def r19():
     (I.OUT / 'r19_fidelity_baseline.json').write_text(json.dumps(out, indent=1))
 
 
-POOLS = {'U0': (5, 20e6, 4), 'U1': (1, 100e6, 4), 'U2': (1, 100e6, 3), 'U3': (1, 50e6, 4), 'U4': (2, 50e6, 3)}
+POOLS = {'U0': (5, 20e6, 4), 'U1': (1, 100e6, 4), 'U2': (1, 100e6, 3), 'U3': (1, 50e6, 4), 'U4': (2, 50e6, 3),
+         'U5': (5, 100e6, 3), 'U6': (2, 50e6, 2)}
 
 
 def pool_mask(A, price, turnover, adr):
@@ -715,9 +716,11 @@ def run_rules(A, entries, seg, pool, rules, placebo=100):
     px = dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'])
     if rules.trail == 'w9' and 'w9' not in A:
         A['w9'] = weekly_ema(A['close'], A['days'], 9)
-    if rules.exit_signal and rules.exit_signal not in A:
-        A[rules.exit_signal] = climax(A, int(rules.exit_signal[len('climax'):]) / 100)
-    ema = {k: A[k] for k in ('e9', 'e21', 'e50', 'w9', rules.exit_signal) if k and k in A}
+    names = (rules.exit_signal, rules.trim_signal, rules.risk_scale)
+    for k in names:
+        if k and (k not in A or k.startswith('idx_')):            # index scales depend on the pool
+            A[k] = named_signal(A, pool, k)
+    ema = {k: A[k] for k in ('e9', 'e21', 'e50', 'w9') + names if k and k in A}
     curve, dates, tr = Y.simulate(px, ema, rules, entries, *seg)
     st = Y.stats(curve, dates, tr)
     r = np.array([t['r'] for t in tr]) if tr else np.zeros(1)
@@ -894,9 +897,10 @@ FLOOR = {'hk': 1.0, 'cn': 3.0}
 COSTS = {'us': (.0005, .0005), 'hk': (.0016, .0016), 'cn': (.00076, .00126)}
 
 
-def pool_for(A):
-    """US: the R20 pool; HK / CN: top 30% by 20-day turnover in that market, price floor, the same ADR floor."""
-    spec = POOLS[chosen('r20_pool.json', 'U0')]
+def pool_for(A, name=None):
+    """US: the R20 pool (or `name`); HK / CN: top 30% by 20-day turnover in that market, price floor, the same
+    ADR floor."""
+    spec = POOLS[name or chosen('r20_pool.json', 'U0')]
     if A['market'] == 'us':
         return pool_mask(A, *spec)
     with np.errstate(invalid='ignore'):
@@ -907,7 +911,7 @@ def pool_for(A):
 
 def system_signals(A, cfg=None):
     cfg = cfg or {}
-    pool = pool_for(A)
+    pool = pool_for(A, cfg.get('pool'))
     k = pool & strength_lists(A, pool)[cfg.get('strength') or strength_choice()]
     w = k & watch_lists(A)[cfg.get('watch') or watch_choice()]
     fams = setup_families(A, w)
@@ -1100,6 +1104,38 @@ def climax(A, gain):
         return (A['turnover'] > prior_high(A['turnover'], 252)) & (c / luk.lag(c, 10) - 1 >= gain)
 
 
+def index_risk_scale(A, pool, pb=1.6, ext=1.0, ext_at=.05):
+    """R59: risk multiplier from the pool's equal-weight index as of the previous close: x `pb` when it sits within
+    1% of its EMA9 or EMA21 while above its EMA50 (his "attack when the index pulls back to the 9/21"), x `ext`
+    when it is more than `ext_at` above its EMA21 (overextended); 1 otherwise."""
+    c = A['close']
+    with np.errstate(invalid='ignore', divide='ignore'):
+        r = np.where(pool & np.isfinite(luk.lag(c)), c / luk.lag(c) - 1, np.nan)
+        idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+        e9, e21, e50 = luk.ema(idx, 9), luk.ema(idx, 21), luk.ema(idx, 50)
+        near = (np.abs(idx / e9 - 1) <= .01) | (np.abs(idx / e21 - 1) <= .01)
+        out = np.where((idx > e50) & near, pb, 1.0)
+        out = np.where(idx > e21 * (1 + ext_at), ext, out)
+    return prev(out)[:, 0]
+
+
+INDEX_SCALES = {'idx_pb16': dict(pb=1.6), 'idx_ext05': dict(pb=1.0, ext=.5), 'idx_both': dict(pb=1.6, ext=.5),
+                'idx_pb20': dict(pb=2.0), 'idx_ext05_3': dict(pb=1.0, ext=.5, ext_at=.03)}
+
+
+def named_signal(A, pool, name):
+    """Day arrays the engine reads by name: 'climax<gain%>', 'ext<k>' (close at least k x ADR above the EMA9,
+    his "extended"), and the index risk scales."""
+    if name.startswith('climax'):
+        return climax(A, int(name[len('climax'):]) / 100)
+    if name.startswith('ext'):
+        with np.errstate(invalid='ignore'):
+            return A['close'] >= A['e9'] * (1 + int(name[3:]) * A['adr'] / 100)
+    if name in INDEX_SCALES:
+        return index_risk_scale(A, pool, **INDEX_SCALES[name])
+    raise ValueError(name)
+
+
 def ep_signal(A, pool, gap_min=.05, gap_adr=1.0, vol_mult=2.0, hold_open=True, near_high=0.0):
     """His pre-market gapper scan, without the leader list: gap >= max(gap_min, gap_adr x ADR), vol_mult x volume,
     (hold_open) a close at or above the open, and (near_high) an open within that fraction of the 126-day high."""
@@ -1175,6 +1211,15 @@ EXITS.update({'X6': dict(trims=(5, 10), trail='e21'), 'X7': dict(trail='e50'), '
 EXITS.update({'X12': dict(EXITS['X9'], exit_signal='climax30'), 'X13': dict(EXITS['X9'], exit_signal='climax50'),
               'X14': dict(trims=(8,), trim_frac=.30, trail='e21'), 'X15': dict(trims=(10,), trim_frac=.50, trail='e21'),
               'X16': dict(trims=(10, 20), trim_frac=.30, trail='e21')})
+EXITS.update({'X17': dict(EXITS['X9'], trail_after_trim='e9'), 'X18': dict(EXITS['X9'], breakeven_r=3.0),
+              'X19': dict(EXITS['X9'], breakeven_r=5.0),
+              'X20': dict(EXITS['X9'], trail_after_trim='e9', exit_signal='climax50'),
+              'X21': dict(trims=(5,), trim_frac=.30, trail='e21', trail_after_trim='e9')})
+EXITS.update({'X22': dict(EXITS['X9'], trim_signal='ext2', trim_signal_frac=.15),
+              'X23': dict(EXITS['X9'], trim_signal='ext3', trim_signal_frac=.15),
+              'X24': dict(trims=(), trail='e21', trim_signal='ext2', trim_signal_frac=.15),
+              'X25': dict(EXITS['X9'], trim_signal='ext3', trim_signal_frac=.15, exit_signal='climax50'),
+              'X26': dict(EXITS['X9'], trim_signal='ext2', trim_signal_frac=.30)})
 BASE_CONFIG = dict(signals='C2', stop='cap', exits='X0', small_cap=False, gap_size=False, gross=2.0, risk=.005,
                    filter='S4', rank=None, rank_n=0)
 CARRY = ['r31_exits_sizing.json', 'r32_exposure.json', 'r33_rotation.json', 'r34_base_path.json',
@@ -1208,8 +1253,9 @@ def market_ok(A, pool, w, spec):
     return out
 
 
-def build_system(A, cfg):
-    """Entries, rules, signal mask and placebo pool for a configuration, in any market."""
+def build_system(A, cfg, trace=None):
+    """Entries, rules, signal mask and placebo pool for a configuration, in any market; `trace` (a dict) gets
+    the entries after the stop rule ('raw'), the market filter ('filtered') and the daily cap ('capped')."""
     pool, w, sig = system_signals(A, cfg)
     ep = ep_signal(A, pool, **cfg.get('ep_opts', {}))
     if cfg['signals'] == 'NONE':
@@ -1235,22 +1281,38 @@ def build_system(A, cfg):
         entries = [[e[:6] + (None, .5 * adrp[d, e[1]] / 100 if cfg['gap_size'] else None,
                              .20 if cfg['small_cap'] and to20p[d, e[1]] < 100e6 else None) for e in lst]
                    for d, lst in enumerate(entries)]
+    if trace is not None:
+        trace['raw'] = entries
     if cfg['filter'] and cfg['filter'] != 'NONE':
         entries = filter_days(entries, market_ok(A, pool, w, cfg['filter']))
-    if cfg.get('priority'):
+    if cfg.get('priority') == 'theme':
+        entries = theme_priority(A, entries)
+    elif cfg.get('priority'):
         score = priority_score(A, cfg['priority'])
         entries = [[(-score[d, e[1]] if np.isfinite(score[d, e[1]]) else np.inf,) + e[1:] for e in lst]
                    for d, lst in enumerate(entries)]
+    if trace is not None:
+        trace['filtered'] = entries
     if cfg.get('max_new'):
         entries = [sorted(lst, key=lambda e: e[0])[:cfg['max_new']] for lst in entries]
+    if trace is not None:
+        trace['capped'] = entries
     if cfg.get('shorts') and A['market'] == 'us':
         z = short_masks(A, pool)[cfg['shorts']]
         se = entries_short_capped(A, z, cfg.get('short_size', 1.0))
-        se = filter_days(se, ~ew_index_up(A, pool, cfg['short_gate']))
-        entries = [a + b for a, b in zip(entries, se)]
+        if cfg.get('short_gate'):
+            se = filter_days(se, ~ew_index_up(A, pool, cfg['short_gate']))
+        if cfg.get('short_max_new'):
+            se = [sorted(lst, key=lambda e: e[0])[:cfg['short_max_new']] for lst in se]
+        if cfg.get('short_last'):                        # R53: the day's longs are opened before any short
+            entries = [[((0, e[0]),) + tuple(e[1:]) for e in a] + [((1, e[0]),) + tuple(e[1:]) for e in b]
+                       for a, b in zip(entries, se)]
+        else:
+            entries = [a + b for a, b in zip(entries, se)]
     rules = replace(RULES, **EXITS[cfg['exits']], max_gross=cfg['gross'], risk=cfg['risk'],
                     feedback=10 if cfg.get('risk_high') else 0, risk_low=cfg['risk'],
-                    risk_high=cfg.get('risk_high', 0.0), short_trims=(3,), short_max_days=3,
+                    risk_high=cfg.get('risk_high', 0.0), short_trims=(3,),
+                    short_max_days=cfg.get('short_days', 3),
                     max_position=cfg.get('max_position', .30),
                     buy_cost=COSTS[A['market']][0], sell_cost=COSTS[A['market']][1])
     if cfg.get('rule_opts'):
@@ -1399,6 +1461,12 @@ def r34():
 FULL = ('2024-01-02', '2026-10-16')
 
 
+def bought(A, tr, located):
+    """How many located trades the system actually opened on a day of their window (same stock, long)."""
+    ours = {(t['code'], t['entry']) for t in tr if t['side'] > 0}
+    return sum(any((str(A['codes'][j]), str(A['days'][d])) in ours for d in range(a, b + 1)) for _, j, a, b in located)
+
+
 def minyear_round(cfgs, file, tag, ref, objective='min_year'):
     """R35+: choose the configuration whose worst calendar year (2024, 2025, 2026 to date) is highest, among those
     beating their full-period placebo median whose ledger hits (selection + validation) are at least the reference's;
@@ -1411,8 +1479,9 @@ def minyear_round(cfgs, file, tag, ref, objective='min_year'):
     out = {'configs': cfgs, 'full': {}, 'fidelity': {}}
     for k, cfg in cfgs.items():
         entries, rules, mask, pool = build_system(A, cfg)
-        st = run_rules(A, entries, FULL, pool, rules)[0]
+        st, tr = run_rules(A, entries, FULL, pool, rules)
         rs, rv = F.recall(mask, ls, A['has']), F.recall(mask, lv, A['has'])
+        st['bought'] = dict(select=[bought(A, tr, ls), len(ls)], validate=[bought(A, tr, lv), len(lv)])
         st['min_year'] = float(min(st['by_year'].values()))
         y = st['by_year']
         st['min_2024_2025'] = float(min(y['2024'], y['2025'])) if y.get('2026', 0) > 0 else -9.0
@@ -1421,7 +1490,8 @@ def minyear_round(cfgs, file, tag, ref, objective='min_year'):
         print(tag, k, f"full {st['total']:+.3f} dd {st['maxdd']:.2f} placebo median {st['placebo']['median']:+.3f} "
               f"p90 {st['placebo']['p90']:+.3f} rank {st['placebo']['rank']:.2f} trades/yr {st['per_year']:.0f} "
               f"win {st['win']:.3f} avg {st['avg_win']:+.3f}/{st['avg_loss']:+.3f} R {st['exp_r']:+.2f}",
-              'years', {a: round(b, 3) for a, b in st['by_year'].items()}, 'fid', out['fidelity'][k], flush=True)
+              'years', {a: round(b, 3) for a, b in st['by_year'].items()}, 'fid', out['fidelity'][k],
+              'bought', st['bought'], flush=True)
     need = sum(x[0] for x in out['fidelity'][ref].values())
     ok = [k for k in cfgs if k != ref and out['full'][k]['total'] > out['full'][k]['placebo']['median']
           and sum(x[0] for x in out['fidelity'][k].values()) >= need]
@@ -1490,10 +1560,37 @@ def r37():
                   'r37_exits.json', 'R37', ref='M2')
 
 
-def priority_score(A, name):
-    """Higher = taken first (R38); all from the previous day's data."""
+def theme_priority(A, entries, rho=.5, n=60):
+    """R52: entries ranked by how many of the same day's entries moved with them (daily return correlation >= rho
+    over the previous n days) -- his "several names of one theme in the scans at once"; ties keep the turnover
+    order.  Priorities become (-count, previous priority) tuples."""
     c = A['close']
     with np.errstate(invalid='ignore', divide='ignore'):
+        r = c / luk.lag(c) - 1
+    out = []
+    for d, lst in enumerate(entries):
+        if len(lst) < 2 or d <= n:
+            out.append(lst)
+            continue
+        x = np.nan_to_num(r[d - n:d][:, [e[1] for e in lst]])
+        x = x - x.mean(0)
+        sd = np.sqrt((x ** 2).sum(0))
+        with np.errstate(invalid='ignore', divide='ignore'):
+            cm = (x.T @ x) / np.outer(sd, sd)
+        cnt = (np.nan_to_num(cm, nan=-1.0) >= rho).sum(1) - (sd > 0)
+        out.append([((-int(k), e[0]),) + tuple(e[1:]) for k, e in zip(cnt, lst)])
+    return out
+
+
+def priority_score(A, name):
+    """Higher = taken first: R38 scores from the previous day's data; R52 'rvol' and 'gain' use the entry day,
+    known at its close (the fill)."""
+    c = A['close']
+    with np.errstate(invalid='ignore', divide='ignore'):
+        if name == 'rvol':
+            return A['turnover'] / prev(A['to20'])
+        if name == 'gain':
+            return c / prev(c) - 1
         if name == 'pr21':
             x = A['pr21']
         elif name == 'pr126':
@@ -1505,6 +1602,10 @@ def priority_score(A, name):
         elif name == 'tight':
             rng = A['high'] / A['low'] - 1
             x = -luk.rolling_mean(rng, 5) / luk.rolling_mean(rng, 20)
+        elif name == 'dollar_range':
+            x = A['to20'] * A['adr']
+        elif name == 'adr5_to20':
+            x = np.log(A['to20']) + 100 * (A['adr'] >= 5)
         else:
             raise ValueError(name)
     return prev(x)
@@ -1592,6 +1693,62 @@ def final(report):
     (I.OUT / 'final_system.json').write_text(json.dumps(out, indent=1, default=float))
 
 
+STAGES = ('no_signal', 'no_entry', 'market_filter', 'daily_cap', 'no_room', 'traded')
+
+
+def diagnose(report):
+    """For each of his dated longs: the furthest step the system reached on a day of the trade's window (signal,
+    entry after the stop rule, market filter, daily cap, actually opened) and our result when we traded it."""
+    cfg = json.loads((I.OUT / report).read_text())['chosen_config']
+    A = us_arrays()
+    trace = {}
+    entries, rules, mask, pool = build_system(A, cfg, trace)
+    st, tr = run_rules(A, entries, FULL, pool, rules, placebo=0)
+    ours = {(t['code'], t['entry']): t for t in tr}
+    sets = {k: [{e[1] for e in lst} for lst in trace[k]] for k in ('raw', 'filtered', 'capped')}
+    rows = []
+    for t, j, a, b in located_longs(A, L.load(LEDGER)):
+        if not t.dated or t.entry_date < FULL[0]:
+            continue
+        code, best, ours_t, n_day, place = str(A['codes'][j]), 0, None, None, None
+        for d in range(a, b + 1):
+            k = 0
+            if mask[d, j]:
+                k = 1
+                if j in sets['raw'][d]:
+                    k = 2
+                    if j in sets['filtered'][d]:
+                        k = 3
+                        if j in sets['capped'][d]:
+                            k = 4
+                            if (code, str(A['days'][d])) in ours:
+                                k = 5
+                                ours_t = ours[(code, str(A['days'][d]))]
+            if k >= 3 and (place is None or k > best):
+                order = [e[1] for e in sorted(trace['filtered'][d], key=lambda e: e[0])]
+                n_day, place = len(order), order.index(j) + 1
+            best = max(best, k)
+        rows.append(dict(id=t.id, ticker=t.ticker, date=t.entry_date, his_r=t.r_multiple, his_outcome=t.outcome,
+                         step=STAGES[best], our_r=ours_t and round(ours_t['r'], 2),
+                         our_ret=ours_t and round(ours_t['ret'], 3), our_days=ours_t and ours_t['days'],
+                         our_why=ours_t and ours_t['why'], entries_that_day=n_day, his_place=place))
+    by_year = {}
+    for r in rows:
+        y = by_year.setdefault(r['date'][:4], {k: 0 for k in STAGES})
+        y[r['step']] += 1
+    pnl = {}
+    for t in tr:
+        y = pnl.setdefault(t['entry'][:4], {})
+        y[t['code']] = y.get(t['code'], 0.0) + t['pnl']
+    top = {y: sorted(v.items(), key=lambda x: -x[1])[:10] for y, v in pnl.items()}
+    out = dict(report=report, by_year=by_year, rows=rows, top_names=top, stats={k: v for k, v in st.items()})
+    for r in rows:
+        print('DIAG', r)
+    print('DIAG by year', by_year)
+    print('DIAG top names', {y: [(c, round(v, 3)) for c, v in x] for y, x in top.items()})
+    (I.OUT / 'diagnose.json').write_text(json.dumps(out, indent=1, default=float))
+
+
 ROUNDS = Path(__file__).resolve().parent / 'notes' / 'rounds'
 
 
@@ -1620,6 +1777,8 @@ if __name__ == '__main__' and sys.argv[1] == 'round':
     run_round(sys.argv[2])
 elif __name__ == '__main__' and sys.argv[1] == 'final':
     final(sys.argv[2])
+elif __name__ == '__main__' and sys.argv[1] == 'diagnose':
+    diagnose(sys.argv[2])
 elif __name__ == '__main__':
     {'r19': r19, 'r20': r20, 'r21': r21, 'r21b': r21b, 'r22': r22, 'r22b': r22b, 'r23': r23, 'r23b': r23b, 'r23c': r23c, 'r24': r24, 'r24b': r24b, 'r25': r25, 'r26': r26,
      'r27': r27, 'r27b': r27b, 'r28': r28, 'r29': r29, 'r30': r30, 'r31': r31, 'r32': r32, 'r33': r33, 'r34': r34, 'r35': r35, 'r36': r36, 'r37': r37, 'r38': r38, 'r39': r39, 'r40': r40, 'r41': r41}[sys.argv[1]]()

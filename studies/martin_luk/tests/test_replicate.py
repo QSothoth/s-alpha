@@ -109,10 +109,39 @@ class EntryTests(unittest.TestCase):
         self.assertEqual(np.flatnonzero(R.climax(A, .30)[:, 0]).tolist(), [T - 2])
         self.assertFalse(R.climax(A, .50).any())
 
+    def test_extension_signal_uses_adr_multiples_above_the_ema9(self):
+        A = {'close': np.array([[11.0], [12.5]]), 'e9': np.array([[10.0], [10.0]]), 'adr': np.array([[6.0], [6.0]])}
+        self.assertEqual(R.named_signal(A, None, 'ext2')[:, 0].tolist(), [False, True])   # needs >= 11.2
+
+    def test_index_risk_scale_is_known_the_next_day(self):
+        T = 80
+        c = np.linspace(10, 20, T)[:, None]                 # steady rise: index far above its EMA21 late on
+        A = {'close': c}
+        pool = np.ones((T, 1), bool)
+        s = R.index_risk_scale(A, pool, pb=1.0, ext=.5, ext_at=.05)
+        self.assertTrue(np.isnan(s[0]))                      # day 0 has no previous close (the engine skips NaN)
+        self.assertEqual(s[-1], .5)                          # a 10 -> 20 straight line ends > 5% above its EMA21
+        self.assertTrue(np.all(np.isin(s[1:], [1.0, .5])))
+
     def test_prior_high_excludes_today(self):
         h = np.array([[10.0], [12.0], [11.0], [np.nan], [9.0]])
         self.assertEqual(R.prior_high(h, 2)[:, 0].tolist()[1:], [10.0, 12.0, 12.0, 11.0])
         self.assertEqual(R.prior_low(h, 2)[:, 0].tolist()[1:], [10.0, 10.0, 11.0, 11.0])
+
+
+class PriorityTests(unittest.TestCase):
+    def test_theme_priority_puts_names_that_move_together_first(self):
+        rng = np.random.default_rng(0)
+        T = 70
+        common = rng.normal(0, .03, T)
+        r = np.column_stack([common + rng.normal(0, .005, T), rng.normal(0, .03, T), common + rng.normal(0, .005, T)])
+        c = 10 * np.cumprod(1 + r, axis=0)
+        entries = [[] for _ in range(T)]
+        entries[-1] = [(-3e8, 0, 1, 1.0, .9, 'x'), (-2e8, 1, 1, 1.0, .9, 'x'), (-1e8, 2, 1, 1.0, .9, 'x')]
+        out = R.theme_priority({'close': c}, entries)[-1]
+        order = [e[1] for e in sorted(out, key=lambda e: e[0])]
+        self.assertEqual(order, [0, 2, 1])                # the pair first (turnover order inside), the loner last
+        self.assertEqual(R.theme_priority({'close': c}, entries)[5], [])
 
 
 class RotationTests(unittest.TestCase):

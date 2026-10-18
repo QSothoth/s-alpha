@@ -141,6 +141,52 @@ class SystemTests(unittest.TestCase):
         self.assertEqual((tr[0]['why'], tr[0]['exit']), ('signal', '2025-01-03'))
         self.assertAlmostEqual(tr[0]['ret'], .2)
 
+    def test_trail_switches_to_a_faster_ema_after_the_first_trim(self):
+        # fill 10, stop 9.5 (R = 0.5); +3R = 11.5 is reached on day 2; day 3 closes below EMA9 but above EMA21
+        rows = [(10, 10, 10, 10), (10.5, 11, 10.4, 11), (11.2, 11.6, 11.1, 11.5), (11.4, 11.5, 11.0, 11.2)]
+        p = px(rows)
+        ema = {'e9': np.array([[9.0], [10.0], [11.0], [11.3]]), 'e21': np.array([[9.0], [9.5], [10.0], [10.5]])}
+        base = dict(trail='e21', trims=(3,), trim_frac=.15, **NOCOST)
+        _, _, tr = Y.simulate(p, ema, Y.Rules(**base), one(4, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1])
+        self.assertEqual(tr[0]['why'], 'end')
+        _, _, tr = Y.simulate(p, ema, Y.Rules(trail_after_trim='e9', **base), one(4, 0, 1, 10.0, 9.5),
+                              p['dates'][0], p['dates'][-1])
+        self.assertEqual((tr[0]['why'], tr[0]['exit']), ('trail', '2025-01-04'))
+
+    def test_breakeven_moves_the_stop_to_the_fill(self):
+        rows = [(10, 10, 10, 10), (10.5, 11.6, 10.4, 11), (10.2, 10.3, 9.6, 9.8)]
+        _, _, tr = self.run_(rows, one(3, 0, 1, 10.0, 9.5), trims=(), breakeven_r=3)
+        self.assertEqual(tr[0]['why'], 'stop')                # day 1 reached +3R (11.5): the stop is now 10
+        self.assertAlmostEqual(tr[0]['r'], 0.0)
+        _, _, tr = self.run_(rows, one(3, 0, 1, 10.0, 9.5), trims=())
+        self.assertEqual(tr[0]['why'], 'end')                 # without it, 9.6 stays above the 9.5 stop
+
+    def test_signal_trim_sells_part_at_that_close(self):
+        rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 12, 11, 12), (12, 12, 12, 12)]
+        p = px(rows)
+        sig = np.array([[False], [True], [False], [False]])
+        _, _, tr = Y.simulate(p, {'ext': sig}, Y.Rules(trail='', trims=(), trim_signal='ext', trim_frac=.25,
+                                                      **NOCOST), one(4, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1])
+        # 25% sold at 11, the rest marked at 12: return = .25 * .1 + .75 * .2
+        self.assertAlmostEqual(tr[0]['ret'], .25 * .1 + .75 * .2)
+
+    def test_pyramid_add_once_and_breakeven_stop(self):
+        # fill 10, stop 9.5: +2R = 11 is reached at day 1's close -> add the original size at 11, stop to 10
+        rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 11.5, 11, 11.5), (11.0, 11.0, 9.9, 10.5)]
+        p = px(rows)
+        _, _, tr = Y.simulate(p, {}, Y.Rules(trail='', trims=(), add_r=2, max_position=10, **NOCOST),
+                              one(4, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1])
+        size0 = .005 / .05 / 10.0                         # 10% of equity at 10
+        self.assertEqual(tr[0]['why'], 'stop')
+        self.assertAlmostEqual(tr[0]['pnl'], 2 * size0 * 10.0 - size0 * 10.0 - size0 * 11.0)
+
+    def test_risk_scale_multiplies_the_risk_of_new_trades(self):
+        rows = [(10, 10, 10, 10), (10, 10.2, 9.4, 9.6)]
+        p = px(rows)
+        _, _, tr = Y.simulate(p, {'k': np.array([2.0, 1.0])}, Y.Rules(trail='', risk_scale='k', **NOCOST),
+                              one(2, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1])
+        self.assertAlmostEqual(tr[0]['pnl'], -.01)
+
     def test_placebo_draws_from_the_pool(self):
         a = np.array([[10, 10, 10, 10], [10, 11, 10, 11]], float)
         p = {'open': np.repeat(a[:, :1], 2, 1), 'high': np.repeat(a[:, 1:2], 2, 1), 'low': np.repeat(a[:, 2:3], 2, 1),

@@ -34,6 +34,14 @@ class Rules:
     short_max_days: int = 0           # shorts' holding limit (0 = same as longs)
     max_open: int = 0               # > 0: no new trade while this many are open
     exit_signal: str = ''           # name of a boolean (days x codes) array in `ema`: longs exit at that close
+    trail_after_trim: str = ''      # EMA name the close trail switches to after the first partial ('' = keep)
+    breakeven_r: float = 0.0        # > 0: once the day's best price reaches this R multiple, the stop moves to the fill
+    trim_signal: str = ''           # boolean (days x codes) array in `ema`: longs sell trim_frac of the original size
+                                    # at that close (at most once a day)
+    trim_signal_frac: float = 0.0   # fraction for signal trims (0 = trim_frac)
+    add_r: float = 0.0              # > 0: once a long closes at least this R above its fill, buy add_frac of the original
+    add_frac: float = 1.0           # size at that close (once) and move the whole stop to the original fill
+    risk_scale: str = ''            # 1-D (days) array in `ema`: risk per new trade is multiplied by its value that day
     buy_cost: float = .0005
     sell_cost: float = .0005
     margin_rate: float = .07        # yearly, on long value above equity
@@ -51,6 +59,7 @@ class Pos:
     size0: float                    # shares (positive)
     size: float
     trims: int = 0
+    adds: int = 0
     armed: bool = False
     cash: float = 0.0               # signed cash flow of the trade so far
     exits: list = field(default_factory=list)
@@ -67,6 +76,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
     d0, d1 = int(np.searchsorted(dates, start)), int(np.searchsorted(dates, end, side='right'))
     trail = ema.get(rules.trail) if rules.trail else None
     sig_exit = ema[rules.exit_signal] if rules.exit_signal else None
+    trail2 = ema.get(rules.trail_after_trim) if rules.trail_after_trim else None
+    sig_trim = ema[rules.trim_signal] if rules.trim_signal else None
+    scale = ema[rules.risk_scale] if rules.risk_scale else None
     cash, pos, trades, curve = 1.0, {}, [], []
 
     def last(j, d):
@@ -119,6 +131,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
                 frac = rules.risk_low
             elif recent > 0 and rules.risk_high > 0:
                 frac = rules.risk_high
+        if scale is not None and np.isfinite(scale[d]):
+            frac *= scale[d]
         cap = rules.max_position if max_pos is None else min(rules.max_position, max_pos)
         width = risk if size_risk is None else max(risk, size_risk)
         val = min(frac * equity / width, cap * equity, rules.max_gross * equity - gross(d))
@@ -128,6 +142,20 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
         flow = -val * (1 + rules.buy_cost) if side > 0 else val * (1 - rules.sell_cost)
         cash += flow
         pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow)
+
+    def add_pos(q, price, d):
+        nonlocal cash
+        eq = cash + value(d)
+        val = min(rules.add_frac * q.size0 * price, rules.max_position * eq - q.size * price,
+                  rules.max_gross * eq - gross(d))
+        q.adds += 1
+        if val <= .001 * eq:
+            return
+        flow = -val * (1 + rules.buy_cost)
+        cash += flow
+        q.cash += flow
+        q.size += val / price
+        q.stop = max(q.stop, q.fill)
 
     for d in range(d0, d1):
         equity = cash + value(d - 1) if d > d0 else 1.0
@@ -159,15 +187,24 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
                 levels.pop(0)
             if j not in pos:
                 continue
-            if trail is not None and np.isfinite(trail[d, j]):
-                if (c[d, j] - trail[d, j]) * s > 0:
+            if rules.breakeven_r and (best - (q.fill + s * rules.breakeven_r * R)) * s >= 0:
+                q.stop = max(q.stop, q.fill) if s > 0 else min(q.stop, q.fill)
+            tr_ = trail2 if trail2 is not None and q.trims else trail
+            if tr_ is not None and np.isfinite(tr_[d, j]):
+                if (c[d, j] - tr_[d, j]) * s > 0:
                     q.armed = True
                 elif q.armed:
                     close_part(q, q.size, c[d, j], d, 'trail')
                     continue
                 if q.armed and rules.stop_ema_buffer >= 0:
-                    level = trail[d, j] * (1 - s * rules.stop_ema_buffer)
+                    level = tr_[d, j] * (1 - s * rules.stop_ema_buffer)
                     q.stop = max(q.stop, level) if s > 0 else min(q.stop, level)
+            if sig_trim is not None and s > 0 and sig_trim[d, j]:
+                close_part(q, (rules.trim_signal_frac or rules.trim_frac) * q.size0, c[d, j], d, 'signal_trim')
+                if j not in pos:
+                    continue
+            if rules.add_r and s > 0 and not q.adds and c[d, j] >= q.fill + rules.add_r * R:
+                add_pos(q, c[d, j], d)
             if sig_exit is not None and s > 0 and sig_exit[d, j]:
                 close_part(q, q.size, c[d, j], d, 'signal')
                 continue
