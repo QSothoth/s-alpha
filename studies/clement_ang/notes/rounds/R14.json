@@ -1,0 +1,13 @@
+{
+ "stage": "retest",
+ "base": ["r13.json", "chosen"],
+ "ref": "R13",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "T1": {"rule_opts": {"trail_after_trim": "ema10"}},
+  "T2": {"rule_opts": {"month_loss_cap": 0.05, "month_cap_ladder": [0.025], "month_cap_basis": "opened"}},
+  "T3": {"rule_opts": {"feedback": 1, "risk_low": 0.0025}},
+  "T4": {"rule_opts": {"trail_after_trim": "ema10", "feedback": 1, "risk_low": 0.0025}}
+ }
+}
