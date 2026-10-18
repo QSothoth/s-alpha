@@ -71,6 +71,16 @@ class EntryTests(unittest.TestCase):
         (e,) = R.entries_close_stop(B, m, 'cap')[1]
         self.assertAlmostEqual(e[4], 9.8)
 
+    def test_short_stop_is_capped_and_can_be_sized_down(self):
+        A = tiny([(10, 10, 10, 10), (11.0, 11.0, 9.9, 10.0)])      # high 10% above the close; cap 4%
+        m = np.array([[False], [True]])
+        (e,) = R.entries_short_capped(A, m)[1]
+        self.assertEqual(e[2], -1)
+        self.assertAlmostEqual(e[4], 10.4)
+        self.assertIsNone(e[7])
+        (e,) = R.entries_short_capped(A, m, size_mult=2.0)[1]
+        self.assertAlmostEqual(e[7], .08)                           # sized as if the stop were twice as far
+
     def test_ep_needs_gap_volume_and_holding_the_open(self):
         rows = [(10, 10, 10, 10), (11.0, 11.5, 10.8, 11.2), (10.2, 10.3, 10.0, 10.1), (11.5, 11.6, 10.9, 11.0)]
         A = tiny(rows, adr=4.0, to20=100e6, turnover=[1e8, 3e8, 1e8, 3e8])
