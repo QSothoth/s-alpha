@@ -387,3 +387,5 @@ cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train
 | `data/calendar-*`（81 个） | 历法研究的指数日线、HKO 历表、封存的预测包 | 研究已归档；2026-10-17 用户决定删除（含 NA2 前向预测） |
 
 各目录自带 `CHECKSUMS.sha256` 或 manifest。需要发布的，先固定 zip 和 SHA256，发布后不改。
+
+- Martin R77/R91分钟输入审计（2026-10-18，本地未发布）：`data/martin-luk-cache/r77/rehab_detail_20261018.json`（85只公司行动完整字段，SHA256 `3988d65c0f440a1f2e63bf0c9f26921dd86603d8501757b841d58036bcec5048`）；`data/martin-luk-cache/r77/units_verify/`（5只NONE/QFQ五分钟对照及2只ALL一分钟，12个原始CSV，每文件SHA在metadata.json，其SHA256 `8a5268626de2172e924c4b7238c0697b7482adf4c40c9a0d4dc5093b71ce6c4c`）。仅输入口径核验、非策略行情修订；历史额度前后均218/82。原始数据忽略不进Git，未发布Release，不替代既有固定数据版本。

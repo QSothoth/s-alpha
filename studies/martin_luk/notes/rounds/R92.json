@@ -1,0 +1,238 @@
+{
+  "stage": "ledger_full_minute_three_layers",
+  "base": [
+    "r91.json",
+    "chosen"
+  ],
+  "ref": "CLOSE",
+  "objective": "execution_selection_attribution_only",
+  "candidates": {
+    "M0": {
+      "bar_start": 1
+    }
+  },
+  "draws": 31,
+  "seed": 1,
+  "sources": {
+    "US.AAOI": {
+      "path": "data/preopen-s20-k5-raw-b/k5/AAOI.csv",
+      "source_asof": "2026-09-24",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "sha256": "5cfd2c8e89feb3a4e9ae5eaac249e957bb5d2ac74046890fea40dfa0032ef143"
+    },
+    "US.AMD": {
+      "path": "data/preopen-us-k5-raw/k5/AMD.csv",
+      "source_asof": "2026-09-24",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "sha256": "3e7d8a450d1078e91093ac0e3b5322d18d9ba702c81ae13c41be864c97dc8328"
+    },
+    "US.ARM": {
+      "path": "data/p3-k5-validation-raw/k5/ARM.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-09-14",
+        "2026-09-25"
+      ],
+      "sha256": "f77af7d20ba75e2e25d965bbe974640fe5965a8a406c95c5d17b1a04127fa1ab"
+    },
+    "US.ASTS": {
+      "path": "data/p3-k5-validation-raw/k5/ASTS.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "1c408f6444deeb7003e2c57866a2781e379dcf8fa7966a6e0589809f898449b7"
+    },
+    "US.BBAI": {
+      "path": "data/martin-luk-k5-r8/BBAI.csv.gz",
+      "source_asof": "2026-10-16",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "sha256": "a739d131ab4e2ce592df2bffdbd420f8d4d8721aedfa16759ee3e0726593b098"
+    },
+    "US.BMNR": {
+      "path": "data/p3-k5-validation-raw/k5/BMNR.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-10-16",
+        "2026-09-25"
+      ],
+      "sha256": "725461a2624e0ce7e7ad165441f8359cc827569dcf627844146607cf9fbe95d0"
+    },
+    "US.COIN": {
+      "path": "data/p3-k5-validation-raw/k5/COIN.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "77c6a048a9a4aed7cd1682d2a8545348fce28b12e2840c17cb42dd51d1f6b235"
+    },
+    "US.DELL": {
+      "path": "data/p3-k5-validation-raw/k5/DELL.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "3c289d1c8adc0715b1d4d90491fccedbe439ef96d46152c31058e945c9f91264"
+    },
+    "US.GME": {
+      "path": "data/p3-k5-validation-raw/k5/GME.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "2a7844b26130e02a2a8d2aa761c3268617a0a16e8aa963e16463ee3ced0bdcbd"
+    },
+    "US.HOOD": {
+      "path": "data/p3-k5-validation-raw/k5/HOOD.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "a5edb73a7ffccc8b762875d9ceb4c46fbe72e56fcb81dfa85119822e03b40d9f"
+    },
+    "US.INTC": {
+      "path": "data/preopen-us-k5-raw/k5/INTC.csv",
+      "source_asof": "2026-09-24",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "sha256": "68d2ecbb657d0945b67add96da87390ed02102e7151471b85fe3fe1c5a9baf01"
+    },
+    "US.IONQ": {
+      "path": "data/preopen-s20-k5-raw-b/k5/IONQ.csv",
+      "source_asof": "2026-09-24",
+      "span": [
+        "2021-09-21",
+        "2026-09-24"
+      ],
+      "sha256": "4dfd5820e2ea924472727ffed1b53e9c70f79456104dc32c9093090e4359497a"
+    },
+    "US.MRVL": {
+      "path": "data/p3-k5-validation-raw/k5/MRVL.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "f26560134bfd04b2f8544e906aac7a54be0df0e8020a7ce440375179ced0f4d3"
+    },
+    "US.MSTR": {
+      "path": "data/p3-k5-validation-raw/k5/MSTR.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "7f3b6fb38021260fe5f6ac386a16b1e5b441743732fdcaf943bdca7135331672"
+    },
+    "US.NBIS": {
+      "path": "data/p3-k5-validation-raw/k5/NBIS.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2024-10-21",
+        "2026-09-25"
+      ],
+      "sha256": "4b17b7b6644b9e53926efc66e34ac4e4c02578f453b17ae0d748200ee429e1d1"
+    },
+    "US.ONDS": {
+      "path": "data/p3-k5-validation-raw/k5/ONDS.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "d76f8cbe00ec1bfd956c94c4a91df5d3feac4744e5d154643dabbc75af648e37"
+    },
+    "US.PLTR": {
+      "path": "data/p3-k5-validation-raw/k5/PLTR.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "f362a9e24af5f7f7319c79b76052fb4eaab4f137e811849f7aaab28991ffff9d"
+    },
+    "US.QBTS": {
+      "path": "data/preopen-s20-k5-raw-b/k5/QBTS.csv",
+      "source_asof": "2026-09-24",
+      "span": [
+        "2022-07-26",
+        "2026-09-24"
+      ],
+      "sha256": "769a742e5af666ec47bc12bf7fedf01d5f90de50397afe57b15320d721a12489"
+    },
+    "US.RGTI": {
+      "path": "data/preopen-s20-k5-raw-b/k5/RGTI.csv",
+      "source_asof": "2026-09-24",
+      "span": [
+        "2022-02-22",
+        "2026-09-24"
+      ],
+      "sha256": "1b5fbace99e7bf893addef8dc933a5006bb1c4469ed3d85e0836c5813a21f004"
+    },
+    "US.RIVN": {
+      "path": "data/p3-k5-validation-raw/k5/RIVN.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "7aba46721424df986d8d60607e1d41b5464dbe5fff0aefb5361cebc625bf40e4"
+    },
+    "US.RKLB": {
+      "path": "data/p3-k5-validation-raw/k5/RKLB.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "736cae92d5db9823139bcff793c6cf5d69a11320826655076803f4f9ed426817"
+    },
+    "US.SMCI": {
+      "path": "data/preopen-s20-k5-raw-b/k5/SMCI.csv",
+      "source_asof": "2026-09-24",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "sha256": "26cbe161557f0ded08cd26067b38ec48a3e2508db0091b5708eeaa1d7294070a"
+    },
+    "US.SOFI": {
+      "path": "data/p3-k5-validation-raw/k5/SOFI.csv",
+      "source_asof": "2026-09-25",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "sha256": "5955a7e00b641e717ab63829fb370cfc54ba2279f8442dfcdc62a2e468e36eda"
+    },
+    "US.TSLA": {
+      "path": "data/preopen-us-k5-raw/k5/TSLA.csv",
+      "source_asof": "2026-09-24",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "sha256": "7282d0b59ef2353b911ca55e7aac959c75341d696c602485bc04227240abf5b2"
+    }
+  },
+  "end": "2026-09-24",
+  "ledger_diagnostic": true,
+  "data_policy": "provider_conditional_diagnostic",
+  "carry": "unchanged_full_market_requires_separate_validation"
+}

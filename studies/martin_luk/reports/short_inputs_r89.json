@@ -1,0 +1,502 @@
+{
+ "config": {
+  "signals": "C2",
+  "stop": "cap",
+  "exits": "X9",
+  "small_cap": false,
+  "gap_size": false,
+  "gross": 2.8,
+  "risk": 0.005,
+  "filter": "IDX50",
+  "rank": null,
+  "rank_n": 0,
+  "risk_high": 0.008,
+  "max_new": 4,
+  "bpath": 0.2,
+  "max_position": 0.5,
+  "strength": "K6",
+  "stop_min": 0.01,
+  "ep_opts": {
+   "hold_open": false
+  },
+  "rule_opts": {
+   "feedback": 5,
+   "risk_scale": "idx_pb16",
+   "exit_signal": "",
+   "add_r": 10.0,
+   "add_levels": [
+    10,
+    20
+   ],
+   "trail": "e9",
+   "arm_trail_on_entry": true,
+   "stop_ema_buffer": 0.01
+  },
+  "setup": "E11+E10+E2+EW1",
+  "bopts": {
+   "lookback": 120
+  },
+  "shorts": "Z2",
+  "short_gate": 50,
+  "short_last": true,
+  "short_max_new": 1
+ },
+ "missing": [
+  "S16",
+  "S17",
+  "S22",
+  "S25",
+  "S30",
+  "S31",
+  "V14"
+ ],
+ "rows": [
+  {
+   "id": "I25",
+   "code": "US.QBTS",
+   "day": "2025-12-17",
+   "outcome": "loss",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": true,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S05",
+   "code": "US.PL",
+   "day": "2025-12-11",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": true,
+    "close_below9": false,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S06",
+   "code": "US.SNDK",
+   "day": "2025-12-15",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S18",
+   "code": "US.OKLO",
+   "day": "2026-01-30",
+   "outcome": "win",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "high_touches21"
+  },
+  {
+   "id": "S20",
+   "code": "US.TSLA",
+   "day": "2026-02-03",
+   "outcome": "win",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S21",
+   "code": "US.NVDA",
+   "day": "2026-02-03",
+   "outcome": "win",
+   "flags": {
+    "pool": false,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "pool"
+  },
+  {
+   "id": "S23",
+   "code": "US.SNDK",
+   "day": "2026-02-05",
+   "outcome": "flat",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": true,
+    "close_below9": false,
+    "index_down": true
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S24",
+   "code": "US.SNDK",
+   "day": "2026-02-10",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": true,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S26",
+   "code": "US.SMR",
+   "day": "2026-02-12",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "high_touches21"
+  },
+  {
+   "id": "S27",
+   "code": "US.AMD",
+   "day": "2026-02-27",
+   "outcome": "loss",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S28",
+   "code": "US.NVDA",
+   "day": "2026-03-02",
+   "outcome": "loss",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S29",
+   "code": "US.STX",
+   "day": "2026-03-02",
+   "outcome": "win",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": true,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "S32",
+   "code": "US.AVGO",
+   "day": "2026-03-04",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": true
+   },
+   "first_failure": "high_touches21"
+  },
+  {
+   "id": "S33",
+   "code": "US.NVDA",
+   "day": "2026-03-05",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": true,
+    "ema21_below50": false,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "V24",
+   "code": "US.SKHY",
+   "day": "2026-07-15",
+   "outcome": "",
+   "flags": {
+    "pool": false,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": true,
+    "close_below9": false,
+    "index_down": false
+   },
+   "first_failure": "pool"
+  },
+  {
+   "id": "V28",
+   "code": "US.SKHY",
+   "day": "2026-07-22",
+   "outcome": "",
+   "flags": {
+    "pool": false,
+    "weekly_down": true,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": true,
+    "close_below9": false,
+    "index_down": false
+   },
+   "first_failure": "pool"
+  },
+  {
+   "id": "V36",
+   "code": "US.TSLA",
+   "day": "2026-08-27",
+   "outcome": "loss",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": false,
+    "ema21_below50": true,
+    "high_touches21": true,
+    "close_below9": false,
+    "index_down": false
+   },
+   "first_failure": "ema9_below21"
+  },
+  {
+   "id": "V37",
+   "code": "US.SNDK",
+   "day": "2026-08-28",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": true,
+    "high_touches21": true,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "V38",
+   "code": "US.SKHY",
+   "day": "2026-08-28",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": false,
+    "ema21_below50": true,
+    "high_touches21": true,
+    "close_below9": false,
+    "index_down": false
+   },
+   "first_failure": "ema9_below21"
+  },
+  {
+   "id": "V39",
+   "code": "US.MU",
+   "day": "2026-09-01",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": true,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "V40",
+   "code": "US.NVDA",
+   "day": "2026-09-02",
+   "outcome": "loss",
+   "flags": {
+    "pool": false,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": true,
+    "close_below9": false,
+    "index_down": true
+   },
+   "first_failure": "pool"
+  },
+  {
+   "id": "V41",
+   "code": "US.IONQ",
+   "day": "2026-09-09",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": false
+   },
+   "first_failure": "high_touches21"
+  },
+  {
+   "id": "V42",
+   "code": "US.ARM",
+   "day": "2026-09-16",
+   "outcome": "loss",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": true,
+    "close_below9": true,
+    "index_down": true
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "V51",
+   "code": "US.QBTS",
+   "day": "2026-10-02",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": true
+   },
+   "first_failure": "high_touches21"
+  },
+  {
+   "id": "V52",
+   "code": "US.QBTS",
+   "day": "2026-10-06",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": true,
+    "ema21_below50": true,
+    "high_touches21": false,
+    "close_below9": true,
+    "index_down": true
+   },
+   "first_failure": "high_touches21"
+  },
+  {
+   "id": "V53",
+   "code": "US.SNDK",
+   "day": "2026-10-07",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": false,
+    "ema9_below21": false,
+    "ema21_below50": false,
+    "high_touches21": true,
+    "close_below9": true,
+    "index_down": true
+   },
+   "first_failure": "weekly_down"
+  },
+  {
+   "id": "V54",
+   "code": "US.AAOI",
+   "day": "2026-10-09",
+   "outcome": "",
+   "flags": {
+    "pool": true,
+    "weekly_down": true,
+    "ema9_below21": false,
+    "ema21_below50": true,
+    "high_touches21": true,
+    "close_below9": true,
+    "index_down": true
+   },
+   "first_failure": "ema9_below21"
+  }
+ ],
+ "first_failures": {
+  "weekly_down": 14,
+  "high_touches21": 6,
+  "pool": 4,
+  "ema9_below21": 3
+ },
+ "each_failures": {
+  "pool": 4,
+  "weekly_down": 17,
+  "ema9_below21": 15,
+  "ema21_below50": 12,
+  "high_touches21": 12,
+  "close_below9": 7,
+  "index_down": 19
+ }
+}

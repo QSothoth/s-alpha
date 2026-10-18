@@ -1,0 +1,33 @@
+{
+  "stage": "short_etf_coverage_measurement",
+  "base": [
+    "r87.json",
+    "chosen"
+  ],
+  "ref": "R87",
+  "objective": "coverage_measurement_only",
+  "draws": 31,
+  "seed": 1,
+  "candidates": {},
+  "diagnostic_config": {
+    "shorts": "Z2",
+    "short_gate": 50,
+    "short_last": true,
+    "short_max_new": 1
+  },
+  "diagnostic_carry": false,
+  "extra_short_data": {
+    "US.GLD": {
+      "path": "data/preopen-s23-raw/daily/GLD.csv",
+      "sha256": "d829ac957c47dad43c18ce2cf6a32e583fc952d629937c9f48da2e653a5d8575"
+    },
+    "US.SLV": {
+      "path": "data/preopen-s23-raw/daily/SLV.csv",
+      "sha256": "47d6f5bb8d5ab6a490cdc712e09c22e8654234d14410381648f3015983f9f07b"
+    },
+    "US.QQQ": {
+      "path": "data/martin-luk-benchmarks-v1/US.QQQ.csv",
+      "sha256": "cb28714aab4b77cb7509afc897aa5d23d3d6a6ad6d780829fe3e44c9e404cb30"
+    }
+  }
+}

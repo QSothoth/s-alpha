@@ -1,0 +1,12 @@
+{
+  "stage": "conditional_minute_execution_diagnostic",
+  "base": ["r90.json", "chosen"],
+  "ref": "CLOSE",
+  "objective": "sample_2025_log_distance",
+  "candidates": {"M0": {"bar_start": 1}, "M30": {"bar_start": 6}, "M60": {"bar_start": 12}},
+  "draws": 31,
+  "seed": 1,
+  "sample": "data/martin-luk-k5-r8/sample.json",
+  "data_policy": "provider_conditional_diagnostic",
+  "carry": "unchanged_full_market_requires_separate_validation"
+}

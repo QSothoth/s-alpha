@@ -187,6 +187,106 @@ def price_audit(A, trades):
     return rows
 
 
+def append_short_prices(A, ema, pool, sources):
+    """Append local ETF execution columns without changing stock signals or account risk scales."""
+    days = {str(day): i for i,day in enumerate(A['days'])}
+    codes = [code for code in sources if code not in set(A['codes'])]
+    extra = {k: np.full((len(days),len(codes)),np.nan) for k in ('open','high','low','close','turnover')}
+    for j,code in enumerate(codes):
+        source = sources[code]
+        path = R.I.luk.ROOT / source['path']
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == source['sha256'], path
+        with path.open() as f:
+            seen = set()
+            for row in csv.DictReader(f):
+                day = row.get('date',row.get('time_key',''))[:10]
+                if day not in days:
+                    continue
+                assert day not in seen, (code,day)
+                seen.add(day)
+                for k in extra:
+                    extra[k][days[day],j] = float(row[k])
+                lo,hi = float(row['low']),float(row['high'])
+                assert 0 < lo <= min(float(row['open']),float(row['close'])) <= max(float(row['open']),float(row['close'])) <= hi
+    extra['to20'] = R.luk.rolling_mean(extra['turnover'],20)
+    extra['adr'] = R.luk.rolling_mean(extra['high']/extra['low']-1,20)*100
+    for n in (9,21,50):
+        extra[f'e{n}'] = R.luk.ema(extra['close'],n)
+    extra['has'] = np.isfinite(extra['close'])
+    out = {k: np.concatenate((A[k],v),axis=1) for k,v in extra.items()}
+    out.update(days=A['days'],codes=np.concatenate((A['codes'],np.array(codes))),market=A['market'])
+    em = {k: out[k] if k in ('e9','e21','e50') else v for k,v in ema.items()}
+    extra_pool = extra['has'] & np.isfinite(extra['adr']) & np.isfinite(extra['to20'])
+    return out, em, np.concatenate((pool,extra_pool),axis=1)
+
+
+def short_layers(name):
+    """Diagnostic forced dated short picks, never a candidate for the live carry configuration."""
+    path = R.I.OUT / f'{name.lower()}.json'
+    spec = json.loads((R.ROUNDS / f'{name}.json').read_text())
+    if spec.get('objective') == 'coverage_measurement_only':
+        base = json.loads((R.I.OUT/spec['base'][0]).read_text())
+        cfg = base['chosen_config']
+        out = dict(chosen=spec['ref'],chosen_config=cfg,full={spec['ref']:base['full'][base['chosen']]},
+                   configs={'SH9':R.merged(cfg,spec['diagnostic_config'])},
+                   spec_sha256=hashlib.sha256((R.ROUNDS/f'{name}.json').read_bytes()).hexdigest())
+    else:
+        out = json.loads(path.read_text())
+    A = R.us_arrays()
+    ledger = R.L.load(R.LEDGER)
+    shorts = [t for t in ledger if t.side == 'short']
+    dated = [t for t in shorts if t.dated]
+    located_longs = {k: [x for x in R.located_longs(A, part) if x[0].dated]
+                     for k, part in zip(('select','validate'), R.L.split(ledger, R.CUTOFF))}
+    own, rules, _, pool = R.build_system(A, out['configs']['SH9'])
+    px, ema = context(A, pool, rules)
+    if spec.get('extra_short_data'):
+        A,ema,pool = append_short_prices(A,ema,pool,spec['extra_short_data'])
+        px = {k:A[k] for k in ('open','high','low','close','codes')}
+        px['dates'] = A['days']
+        out['extra_short_data'] = spec['extra_short_data']
+    located, missing = R.F.locate(dated, A['days'], A['codes'], has=A['has'])
+    mask = np.zeros_like(A['has'])
+    records = []
+    for t,j,_,_ in located:
+        d = int(np.searchsorted(A['days'], t.entry_date))
+        valid = 0 < d < len(A['days']) and str(A['days'][d]) == t.entry_date and bool(A['has'][d,j])
+        records.append(dict(id=t.id, code=str(A['codes'][j]), date=t.entry_date,
+                            his_outcome=t.outcome, his_r=t.r_multiple, valid_day=valid))
+        if valid:
+            mask[d,j] = True
+    forced_raw = R.entries_short_capped(A, mask)
+    forced = [sorted(day,key=lambda e:e[0])[:1] for day in forced_raw]
+    lookup = {(str(A['days'][d]), str(A['codes'][e[1]])): (d,e)
+              for d,day in enumerate(forced_raw) for e in day}
+    cap_keys = {(str(A['days'][d]), str(A['codes'][e[1]])) for d,day in enumerate(forced) for e in day}
+    for row in records:
+        key = row['date'], row['code']
+        row['valid_stop'] = key in lookup
+        row['after_daily_cap'] = key in cap_keys
+        if key in lookup:
+            d,e = lookup[key]
+            row['independent'] = independent(px,ema,rules,d,e)
+    own_short = [[e for e in day if e[2] < 0] for day in own]
+    own_long = [[e for e in day if e[2] > 0] for day in own]
+    combined = [longs + [((1,e[0]),)+tuple(e[1:]) for e in sh] for longs,sh in zip(own_long,forced)]
+    layers = {}
+    for key, entries in (('his_short_picks',forced),('our_short_picks',own_short),
+                         ('our_longs_his_shorts',combined)):
+        st,trades = summarize(A,px,ema,rules,entries,located_longs,spec['draws'],pool)
+        actual = {(t['entry'],t['code']) for t in trades if t['side'] < 0}
+        st['dated_short_records_bought'] = sum((r['date'],r['code']) in actual for r in records)
+        st['dated_short_unique_days_bought'] = len(actual & set(lookup))
+        layers[key] = dict(stats=st,price_audit=price_audit(A,trades),
+                           shorts=[t for t in trades if t['side'] < 0])
+        print(name,key,st['by_year'],st['behavior']['all'],flush=True)
+    out['short_diagnostic'] = dict(ledger_sha256=hashlib.sha256(R.LEDGER.read_bytes()).hexdigest(),
+        his_execution=dict(records=len(shorts),dated=len(dated),outcomes=dict(Counter(t.outcome or 'unknown' for t in shorts)),
+                           public_profit_share=[.1,.3],account_reconstruction=None),
+        missing=missing,records=records,layers=layers)
+    path.write_text(json.dumps(out,indent=1,default=float))
+
+
 def r75():
     spec_path = R.ROUNDS / 'R75.json'
     spec = json.loads(spec_path.read_text())
@@ -289,4 +389,5 @@ def r75():
 
 
 if __name__ == '__main__':
-    r75()
+    import sys
+    short_layers(sys.argv[1]) if len(sys.argv)>1 else r75()

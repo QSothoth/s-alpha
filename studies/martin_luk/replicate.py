@@ -1401,6 +1401,8 @@ def build_system(A, cfg, trace=None):
                    for d, lst in enumerate(entries)]
     if trace is not None:
         trace['raw'] = entries
+    if cfg.get('liquidity_groups'):
+        entries = liquidity_groups(A, entries)
     if cfg['filter'] and cfg['filter'] != 'NONE':
         entries = filter_days(entries, market_ok(A, pool, w, cfg['filter']))
     if cfg.get('priority') == 'theme':
@@ -1436,6 +1438,12 @@ def build_system(A, cfg, trace=None):
     if cfg.get('rule_opts'):
         rules = replace(rules, **{k: tuple(v) if isinstance(v, list) else v for k, v in cfg['rule_opts'].items()})
     return entries, rules, mask, pool
+
+
+def liquidity_groups(A, entries):
+    """Freeze a position's management group using only the prior 20-day average turnover."""
+    return [[e[:5] + ('thin' if d and A['to20'][d-1, e[1]] < 100e6 else 'premier',) + e[6:]
+             for e in day] for d, day in enumerate(entries)]
 
 
 def carry_round(cfgs, file, tag, ref):
@@ -1630,6 +1638,13 @@ def r35():
 def short_masks(A, pool):
     z = short_signals(A, pool)
     z.update(leader_shorts(A, pool))
+    e9p,e21p,e50p = (prev(A[k]) for k in ('e9','e21','e50'))
+    z['Z11'] = pool & (e9p < e21p) & (e21p < e50p) & (A['high'] >= e21p) & (A['close'] < e9p)
+    reject = np.zeros_like(pool)
+    for key in ('e9','e21','e50'):
+        line = prev(A[key])
+        reject |= (line < prev(line)) & (A['high'] >= line) & (A['close'] < line)
+    z['Z12'] = pool & reject
     return z
 
 

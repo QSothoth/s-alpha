@@ -1,17 +1,67 @@
 """R75 measurement timing; synthetic bars are test data only."""
 import unittest
+import hashlib
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 from copy import deepcopy
 
 import numpy as np
 
-from studies.martin_luk.measure import complete_trigger, behavior, calendar_profit
+from studies.martin_luk.measure import complete_trigger, behavior, calendar_profit, append_short_prices
 from studies.trader_replication import system as Y
 from studies.martin_luk.continue_round import failures, objective
 from studies.martin_luk import replicate as R
 
 
 class MeasurementTests(unittest.TestCase):
+    def test_short_rejection_uses_previous_ema_and_previous_slope(self):
+        a={'e9':np.array([[12.],[11.],[100.]]),'e21':np.array([[15.],[15.],[15.]]),
+           'e50':np.array([[20.],[20.],[20.]]),'high':np.array([[10.],[10.],[11.1]]),
+           'close':np.array([[10.],[10.],[10.9]])}
+        pool=np.ones((3,1),bool)
+        with patch.object(R,'short_signals',return_value={}),patch.object(R,'leader_shorts',return_value={}):
+            self.assertTrue(R.short_masks(a,pool)['Z12'][2,0])
+            a['e9'][2,0]=1.
+            self.assertTrue(R.short_masks(a,pool)['Z12'][2,0])
+            a['e9'][0,0]=10.
+            self.assertFalse(R.short_masks(a,pool)['Z12'][2,0])
+
+    def test_no_short_profit_is_zero_contribution_even_when_account_loses(self):
+        st={'profit_by_calendar_year':{'2025':dict(short_profit=0,short_net_profit_share=None)}}
+        self.assertEqual(objective(st,'2025_short_profit_share'),-.1)
+        st['profit_by_calendar_year']['2025']['short_profit']=-.1
+        self.assertEqual(objective(st,'2025_short_profit_share'),-float('inf'))
+
+    def test_append_etf_prices_keeps_stock_columns_and_prior_risk_scale(self):
+        days=np.array([f'2025-01-{d:02d}' for d in range(1,26)])
+        a={k:np.full((25,1),10.) for k in ('open','high','low','close','turnover','to20','adr','e9','e21','e50')}
+        a.update(days=days,codes=np.array(['US.OLD']),market='us',has=np.ones((25,1),bool))
+        em={k:a[k] for k in ('e9','e21','e50')};em['scale']=np.linspace(1,2,25)
+        with tempfile.TemporaryDirectory() as folder:
+            p=Path(folder)/'ETF.csv'
+            def write(last):
+                p.write_text('date,open,high,low,close,turnover\n'+'\n'.join(
+                    f'{day},{last if i==24 else 20},{last if i==24 else 20},{last if i==24 else 20},{last if i==24 else 20},1000'
+                    for i,day in enumerate(days)))
+                return {'US.ETF':dict(path=str(p),sha256=hashlib.sha256(p.read_bytes()).hexdigest())}
+            out,ema,pool=append_short_prices(a,em,np.ones((25,1),bool),write(20))
+            changed,_,_=append_short_prices(a,em,np.ones((25,1),bool),write(200))
+        np.testing.assert_array_equal(out['close'][:,0],a['close'][:,0])
+        np.testing.assert_array_equal(ema['scale'],em['scale'])
+        np.testing.assert_array_equal(out['e9'][:-1,1],changed['e9'][:-1,1])
+        self.assertEqual((pool.shape,out['codes'].tolist()),((25,2),['US.OLD','US.ETF']))
+
+    def test_liquidity_group_uses_previous_turnover_and_preserves_entry_overrides(self):
+        a={'to20':np.array([[99e6],[101e6],[1e9]])}
+        entry=(0,0,1,10.,9.,'original',None,.2,.3)
+        entries=[[],[entry],[entry]]
+        grouped=R.liquidity_groups(a,entries)
+        self.assertEqual([grouped[d][0][5] for d in (1,2)],['thin','premier'])
+        self.assertEqual(grouped[1][0][6:],entry[6:])
+        a['to20'][1,0]=1e9
+        self.assertEqual(R.liquidity_groups(a,entries)[1],grouped[1])
+
     def test_real_benchmark_gate_and_risk_scale_use_only_previous_close(self):
         a={'market':'us','_benchmark_QQQ':np.array([[10.],[12.],[1.],[20.]])}
         pool=np.ones((4,1),bool)
@@ -70,6 +120,21 @@ class MeasurementTests(unittest.TestCase):
         self.assertAlmostEqual(split['short_profit'],.0102)
         self.assertAlmostEqual(split['short_net_profit_share'],.0102/.0302)
         self.assertAlmostEqual(split['financing_and_rounding'],0.)
+
+    def test_structural_stop_filter_uses_prior_adr_and_no_future_lows(self):
+        a=dict(close=np.full((3,1),10.),low=np.array([[9.8],[9.75],[1.]]),
+               adr=np.array([[8.],[1.],[1.]]),to20=np.full((3,1),1e8))
+        mask=np.array([[False],[True],[False]])
+        first=R.entries_close_stop(a,mask,'skip',cap_max=.03,stop_min=.01)[1]
+        self.assertEqual(len(first),1)
+        self.assertAlmostEqual(first[0][4],9.75)
+        a['adr'][1:]=1000; a['low'][2]=.01
+        self.assertEqual(first,R.entries_close_stop(a,mask,'skip',cap_max=.03,stop_min=.01)[1])
+        a['low'][1]=9.6
+        self.assertEqual(R.entries_close_stop(a,mask,'skip',cap_max=.03)[1],[])
+        self.assertAlmostEqual(R.entries_close_stop(a,mask,'cap',cap_max=.03)[1][0][4],9.7)
+        a['low'][1]=9.75; a['adr'][0]=4
+        self.assertEqual(R.entries_close_stop(a,mask,'skip',cap_max=.03)[1],[])
 
     def test_stop_floor_and_previous_low_only_use_known_bars(self):
         a=dict(close=np.array([[10.],[10.],[11.]]),low=np.array([[9.8],[9.99],[1.]]),

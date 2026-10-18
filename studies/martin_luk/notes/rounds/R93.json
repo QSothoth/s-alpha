@@ -1,0 +1,13 @@
+{
+  "stage": "new_positions_instead_of_mechanical_single_stock_adds",
+  "base": ["r92.json", "chosen"],
+  "ref": "R92",
+  "objective": "2025_log_distance",
+  "draws": 31,
+  "seed": 1,
+  "candidates": {
+    "NOADD": {"rule_opts": {"add_r": 0, "add_levels": []}},
+    "NOADD_EXEC4": {"max_new": 0, "rule_opts": {"add_r": 0, "add_levels": [], "max_new_long": 4}},
+    "NOADD_UNCAPPED": {"max_new": 0, "rule_opts": {"add_r": 0, "add_levels": []}}
+  }
+}

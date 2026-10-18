@@ -1,0 +1,15 @@
+{
+  "stage": "tight_structural_risk_and_partial_exit_retest",
+  "base": ["r93.json", "chosen"],
+  "ref": "R93",
+  "objective": "2025_log_distance",
+  "draws": 31,
+  "seed": 1,
+  "candidates": {
+    "CAP03": {"stop_cap_max": 0.03},
+    "SKIP03": {"stop": "skip", "stop_cap_max": 0.03},
+    "SKIP03_UNCAPPED": {"stop": "skip", "stop_cap_max": 0.03, "max_new": 0},
+    "NOADD_EXEC4_EARLY": {"max_new": 0, "rule_opts": {"add_r": 0, "add_levels": [], "max_new_long": 4, "trims": [3, 5], "trim_frac": 0.15}},
+    "NOADD_EXEC4_EARLY03": {"stop_cap_max": 0.03, "max_new": 0, "rule_opts": {"add_r": 0, "add_levels": [], "max_new_long": 4, "trims": [3, 5], "trim_frac": 0.15}}
+  }
+}

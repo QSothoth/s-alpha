@@ -1,0 +1,25 @@
+{
+  "stage": "short_three_layers_after_ema9",
+  "base": [
+    "r86.json",
+    "chosen"
+  ],
+  "ref": "R86",
+  "objective": "2025_short_profit_share",
+  "draws": 31,
+  "seed": 1,
+  "candidates": {
+    "SH9": {
+      "shorts": "Z2",
+      "short_gate": 50,
+      "short_last": true,
+      "short_max_new": 1
+    }
+  },
+  "diagnostic_layers": [
+    "his_short_picks_our_execution",
+    "our_short_picks_our_execution",
+    "our_longs_plus_his_short_picks"
+  ],
+  "diagnostic_carry": false
+}

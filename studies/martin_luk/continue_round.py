@@ -13,7 +13,8 @@ def objective(st, name='bought_fraction_sum'):
     if name == '2025_count_distance':
         return -abs(st['behavior']['2025']['n']-940)
     if name == '2025_short_profit_share':
-        share = st['profit_by_calendar_year']['2025']['short_net_profit_share']
+        profit = st['profit_by_calendar_year']['2025']
+        share = 0. if profit.get('short_profit') == 0 else profit['short_net_profit_share']
         return -max(.10-share, share-.30, 0.) if share is not None else -math.inf
     if name == '2025_log_distance':
         return -abs(math.log1p(st['by_year']['2025'])-math.log(10.7)) if st['by_year']['2025'] > -1 else -math.inf
@@ -36,7 +37,8 @@ def failures(st, ref):
         bad.append('2025_count_distance')
     for year, target in (('2024', 5), ('2025', 3)):
         h = st['behavior'][year]['days_win']
-        if h is None or abs(h - target) > abs(ref['behavior'][year]['days_win'] - target) + 1e-10:
+        ref_h = ref['behavior'][year]['days_win']
+        if h is None or abs(h - target) > (abs(ref_h - target) if ref_h is not None else math.inf) + 1e-10:
             bad.append(f'{year}_holding_distance')
     if st['march_start']['2024'] < ref['march_start']['2024'] - 1e-10:
         bad.append('march_start')
@@ -57,6 +59,9 @@ def run(name):
     ledger = R.L.load(R.LEDGER)
     located = {k: [x for x in R.located_longs(A, part) if x[0].dated]
                for k, part in zip(('select', 'validate'), R.L.split(ledger, R.CUTOFF))}
+    short_located = {k:R.F.locate([t for t in part if t.side=='short' and t.dated],
+                                A['days'],A['codes'],has=A['has'])
+                     for k,part in zip(('select','validate'),R.L.split(ledger,R.CUTOFF))}
     out = dict(configs=cfgs, full={}, price_audit={}, objective=spec['objective'],
                spec_sha256=hashlib.sha256(path.read_bytes()).hexdigest(), rejected={})
     if 'data_files' in spec:
@@ -65,6 +70,11 @@ def run(name):
         entries, rules, _, pool = R.build_system(A, config)
         px, ema = M.context(A, pool, rules)
         st, trades = M.summarize(A, px, ema, rules, entries, located, spec['draws'], pool)
+        short_actual = {(t['code'],t['entry']) for t in trades if t['side'] < 0}
+        st['short_bought_entry_date'] = {
+            k:[sum((str(A['codes'][j]),t.entry_date) in short_actual for t,j,_,_ in rows),len(rows)]
+            for k,(rows,_) in short_located.items()}
+        st['short_missing_panel'] = {k:missing for k,(_,missing) in short_located.items()}
         out['full'][key] = st
         out['price_audit'][key] = M.price_audit(A, trades)
         print(name, key, json.dumps({k: st[k] for k in ('by_year', '2026_jan_jul', 'bought', 'march_start', 'placebo')}),
