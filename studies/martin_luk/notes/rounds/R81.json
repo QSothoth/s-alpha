@@ -1,0 +1,45 @@
+{
+  "stage": "first_ema_break_execution",
+  "base": [
+    "r80.json",
+    "chosen"
+  ],
+  "ref": "R80",
+  "objective": "winner_holding_distance",
+  "draws": 100,
+  "seed": 1,
+  "candidates": {
+    "ARM_CURRENT": {
+      "rule_opts": {
+        "arm_trail_on_entry": true
+      }
+    },
+    "EMA9_FIRST": {
+      "rule_opts": {
+        "trail": "e9",
+        "arm_trail_on_entry": true
+      }
+    },
+    "EMA9_STOP": {
+      "rule_opts": {
+        "trail": "e9",
+        "arm_trail_on_entry": true,
+        "stop_ema_buffer": 0.01
+      }
+    },
+    "FAST_FIRST": {
+      "max_position": 0.2,
+      "rule_opts": {
+        "trims": [
+          3,
+          5
+        ],
+        "trim_frac": 0.15,
+        "trail": "e9",
+        "arm_trail_on_entry": true,
+        "add_r": 0,
+        "add_levels": []
+      }
+    }
+  }
+}

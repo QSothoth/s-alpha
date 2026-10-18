@@ -1,0 +1,36 @@
+{
+  "stage": "daily_cap_execution",
+  "base": [
+    "r79.json",
+    "chosen"
+  ],
+  "ref": "R79",
+  "objective": "2025_count_distance",
+  "draws": 31,
+  "seed": 1,
+  "candidates": {
+    "EXEC4": {
+      "max_new": 0,
+      "rule_opts": {
+        "max_new_long": 4
+      }
+    },
+    "UNCAPPED": {
+      "max_new": 0
+    },
+    "UNCAPPED_FAST": {
+      "max_new": 0,
+      "max_position": 0.2,
+      "rule_opts": {
+        "trims": [
+          3,
+          5
+        ],
+        "trim_frac": 0.15,
+        "trail": "e9",
+        "add_r": 0,
+        "add_levels": []
+      }
+    }
+  }
+}

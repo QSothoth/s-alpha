@@ -24,6 +24,7 @@ class Rules:
     trims: tuple = (3, 5)           # R multiples where trim_frac of the original size is taken off
     trim_frac: float = .15
     trail: str = 'e9'               # EMA name for the close trail ('' = none); armed after a close on the right side
+    arm_trail_on_entry: bool = False  # include the completed entry close when arming the EMA trail
     stop_ema_buffer: float = -1.0   # >= 0: after arming, the stop also trails the EMA minus/plus this fraction
     max_days: int = 0               # > 0: exit at the close after this many days
     nft_days: int = 0               # > 0: exit at that day's close if the trade is still on the wrong side of its fill
@@ -33,6 +34,7 @@ class Rules:
     short_trims: tuple | None = None  # shorts' partial levels (None = same as longs)
     short_max_days: int = 0           # shorts' holding limit (0 = same as longs)
     max_open: int = 0               # > 0: no new trade while this many are open
+    max_new_long: int = 0           # > 0: count successful new long positions per trading session
     exit_signal: str = ''           # name of a boolean (days x codes) array in `ema`: longs exit at that close
     trail_after_trim: str = ''      # EMA name the close trail switches to after the first partial ('' = keep)
     breakeven_r: float = 0.0        # > 0: once the day's best price reaches this R multiple, the stop moves to the fill
@@ -68,16 +70,24 @@ class Pos:
     armed: bool = False
     cash: float = 0.0               # signed cash flow of the trade so far
     exits: list = field(default_factory=list)
+    invested: float = 0.0
+    executions: list = field(default_factory=list)
 
 
-def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
+def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False):
     """Run between ISO dates; return (equity array, dates, trades).
 
     px: dict of (days x codes) 'open', 'high', 'low', 'close' and 'dates', 'codes';  ema: dict name -> array;
     entries: list over days of entry tuples;  placebo: numpy Generator -> each real entry becomes a random
     pool[d] name of the same side, filled at its close with the same stop distance in percent.
+    Optional px['session'] numbers trading days and px['daily_close'] marks their final bars. Stops/trims
+    run every bar; daily management and financing retain their daily clocks. px['mark'] may contain
+    forward-filled, already observed closes for valuation only; never use it as tradable OHLC.
     """
     o, h, l, c, dates = px['open'], px['high'], px['low'], px['close'], px['dates']
+    session = px.get('session', np.arange(len(dates)))
+    daily_close = px.get('daily_close')
+    mark = px.get('mark')
     d0, d1 = int(np.searchsorted(dates, start)), int(np.searchsorted(dates, end, side='right'))
     trail = ema.get(rules.trail) if rules.trail else None
     sig_exit = ema[rules.exit_signal] if rules.exit_signal else None
@@ -90,6 +100,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
     cash, pos, trades, curve = 1.0, {}, [], []
 
     def last(j, d):
+        if mark is not None:
+            return mark[d, j]
         k = d
         while k > 0 and np.isnan(c[k, j]):
             k -= 1
@@ -114,14 +126,19 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
         q.cash += flow
         q.size -= size
         q.exits.append((d, price, size, why))
+        if audit:
+            q.executions.append(dict(time=str(dates[d]), action=why, price=float(price), shares=float(size)))
         if q.size <= 1e-12 * q.size0:
             pos.pop(q.j, None)
             risk = q.size0 * abs(q.fill - q.stop0)
             gross0 = q.size0 * q.fill
             trades.append(dict(code=str(px['codes'][q.j]), side=q.side, kind=q.kind, entry=str(dates[q.d0]),
-                               exit=str(dates[d]), days=d - q.d0, fill=q.fill, stop=q.stop0,
+                               exit=str(dates[d]), days=int(session[d] - session[q.d0]), fill=q.fill, stop=q.stop0,
                                risk_pct=abs(q.fill - q.stop0) / q.fill, pnl=q.cash,
-                               r=q.cash / risk if risk > 0 else 0.0, ret=q.cash / gross0, why=why, add_tries=q.adds))
+                               r=q.cash / risk if risk > 0 else 0.0, ret=q.cash / gross0,
+                               ret_invested=q.cash / q.invested, why=why, add_tries=q.adds))
+            if audit:
+                trades[-1]['executions'] = q.executions
 
     def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None):
         nonlocal cash
@@ -149,7 +166,13 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
         size = val / fill
         flow = -val * (1 + rules.buy_cost) if side > 0 else val * (1 - rules.sell_cost)
         cash += flow
-        pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow)
+        pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow, invested=val)
+        initial_trail = trail3 if alt else trail
+        if rules.arm_trail_on_entry and initial_trail is not None and np.isfinite(initial_trail[d,j]):
+            pos[j].armed = (fill-initial_trail[d,j])*side > 0
+        if audit:
+            pos[j].executions.append(dict(time=str(dates[d]), action='entry', price=float(fill), shares=float(size)))
+        return True
 
     def add_pos(q, price, d):
         nonlocal cash
@@ -163,6 +186,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
         cash += flow
         q.cash += flow
         q.size += val / price
+        q.invested += val
+        if audit:
+            q.executions.append(dict(time=str(dates[d]), action='add', price=float(price), shares=float(val / price)))
         q.stop = max(q.stop, q.fill)
 
     for d in range(d0, d1):
@@ -171,8 +197,10 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
         alt = trail3 is not None and (rules.trail_alt_dd > 0 or alt_days is not None) \
             and (rules.trail_alt_dd <= 0 or equity < peak * (1 - rules.trail_alt_dd)) \
             and (alt_days is None or bool(alt_days[d]))
-        longs = sum(q.size * last(q.j, d - 1) for q in pos.values() if q.side > 0)
-        cash -= rules.margin_rate / 252 * max(0.0, longs - equity)
+        if d == d0 or session[d] != session[d - 1]:
+            new_longs = 0
+            longs = sum(q.size * last(q.j, d - 1) for q in pos.values() if q.side > 0)
+            cash -= rules.margin_rate / 252 * max(0.0, longs - equity)
         for q in list(pos.values()):
             j, s = q.j, q.side
             if np.isnan(o[d, j]):
@@ -201,6 +229,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
                 continue
             if rules.breakeven_r and (best - (q.fill + s * rules.breakeven_r * R)) * s >= 0:
                 q.stop = max(q.stop, q.fill) if s > 0 else min(q.stop, q.fill)
+            if daily_close is not None and not daily_close[d]:
+                continue
             tr_ = trail3 if alt else (trail2 if trail2 is not None and q.trims else trail)
             if tr_ is not None and np.isfinite(tr_[d, j]):
                 if (c[d, j] - tr_[d, j]) * s > 0:
@@ -221,19 +251,19 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
             if sig_exit is not None and s > 0 and sig_exit[d, j]:
                 close_part(q, q.size, c[d, j], d, 'signal')
                 continue
-            if rules.nft_days and d - q.d0 == rules.nft_days and (c[d, j] - q.fill) * s < 0:
+            if rules.nft_days and session[d] - session[q.d0] == rules.nft_days and (c[d, j] - q.fill) * s < 0:
                 close_part(q, q.size, c[d, j], d, 'no_follow')
                 continue
             hold = rules.max_days if s > 0 else (rules.short_max_days or rules.max_days)
-            if hold and d - q.d0 >= hold:
+            if hold and session[d] - session[q.d0] >= hold:
                 close_part(q, q.size, c[d, j], d, 'time')
         eq_now = cash + value(d)
         todays = entries[d] if d < len(entries) else []
         if placebo is not None:
             swapped = []
+            cand = np.flatnonzero(pool[d] & np.isfinite(c[d]))
             for e in todays:
                 pr, j, side, fill, stop, kind = e[:6]
-                cand = np.flatnonzero(pool[d] & np.isfinite(c[d]))
                 if not len(cand):
                     continue
                 k = int(placebo.choice(cand))
@@ -242,9 +272,13 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
             todays = swapped
         for e in sorted(todays, key=lambda x: x[0]):
             pr, j, side, fill, stop, kind = e[:6]
+            if side > 0 and rules.max_new_long and new_longs >= rules.max_new_long:
+                continue
             had = j in pos
-            open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,
-                     e[8] if len(e) > 8 else None)
+            opened = open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,
+                              e[8] if len(e) > 8 else None)
+            if opened and side > 0:
+                new_longs += 1
             if len(e) > 6 and e[6] is not None and j in pos and not had:     # intraday entry stopped the same day
                 close_part(pos[j], pos[j].size, e[6], d, 'stop_day0')
         curve.append(cash + value(d))

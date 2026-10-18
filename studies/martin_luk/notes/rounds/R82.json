@@ -1,0 +1,52 @@
+{
+  "stage": "priority_after_R81_exit",
+  "base": [
+    "r81.json",
+    "chosen"
+  ],
+  "ref": "R81",
+  "objective": "2025_log_distance",
+  "draws": 100,
+  "seed": 1,
+  "candidates": {
+    "RVOL_FAST": {
+      "max_position": 0.2,
+      "rule_opts": {
+        "trims": [
+          3,
+          5
+        ],
+        "trim_frac": 0.15,
+        "add_r": 0,
+        "add_levels": []
+      },
+      "priority": "rvol"
+    },
+    "GAIN_FAST": {
+      "max_position": 0.2,
+      "rule_opts": {
+        "trims": [
+          3,
+          5
+        ],
+        "trim_frac": 0.15,
+        "add_r": 0,
+        "add_levels": []
+      },
+      "priority": "gain"
+    },
+    "PRIOR_GAIN_FAST": {
+      "max_position": 0.2,
+      "rule_opts": {
+        "trims": [
+          3,
+          5
+        ],
+        "trim_frac": 0.15,
+        "add_r": 0,
+        "add_levels": []
+      },
+      "priority": "prior_gain"
+    }
+  }
+}

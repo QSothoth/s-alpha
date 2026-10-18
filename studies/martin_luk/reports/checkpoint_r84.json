@@ -1,0 +1,127 @@
+{
+  "chosen_report": "r84.json",
+  "chosen_config": {
+    "signals": "C2",
+    "stop": "cap",
+    "exits": "X9",
+    "small_cap": false,
+    "gap_size": false,
+    "gross": 2.8,
+    "risk": 0.005,
+    "filter": "IDX50",
+    "rank": null,
+    "rank_n": 0,
+    "risk_high": 0.008,
+    "max_new": 4,
+    "bpath": 0.2,
+    "max_position": 0.5,
+    "strength": "K6",
+    "stop_min": 0.01,
+    "ep_opts": {
+      "hold_open": false
+    },
+    "rule_opts": {
+      "feedback": 5,
+      "risk_scale": "idx_pb16",
+      "exit_signal": "",
+      "add_r": 10.0,
+      "add_levels": [
+        10,
+        20
+      ],
+      "trail": "e9",
+      "arm_trail_on_entry": true,
+      "stop_ema_buffer": 0.01
+    },
+    "setup": "E11+E10+E2+EW1",
+    "bopts": {
+      "lookback": 120
+    }
+  },
+  "scoreboard": {
+    "2024": {
+      "value": 1.9118138239100224,
+      "target": 2.83,
+      "log_gap": -0.2740886089988197,
+      "passed": true
+    },
+    "2025": {
+      "value": -0.11197812586977951,
+      "target": 9.7,
+      "log_gap": -2.4890026447316878,
+      "passed": false
+    },
+    "2026_jan_jul": {
+      "value": 0.33669428602753193,
+      "target": 8.686,
+      "log_gap": -1.980481928680653,
+      "passed": false
+    },
+    "2025_n": {
+      "value": 387,
+      "target": 940,
+      "passed": false
+    },
+    "2025_win": {
+      "value": 0.2661498708010336,
+      "target": 0.22,
+      "passed": true
+    },
+    "2025_avg_win": {
+      "value": 0.07603894997332218,
+      "target": 0.141,
+      "passed": false
+    },
+    "2025_avg_loss": {
+      "value": -0.026258657490309322,
+      "target": -0.021,
+      "passed": true
+    },
+    "2024_holding": {
+      "value": 7.853211009174312,
+      "target": 5,
+      "passed": false
+    },
+    "2025_holding": {
+      "value": 8.077669902912621,
+      "target": 3,
+      "passed": false
+    },
+    "bought_select": {
+      "value": 6,
+      "total": 42,
+      "passed": false
+    },
+    "bought_validate": {
+      "value": 0,
+      "total": 40,
+      "passed": false
+    },
+    "short_profit_share": {
+      "value": 0,
+      "target": [
+        0.1,
+        0.3
+      ],
+      "passed": false
+    }
+  },
+  "complete": false,
+  "prereg_hash_verified": {
+    "R75": true,
+    "R76": true,
+    "R78": true,
+    "R79": true,
+    "R80": true,
+    "R81": true,
+    "R82": true,
+    "R83": true,
+    "R84": true
+  },
+  "unresolved": [
+    "R77 minute data guard; no candidate returns evaluated",
+    "Required annual returns and trade fidelity remain unmet",
+    "Start-date sensitivity persists"
+  ],
+  "march_start_2024": 0.15957892724838785
+}

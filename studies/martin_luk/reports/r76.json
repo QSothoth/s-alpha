@@ -1,0 +1,2738 @@
+{
+ "configs": {
+  "R75": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   }
+  },
+  "GAIN_FAST": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.2,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 0,
+    "add_levels": [],
+    "trims": [
+     3,
+     5
+    ],
+    "trim_frac": 0.15,
+    "trail": "e9"
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "priority": "gain"
+  },
+  "RVOL_FAST": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.2,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 0,
+    "add_levels": [],
+    "trims": [
+     3,
+     5
+    ],
+    "trim_frac": 0.15,
+    "trail": "e9"
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "priority": "rvol"
+  },
+  "DOLLAR_FAST": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.2,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 0,
+    "add_levels": [],
+    "trims": [
+     3,
+     5
+    ],
+    "trim_frac": 0.15,
+    "trail": "e9"
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "priority": "dollar_range"
+  },
+  "GAIN_FAST_ADDS": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.2,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ],
+    "trims": [
+     3,
+     5
+    ],
+    "trim_frac": 0.15,
+    "trail": "e9"
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "priority": "gain"
+  }
+ },
+ "full": {
+  "R75": {
+   "total": 23.28482588182323,
+   "cagr": 2.1478146784742798,
+   "maxdd": 0.6106927852418772,
+   "trades": 767,
+   "per_year": 275.72610556348076,
+   "win": 0.18383311603650587,
+   "avg_win": 0.2668060958498324,
+   "avg_loss": -0.026333386563233172,
+   "exp_r": 1.524490566656049,
+   "days_win": 22.5531914893617,
+   "days_loss": 2.194888178913738,
+   "by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "behavior": {
+    "2024": {
+     "n": 310,
+     "win": 0.17096774193548386,
+     "avg_win": 0.35046123665309054,
+     "avg_loss": -0.02865793429884323,
+     "days_win": 22.77358490566038,
+     "calendar_days_win": 33.283018867924525,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "n": 229,
+     "win": 0.24017467248908297,
+     "avg_win": 0.2003148927736093,
+     "avg_loss": -0.023005613622814173,
+     "days_win": 22.727272727272727,
+     "calendar_days_win": 33.127272727272725,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "n": 228,
+     "win": 0.14473684210526316,
+     "avg_win": 0.2432695415049713,
+     "avg_loss": -0.026239149248264555,
+     "days_win": 21.90909090909091,
+     "calendar_days_win": 32.0,
+     "short_net_profit_share": 0.0
+    },
+    "all": {
+     "n": 767,
+     "win": 0.18383311603650587,
+     "avg_win": 0.2668060958498324,
+     "avg_loss": -0.026333386563233172,
+     "days_win": 22.5531914893617,
+     "calendar_days_win": 32.92198581560284,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "bought": {
+    "select": [
+     5,
+     42
+    ],
+    "validate": [
+     0,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     3,
+     42
+    ],
+    "validate": [
+     0,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 3,
+   "2026_jan_jul": 0.891681703369035,
+   "march_start": {
+    "2024": 0.05665917127818343,
+    "2025": 2.2119054687070694,
+    "2026": 0.9474778482248725
+   },
+   "placebo": {
+    "real": 23.28482588182323,
+    "median": -0.4788436708815856,
+    "p90": 0.08701923337278437,
+    "rank": 1.0
+   }
+  },
+  "GAIN_FAST": {
+   "total": -0.7432867710563668,
+   "cagr": -0.3866552548089295,
+   "maxdd": 0.844230281738264,
+   "trades": 1827,
+   "per_year": 656.7817403708988,
+   "win": 0.19649698960043788,
+   "avg_win": 0.14270517831694168,
+   "avg_loss": -0.03809925580519855,
+   "exp_r": -0.05580367904414488,
+   "days_win": 11.610027855153204,
+   "days_loss": 1.8010899182561309,
+   "by_year": {
+    "2024": 0.022999158771295214,
+    "2025": -0.43157720628040375,
+    "2026": -0.5585297037771205
+   },
+   "behavior": {
+    "2024": {
+     "n": 709,
+     "win": 0.1918194640338505,
+     "avg_win": 0.15311796249390647,
+     "avg_loss": -0.03382456700214627,
+     "days_win": 11.25,
+     "calendar_days_win": 16.352941176470587,
+     "short_net_profit_share": null
+    },
+    "2025": {
+     "n": 651,
+     "win": 0.2073732718894009,
+     "avg_win": 0.146946268114761,
+     "avg_loss": -0.039780005805443386,
+     "days_win": 12.207407407407407,
+     "calendar_days_win": 17.68888888888889,
+     "short_net_profit_share": null
+    },
+    "2026": {
+     "n": 467,
+     "win": 0.18843683083511778,
+     "avg_win": 0.12010647637634154,
+     "avg_loss": -0.0422737404596118,
+     "days_win": 11.25,
+     "calendar_days_win": 16.65909090909091,
+     "short_net_profit_share": null
+    },
+    "all": {
+     "n": 1827,
+     "win": 0.19649698960043788,
+     "avg_win": 0.14270517831694168,
+     "avg_loss": -0.03809925580519855,
+     "days_win": 11.610027855153204,
+     "calendar_days_win": 16.930362116991642,
+     "short_net_profit_share": null
+    }
+   },
+   "bought": {
+    "select": [
+     11,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     9,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 8,
+   "2026_jan_jul": -0.3092359293756546,
+   "march_start": {
+    "2024": -0.03471873668385761,
+    "2025": -0.43157720628040674,
+    "2026": -0.5585297037771204
+   },
+   "placebo": {
+    "real": -0.7432867710563668,
+    "median": -0.49258041566260224,
+    "p90": -0.05786355928567524,
+    "rank": 0.08
+   }
+  },
+  "RVOL_FAST": {
+   "total": -0.0426406456307602,
+   "cagr": -0.015543085576313787,
+   "maxdd": 0.5691763525086329,
+   "trades": 1776,
+   "per_year": 638.4479315263909,
+   "win": 0.22804054054054054,
+   "avg_win": 0.11912881763546283,
+   "avg_loss": -0.032754408033036156,
+   "exp_r": 0.04705737668872251,
+   "days_win": 11.019753086419753,
+   "days_loss": 1.662290299051787,
+   "by_year": {
+    "2024": 0.2880989569083421,
+    "2025": -0.009858002606095262,
+    "2026": -0.24936592575712413
+   },
+   "behavior": {
+    "2024": {
+     "n": 682,
+     "win": 0.2316715542521994,
+     "avg_win": 0.1234078926693385,
+     "avg_loss": -0.032040295468291076,
+     "days_win": 10.310126582278482,
+     "calendar_days_win": 15.10759493670886,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "n": 640,
+     "win": 0.215625,
+     "avg_win": 0.14006952605222178,
+     "avg_loss": -0.03350847649873805,
+     "days_win": 12.326086956521738,
+     "calendar_days_win": 18.014492753623188,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "n": 454,
+     "win": 0.24008810572687225,
+     "avg_win": 0.08641403215963633,
+     "avg_loss": -0.032741806914613175,
+     "days_win": 10.394495412844037,
+     "calendar_days_win": 15.26605504587156,
+     "short_net_profit_share": null
+    },
+    "all": {
+     "n": 1776,
+     "win": 0.22804054054054054,
+     "avg_win": 0.11912881763546283,
+     "avg_loss": -0.032754408033036156,
+     "days_win": 11.019753086419753,
+     "calendar_days_win": 16.14074074074074,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "bought": {
+    "select": [
+     9,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     9,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 8,
+   "2026_jan_jul": 0.10390662167426123,
+   "march_start": {
+    "2024": -0.05631450545452954,
+    "2025": -0.009858002606094596,
+    "2026": -0.24936592575712135
+   },
+   "placebo": {
+    "real": -0.0426406456307602,
+    "median": -0.532023213588968,
+    "p90": -0.010586015066078742,
+    "rank": 0.88
+   }
+  },
+  "DOLLAR_FAST": {
+   "total": 0.044833529160927865,
+   "cagr": 0.015891144554563086,
+   "maxdd": 0.4819691581577489,
+   "trades": 1190,
+   "per_year": 427.78887303851644,
+   "win": 0.23109243697478993,
+   "avg_win": 0.10850615253811431,
+   "avg_loss": -0.030109118131817145,
+   "exp_r": 0.14021492149496909,
+   "days_win": 8.86909090909091,
+   "days_loss": 1.555191256830601,
+   "by_year": {
+    "2024": 0.20303627626455323,
+    "2025": -0.05385759162965498,
+    "2026": -0.08206512855087145
+   },
+   "behavior": {
+    "2024": {
+     "n": 466,
+     "win": 0.22532188841201717,
+     "avg_win": 0.10913723321970778,
+     "avg_loss": -0.029759630578835423,
+     "days_win": 8.790476190476191,
+     "calendar_days_win": 12.838095238095239,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "n": 400,
+     "win": 0.2475,
+     "avg_win": 0.10901946514218797,
+     "avg_loss": -0.030041183061305297,
+     "days_win": 9.383838383838384,
+     "calendar_days_win": 13.787878787878787,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "n": 324,
+     "win": 0.2191358024691358,
+     "avg_win": 0.10685711846247202,
+     "avg_loss": -0.030688617984981053,
+     "days_win": 8.267605633802816,
+     "calendar_days_win": 11.901408450704226,
+     "short_net_profit_share": null
+    },
+    "all": {
+     "n": 1190,
+     "win": 0.23109243697478993,
+     "avg_win": 0.10850615253811431,
+     "avg_loss": -0.030109118131817145,
+     "days_win": 8.86909090909091,
+     "calendar_days_win": 12.938181818181818,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "bought": {
+    "select": [
+     3,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     3,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 4,
+   "2026_jan_jul": 0.09595806707540544,
+   "march_start": {
+    "2024": -0.08011736124814928,
+    "2025": -0.05385759162965542,
+    "2026": -0.08206512855087245
+   },
+   "placebo": {
+    "real": 0.044833529160927865,
+    "median": -0.5091199257261272,
+    "p90": -0.04373302646631539,
+    "rank": 0.9
+   }
+  },
+  "GAIN_FAST_ADDS": {
+   "total": -0.8280508321830171,
+   "cagr": -0.46894843863655333,
+   "maxdd": 0.8875682892838627,
+   "trades": 1807,
+   "per_year": 649.5920114122682,
+   "win": 0.1936912008854455,
+   "avg_win": 0.1406190440059456,
+   "avg_loss": -0.039200497386974766,
+   "exp_r": -0.09400389127267397,
+   "days_win": 11.62,
+   "days_loss": 1.8291008922443377,
+   "by_year": {
+    "2024": 0.05177012660029967,
+    "2025": -0.5932760762989859,
+    "2026": -0.598043062822677
+   },
+   "behavior": {
+    "2024": {
+     "n": 706,
+     "win": 0.19121813031161472,
+     "avg_win": 0.1517216129714083,
+     "avg_loss": -0.03470956681012743,
+     "days_win": 11.251851851851852,
+     "calendar_days_win": 16.333333333333332,
+     "short_net_profit_share": null
+    },
+    "2025": {
+     "n": 638,
+     "win": 0.2006269592476489,
+     "avg_win": 0.14811118679670532,
+     "avg_loss": -0.04186524968052834,
+     "days_win": 12.234375,
+     "calendar_days_win": 17.6875,
+     "short_net_profit_share": null
+    },
+    "2026": {
+     "n": 463,
+     "win": 0.1879049676025918,
+     "avg_win": 0.11236799702255824,
+     "avg_loss": -0.042406076348856424,
+     "days_win": 11.28735632183908,
+     "calendar_days_win": 16.71264367816092,
+     "short_net_profit_share": null
+    },
+    "all": {
+     "n": 1807,
+     "win": 0.1936912008854455,
+     "avg_win": 0.1406190440059456,
+     "avg_loss": -0.039200497386974766,
+     "days_win": 11.62,
+     "calendar_days_win": 16.922857142857143,
+     "short_net_profit_share": null
+    }
+   },
+   "bought": {
+    "select": [
+     11,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     9,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 8,
+   "2026_jan_jul": -0.3710535641905609,
+   "march_start": {
+    "2024": -0.046423716478991905,
+    "2025": -0.5932760762989839,
+    "2026": -0.598043062822677
+   },
+   "placebo": {
+    "real": -0.8280508321830171,
+    "median": -0.5091592763242516,
+    "p90": -0.03670283061154601,
+    "rank": 0.02
+   }
+  }
+ },
+ "price_audit": {
+  "R75": [
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-12-17",
+     "exit": "2026-03-03",
+     "days": 50,
+     "fill": 206.8300018310547,
+     "stop": 204.76170181274415,
+     "risk_pct": 0.009999999999999957,
+     "pnl": 9.827672644362082,
+     "r": 179.7086385772924,
+     "ret": 1.7970863857729162,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 206.8300018310547,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 581.6400146484375,
+     "high": 593.1599731445312,
+     "low": 557.0900268554688,
+     "close": 565.4099731445312
+    }
+   },
+   {
+    "trade": {
+     "code": "US.DELL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-15",
+     "exit": "2026-07-02",
+     "days": 54,
+     "fill": 176.4405975341797,
+     "stop": 174.6761915588379,
+     "risk_pct": 0.009999999999999948,
+     "pnl": 8.607237407433773,
+     "r": 122.6093472631549,
+     "ret": 1.2260934726315427,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 176.4405975341797,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 415.3934631347656,
+     "high": 421.8478088378906,
+     "low": 385.3730773925781,
+     "close": 393.66937255859375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-22",
+     "exit": "2026-06-01",
+     "days": 27,
+     "fill": 65.2699966430664,
+     "stop": 64.61729667663575,
+     "risk_pct": 0.00999999999999994,
+     "pnl": 5.413129553847987,
+     "r": 62.160880508600776,
+     "ret": 0.6216088050860039,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 65.2699966430664,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 109.43000030517578,
+     "high": 113.30000305175781,
+     "low": 106.33000183105469,
+     "close": 109.33000183105469
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-13",
+     "exit": "2026-07-01",
+     "days": 55,
+     "fill": 426.42352294921875,
+     "stop": 413.15192683016954,
+     "risk_pct": 0.03112303943098766,
+     "pnl": 2.9985782465570976,
+     "r": 44.384456420439,
+     "ret": 1.3813791872962766,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 426.42352294921875,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 1081.663818359375,
+     "high": 1096.6490478515625,
+     "low": 1031.8697509765625,
+     "close": 1031.94970703125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-09-04",
+     "exit": "2026-10-12",
+     "days": 25,
+     "fill": 477.57000732421875,
+     "stop": 469.4725212494515,
+     "risk_pct": 0.01695560012266413,
+     "pnl": 2.711149025773164,
+     "r": 14.29318139881743,
+     "ret": 0.24234946827904943,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 477.57000732421875,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 599.9299926757812,
+     "high": 601.77001953125,
+     "low": 586.5399780273438,
+     "close": 594.239990234375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-02",
+     "exit": "2025-11-19",
+     "days": 56,
+     "fill": 118.26924896240234,
+     "stop": 116.27882600603151,
+     "risk_pct": 0.016829589887761853,
+     "pnl": 2.6037239842513857,
+     "r": 77.43278468608754,
+     "ret": 1.3031620101342198,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 118.26924896240234,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 226.64915466308594,
+     "high": 234.0806121826172,
+     "low": 216.1112823486328,
+     "close": 225.66029357910156
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-26",
+     "exit": "2025-11-06",
+     "days": 29,
+     "fill": 159.4600067138672,
+     "stop": 157.0500030517578,
+     "risk_pct": 0.015113530419159282,
+     "pnl": 2.2671008240939585,
+     "r": 44.42049063743215,
+     "ret": 0.6713504364828109,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 159.4600067138672,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 253.46499633789062,
+     "high": 253.50999450683594,
+     "low": 235.74000549316406,
+     "close": 237.6999969482422
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MRVL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-29",
+     "exit": "2026-07-02",
+     "days": 44,
+     "fill": 156.4964141845703,
+     "stop": 152.26853123668053,
+     "risk_pct": 0.02701584550623287,
+     "pnl": 2.1031186390795007,
+     "r": 18.662819204255378,
+     "ret": 0.5041918403329192,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 156.4964141845703,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 269.37335205078125,
+     "high": 274.82080078125,
+     "low": 237.08853149414062,
+     "close": 245.1747283935547
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-09",
+     "exit": "2026-07-02",
+     "days": 58,
+     "fill": 851.5700073242188,
+     "stop": 817.1063684893868,
+     "risk_pct": 0.040470705330642995,
+     "pnl": 1.9124873555165154,
+     "r": 28.481597518995088,
+     "ret": 1.1526703405372227,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 851.5700073242188,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 2043.800048828125,
+     "high": 2052.5400390625,
+     "low": 1693.0,
+     "close": 1745.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-08-21",
+     "exit": "2025-11-04",
+     "days": 52,
+     "fill": 23.5,
+     "stop": 22.972844079534624,
+     "risk_pct": 0.02243216682831385,
+     "pnl": 1.7846711200462204,
+     "r": 35.137391660949646,
+     "ret": 0.7882078316502265,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 23.5,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 38.13999938964844,
+     "high": 38.25,
+     "low": 36.630001068115234,
+     "close": 37.029998779296875
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-08-20",
+     "exit": "2026-10-14",
+     "days": 38,
+     "fill": 112.38999938964844,
+     "stop": 109.26907052300122,
+     "risk_pct": 0.02776874173499345,
+     "pnl": 1.7826458744715055,
+     "r": 9.550100200214262,
+     "ret": 0.2651942660030591,
+     "why": "trail",
+     "add_tries": 1
+    },
+    "entry_close": 112.38999938964844,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 149.75999450683594,
+     "high": 152.17999267578125,
+     "low": 141.74000549316406,
+     "close": 143.24000549316406
+    }
+   },
+   {
+    "trade": {
+     "code": "US.APP",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-25",
+     "exit": "2025-10-06",
+     "days": 50,
+     "fill": 364.1400146484375,
+     "stop": 357.029296875,
+     "risk_pct": 0.019527427603095504,
+     "pnl": 1.7294061218670045,
+     "r": 40.03040200635977,
+     "ret": 0.7816907771019994,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 364.1400146484375,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 684.4749755859375,
+     "high": 687.0,
+     "low": 545.0,
+     "close": 587.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.DELL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-09-01",
+     "exit": "2026-10-14",
+     "days": 30,
+     "fill": 425.0,
+     "stop": 420.75,
+     "risk_pct": 0.01,
+     "pnl": 1.6664419285070018,
+     "r": 17.24099782133777,
+     "ret": 0.17240997821337772,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 425.0,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 547.989990234375,
+     "high": 548.385009765625,
+     "low": 502.32000732421875,
+     "close": 507.92999267578125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-06-10",
+     "exit": "2026-07-02",
+     "days": 15,
+     "fill": 107.04000091552734,
+     "stop": 104.91999816894531,
+     "risk_pct": 0.01980570560957928,
+     "pnl": 1.322462480129392,
+     "r": 4.46334837612767,
+     "ret": 0.08839976397057837,
+     "why": "trail",
+     "add_tries": 1
+    },
+    "entry_close": 107.04000091552734,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 128.9149932861328,
+     "high": 130.74000549316406,
+     "low": 117.62999725341797,
+     "close": 120.3499984741211
+    }
+   },
+   {
+    "trade": {
+     "code": "US.HOOD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-05-09",
+     "exit": "2025-08-20",
+     "days": 70,
+     "fill": 54.650001525878906,
+     "stop": 53.742000579833984,
+     "risk_pct": 0.016614838439024525,
+     "pnl": 1.1903395171990296,
+     "r": 60.37895257662128,
+     "ret": 1.0031865421780861,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 54.650001525878906,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 106.66500091552734,
+     "high": 107.9800033569336,
+     "low": 99.0,
+     "close": 105.33999633789062
+    }
+   }
+  ],
+  "GAIN_FAST": [
+   {
+    "trade": {
+     "code": "US.VKTX",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-08",
+     "exit": "2024-03-07",
+     "days": 19,
+     "fill": 28.889999389648438,
+     "stop": 27.80195255562346,
+     "risk_pct": 0.037661711907644994,
+     "pnl": 0.1942711030071026,
+     "r": 30.18006603529947,
+     "ret": 1.1366329523751502,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 28.889999389648438,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 79.58999633789062,
+     "high": 81.44000244140625,
+     "low": 72.0199966430664,
+     "close": 74.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-08",
+     "exit": "2024-03-18",
+     "days": 26,
+     "fill": 58.78099822998047,
+     "stop": 56.99190546591351,
+     "risk_pct": 0.03043658355489537,
+     "pnl": 0.19220405881152242,
+     "r": 36.946958180288185,
+     "ret": 1.1245391797535662,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 58.78099822998047,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 171.84500122070312,
+     "high": 173.49000549316406,
+     "low": 144.50100708007812,
+     "close": 150.2760009765625
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QMCO",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-09",
+     "exit": "2025-01-06",
+     "days": 18,
+     "fill": 15.890000343322754,
+     "stop": 15.095500326156616,
+     "risk_pct": 0.050000000000000024,
+     "pnl": 0.18358729037129265,
+     "r": 32.872796429260966,
+     "ret": 1.6436398214630488,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 15.890000343322754,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 53.9900016784668,
+     "high": 60.880001068115234,
+     "low": 51.0,
+     "close": 51.880001068115234
+    }
+   },
+   {
+    "trade": {
+     "code": "US.EOSE",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-12",
+     "exit": "2025-10-17",
+     "days": 25,
+     "fill": 8.199999809265137,
+     "stop": 7.889917715512072,
+     "risk_pct": 0.03781489036166858,
+     "pnl": 0.12274824877038529,
+     "r": 16.606307406763605,
+     "ret": 0.6279656938989305,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 8.199999809265137,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 15.140000343322754,
+     "high": 15.489999771118164,
+     "low": 14.5,
+     "close": 15.039999961853027
+    }
+   },
+   {
+    "trade": {
+     "code": "US.IREN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-09",
+     "exit": "2025-10-17",
+     "days": 28,
+     "fill": 30.190000534057617,
+     "stop": 28.7010015712107,
+     "risk_pct": 0.0493209319810102,
+     "pnl": 0.11212227050390752,
+     "r": 15.53541883373646,
+     "ret": 0.7662213355952207,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 30.190000534057617,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 59.279998779296875,
+     "high": 61.95000076293945,
+     "low": 57.63999938964844,
+     "close": 60.720001220703125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.OPEN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-08-14",
+     "exit": "2025-09-22",
+     "days": 26,
+     "fill": 3.0399999618530273,
+     "stop": 2.8879999637603757,
+     "risk_pct": 0.050000000000000086,
+     "pnl": 0.1085862026133191,
+     "r": 25.759210221318288,
+     "ret": 1.2879605110659167,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 3.0399999618530273,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 9.170000076293945,
+     "high": 9.449999809265137,
+     "low": 8.319999694824219,
+     "close": 8.380000114440918
+    }
+   },
+   {
+    "trade": {
+     "code": "US.BE",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-24",
+     "exit": "2025-09-24",
+     "days": 43,
+     "fill": 33.060001373291016,
+     "stop": 32.092866801525545,
+     "risk_pct": 0.029253918075962716,
+     "pnl": 0.10156930813817569,
+     "r": 27.29535188521518,
+     "ret": 0.7984959879046594,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 33.060001373291016,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 69.27999877929688,
+     "high": 69.56999969482422,
+     "low": 64.27200317382812,
+     "close": 69.18000030517578
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QS",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-06-25",
+     "exit": "2025-07-25",
+     "days": 21,
+     "fill": 5.670000076293945,
+     "stop": 5.522713429357918,
+     "risk_pct": 0.025976480591566046,
+     "pnl": 0.0936057198249656,
+     "r": 31.087548212671095,
+     "ret": 0.8075450927858244,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 5.670000076293945,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 12.354999542236328,
+     "high": 12.600000381469727,
+     "low": 11.109999656677246,
+     "close": 11.970000267028809
+    }
+   },
+   {
+    "trade": {
+     "code": "US.RGTI",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-06",
+     "exit": "2024-12-19",
+     "days": 9,
+     "fill": 4.380000114440918,
+     "stop": 4.161000108718872,
+     "risk_pct": 0.05000000000000008,
+     "pnl": 0.08602511817767555,
+     "r": 11.066918097042008,
+     "ret": 0.5533459048521013,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 4.380000114440918,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 10.104999542236328,
+     "high": 10.180000305175781,
+     "low": 6.75,
+     "close": 7.46999979019165
+    }
+   },
+   {
+    "trade": {
+     "code": "US.ASTS",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-07-23",
+     "exit": "2024-08-27",
+     "days": 25,
+     "fill": 13.84000015258789,
+     "stop": 13.192682647938986,
+     "risk_pct": 0.0467714954849813,
+     "pnl": 0.08288020799988106,
+     "r": 19.844216080893514,
+     "ret": 0.9281436628305044,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 13.84000015258789,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 33.0099983215332,
+     "high": 34.86989974975586,
+     "low": 30.430500030517578,
+     "close": 31.110000610351562
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QUBT",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-16",
+     "exit": "2024-12-31",
+     "days": 10,
+     "fill": 11.079999923706055,
+     "stop": 10.525999927520752,
+     "risk_pct": 0.04999999999999997,
+     "pnl": 0.07897401510537569,
+     "r": 8.571369042268266,
+     "ret": 0.428568452113413,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 11.079999923706055,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 18.260000228881836,
+     "high": 18.34000015258789,
+     "low": 16.010000228881836,
+     "close": 16.549999237060547
+    }
+   },
+   {
+    "trade": {
+     "code": "US.LAES",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-20",
+     "exit": "2025-01-08",
+     "days": 11,
+     "fill": 2.75,
+     "stop": 2.6125,
+     "risk_pct": 0.050000000000000065,
+     "pnl": 0.06861322711724911,
+     "r": 14.659929388999927,
+     "ret": 0.7329964694499974,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 2.75,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 4.980000019073486,
+     "high": 5.46999979019165,
+     "low": 3.25,
+     "close": 5.275000095367432
+    }
+   },
+   {
+    "trade": {
+     "code": "US.UAMY",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-10-01",
+     "exit": "2025-10-17",
+     "days": 12,
+     "fill": 7.550000190734863,
+     "stop": 7.17250018119812,
+     "risk_pct": 0.050000000000000024,
+     "pnl": 0.06068218113222043,
+     "r": 7.925692738092367,
+     "ret": 0.3962846369046185,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 7.550000190734863,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 11.010000228881836,
+     "high": 12.399999618530273,
+     "low": 10.680000305175781,
+     "close": 11.1899995803833
+    }
+   },
+   {
+    "trade": {
+     "code": "US.CADL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-04-30",
+     "exit": "2024-05-22",
+     "days": 16,
+     "fill": 7.050000190734863,
+     "stop": 6.697500181198119,
+     "risk_pct": 0.0500000000000001,
+     "pnl": 0.05899532489047475,
+     "r": 8.185823393914411,
+     "ret": 0.4092911696957213,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 7.050000190734863,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 12.3100004196167,
+     "high": 12.407500267028809,
+     "low": 10.520000457763672,
+     "close": 10.579999923706055
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SMCI",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-01-30",
+     "exit": "2024-02-21",
+     "days": 15,
+     "fill": 51.297000885009766,
+     "stop": 50.117000579833984,
+     "risk_pct": 0.023003300091967094,
+     "pnl": 0.057990997936038347,
+     "r": 14.271396832670613,
+     "ret": 0.32828922407347083,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 51.297000885009766,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 74.9749984741211,
+     "high": 77.24999237060547,
+     "low": 70.8080062866211,
+     "close": 73.41699981689453
+    }
+   }
+  ],
+  "RVOL_FAST": [
+   {
+    "trade": {
+     "code": "US.VKTX",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-08",
+     "exit": "2024-03-07",
+     "days": 19,
+     "fill": 28.889999389648438,
+     "stop": 27.80195255562346,
+     "risk_pct": 0.037661711907644994,
+     "pnl": 0.2247363038032533,
+     "r": 30.18006603529946,
+     "ret": 1.13663295237515,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 28.889999389648438,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 79.58999633789062,
+     "high": 81.44000244140625,
+     "low": 72.0199966430664,
+     "close": 74.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.RGTI",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-11-27",
+     "exit": "2024-12-19",
+     "days": 15,
+     "fill": 2.4000000953674316,
+     "stop": 2.299999952316284,
+     "risk_pct": 0.04166672461562456,
+     "pnl": 0.18130098725372296,
+     "r": 36.647602154824035,
+     "ret": 1.5269855468080227,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 2.4000000953674316,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 10.104999542236328,
+     "high": 10.180000305175781,
+     "low": 6.75,
+     "close": 7.46999979019165
+    }
+   },
+   {
+    "trade": {
+     "code": "US.BE",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-24",
+     "exit": "2025-09-24",
+     "days": 43,
+     "fill": 33.060001373291016,
+     "stop": 32.092866801525545,
+     "risk_pct": 0.029253918075962716,
+     "pnl": 0.17863013488328636,
+     "r": 27.295351885215172,
+     "ret": 0.798495987904659,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 33.060001373291016,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 69.27999877929688,
+     "high": 69.56999969482422,
+     "low": 64.27200317382812,
+     "close": 69.18000030517578
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SIMO",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-09",
+     "exit": "2026-05-18",
+     "days": 27,
+     "fill": 126.48236846923828,
+     "stop": 123.00548778695556,
+     "risk_pct": 0.027489054200691507,
+     "pnl": 0.1702546834030697,
+     "r": 23.859850421053252,
+     "ret": 0.655884721444725,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 126.48236846923828,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 263.63372802734375,
+     "high": 266.4579772949219,
+     "low": 234.52294921875,
+     "close": 239.27328491210938
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-09",
+     "exit": "2024-03-18",
+     "days": 25,
+     "fill": 64.63200378417969,
+     "stop": 62.56642604712386,
+     "risk_pct": 0.03195905458777417,
+     "pnl": 0.15812337260100445,
+     "r": 30.177341404995282,
+     "ret": 0.964439301276142,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 64.63200378417969,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 171.84500122070312,
+     "high": 173.49000549316406,
+     "low": 144.50100708007812,
+     "close": 150.2760009765625
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QS",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-06-25",
+     "exit": "2025-07-25",
+     "days": 21,
+     "fill": 5.670000076293945,
+     "stop": 5.522713429357918,
+     "risk_pct": 0.025976480591566046,
+     "pnl": 0.15334516608859738,
+     "r": 31.087548212671106,
+     "ret": 0.8075450927858245,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 5.670000076293945,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 12.354999542236328,
+     "high": 12.600000381469727,
+     "low": 11.109999656677246,
+     "close": 11.970000267028809
+    }
+   },
+   {
+    "trade": {
+     "code": "US.ASTS",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-07-23",
+     "exit": "2024-08-27",
+     "days": 25,
+     "fill": 13.84000015258789,
+     "stop": 13.192682647938986,
+     "risk_pct": 0.0467714954849813,
+     "pnl": 0.14699047055401535,
+     "r": 19.844216080893517,
+     "ret": 0.9281436628305044,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 13.84000015258789,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 33.0099983215332,
+     "high": 34.86989974975586,
+     "low": 30.430500030517578,
+     "close": 31.110000610351562
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SBET",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-07",
+     "exit": "2025-07-21",
+     "days": 10,
+     "fill": 12.670000076293945,
+     "stop": 12.460000038146973,
+     "risk_pct": 0.016574588546364,
+     "pnl": 0.14112533653182158,
+     "r": 44.29128416287847,
+     "ret": 0.7341098111897987,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 12.670000076293945,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 32.0,
+     "high": 34.28990173339844,
+     "low": 24.791799545288086,
+     "close": 25.2450008392334
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QUBT",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-16",
+     "exit": "2024-12-31",
+     "days": 10,
+     "fill": 11.079999923706055,
+     "stop": 10.525999927520752,
+     "risk_pct": 0.04999999999999997,
+     "pnl": 0.12351974963823248,
+     "r": 8.571369042268268,
+     "ret": 0.4285684521134131,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 11.079999923706055,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 18.260000228881836,
+     "high": 18.34000015258789,
+     "low": 16.010000228881836,
+     "close": 16.549999237060547
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SIDU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-12-26",
+     "exit": "2026-01-12",
+     "days": 10,
+     "fill": 1.9299999475479126,
+     "stop": 1.833499950170517,
+     "risk_pct": 0.050000000000000024,
+     "pnl": 0.11811106664422083,
+     "r": 11.91056166555425,
+     "ret": 0.5955280832777127,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 1.9299999475479126,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 3.930000066757202,
+     "high": 4.028800010681152,
+     "low": 3.369999885559082,
+     "close": 3.4100000858306885
+    }
+   },
+   {
+    "trade": {
+     "code": "US.CIEN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-03",
+     "exit": "2025-10-22",
+     "days": 35,
+     "fill": 94.81999969482422,
+     "stop": 93.2772589762751,
+     "risk_pct": 0.01627020379154592,
+     "pnl": 0.11200580704516516,
+     "r": 35.452340538167995,
+     "ret": 0.576816805443278,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 94.81999969482422,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 170.44000244140625,
+     "high": 173.47000122070312,
+     "low": 159.55999755859375,
+     "close": 164.47999572753906
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QUBT",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-11-20",
+     "exit": "2024-12-11",
+     "days": 14,
+     "fill": 3.680000066757202,
+     "stop": 3.4960000634193418,
+     "risk_pct": 0.05000000000000007,
+     "pnl": 0.11038228947234859,
+     "r": 11.528570324174423,
+     "ret": 0.5764285162087219,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 3.680000066757202,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 7.110000133514404,
+     "high": 7.380000114440918,
+     "low": 5.829999923706055,
+     "close": 6.400000095367432
+    }
+   },
+   {
+    "trade": {
+     "code": "US.NVTS",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-10-09",
+     "exit": "2025-10-28",
+     "days": 13,
+     "fill": 8.0,
+     "stop": 7.656636554318069,
+     "risk_pct": 0.04292043071024132,
+     "pnl": 0.10150207115444071,
+     "r": 11.017886763858678,
+     "ret": 0.4728924454214814,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 8.0,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 13.739999771118164,
+     "high": 14.123000144958496,
+     "low": 12.604999542236328,
+     "close": 12.829999923706055
+    }
+   },
+   {
+    "trade": {
+     "code": "US.IREN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-06-23",
+     "exit": "2025-07-25",
+     "days": 23,
+     "fill": 10.65999984741211,
+     "stop": 10.328968089352522,
+     "risk_pct": 0.031053636284990308,
+     "pnl": 0.1004818646270382,
+     "r": 16.236868915198162,
+     "ret": 0.5042138216996288,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 10.65999984741211,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 18.020000457763672,
+     "high": 18.049999237060547,
+     "low": 17.3700008392334,
+     "close": 17.719999313354492
+    }
+   },
+   {
+    "trade": {
+     "code": "US.STM",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-23",
+     "exit": "2026-06-05",
+     "days": 30,
+     "fill": 49.566932678222656,
+     "stop": 48.725258602471534,
+     "risk_pct": 0.01698055599314729,
+     "pnl": 0.09689601542822301,
+     "r": 18.55501690772564,
+     "ret": 0.31507450355542993,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 49.566932678222656,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 73.46794891357422,
+     "high": 74.27561950683594,
+     "low": 69.21522521972656,
+     "close": 70.51646423339844
+    }
+   }
+  ],
+  "DOLLAR_FAST": [
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-07",
+     "exit": "2024-03-18",
+     "days": 27,
+     "fill": 50.80099868774414,
+     "stop": 49.296455952599864,
+     "risk_pct": 0.029616400740311653,
+     "pnl": 0.2616600827587349,
+     "r": 47.42399882870318,
+     "ret": 1.4045281540189438,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 50.80099868774414,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 171.84500122070312,
+     "high": 173.49000549316406,
+     "low": 144.50100708007812,
+     "close": 150.2760009765625
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-01-05",
+     "exit": "2026-02-10",
+     "days": 25,
+     "fill": 274.0799865722656,
+     "stop": 266.3299865722656,
+     "risk_pct": 0.02827641703038608,
+     "pnl": 0.17548132628730143,
+     "r": 25.318663697667287,
+     "ret": 0.7159210933673371,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 274.0799865722656,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 573.8800048828125,
+     "high": 582.280029296875,
+     "low": 540.1400756835938,
+     "close": 541.6400146484375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.COIN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-07",
+     "exit": "2024-03-14",
+     "days": 25,
+     "fill": 122.06999969482422,
+     "stop": 117.86716523783865,
+     "risk_pct": 0.034429708097752795,
+     "pnl": 0.12838100306929,
+     "r": 20.015221408605235,
+     "ret": 0.6891182306101707,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 122.06999969482422,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 245.0,
+     "high": 248.27000427246094,
+     "low": 227.24000549316406,
+     "close": 233.6699981689453
+    }
+   },
+   {
+    "trade": {
+     "code": "US.OPEN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-08-14",
+     "exit": "2025-09-22",
+     "days": 26,
+     "fill": 3.0399999618530273,
+     "stop": 2.8879999637603757,
+     "risk_pct": 0.050000000000000086,
+     "pnl": 0.1188391390070458,
+     "r": 25.759210221318284,
+     "ret": 1.2879605110659167,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 3.0399999618530273,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 9.170000076293945,
+     "high": 9.449999809265137,
+     "low": 8.319999694824219,
+     "close": 8.380000114440918
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-22",
+     "exit": "2026-05-15",
+     "days": 17,
+     "fill": 65.2699966430664,
+     "stop": 64.61729667663575,
+     "risk_pct": 0.00999999999999994,
+     "pnl": 0.11800594219908636,
+     "r": 50.86763464701196,
+     "ret": 0.5086763464701165,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 65.2699966430664,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 109.78500366210938,
+     "high": 110.56999969482422,
+     "low": 105.0199966430664,
+     "close": 108.7699966430664
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-30",
+     "exit": "2025-11-04",
+     "days": 25,
+     "fill": 161.7899932861328,
+     "stop": 159.3300018310547,
+     "risk_pct": 0.015204843050629965,
+     "pnl": 0.10518547527382374,
+     "r": 29.426594684371473,
+     "ret": 0.4474267536903702,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 161.7899932861328,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 250.35000610351562,
+     "high": 257.3800048828125,
+     "low": 247.38999938964844,
+     "close": 250.0500030517578
+    }
+   },
+   {
+    "trade": {
+     "code": "US.HOOD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-05-09",
+     "exit": "2025-07-31",
+     "days": 56,
+     "fill": 54.650001525878906,
+     "stop": 53.742000579833984,
+     "risk_pct": 0.016614838439024525,
+     "pnl": 0.09671784142173111,
+     "r": 38.731491960891006,
+     "ret": 0.6435174814325813,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 54.650001525878906,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 103.86499786376953,
+     "high": 109.05999755859375,
+     "low": 101.06999969482422,
+     "close": 103.05000305175781
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MRVL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-05-19",
+     "exit": "2026-06-10",
+     "days": 15,
+     "fill": 176.18716430664062,
+     "stop": 170.63239572329755,
+     "risk_pct": 0.031527657563495466,
+     "pnl": 0.09555357068072676,
+     "r": 10.969820949352169,
+     "ret": 0.3458527584240339,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 176.18716430664062,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 263.37615966796875,
+     "high": 272.3419494628906,
+     "low": 252.14144897460938,
+     "close": 252.47129821777344
+    }
+   },
+   {
+    "trade": {
+     "code": "US.CVNA",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-09-16",
+     "exit": "2024-12-06",
+     "days": 58,
+     "fill": 30.579999923706055,
+     "stop": 29.88331399700589,
+     "risk_pct": 0.02278240446168494,
+     "pnl": 0.08867891364077882,
+     "r": 20.901159764473423,
+     "ret": 0.47617867547252907,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 30.579999923706055,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 51.597999572753906,
+     "high": 51.650001525878906,
+     "low": 49.33599853515625,
+     "close": 50.242000579833984
+    }
+   },
+   {
+    "trade": {
+     "code": "US.GME",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-05-30",
+     "exit": "2024-06-07",
+     "days": 6,
+     "fill": 22.610000610351562,
+     "stop": 21.479500579833985,
+     "risk_pct": 0.04999999999999997,
+     "pnl": 0.08541200202699648,
+     "r": 8.11480561654685,
+     "ret": 0.40574028082734226,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 22.610000610351562,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 37.689998626708984,
+     "high": 48.0,
+     "low": 26.1200008392334,
+     "close": 28.219999313354492
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-11-05",
+     "exit": "2024-11-26",
+     "days": 15,
+     "fill": 227.8000030517578,
+     "stop": 225.42999267578125,
+     "risk_pct": 0.010403908446998919,
+     "pnl": 0.08461413853207123,
+     "r": 41.14172163261888,
+     "ret": 0.4280347052176818,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 227.8000030517578,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 382.7799987792969,
+     "high": 402.9999084472656,
+     "low": 338.67010498046875,
+     "close": 353.69000244140625
+    }
+   },
+   {
+    "trade": {
+     "code": "US.PLTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-01-16",
+     "exit": "2025-02-19",
+     "days": 22,
+     "fill": 69.23999786376953,
+     "stop": 68.36000061035156,
+     "risk_pct": 0.012709377246795604,
+     "pnl": 0.08413114810873537,
+     "r": 35.31167768178392,
+     "ret": 0.44878943287504475,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 69.23999786376953,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 123.86000061035156,
+     "high": 125.41000366210938,
+     "low": 108.55999755859375,
+     "close": 112.05999755859375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.CRWV",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-05-15",
+     "exit": "2025-06-25",
+     "days": 27,
+     "fill": 65.7699966430664,
+     "stop": 62.531174613382,
+     "risk_pct": 0.04924467378737276,
+     "pnl": 0.08383615773187418,
+     "r": 21.42663887005891,
+     "ret": 1.0551478415158924,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 65.7699966430664,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 178.02000427246094,
+     "high": 180.25,
+     "low": 157.89999389648438,
+     "close": 159.5
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-09-18",
+     "exit": "2024-11-01",
+     "days": 32,
+     "fill": 132.6699981689453,
+     "stop": 128.50999450683594,
+     "risk_pct": 0.031356024116408907,
+     "pnl": 0.08047913462014199,
+     "r": 17.488177002164107,
+     "ret": 0.5483596998318854,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 132.6699981689453,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 245.3300018310547,
+     "high": 255.75,
+     "low": 225.92999267578125,
+     "close": 229.7100067138672
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-13",
+     "exit": "2026-05-18",
+     "days": 25,
+     "fill": 426.42352294921875,
+     "stop": 413.15192683016954,
+     "risk_pct": 0.03112303943098766,
+     "pnl": 0.0794636077907496,
+     "r": 14.610186162314283,
+     "ret": 0.45471340002377775,
+     "why": "trail",
+     "add_tries": 0
+    },
+    "entry_close": 426.42352294921875,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 750.2198486328125,
+     "high": 756.7577514648438,
+     "low": 663.0377807617188,
+     "close": 681.3218994140625
+    }
+   }
+  ],
+  "GAIN_FAST_ADDS": [
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-08",
+     "exit": "2024-03-18",
+     "days": 26,
+     "fill": 58.78099822998047,
+     "stop": 56.99190546591351,
+     "risk_pct": 0.03043658355489537,
+     "pnl": 0.23571919310245656,
+     "r": 45.281197017205955,
+     "ret": 1.378204936479868,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 58.78099822998047,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 171.84500122070312,
+     "high": 173.49000549316406,
+     "low": 144.50100708007812,
+     "close": 150.2760009765625
+    }
+   },
+   {
+    "trade": {
+     "code": "US.VKTX",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-08",
+     "exit": "2024-03-07",
+     "days": 19,
+     "fill": 28.889999389648438,
+     "stop": 27.80195255562346,
+     "risk_pct": 0.037661711907644994,
+     "pnl": 0.19440229482260818,
+     "r": 30.180066035299465,
+     "ret": 1.1366329523751502,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 28.889999389648438,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 79.58999633789062,
+     "high": 81.44000244140625,
+     "low": 72.0199966430664,
+     "close": 74.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QMCO",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-09",
+     "exit": "2025-01-06",
+     "days": 18,
+     "fill": 15.890000343322754,
+     "stop": 15.095500326156616,
+     "risk_pct": 0.050000000000000024,
+     "pnl": 0.1839594149248429,
+     "r": 32.87279642926097,
+     "ret": 1.6436398214630494,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 15.890000343322754,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 53.9900016784668,
+     "high": 60.880001068115234,
+     "low": 51.0,
+     "close": 51.880001068115234
+    }
+   },
+   {
+    "trade": {
+     "code": "US.OPEN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-08-14",
+     "exit": "2025-09-22",
+     "days": 26,
+     "fill": 3.0399999618530273,
+     "stop": 2.8879999637603757,
+     "risk_pct": 0.050000000000000086,
+     "pnl": 0.12916185407590505,
+     "r": 36.84314241256168,
+     "ret": 1.8421571206280871,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 3.0399999618530273,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 9.170000076293945,
+     "high": 9.449999809265137,
+     "low": 8.319999694824219,
+     "close": 8.380000114440918
+    }
+   },
+   {
+    "trade": {
+     "code": "US.EOSE",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-12",
+     "exit": "2025-10-17",
+     "days": 25,
+     "fill": 8.199999809265137,
+     "stop": 7.889917715512072,
+     "risk_pct": 0.03781489036166858,
+     "pnl": 0.11139750149394341,
+     "r": 16.6063074067636,
+     "ret": 0.6279656938989304,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 8.199999809265137,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 15.140000343322754,
+     "high": 15.489999771118164,
+     "low": 14.5,
+     "close": 15.039999961853027
+    }
+   },
+   {
+    "trade": {
+     "code": "US.IREN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-09",
+     "exit": "2025-10-17",
+     "days": 28,
+     "fill": 30.190000534057617,
+     "stop": 28.7010015712107,
+     "risk_pct": 0.0493209319810102,
+     "pnl": 0.11076423371324753,
+     "r": 17.708185714952997,
+     "ret": 0.8733842231542932,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 30.190000534057617,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 59.279998779296875,
+     "high": 61.95000076293945,
+     "low": 57.63999938964844,
+     "close": 60.720001220703125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.BE",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-24",
+     "exit": "2025-09-24",
+     "days": 43,
+     "fill": 33.060001373291016,
+     "stop": 32.092866801525545,
+     "risk_pct": 0.029253918075962716,
+     "pnl": 0.10691048953551399,
+     "r": 35.02410095827644,
+     "ret": 1.0245921801176663,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 33.060001373291016,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 69.27999877929688,
+     "high": 69.56999969482422,
+     "low": 64.27200317382812,
+     "close": 69.18000030517578
+    }
+   },
+   {
+    "trade": {
+     "code": "US.RGTI",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-06",
+     "exit": "2024-12-19",
+     "days": 9,
+     "fill": 4.380000114440918,
+     "stop": 4.161000108718872,
+     "risk_pct": 0.05000000000000008,
+     "pnl": 0.08874793233171381,
+     "r": 11.066918097042011,
+     "ret": 0.5533459048521014,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 4.380000114440918,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 10.104999542236328,
+     "high": 10.180000305175781,
+     "low": 6.75,
+     "close": 7.46999979019165
+    }
+   },
+   {
+    "trade": {
+     "code": "US.ASTS",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-07-23",
+     "exit": "2024-08-27",
+     "days": 25,
+     "fill": 13.84000015258789,
+     "stop": 13.192682647938986,
+     "risk_pct": 0.0467714954849813,
+     "pnl": 0.08864387220882033,
+     "r": 21.25187618141796,
+     "ret": 0.9939820308665718,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 13.84000015258789,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 33.0099983215332,
+     "high": 34.86989974975586,
+     "low": 30.430500030517578,
+     "close": 31.110000610351562
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QS",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-06-25",
+     "exit": "2025-07-25",
+     "days": 21,
+     "fill": 5.670000076293945,
+     "stop": 5.522713429357918,
+     "risk_pct": 0.025976480591566046,
+     "pnl": 0.08688028647876059,
+     "r": 36.95562018770599,
+     "ret": 0.959976950555231,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 5.670000076293945,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 12.354999542236328,
+     "high": 12.600000381469727,
+     "low": 11.109999656677246,
+     "close": 11.970000267028809
+    }
+   },
+   {
+    "trade": {
+     "code": "US.LAES",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-20",
+     "exit": "2025-01-08",
+     "days": 11,
+     "fill": 2.75,
+     "stop": 2.6125,
+     "risk_pct": 0.050000000000000065,
+     "pnl": 0.07608987651588153,
+     "r": 16.24462607949848,
+     "ret": 0.8122313039749249,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 2.75,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 4.980000019073486,
+     "high": 5.46999979019165,
+     "low": 3.25,
+     "close": 5.275000095367432
+    }
+   },
+   {
+    "trade": {
+     "code": "US.QUBT",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-12-16",
+     "exit": "2024-12-31",
+     "days": 10,
+     "fill": 11.079999923706055,
+     "stop": 10.525999927520752,
+     "risk_pct": 0.04999999999999997,
+     "pnl": 0.06340565351016014,
+     "r": 8.473035366937745,
+     "ret": 0.423651768346887,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 11.079999923706055,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 18.260000228881836,
+     "high": 18.34000015258789,
+     "low": 16.010000228881836,
+     "close": 16.549999237060547
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SBET",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-02",
+     "exit": "2025-07-21",
+     "days": 12,
+     "fill": 11.975000381469727,
+     "stop": 11.37625036239624,
+     "risk_pct": 0.05000000000000003,
+     "pnl": 0.0633261417162875,
+     "r": 23.958379059013858,
+     "ret": 1.1979189529506935,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 11.975000381469727,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 32.0,
+     "high": 34.28990173339844,
+     "low": 24.791799545288086,
+     "close": 25.2450008392334
+    }
+   },
+   {
+    "trade": {
+     "code": "US.CADL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-04-30",
+     "exit": "2024-05-22",
+     "days": 16,
+     "fill": 7.050000190734863,
+     "stop": 6.697500181198119,
+     "risk_pct": 0.0500000000000001,
+     "pnl": 0.06065903625224106,
+     "r": 8.185823393914411,
+     "ret": 0.40929116969572144,
+     "why": "trail",
+     "add_tries": 1
+    },
+    "entry_close": 7.050000190734863,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 12.3100004196167,
+     "high": 12.407500267028809,
+     "low": 10.520000457763672,
+     "close": 10.579999923706055
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SMCI",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-01-30",
+     "exit": "2024-02-21",
+     "days": 15,
+     "fill": 51.297000885009766,
+     "stop": 50.117000579833984,
+     "risk_pct": 0.023003300091967094,
+     "pnl": 0.059178448405726,
+     "r": 14.56362454861275,
+     "ret": 0.33501142591847793,
+     "why": "trail",
+     "add_tries": 2
+    },
+    "entry_close": 51.297000885009766,
+    "fill_matches_close": true,
+    "initial_stop_below_fill": true,
+    "exit_ohlc": {
+     "open": 74.9749984741211,
+     "high": 77.24999237060547,
+     "low": 70.8080062866211,
+     "close": 73.41699981689453
+    }
+   }
+  ]
+ },
+ "objective": "bought_fraction_sum",
+ "spec_sha256": "2e9652256c8d08246eedf3776103093134ae2b0846424af80be403727672e176",
+ "rejected": {
+  "GAIN_FAST": [
+   "random_median",
+   "march_start"
+  ],
+  "RVOL_FAST": [
+   "march_start"
+  ],
+  "DOLLAR_FAST": [
+   "bought_select",
+   "march_start",
+   "objective_not_improved"
+  ],
+  "GAIN_FAST_ADDS": [
+   "random_median",
+   "march_start"
+  ]
+ },
+ "chosen": "R75",
+ "chosen_config": {
+  "signals": "C2",
+  "stop": "cap",
+  "exits": "X9",
+  "small_cap": false,
+  "gap_size": false,
+  "gross": 2.8,
+  "risk": 0.005,
+  "filter": "IDX50",
+  "rank": null,
+  "rank_n": 0,
+  "risk_high": 0.008,
+  "max_new": 4,
+  "bpath": 0.2,
+  "max_position": 0.5,
+  "strength": "K6",
+  "stop_min": 0.01,
+  "ep_opts": {
+   "hold_open": false
+  },
+  "rule_opts": {
+   "feedback": 5,
+   "risk_scale": "idx_pb16",
+   "exit_signal": "",
+   "add_r": 10.0,
+   "add_levels": [
+    10,
+    20
+   ]
+  },
+  "setup": "E11+E10+E2+EW1",
+  "bopts": {
+   "lookback": 120
+  }
+ }
+}

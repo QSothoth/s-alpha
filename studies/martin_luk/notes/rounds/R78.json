@@ -1,0 +1,14 @@
+{
+  "stage": "stop_retest_R16",
+  "base": ["r76.json", "chosen"],
+  "ref": "R76",
+  "objective": "2025_log_distance",
+  "draws": 100,
+  "seed": 1,
+  "candidates": {
+    "ADR03": {"stop_floor_adr": 0.3},
+    "ADR05": {"stop_floor_adr": 0.5},
+    "PRIOR_LOW": {"stop_reference": "prior_low"},
+    "CAP03": {"stop_cap_max": 0.03}
+  }
+}

@@ -1,0 +1,4044 @@
+{
+ "configs": {
+  "R79": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   }
+  },
+  "EXEC4": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 0,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ],
+    "max_new_long": 4
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   }
+  },
+  "UNCAPPED": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 0,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   }
+  },
+  "UNCAPPED_FAST": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 0,
+   "bpath": 0.2,
+   "max_position": 0.2,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 0,
+    "add_levels": [],
+    "trims": [
+     3,
+     5
+    ],
+    "trim_frac": 0.15,
+    "trail": "e9"
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   }
+  }
+ },
+ "full": {
+  "R79": {
+   "total": 23.28482588182323,
+   "cagr": 2.1478146784742798,
+   "maxdd": 0.6106927852418772,
+   "trades": 767,
+   "per_year": 275.72610556348076,
+   "win": 0.18383311603650587,
+   "avg_win": 0.2668060958498324,
+   "avg_loss": -0.026333386563233172,
+   "exp_r": 1.524490566656049,
+   "days_win": 22.5531914893617,
+   "days_loss": 2.194888178913738,
+   "by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "behavior": {
+    "2024": {
+     "n": 310,
+     "win": 0.17096774193548386,
+     "avg_win": 0.35046123665309054,
+     "avg_loss": -0.02865793429884323,
+     "avg_win_invested": 0.18012461526003956,
+     "avg_loss_invested": -0.02646382228097179,
+     "days_win": 22.77358490566038,
+     "calendar_days_win": 33.283018867924525,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "n": 229,
+     "win": 0.24017467248908297,
+     "avg_win": 0.2003148927736093,
+     "avg_loss": -0.023005613622814173,
+     "avg_win_invested": 0.12435852424779803,
+     "avg_loss_invested": -0.02263990546937591,
+     "days_win": 22.727272727272727,
+     "calendar_days_win": 33.127272727272725,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "n": 228,
+     "win": 0.14473684210526316,
+     "avg_win": 0.2432695415049713,
+     "avg_loss": -0.026239149248264555,
+     "avg_win_invested": 0.1511551485250108,
+     "avg_loss_invested": -0.02558328016826631,
+     "days_win": 21.90909090909091,
+     "calendar_days_win": 32.0,
+     "short_net_profit_share": 0.0
+    },
+    "all": {
+     "n": 767,
+     "win": 0.18383311603650587,
+     "avg_win": 0.2668060958498324,
+     "avg_loss": -0.026333386563233172,
+     "avg_win_invested": 0.15159179676408754,
+     "avg_loss_invested": -0.025126654170436243,
+     "days_win": 22.5531914893617,
+     "calendar_days_win": 32.92198581560284,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "profit_by_calendar_year": {
+    "2024": {
+     "account_profit": 2.8823949438068848,
+     "long_profit": 3.126570703936971,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.24417576013008624,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "account_profit": 8.587490607887046,
+     "long_profit": 9.299658145964566,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.7121675380775194,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "account_profit": 11.8149403301293,
+     "long_profit": 13.365262014568994,
+     "short_profit": 0.0,
+     "financing_and_rounding": 1.5503216844396945,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "bought": {
+    "select": [
+     5,
+     42
+    ],
+    "validate": [
+     0,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     3,
+     42
+    ],
+    "validate": [
+     0,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 3,
+   "2026_jan_jul": 0.891681703369035,
+   "march_start": {
+    "2024": 0.05665917127818343,
+    "2025": 2.2119054687070694,
+    "2026": 0.9474778482248725
+   },
+   "placebo": {
+    "real": 23.28482588182323,
+    "median": -0.48627651279162876,
+    "p90": -0.14422743184090359,
+    "rank": 1.0
+   }
+  },
+  "EXEC4": {
+   "total": 9.737726991847422,
+   "cagr": 1.3474644369817645,
+   "maxdd": 0.7074687577756718,
+   "trades": 961,
+   "per_year": 345.46647646219685,
+   "win": 0.16545265348595214,
+   "avg_win": 0.2515953101558192,
+   "avg_loss": -0.027261810076429978,
+   "exp_r": 1.0426176691661988,
+   "days_win": 22.19496855345912,
+   "days_loss": 2.1359102244389025,
+   "by_year": {
+    "2024": 1.8677268483637093,
+    "2025": 1.4790842750888307,
+    "2026": 0.510369770644757
+   },
+   "behavior": {
+    "2024": {
+     "n": 396,
+     "win": 0.14646464646464646,
+     "avg_win": 0.31401628269008103,
+     "avg_loss": -0.02838679118549655,
+     "avg_win_invested": 0.17847526474226902,
+     "avg_loss_invested": -0.026427543516119385,
+     "days_win": 22.189655172413794,
+     "calendar_days_win": 32.44827586206897,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "n": 280,
+     "win": 0.21785714285714286,
+     "avg_win": 0.20946011280944835,
+     "avg_loss": -0.024948770755362476,
+     "avg_win_invested": 0.12400781890354583,
+     "avg_loss_invested": -0.024588933732852175,
+     "days_win": 22.770491803278688,
+     "calendar_days_win": 33.131147540983605,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "n": 285,
+     "win": 0.14035087719298245,
+     "avg_win": 0.2253410759343551,
+     "avg_loss": -0.027777369245610726,
+     "avg_win_invested": 0.14721208552877596,
+     "avg_loss_invested": -0.02732909312172104,
+     "days_win": 21.325,
+     "calendar_days_win": 31.125,
+     "short_net_profit_share": null
+    },
+    "all": {
+     "n": 961,
+     "win": 0.16545265348595214,
+     "avg_win": 0.2515953101558192,
+     "avg_loss": -0.027261810076429978,
+     "avg_win_invested": 0.14971399829760337,
+     "avg_loss_invested": -0.026200890287736454,
+     "days_win": 22.19496855345912,
+     "calendar_days_win": 32.37735849056604,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "profit_by_calendar_year": {
+    "2024": {
+     "account_profit": 1.8677268483637093,
+     "long_profit": 2.115512686609428,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.24778583824571854,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "account_profit": 4.241609686664814,
+     "long_profit": 4.740146604662453,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.49853691799763844,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "account_profit": 3.6283904568188987,
+     "long_profit": 4.543465517743454,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.915075060924555,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "bought": {
+    "select": [
+     6,
+     42
+    ],
+    "validate": [
+     0,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     4,
+     42
+    ],
+    "validate": [
+     0,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 4,
+   "2026_jan_jul": 0.9185335390530633,
+   "march_start": {
+    "2024": -0.27303241374464005,
+    "2025": 1.4790842750888507,
+    "2026": 0.5103697706447496
+   },
+   "placebo": {
+    "real": 9.737726991847422,
+    "median": -0.4990591174076019,
+    "p90": 0.27204061734742147,
+    "rank": 1.0
+   }
+  },
+  "UNCAPPED": {
+   "total": 5.399026441222489,
+   "cagr": 0.9488886404660408,
+   "maxdd": 0.7420094053012758,
+   "trades": 1033,
+   "per_year": 371.34950071326676,
+   "win": 0.15972894482090996,
+   "avg_win": 0.23388452077902622,
+   "avg_loss": -0.027583321047136383,
+   "exp_r": 0.7808277572690979,
+   "days_win": 21.236363636363638,
+   "days_loss": 2.1451612903225805,
+   "by_year": {
+    "2024": 1.6931947063200417,
+    "2025": 0.9432886338886337,
+    "2026": 0.22266883371635493
+   },
+   "behavior": {
+    "2024": {
+     "n": 430,
+     "win": 0.14186046511627906,
+     "avg_win": 0.2817859905537274,
+     "avg_loss": -0.027705555926135845,
+     "avg_win_invested": 0.15587695952929376,
+     "avg_loss_invested": -0.025723418112927023,
+     "days_win": 20.852459016393443,
+     "calendar_days_win": 30.491803278688526,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "n": 297,
+     "win": 0.2053872053872054,
+     "avg_win": 0.173016877214539,
+     "avg_loss": -0.025762291255603975,
+     "avg_win_invested": 0.11577155210234695,
+     "avg_loss_invested": -0.02490555607983779,
+     "days_win": 21.42622950819672,
+     "calendar_days_win": 31.016393442622952,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "n": 306,
+     "win": 0.14052287581699346,
+     "avg_win": 0.2522783952250016,
+     "avg_loss": -0.02904590036443998,
+     "avg_win_invested": 0.14989762561909753,
+     "avg_loss_invested": -0.028014970139516763,
+     "days_win": 21.511627906976745,
+     "calendar_days_win": 31.441860465116278,
+     "short_net_profit_share": null
+    },
+    "all": {
+     "n": 1033,
+     "win": 0.15972894482090996,
+     "avg_win": 0.23388452077902622,
+     "avg_loss": -0.027583321047136383,
+     "avg_win_invested": 0.13949186127970473,
+     "avg_loss_invested": -0.02619537979862293,
+     "days_win": 21.236363636363638,
+     "calendar_days_win": 30.933333333333334,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "profit_by_calendar_year": {
+    "2024": {
+     "account_profit": 1.6931947063200417,
+     "long_profit": 1.9386417380682412,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.2454470317481996,
+     "short_net_profit_share": 0.0
+    },
+    "2025": {
+     "account_profit": 2.540459955320732,
+     "long_profit": 2.923231525208905,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.38277156988817307,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "account_profit": 1.1653717795817151,
+     "long_profit": 1.8386540294365705,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.6732822498548554,
+     "short_net_profit_share": 0.0
+    }
+   },
+   "bought": {
+    "select": [
+     5,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     3,
+     42
+    ],
+    "validate": [
+     1,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 4,
+   "2026_jan_jul": 0.6614425221744094,
+   "march_start": {
+    "2024": -0.28026230190224055,
+    "2025": 0.9432886338886213,
+    "2026": 0.22266883371635382
+   },
+   "placebo": {
+    "real": 5.399026441222489,
+    "median": -0.5452688606831062,
+    "p90": -0.01320447349589493,
+    "rank": 1.0
+   }
+  },
+  "UNCAPPED_FAST": {
+   "total": -0.390382605301999,
+   "cagr": -0.16298926033665484,
+   "maxdd": 0.6338000380156992,
+   "trades": 2838,
+   "per_year": 1020.222539229672,
+   "win": 0.24665257223396758,
+   "avg_win": 0.0824424102397292,
+   "avg_loss": -0.025336195108403077,
+   "exp_r": 0.07346172979439303,
+   "days_win": 8.947142857142858,
+   "days_loss": 1.6225444340505144,
+   "by_year": {
+    "2024": -0.09855620891286865,
+    "2025": -0.006689217930646918,
+    "2026": -0.3191780499380342
+   },
+   "behavior": {
+    "2024": {
+     "n": 1124,
+     "win": 0.23576512455516013,
+     "avg_win": 0.08015159776998178,
+     "avg_loss": -0.023866176786789577,
+     "avg_win_invested": 0.08015159776998178,
+     "avg_loss_invested": -0.023866176786789577,
+     "days_win": 9.075471698113208,
+     "calendar_days_win": 13.181132075471698,
+     "short_net_profit_share": null
+    },
+    "2025": {
+     "n": 928,
+     "win": 0.27370689655172414,
+     "avg_win": 0.0790895385401195,
+     "avg_loss": -0.026114559157058372,
+     "avg_win_invested": 0.0790895385401195,
+     "avg_loss_invested": -0.026114559157058372,
+     "days_win": 9.23228346456693,
+     "calendar_days_win": 13.55511811023622,
+     "short_net_profit_share": 0.0
+    },
+    "2026": {
+     "n": 786,
+     "win": 0.23027989821882952,
+     "avg_win": 0.0905014970694747,
+     "avg_loss": -0.026556242000092885,
+     "avg_win_invested": 0.0905014970694747,
+     "avg_loss_invested": -0.026556242000092885,
+     "days_win": 8.359116022099448,
+     "calendar_days_win": 12.19889502762431,
+     "short_net_profit_share": null
+    },
+    "all": {
+     "n": 2838,
+     "win": 0.24665257223396758,
+     "avg_win": 0.0824424102397292,
+     "avg_loss": -0.025336195108403077,
+     "avg_win_invested": 0.0824424102397292,
+     "avg_loss_invested": -0.025336195108403077,
+     "days_win": 8.947142857142858,
+     "calendar_days_win": 13.062857142857142,
+     "short_net_profit_share": null
+    }
+   },
+   "profit_by_calendar_year": {
+    "2024": {
+     "account_profit": -0.09855620891286865,
+     "long_profit": -0.00686114801588477,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.09169506089698387,
+     "short_net_profit_share": null
+    },
+    "2025": {
+     "account_profit": -0.006029953970810409,
+     "long_profit": 0.07642224048775287,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.08245219445856328,
+     "short_net_profit_share": null
+    },
+    "2026": {
+     "account_profit": -0.2857964424183199,
+     "long_profit": -0.21721665120152134,
+     "short_profit": 0.0,
+     "financing_and_rounding": 0.06857979121679858,
+     "short_net_profit_share": null
+    }
+   },
+   "bought": {
+    "select": [
+     6,
+     42
+    ],
+    "validate": [
+     0,
+     40
+    ]
+   },
+   "bought_entry_date": {
+    "select": [
+     4,
+     42
+    ],
+    "validate": [
+     0,
+     40
+    ]
+   },
+   "bought_unique_stock_days": 4,
+   "2026_jan_jul": 0.038407060374407775,
+   "march_start": {
+    "2024": -0.29849024306805405,
+    "2025": -0.00668921793065036,
+    "2026": -0.31917804993803034
+   },
+   "placebo": {
+    "real": -0.390382605301999,
+    "median": -0.5510965837712155,
+    "p90": -0.3979885730696422,
+    "rank": 0.9032258064516129
+   }
+  }
+ },
+ "price_audit": {
+  "R79": [
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-12-17",
+     "exit": "2026-03-03",
+     "days": 50,
+     "fill": 206.8300018310547,
+     "stop": 204.76170181274415,
+     "risk_pct": 0.009999999999999957,
+     "pnl": 9.827672644362082,
+     "r": 179.7086385772924,
+     "ret": 1.7970863857729162,
+     "ret_invested": 1.2805964656488424,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-12-17",
+       "action": "entry",
+       "price": 206.8300018310547,
+       "shares": 0.026440410407688592
+      },
+      {
+       "time": "2025-12-18",
+       "action": "trim",
+       "price": 227.51300201416007,
+       "shares": 0.007932123122306577
+      },
+      {
+       "time": "2025-12-19",
+       "action": "add",
+       "price": 237.61000061035156,
+       "shares": 0.009165179710263135
+      },
+      {
+       "time": "2025-12-24",
+       "action": "add",
+       "price": 250.0800018310547,
+       "shares": 0.00011150283536311058
+      },
+      {
+       "time": "2026-03-03",
+       "action": "trail",
+       "price": 565.4099731445312,
+       "shares": 0.027784969831008262
+      }
+     ]
+    },
+    "entry_close": 206.8300018310547,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 581.6400146484375,
+     "high": 593.1599731445312,
+     "low": 557.0900268554688,
+     "close": 565.4099731445312
+    }
+   },
+   {
+    "trade": {
+     "code": "US.DELL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-15",
+     "exit": "2026-07-02",
+     "days": 54,
+     "fill": 176.4405975341797,
+     "stop": 174.6761915588379,
+     "risk_pct": 0.009999999999999948,
+     "pnl": 8.607237407433773,
+     "r": 122.6093472631549,
+     "ret": 1.2260934726315427,
+     "ret_invested": 0.9204266275567857,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-15",
+       "action": "entry",
+       "price": 176.4405975341797,
+       "shares": 0.03978704468725122
+      },
+      {
+       "time": "2026-04-17",
+       "action": "trim",
+       "price": 194.08465728759757,
+       "shares": 0.011936113406175366
+      },
+      {
+       "time": "2026-04-17",
+       "action": "add",
+       "price": 195.61935424804688,
+       "shares": 0.011917565319640198
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 393.66937255859375,
+       "shares": 0.039768496600716054
+      }
+     ]
+    },
+    "entry_close": 176.4405975341797,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 415.3934631347656,
+     "high": 421.8478088378906,
+     "low": 385.3730773925781,
+     "close": 393.66937255859375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-22",
+     "exit": "2026-06-01",
+     "days": 27,
+     "fill": 65.2699966430664,
+     "stop": 64.61729667663575,
+     "risk_pct": 0.00999999999999994,
+     "pnl": 5.413129553847987,
+     "r": 62.160880508600776,
+     "ret": 0.6216088050860039,
+     "ret_invested": 0.5077273767727852,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-22",
+       "action": "entry",
+       "price": 65.2699966430664,
+       "shares": 0.1334189975767659
+      },
+      {
+       "time": "2026-04-24",
+       "action": "trim",
+       "price": 82.19999694824219,
+       "shares": 0.04002569927302977
+      },
+      {
+       "time": "2026-04-24",
+       "action": "add",
+       "price": 82.54000091552734,
+       "shares": 0.023664052410169868
+      },
+      {
+       "time": "2026-06-01",
+       "action": "trail",
+       "price": 109.33000183105469,
+       "shares": 0.117057350713906
+      }
+     ]
+    },
+    "entry_close": 65.2699966430664,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 109.43000030517578,
+     "high": 113.30000305175781,
+     "low": 106.33000183105469,
+     "close": 109.33000183105469
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-13",
+     "exit": "2026-07-01",
+     "days": 55,
+     "fill": 426.42352294921875,
+     "stop": 413.15192683016954,
+     "risk_pct": 0.03112303943098766,
+     "pnl": 2.9985782465570976,
+     "r": 44.384456420439,
+     "ret": 1.3813791872962766,
+     "ret_invested": 1.0059038383267112,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-13",
+       "action": "entry",
+       "price": 426.42352294921875,
+       "shares": 0.005090510339021815
+      },
+      {
+       "time": "2026-05-04",
+       "action": "trim",
+       "price": 560.4205932617188,
+       "shares": 0.0015271531017065445
+      },
+      {
+       "time": "2026-05-04",
+       "action": "add",
+       "price": 576.2655639648438,
+       "shares": 0.0014060629796593495
+      },
+      {
+       "time": "2026-07-01",
+       "action": "trail",
+       "price": 1031.94970703125,
+       "shares": 0.00496942021697462
+      }
+     ]
+    },
+    "entry_close": 426.42352294921875,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 1081.663818359375,
+     "high": 1096.6490478515625,
+     "low": 1031.8697509765625,
+     "close": 1031.94970703125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-09-04",
+     "exit": "2026-10-12",
+     "days": 25,
+     "fill": 477.57000732421875,
+     "stop": 469.4725212494515,
+     "risk_pct": 0.01695560012266413,
+     "pnl": 2.711149025773164,
+     "r": 14.29318139881743,
+     "ret": 0.24234946827904943,
+     "ret_invested": 0.17858702149048758,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-09-04",
+       "action": "entry",
+       "price": 477.57000732421875,
+       "shares": 0.023424712810828186
+      },
+      {
+       "time": "2026-09-18",
+       "action": "trim",
+       "price": 558.5448680718911,
+       "shares": 0.007027413843248456
+      },
+      {
+       "time": "2026-09-18",
+       "action": "add",
+       "price": 559.8200073242188,
+       "shares": 0.0071347372436557305
+      },
+      {
+       "time": "2026-10-12",
+       "action": "trail",
+       "price": 594.239990234375,
+       "shares": 0.02353203621123546
+      }
+     ]
+    },
+    "entry_close": 477.57000732421875,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 599.9299926757812,
+     "high": 601.77001953125,
+     "low": 586.5399780273438,
+     "close": 594.239990234375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-02",
+     "exit": "2025-11-19",
+     "days": 56,
+     "fill": 118.26924896240234,
+     "stop": 116.27882600603151,
+     "risk_pct": 0.016829589887761853,
+     "pnl": 2.6037239842513857,
+     "r": 77.43278468608754,
+     "ret": 1.3031620101342198,
+     "ret_invested": 0.6349023172207545,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-09-02",
+       "action": "entry",
+       "price": 118.26924896240234,
+       "shares": 0.016893696736201738
+      },
+      {
+       "time": "2025-09-10",
+       "action": "trim",
+       "price": 139.77093505859375,
+       "shares": 0.005068109020860521
+      },
+      {
+       "time": "2025-09-10",
+       "action": "add",
+       "price": 139.75096130371094,
+       "shares": 0.01270803462054338
+      },
+      {
+       "time": "2025-09-16",
+       "action": "add",
+       "price": 158.53749084472656,
+       "shares": 0.0020627216230462405
+      },
+      {
+       "time": "2025-11-19",
+       "action": "trail",
+       "price": 225.66029357910156,
+       "shares": 0.026596343958930835
+      }
+     ]
+    },
+    "entry_close": 118.26924896240234,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 226.64915466308594,
+     "high": 234.0806121826172,
+     "low": 216.1112823486328,
+     "close": 225.66029357910156
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-26",
+     "exit": "2025-11-06",
+     "days": 29,
+     "fill": 159.4600067138672,
+     "stop": 157.0500030517578,
+     "risk_pct": 0.015113530419159282,
+     "pnl": 2.2671008240939585,
+     "r": 44.42049063743215,
+     "ret": 0.6713504364828109,
+     "ret_invested": 0.3017027665013474,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-09-26",
+       "action": "entry",
+       "price": 159.4600067138672,
+       "shares": 0.02117726061091777
+      },
+      {
+       "time": "2025-10-06",
+       "action": "trim",
+       "price": 226.44500732421875,
+       "shares": 0.006353178183275331
+      },
+      {
+       "time": "2025-10-06",
+       "action": "add",
+       "price": 203.7100067138672,
+       "shares": 0.020310371939703326
+      },
+      {
+       "time": "2025-11-06",
+       "action": "trail",
+       "price": 237.6999969482422,
+       "shares": 0.03513445436734577
+      }
+     ]
+    },
+    "entry_close": 159.4600067138672,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 253.46499633789062,
+     "high": 253.50999450683594,
+     "low": 235.74000549316406,
+     "close": 237.6999969482422
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MRVL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-29",
+     "exit": "2026-07-02",
+     "days": 44,
+     "fill": 156.4964141845703,
+     "stop": 152.26853123668053,
+     "risk_pct": 0.02701584550623287,
+     "pnl": 2.1031186390795007,
+     "r": 18.662819204255378,
+     "ret": 0.5041918403329192,
+     "ret_invested": 0.13275362509744784,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-29",
+       "action": "entry",
+       "price": 156.4964141845703,
+       "shares": 0.02665407211931398
+      },
+      {
+       "time": "2026-05-26",
+       "action": "trim",
+       "price": 211.14073181152344,
+       "shares": 0.007996221635794193
+      },
+      {
+       "time": "2026-05-26",
+       "action": "add",
+       "price": 208.16212463378906,
+       "shares": 0.02665407211931398
+      },
+      {
+       "time": "2026-06-02",
+       "action": "add",
+       "price": 290.6533508300781,
+       "shares": 0.021065072832004515
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 245.1747283935547,
+       "shares": 0.06637699543483828
+      }
+     ]
+    },
+    "entry_close": 156.4964141845703,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 269.37335205078125,
+     "high": 274.82080078125,
+     "low": 237.08853149414062,
+     "close": 245.1747283935547
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-09",
+     "exit": "2026-07-02",
+     "days": 58,
+     "fill": 851.5700073242188,
+     "stop": 817.1063684893868,
+     "risk_pct": 0.040470705330642995,
+     "pnl": 1.9124873555165154,
+     "r": 28.481597518995088,
+     "ret": 1.1526703405372227,
+     "ret_invested": 0.4338140363627918,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-09",
+       "action": "entry",
+       "price": 851.5700073242188,
+       "shares": 0.0019483774613774341
+      },
+      {
+       "time": "2026-05-04",
+       "action": "trim",
+       "price": 1222.1800537109375,
+       "shares": 0.0005845132384132302
+      },
+      {
+       "time": "2026-05-04",
+       "action": "add",
+       "price": 1255.8599853515625,
+       "shares": 0.0004711233620102686
+      },
+      {
+       "time": "2026-05-08",
+       "action": "add",
+       "price": 1562.3399658203125,
+       "shares": 0.0013810676026087976
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 1745.0,
+       "shares": 0.0032160551875832703
+      }
+     ]
+    },
+    "entry_close": 851.5700073242188,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 2043.800048828125,
+     "high": 2052.5400390625,
+     "low": 1693.0,
+     "close": 1745.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-08-21",
+     "exit": "2025-11-04",
+     "days": 52,
+     "fill": 23.5,
+     "stop": 22.972844079534624,
+     "risk_pct": 0.02243216682831385,
+     "pnl": 1.7846711200462204,
+     "r": 35.137391660949646,
+     "ret": 0.7882078316502265,
+     "ret_invested": 0.3186028207742031,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-08-21",
+       "action": "entry",
+       "price": 23.5,
+       "shares": 0.09634952720256777
+      },
+      {
+       "time": "2025-09-18",
+       "action": "trim",
+       "price": 31.780000686645508,
+       "shares": 0.02890485816077033
+      },
+      {
+       "time": "2025-09-18",
+       "action": "add",
+       "price": 30.56999969482422,
+       "shares": 0.09634952720256777
+      },
+      {
+       "time": "2025-09-26",
+       "action": "add",
+       "price": 35.5,
+       "shares": 0.011040444173340833
+      },
+      {
+       "time": "2025-11-04",
+       "action": "trail",
+       "price": 37.029998779296875,
+       "shares": 0.17483464041770602
+      }
+     ]
+    },
+    "entry_close": 23.5,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 38.13999938964844,
+     "high": 38.25,
+     "low": 36.630001068115234,
+     "close": 37.029998779296875
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-08-20",
+     "exit": "2026-10-14",
+     "days": 38,
+     "fill": 112.38999938964844,
+     "stop": 109.26907052300122,
+     "risk_pct": 0.02776874173499345,
+     "pnl": 1.7826458744715055,
+     "r": 9.550100200214262,
+     "ret": 0.2651942660030591,
+     "ret_invested": 0.15017563710021872,
+     "why": "trail",
+     "add_tries": 1,
+     "executions": [
+      {
+       "time": "2026-08-20",
+       "action": "entry",
+       "price": 112.38999938964844,
+       "shares": 0.059809928054899424
+      },
+      {
+       "time": "2026-09-03",
+       "action": "trim",
+       "price": 143.59928805612063,
+       "shares": 0.017942978416469826
+      },
+      {
+       "time": "2026-09-03",
+       "action": "add",
+       "price": 144.82000732421875,
+       "shares": 0.03555012129921199
+      },
+      {
+       "time": "2026-10-14",
+       "action": "trail",
+       "price": 143.24000549316406,
+       "shares": 0.0774170709376416
+      }
+     ]
+    },
+    "entry_close": 112.38999938964844,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 149.75999450683594,
+     "high": 152.17999267578125,
+     "low": 141.74000549316406,
+     "close": 143.24000549316406
+    }
+   },
+   {
+    "trade": {
+     "code": "US.APP",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-25",
+     "exit": "2025-10-06",
+     "days": 50,
+     "fill": 364.1400146484375,
+     "stop": 357.029296875,
+     "risk_pct": 0.019527427603095504,
+     "pnl": 1.7294061218670045,
+     "r": 40.03040200635977,
+     "ret": 0.7816907771019994,
+     "ret_invested": 0.4185150422599931,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-07-25",
+       "action": "entry",
+       "price": 364.1400146484375,
+       "shares": 0.006075661908572002
+      },
+      {
+       "time": "2025-08-07",
+       "action": "trim",
+       "price": 435.2471923828125,
+       "shares": 0.0018226985725716006
+      },
+      {
+       "time": "2025-08-07",
+       "action": "add",
+       "price": 437.3399963378906,
+       "shares": 0.00438983866161861
+      },
+      {
+       "time": "2025-10-06",
+       "action": "trail",
+       "price": 587.0,
+       "shares": 0.00864280199761901
+      }
+     ]
+    },
+    "entry_close": 364.1400146484375,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 684.4749755859375,
+     "high": 687.0,
+     "low": 545.0,
+     "close": 587.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.DELL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-09-01",
+     "exit": "2026-10-14",
+     "days": 30,
+     "fill": 425.0,
+     "stop": 420.75,
+     "risk_pct": 0.01,
+     "pnl": 1.6664419285070018,
+     "r": 17.24099782133777,
+     "ret": 0.17240997821337772,
+     "ret_invested": 0.13292807442263693,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-09-01",
+       "action": "entry",
+       "price": 425.0,
+       "shares": 0.022742534233885413
+      },
+      {
+       "time": "2026-09-02",
+       "action": "trim",
+       "price": 467.5,
+       "shares": 0.006822760270165624
+      },
+      {
+       "time": "2026-09-02",
+       "action": "add",
+       "price": 492.20001220703125,
+       "shares": 0.004902862236284122
+      },
+      {
+       "time": "2026-09-03",
+       "action": "add",
+       "price": 516.3900146484375,
+       "shares": 0.0008862531471964172
+      },
+      {
+       "time": "2026-10-14",
+       "action": "trail",
+       "price": 507.92999267578125,
+       "shares": 0.02170888934720033
+      }
+     ]
+    },
+    "entry_close": 425.0,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 547.989990234375,
+     "high": 548.385009765625,
+     "low": 502.32000732421875,
+     "close": 507.92999267578125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-06-10",
+     "exit": "2026-07-02",
+     "days": 15,
+     "fill": 107.04000091552734,
+     "stop": 104.91999816894531,
+     "risk_pct": 0.01980570560957928,
+     "pnl": 1.322462480129392,
+     "r": 4.46334837612767,
+     "ret": 0.08839976397057837,
+     "ret_invested": 0.05564274243542438,
+     "why": "trail",
+     "add_tries": 1,
+     "executions": [
+      {
+       "time": "2026-06-10",
+       "action": "entry",
+       "price": 107.04000091552734,
+       "shares": 0.1397610484159178
+      },
+      {
+       "time": "2026-06-15",
+       "action": "trim",
+       "price": 129.49000549316406,
+       "shares": 0.041928314524775336
+      },
+      {
+       "time": "2026-06-18",
+       "action": "add",
+       "price": 133.99000549316406,
+       "shares": 0.06572880379488769
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 120.3499984741211,
+       "shares": 0.16356153768603016
+      }
+     ]
+    },
+    "entry_close": 107.04000091552734,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 128.9149932861328,
+     "high": 130.74000549316406,
+     "low": 117.62999725341797,
+     "close": 120.3499984741211
+    }
+   },
+   {
+    "trade": {
+     "code": "US.HOOD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-05-09",
+     "exit": "2025-08-20",
+     "days": 70,
+     "fill": 54.650001525878906,
+     "stop": 53.742000579833984,
+     "risk_pct": 0.016614838439024525,
+     "pnl": 1.1903395171990296,
+     "r": 60.37895257662128,
+     "ret": 1.0031865421780861,
+     "ret_invested": 0.6160152540828517,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-05-09",
+       "action": "entry",
+       "price": 54.650001525878906,
+       "shares": 0.021711957280274204
+      },
+      {
+       "time": "2025-05-14",
+       "action": "trim",
+       "price": 63.730010986328125,
+       "shares": 0.006513587184082261
+      },
+      {
+       "time": "2025-05-19",
+       "action": "add",
+       "price": 64.2699966430664,
+       "shares": 0.004016817415954999
+      },
+      {
+       "time": "2025-06-06",
+       "action": "add",
+       "price": 74.87999725341797,
+       "shares": 0.0065117811610499315
+      },
+      {
+       "time": "2025-08-20",
+       "action": "trail",
+       "price": 105.33999633789062,
+       "shares": 0.025726968673196873
+      }
+     ]
+    },
+    "entry_close": 54.650001525878906,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 106.66500091552734,
+     "high": 107.9800033569336,
+     "low": 99.0,
+     "close": 105.33999633789062
+    }
+   }
+  ],
+  "EXEC4": [
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-12-17",
+     "exit": "2026-03-03",
+     "days": 50,
+     "fill": 206.8300018310547,
+     "stop": 204.76170181274415,
+     "risk_pct": 0.009999999999999957,
+     "pnl": 5.605767248571944,
+     "r": 179.88927012322495,
+     "ret": 1.7988927012322415,
+     "ret_invested": 1.2806720498787474,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-12-17",
+       "action": "entry",
+       "price": 206.8300018310547,
+       "shares": 0.015066634968386306
+      },
+      {
+       "time": "2025-12-18",
+       "action": "trim",
+       "price": 227.51300201416007,
+       "shares": 0.0045199904905158916
+      },
+      {
+       "time": "2025-12-19",
+       "action": "add",
+       "price": 237.61000061035156,
+       "shares": 0.005237497017087969
+      },
+      {
+       "time": "2025-12-24",
+       "action": "add",
+       "price": 250.0800018310547,
+       "shares": 6.595349813738095e-05
+      },
+      {
+       "time": "2026-03-03",
+       "action": "trail",
+       "price": 565.4099731445312,
+       "shares": 0.015850094993095764
+      }
+     ]
+    },
+    "entry_close": 206.8300018310547,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 581.6400146484375,
+     "high": 593.1599731445312,
+     "low": 557.0900268554688,
+     "close": 565.4099731445312
+    }
+   },
+   {
+    "trade": {
+     "code": "US.DELL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-15",
+     "exit": "2026-07-02",
+     "days": 54,
+     "fill": 176.4405975341797,
+     "stop": 174.6761915588379,
+     "risk_pct": 0.009999999999999948,
+     "pnl": 4.643130519768736,
+     "r": 126.98872102535368,
+     "ret": 1.2698872102535304,
+     "ret_invested": 0.9232768291299892,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-15",
+       "action": "entry",
+       "price": 176.4405975341797,
+       "shares": 0.02072274213717257
+      },
+      {
+       "time": "2026-04-17",
+       "action": "trim",
+       "price": 194.08465728759757,
+       "shares": 0.006216822641151771
+      },
+      {
+       "time": "2026-04-17",
+       "action": "add",
+       "price": 195.61935424804688,
+       "shares": 0.007016871950195622
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 393.66937255859375,
+       "shares": 0.02152279144621642
+      }
+     ]
+    },
+    "entry_close": 176.4405975341797,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 415.3934631347656,
+     "high": 421.8478088378906,
+     "low": 385.3730773925781,
+     "close": 393.66937255859375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-22",
+     "exit": "2026-06-01",
+     "days": 27,
+     "fill": 65.2699966430664,
+     "stop": 64.61729667663575,
+     "risk_pct": 0.00999999999999994,
+     "pnl": 2.882276211831508,
+     "r": 62.57624412936054,
+     "ret": 0.6257624412936015,
+     "ret_invested": 0.5058138642739535,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-22",
+       "action": "entry",
+       "price": 65.2699966430664,
+       "shares": 0.07056876452246441
+      },
+      {
+       "time": "2026-04-24",
+       "action": "trim",
+       "price": 82.19999694824219,
+       "shares": 0.021170629356739322
+      },
+      {
+       "time": "2026-04-24",
+       "action": "add",
+       "price": 82.54000091552734,
+       "shares": 0.013233234430020347
+      },
+      {
+       "time": "2026-06-01",
+       "action": "trail",
+       "price": 109.33000183105469,
+       "shares": 0.06263136959574543
+      }
+     ]
+    },
+    "entry_close": 65.2699966430664,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 109.43000030517578,
+     "high": 113.30000305175781,
+     "low": 106.33000183105469,
+     "close": 109.33000183105469
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMAT",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-06-01",
+     "exit": "2026-07-07",
+     "days": 24,
+     "fill": 457.67974853515625,
+     "stop": 448.4535000776178,
+     "risk_pct": 0.020158743066670273,
+     "pnl": 1.742390999405817,
+     "r": 9.566153017960348,
+     "ret": 0.19284162082551504,
+     "ret_invested": 0.1342322129723024,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-06-01",
+       "action": "entry",
+       "price": 457.67974853515625,
+       "shares": 0.01974163644386549
+      },
+      {
+       "time": "2026-06-11",
+       "action": "trim",
+       "price": 549.942233110541,
+       "shares": 0.005922490933159647
+      },
+      {
+       "time": "2026-06-11",
+       "action": "add",
+       "price": 552.0486450195312,
+       "shares": 0.005753495972652227
+      },
+      {
+       "time": "2026-06-25",
+       "action": "add",
+       "price": 667.2852172851562,
+       "shares": 0.001152231200673825
+      },
+      {
+       "time": "2026-07-07",
+       "action": "trail",
+       "price": 553.9066772460938,
+       "shares": 0.020724872684031895
+      }
+     ]
+    },
+    "entry_close": 457.67974853515625,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 544.7664794921875,
+     "high": 557.6826171875,
+     "low": 527.0654296875,
+     "close": 553.9066772460938
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-13",
+     "exit": "2026-07-01",
+     "days": 55,
+     "fill": 426.42352294921875,
+     "stop": 413.15192683016954,
+     "risk_pct": 0.03112303943098766,
+     "pnl": 1.5847560236921088,
+     "r": 44.38189532621148,
+     "ret": 1.381299478259647,
+     "ret_invested": 1.005919762539865,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-13",
+       "action": "entry",
+       "price": 426.42352294921875,
+       "shares": 0.002690502560059996
+      },
+      {
+       "time": "2026-05-04",
+       "action": "trim",
+       "price": 560.4205932617188,
+       "shares": 0.0008071507680179989
+      },
+      {
+       "time": "2026-05-04",
+       "action": "add",
+       "price": 576.2655639648438,
+       "shares": 0.0007429496046118083
+      },
+      {
+       "time": "2026-07-01",
+       "action": "trail",
+       "price": 1031.94970703125,
+       "shares": 0.0026263013966538054
+      }
+     ]
+    },
+    "entry_close": 426.42352294921875,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 1081.663818359375,
+     "high": 1096.6490478515625,
+     "low": 1031.8697509765625,
+     "close": 1031.94970703125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-26",
+     "exit": "2025-11-06",
+     "days": 29,
+     "fill": 159.4600067138672,
+     "stop": 157.0500030517578,
+     "risk_pct": 0.015113530419159282,
+     "pnl": 1.5778103027539645,
+     "r": 42.6047436949738,
+     "ret": 0.6439080898344711,
+     "ret_invested": 0.3126281253485556,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-09-26",
+       "action": "entry",
+       "price": 159.4600067138672,
+       "shares": 0.015366647468500024
+      },
+      {
+       "time": "2025-10-06",
+       "action": "trim",
+       "price": 226.44500732421875,
+       "shares": 0.004609994240550007
+      },
+      {
+       "time": "2025-10-06",
+       "action": "add",
+       "price": 203.7100067138672,
+       "shares": 0.012746344953033827
+      },
+      {
+       "time": "2025-11-06",
+       "action": "trail",
+       "price": 237.6999969482422,
+       "shares": 0.023502998180983843
+      }
+     ]
+    },
+    "entry_close": 159.4600067138672,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 253.46499633789062,
+     "high": 253.50999450683594,
+     "low": 235.74000549316406,
+     "close": 237.6999969482422
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-02",
+     "exit": "2025-11-19",
+     "days": 56,
+     "fill": 118.26924896240234,
+     "stop": 116.27882600603151,
+     "risk_pct": 0.016829589887761853,
+     "pnl": 1.500787511651838,
+     "r": 67.83626172631836,
+     "ret": 1.141656464372814,
+     "ret_invested": 0.656794169580126,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-09-02",
+       "action": "entry",
+       "price": 118.26924896240234,
+       "shares": 0.01111506298816922
+      },
+      {
+       "time": "2025-09-10",
+       "action": "trim",
+       "price": 139.77093505859375,
+       "shares": 0.003334518896450766
+      },
+      {
+       "time": "2025-09-10",
+       "action": "add",
+       "price": 139.75096130371094,
+       "shares": 0.0069441339063441325
+      },
+      {
+       "time": "2025-11-19",
+       "action": "trail",
+       "price": 225.66029357910156,
+       "shares": 0.014724677998062586
+      }
+     ]
+    },
+    "entry_close": 118.26924896240234,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 226.64915466308594,
+     "high": 234.0806121826172,
+     "low": 216.1112823486328,
+     "close": 225.66029357910156
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-09-04",
+     "exit": "2026-10-12",
+     "days": 25,
+     "fill": 477.57000732421875,
+     "stop": 469.4725212494515,
+     "risk_pct": 0.01695560012266413,
+     "pnl": 1.221094514409665,
+     "r": 14.085684042782939,
+     "ret": 0.23883122608361854,
+     "ret_invested": 0.18388029028695263,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-09-04",
+       "action": "entry",
+       "price": 477.57000732421875,
+       "shares": 0.010705849353392383
+      },
+      {
+       "time": "2026-09-18",
+       "action": "trim",
+       "price": 558.5448680718911,
+       "shares": 0.0032117548060177146
+      },
+      {
+       "time": "2026-09-18",
+       "action": "add",
+       "price": 559.8200073242188,
+       "shares": 0.002729289902801273
+      },
+      {
+       "time": "2026-10-12",
+       "action": "trail",
+       "price": 594.239990234375,
+       "shares": 0.01022338445017594
+      }
+     ]
+    },
+    "entry_close": 477.57000732421875,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 599.9299926757812,
+     "high": 601.77001953125,
+     "low": 586.5399780273438,
+     "close": 594.239990234375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.APP",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-24",
+     "exit": "2025-10-06",
+     "days": 51,
+     "fill": 359.94000244140625,
+     "stop": 355.0,
+     "risk_pct": 0.013724516330219287,
+     "pnl": 1.124647225493916,
+     "r": 51.71376238543845,
+     "ret": 0.7097463763560299,
+     "ret_invested": 0.42519026499725937,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-07-24",
+       "action": "entry",
+       "price": 359.94000244140625,
+       "shares": 0.004402334285198933
+      },
+      {
+       "time": "2025-08-07",
+       "action": "trim",
+       "price": 409.34002685546875,
+       "shares": 0.0013207002855596798
+      },
+      {
+       "time": "2025-08-07",
+       "action": "add",
+       "price": 437.3399963378906,
+       "shares": 0.002424814610144969
+      },
+      {
+       "time": "2025-10-06",
+       "action": "trail",
+       "price": 587.0,
+       "shares": 0.005506448609784222
+      }
+     ]
+    },
+    "entry_close": 359.94000244140625,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 684.4749755859375,
+     "high": 687.0,
+     "low": 545.0,
+     "close": 587.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-08-21",
+     "exit": "2025-11-04",
+     "days": 52,
+     "fill": 23.5,
+     "stop": 22.972844079534624,
+     "risk_pct": 0.02243216682831385,
+     "pnl": 1.1225844398512108,
+     "r": 35.64897964520466,
+     "ret": 0.7996838586603956,
+     "ret_invested": 0.29114457649183345,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-08-21",
+       "action": "entry",
+       "price": 23.5,
+       "shares": 0.05973554438373736
+      },
+      {
+       "time": "2025-09-18",
+       "action": "trim",
+       "price": 31.780000686645508,
+       "shares": 0.017920663315121207
+      },
+      {
+       "time": "2025-09-18",
+       "action": "add",
+       "price": 30.56999969482422,
+       "shares": 0.05973554438373736
+      },
+      {
+       "time": "2025-09-26",
+       "action": "add",
+       "price": 35.5,
+       "shares": 0.017629914815916893
+      },
+      {
+       "time": "2025-11-04",
+       "action": "trail",
+       "price": 37.029998779296875,
+       "shares": 0.1191803402682704
+      }
+     ]
+    },
+    "entry_close": 23.5,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 38.13999938964844,
+     "high": 38.25,
+     "low": 36.630001068115234,
+     "close": 37.029998779296875
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-08",
+     "exit": "2024-04-05",
+     "days": 39,
+     "fill": 58.78099822998047,
+     "stop": 56.99190546591351,
+     "risk_pct": 0.03043658355489537,
+     "pnl": 1.0282059612237713,
+     "r": 77.36276643093844,
+     "ret": 2.354658304513112,
+     "ret_invested": 0.9260992717114513,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2024-02-08",
+       "action": "entry",
+       "price": 58.78099822998047,
+       "shares": 0.007428741850622347
+      },
+      {
+       "time": "2024-02-14",
+       "action": "trim",
+       "price": 76.67192587065004,
+       "shares": 0.002228622555186704
+      },
+      {
+       "time": "2024-02-14",
+       "action": "add",
+       "price": 76.98799896240234,
+       "shares": 0.007428741850622347
+      },
+      {
+       "time": "2024-02-28",
+       "action": "add",
+       "price": 96.29499816894531,
+       "shares": 0.0010557324264556384
+      },
+      {
+       "time": "2024-04-05",
+       "action": "trail",
+       "price": 143.89999389648438,
+       "shares": 0.013684593572513629
+      }
+     ]
+    },
+    "entry_close": 58.78099822998047,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 157.0,
+     "high": 167.4250030517578,
+     "low": 143.1999969482422,
+     "close": 143.89999389648438
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-09",
+     "exit": "2026-07-02",
+     "days": 58,
+     "fill": 851.5700073242188,
+     "stop": 817.1063684893868,
+     "risk_pct": 0.040470705330642995,
+     "pnl": 0.9010275916784279,
+     "r": 25.72082528972823,
+     "ret": 1.0409399411615414,
+     "ret_invested": 0.7145018270486033,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-09",
+       "action": "entry",
+       "price": 851.5700073242188,
+       "shares": 0.0010164641371858067
+      },
+      {
+       "time": "2026-05-04",
+       "action": "trim",
+       "price": 1222.1800537109375,
+       "shares": 0.00030493924115574197
+      },
+      {
+       "time": "2026-05-04",
+       "action": "add",
+       "price": 1255.8599853515625,
+       "shares": 0.0003148971362023818
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 1745.0,
+       "shares": 0.0010264220322324465
+      }
+     ]
+    },
+    "entry_close": 851.5700073242188,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 2043.800048828125,
+     "high": 2052.5400390625,
+     "low": 1693.0,
+     "close": 1745.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.DELL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-09-01",
+     "exit": "2026-10-14",
+     "days": 30,
+     "fill": 425.0,
+     "stop": 420.75,
+     "risk_pct": 0.01,
+     "pnl": 0.8047865657103905,
+     "r": 17.347805201291912,
+     "ret": 0.1734780520129191,
+     "ret_invested": 0.13794383423087347,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-09-01",
+       "action": "entry",
+       "price": 425.0,
+       "shares": 0.010915590916303989
+      },
+      {
+       "time": "2026-09-02",
+       "action": "trim",
+       "price": 467.5,
+       "shares": 0.0032746772748911963
+      },
+      {
+       "time": "2026-09-02",
+       "action": "add",
+       "price": 492.20001220703125,
+       "shares": 0.002427946023624018
+      },
+      {
+       "time": "2026-10-14",
+       "action": "trail",
+       "price": 507.92999267578125,
+       "shares": 0.01006885966503681
+      }
+     ]
+    },
+    "entry_close": 425.0,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 547.989990234375,
+     "high": 548.385009765625,
+     "low": 502.32000732421875,
+     "close": 507.92999267578125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.HOOD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-05-09",
+     "exit": "2025-08-20",
+     "days": 70,
+     "fill": 54.650001525878906,
+     "stop": 53.742000579833984,
+     "risk_pct": 0.016614838439024525,
+     "pnl": 0.7742411100170362,
+     "r": 60.29255069472654,
+     "ret": 1.0017509888695775,
+     "ret_invested": 0.6146499694338671,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-05-09",
+       "action": "entry",
+       "price": 54.650001525878906,
+       "shares": 0.014142502662687977
+      },
+      {
+       "time": "2025-05-14",
+       "action": "trim",
+       "price": 63.730010986328125,
+       "shares": 0.0042427507988063926
+      },
+      {
+       "time": "2025-05-19",
+       "action": "add",
+       "price": 64.2699966430664,
+       "shares": 0.002515127385311619
+      },
+      {
+       "time": "2025-06-06",
+       "action": "add",
+       "price": 74.87999725341797,
+       "shares": 0.004341754266290093
+      },
+      {
+       "time": "2025-08-20",
+       "action": "trail",
+       "price": 105.33999633789062,
+       "shares": 0.016756633515483295
+      }
+     ]
+    },
+    "entry_close": 54.650001525878906,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 106.66500091552734,
+     "high": 107.9800033569336,
+     "low": 99.0,
+     "close": 105.33999633789062
+    }
+   },
+   {
+    "trade": {
+     "code": "US.STX",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-13",
+     "exit": "2026-06-10",
+     "days": 41,
+     "fill": 512.4949951171875,
+     "stop": 495.61076149473257,
+     "risk_pct": 0.032945167822749505,
+     "pnl": 0.7396306752329047,
+     "r": 20.713731777945572,
+     "ret": 0.6824173696598363,
+     "ret_invested": 0.28242893427513016,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-13",
+       "action": "entry",
+       "price": 512.4949951171875,
+       "shares": 0.0021148287883730695
+      },
+      {
+       "time": "2026-04-29",
+       "action": "trim",
+       "price": 681.3373313417368,
+       "shares": 0.0006344486365119209
+      },
+      {
+       "time": "2026-05-01",
+       "action": "add",
+       "price": 725.8182373046875,
+       "shares": 0.0021148287883730695
+      },
+      {
+       "time": "2026-06-10",
+       "action": "trail",
+       "price": 814.7420043945312,
+       "shares": 0.003595208940234218
+      }
+     ]
+    },
+    "entry_close": 512.4949951171875,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 820.60302734375,
+     "high": 854.2015991210938,
+     "low": 805.1766357421875,
+     "close": 814.7420043945312
+    }
+   }
+  ],
+  "UNCAPPED": [
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-12-17",
+     "exit": "2026-03-03",
+     "days": 50,
+     "fill": 206.8300018310547,
+     "stop": 204.76170181274415,
+     "risk_pct": 0.009999999999999957,
+     "pnl": 4.1272107707334555,
+     "r": 186.27931036845575,
+     "ret": 1.8627931036845493,
+     "ret_invested": 1.2831925447045969,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-12-17",
+       "action": "entry",
+       "price": 206.8300018310547,
+       "shares": 0.010712195523348565
+      },
+      {
+       "time": "2025-12-18",
+       "action": "trim",
+       "price": 227.51300201416007,
+       "shares": 0.0032136586570045696
+      },
+      {
+       "time": "2025-12-19",
+       "action": "add",
+       "price": 237.61000061035156,
+       "shares": 0.0040905766394764
+      },
+      {
+       "time": "2025-12-24",
+       "action": "add",
+       "price": 250.0800018310547,
+       "shares": 0.00011514678236687457
+      },
+      {
+       "time": "2026-03-03",
+       "action": "trail",
+       "price": 565.4099731445312,
+       "shares": 0.011704260288187269
+      }
+     ]
+    },
+    "entry_close": 206.8300018310547,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 581.6400146484375,
+     "high": 593.1599731445312,
+     "low": 557.0900268554688,
+     "close": 565.4099731445312
+    }
+   },
+   {
+    "trade": {
+     "code": "US.STX",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-09",
+     "exit": "2026-06-10",
+     "days": 43,
+     "fill": 500.0041198730469,
+     "stop": 492.44580078125,
+     "risk_pct": 0.015116513627359638,
+     "pnl": 1.5694575893473068,
+     "r": 61.0223108536846,
+     "ret": 0.9224445935926993,
+     "ret_invested": 0.44498798328630856,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-09",
+       "action": "entry",
+       "price": 500.0041198730469,
+       "shares": 0.0034027944191405844
+      },
+      {
+       "time": "2026-04-22",
+       "action": "trim",
+       "price": 579.1229248046875,
+       "shares": 0.0010208383257421752
+      },
+      {
+       "time": "2026-04-22",
+       "action": "add",
+       "price": 578.9931030273438,
+       "shares": 0.0031529822907584823
+      },
+      {
+       "time": "2026-06-10",
+       "action": "trail",
+       "price": 814.7420043945312,
+       "shares": 0.005534938384156892
+      }
+     ]
+    },
+    "entry_close": 500.0041198730469,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 820.60302734375,
+     "high": 854.2015991210938,
+     "low": 805.1766357421875,
+     "close": 814.7420043945312
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-26",
+     "exit": "2025-11-06",
+     "days": 29,
+     "fill": 159.4600067138672,
+     "stop": 157.0500030517578,
+     "risk_pct": 0.015113530419159282,
+     "pnl": 1.4829695922784065,
+     "r": 35.60791755686285,
+     "ret": 0.5381613451585626,
+     "ret_invested": 0.37851925088332145,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-09-26",
+       "action": "entry",
+       "price": 159.4600067138672,
+       "shares": 0.017280964093558483
+      },
+      {
+       "time": "2025-10-06",
+       "action": "trim",
+       "price": 226.44500732421875,
+       "shares": 0.005184289228067545
+      },
+      {
+       "time": "2025-10-06",
+       "action": "add",
+       "price": 203.7100067138672,
+       "shares": 0.005705146846359062
+      },
+      {
+       "time": "2025-11-06",
+       "action": "trail",
+       "price": 237.6999969482422,
+       "shares": 0.017801821711849998
+      }
+     ]
+    },
+    "entry_close": 159.4600067138672,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 253.46499633789062,
+     "high": 253.50999450683594,
+     "low": 235.74000549316406,
+     "close": 237.6999969482422
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-02",
+     "exit": "2025-11-19",
+     "days": 56,
+     "fill": 118.26924896240234,
+     "stop": 116.27882600603151,
+     "risk_pct": 0.016829589887761853,
+     "pnl": 1.202236795031956,
+     "r": 75.86765395559942,
+     "ret": 1.2768215018193716,
+     "ret_invested": 0.6407908857943447,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-09-02",
+       "action": "entry",
+       "price": 118.26924896240234,
+       "shares": 0.007961373319376698
+      },
+      {
+       "time": "2025-09-10",
+       "action": "trim",
+       "price": 139.77093505859375,
+       "shares": 0.0023884119958130093
+      },
+      {
+       "time": "2025-09-10",
+       "action": "add",
+       "price": 139.75096130371094,
+       "shares": 0.005952771450561009
+      },
+      {
+       "time": "2025-09-16",
+       "action": "add",
+       "price": 158.53749084472656,
+       "shares": 0.0006477036679282837
+      },
+      {
+       "time": "2025-11-19",
+       "action": "trail",
+       "price": 225.66029357910156,
+       "shares": 0.01217343644205298
+      }
+     ]
+    },
+    "entry_close": 118.26924896240234,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 226.64915466308594,
+     "high": 234.0806121826172,
+     "low": 216.1112823486328,
+     "close": 225.66029357910156
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-13",
+     "exit": "2026-07-01",
+     "days": 55,
+     "fill": 426.42352294921875,
+     "stop": 413.15192683016954,
+     "risk_pct": 0.03112303943098766,
+     "pnl": 1.1755238305508138,
+     "r": 44.374230282977344,
+     "ret": 1.3810609188168308,
+     "ret_invested": 1.005967435768297,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-13",
+       "action": "entry",
+       "price": 426.42352294921875,
+       "shares": 0.001996077724352378
+      },
+      {
+       "time": "2026-05-04",
+       "action": "trim",
+       "price": 560.4205932617188,
+       "shares": 0.0005988233173057135
+      },
+      {
+       "time": "2026-05-04",
+       "action": "add",
+       "price": 576.2655639648438,
+       "shares": 0.0005507462263406819
+      },
+      {
+       "time": "2026-07-01",
+       "action": "trail",
+       "price": 1031.94970703125,
+       "shares": 0.0019480006333873466
+      }
+     ]
+    },
+    "entry_close": 426.42352294921875,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 1081.663818359375,
+     "high": 1096.6490478515625,
+     "low": 1031.8697509765625,
+     "close": 1031.94970703125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.DELL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-16",
+     "exit": "2026-07-02",
+     "days": 53,
+     "fill": 192.1757354736328,
+     "stop": 187.21137045932736,
+     "risk_pct": 0.025832423651562325,
+     "pnl": 1.1741229825582948,
+     "r": 39.89998682207983,
+     "ret": 1.03071336327972,
+     "ret_invested": 0.6211212254534493,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-16",
+       "action": "entry",
+       "price": 192.1757354736328,
+       "shares": 0.005927575994296632
+      },
+      {
+       "time": "2026-05-08",
+       "action": "trim",
+       "price": 241.81938561668738,
+       "shares": 0.0017782727982889896
+      },
+      {
+       "time": "2026-05-22",
+       "action": "add",
+       "price": 294.70294189453125,
+       "shares": 0.0025489801431222
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 393.66937255859375,
+       "shares": 0.0066982833391298425
+      }
+     ]
+    },
+    "entry_close": 192.1757354736328,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 415.3934631347656,
+     "high": 421.8478088378906,
+     "low": 385.3730773925781,
+     "close": 393.66937255859375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.ARM",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-09",
+     "exit": "2026-06-10",
+     "days": 43,
+     "fill": 149.7949981689453,
+     "stop": 145.74127786530246,
+     "risk_pct": 0.027061786796585063,
+     "pnl": 1.135206129830896,
+     "r": 44.13811612861601,
+     "ret": 1.194456288275519,
+     "ret_invested": 0.6178503128302318,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-09",
+       "action": "entry",
+       "price": 149.7949981689453,
+       "shares": 0.006344642475835733
+      },
+      {
+       "time": "2026-04-22",
+       "action": "trim",
+       "price": 190.3322012053738,
+       "shares": 0.0019033927427507197
+      },
+      {
+       "time": "2026-04-22",
+       "action": "add",
+       "price": 196.57000732421875,
+       "shares": 0.0017186883165272939
+      },
+      {
+       "time": "2026-04-24",
+       "action": "add",
+       "price": 234.80999755859375,
+       "shares": 0.002338528485253023
+      },
+      {
+       "time": "2026-06-10",
+       "action": "trail",
+       "price": 307.42999267578125,
+       "shares": 0.00849846653486533
+      }
+     ]
+    },
+    "entry_close": 149.7949981689453,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 314.4700012207031,
+     "high": 332.1000061035156,
+     "low": 304.1099853515625,
+     "close": 307.42999267578125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-08",
+     "exit": "2024-04-05",
+     "days": 39,
+     "fill": 58.78099822998047,
+     "stop": 56.99190546591351,
+     "risk_pct": 0.03043658355489537,
+     "pnl": 1.0261177638057446,
+     "r": 77.27856739705358,
+     "ret": 2.3520955735830347,
+     "ret_invested": 0.9269860959198719,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2024-02-08",
+       "action": "entry",
+       "price": 58.78099822998047,
+       "shares": 0.007421732282025884
+      },
+      {
+       "time": "2024-02-14",
+       "action": "trim",
+       "price": 76.67192587065004,
+       "shares": 0.002226519684607765
+      },
+      {
+       "time": "2024-02-14",
+       "action": "add",
+       "price": 76.98799896240234,
+       "shares": 0.007421732282025885
+      },
+      {
+       "time": "2024-02-28",
+       "action": "add",
+       "price": 96.29499816894531,
+       "shares": 0.0010311917501076016
+      },
+      {
+       "time": "2024-04-05",
+       "action": "trail",
+       "price": 143.89999389648438,
+       "shares": 0.013648136629551605
+      }
+     ]
+    },
+    "entry_close": 58.78099822998047,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 157.0,
+     "high": 167.4250030517578,
+     "low": 143.1999969482422,
+     "close": 143.89999389648438
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MRVL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-29",
+     "exit": "2026-07-02",
+     "days": 44,
+     "fill": 156.4964141845703,
+     "stop": 152.26853123668053,
+     "risk_pct": 0.02701584550623287,
+     "pnl": 0.8806201499560729,
+     "r": 17.575617848445773,
+     "ret": 0.4748201764702,
+     "ret_invested": 0.11916483564525472,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-29",
+       "action": "entry",
+       "price": 156.4964141845703,
+       "shares": 0.011851001756888026
+      },
+      {
+       "time": "2026-05-26",
+       "action": "trim",
+       "price": 211.14073181152344,
+       "shares": 0.003555300527066408
+      },
+      {
+       "time": "2026-05-26",
+       "action": "add",
+       "price": 208.16212463378906,
+       "shares": 0.011851001756888026
+      },
+      {
+       "time": "2026-06-02",
+       "action": "add",
+       "price": 290.6533508300781,
+       "shares": 0.010556781799122044
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 245.1747283935547,
+       "shares": 0.03070348478583169
+      }
+     ]
+    },
+    "entry_close": 156.4964141845703,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 269.37335205078125,
+     "high": 274.82080078125,
+     "low": 237.08853149414062,
+     "close": 245.1747283935547
+    }
+   },
+   {
+    "trade": {
+     "code": "US.APP",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-07-24",
+     "exit": "2025-10-06",
+     "days": 51,
+     "fill": 359.94000244140625,
+     "stop": 355.0,
+     "risk_pct": 0.013724516330219287,
+     "pnl": 0.8481433868486623,
+     "r": 53.856439247145794,
+     "ret": 0.7391535799349154,
+     "ret_invested": 0.42105648080375285,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-07-24",
+       "action": "entry",
+       "price": 359.94000244140625,
+       "shares": 0.0031878984622000766
+      },
+      {
+       "time": "2025-08-07",
+       "action": "trim",
+       "price": 409.34002685546875,
+       "shares": 0.0009563695386600229
+      },
+      {
+       "time": "2025-08-07",
+       "action": "add",
+       "price": 437.3399963378906,
+       "shares": 0.001982141939927099
+      },
+      {
+       "time": "2025-10-06",
+       "action": "trail",
+       "price": 587.0,
+       "shares": 0.004213670863467153
+      }
+     ]
+    },
+    "entry_close": 359.94000244140625,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 684.4749755859375,
+     "high": 687.0,
+     "low": 545.0,
+     "close": 587.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-08-21",
+     "exit": "2025-11-04",
+     "days": 52,
+     "fill": 23.5,
+     "stop": 22.972844079534624,
+     "risk_pct": 0.02243216682831385,
+     "pnl": 0.8305318034754055,
+     "r": 34.87807108993843,
+     "ret": 0.7823907093392892,
+     "ret_invested": 0.33497029377252097,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2025-08-21",
+       "action": "entry",
+       "price": 23.5,
+       "shares": 0.04517152165717709
+      },
+      {
+       "time": "2025-09-18",
+       "action": "trim",
+       "price": 31.780000686645508,
+       "shares": 0.013551456497153126
+      },
+      {
+       "time": "2025-09-18",
+       "action": "add",
+       "price": 30.56999969482422,
+       "shares": 0.04517152165717709
+      },
+      {
+       "time": "2025-09-26",
+       "action": "add",
+       "price": 35.5,
+       "shares": 0.0010421158987024286
+      },
+      {
+       "time": "2025-11-04",
+       "action": "trail",
+       "price": 37.029998779296875,
+       "shares": 0.07783370271590348
+      }
+     ]
+    },
+    "entry_close": 23.5,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 38.13999938964844,
+     "high": 38.25,
+     "low": 36.630001068115234,
+     "close": 37.029998779296875
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-09",
+     "exit": "2026-07-02",
+     "days": 58,
+     "fill": 851.5700073242188,
+     "stop": 817.1063684893868,
+     "risk_pct": 0.040470705330642995,
+     "pnl": 0.7340542814893294,
+     "r": 28.540872243096665,
+     "ret": 1.1550692304298928,
+     "ret_invested": 0.6597371888800032,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-04-09",
+       "action": "entry",
+       "price": 851.5700073242188,
+       "shares": 0.0007462765654814101
+      },
+      {
+       "time": "2026-05-04",
+       "action": "trim",
+       "price": 1222.1800537109375,
+       "shares": 0.00022388296964442303
+      },
+      {
+       "time": "2026-05-04",
+       "action": "add",
+       "price": 1255.8599853515625,
+       "shares": 0.00037993070596381584
+      },
+      {
+       "time": "2026-07-02",
+       "action": "trail",
+       "price": 1745.0,
+       "shares": 0.0009023243018008029
+      }
+     ]
+    },
+    "entry_close": 851.5700073242188,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 2043.800048828125,
+     "high": 2052.5400390625,
+     "low": 1693.0,
+     "close": 1745.0
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-09-04",
+     "exit": "2026-10-12",
+     "days": 25,
+     "fill": 477.57000732421875,
+     "stop": 469.4725212494515,
+     "risk_pct": 0.01695560012266413,
+     "pnl": 0.7225285856978556,
+     "r": 14.124852810317469,
+     "ret": 0.23949535604323166,
+     "ret_invested": 0.18284507746860193,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2026-09-04",
+       "action": "entry",
+       "price": 477.57000732421875,
+       "shares": 0.006317145693372511
+      },
+      {
+       "time": "2026-09-18",
+       "action": "trim",
+       "price": 558.5448680718911,
+       "shares": 0.0018951437080117531
+      },
+      {
+       "time": "2026-09-18",
+       "action": "add",
+       "price": 559.8200073242188,
+       "shares": 0.001669660983603831
+      },
+      {
+       "time": "2026-10-12",
+       "action": "trail",
+       "price": 594.239990234375,
+       "shares": 0.006091662968964589
+      }
+     ]
+    },
+    "entry_close": 477.57000732421875,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 599.9299926757812,
+     "high": 601.77001953125,
+     "low": 586.5399780273438,
+     "close": 594.239990234375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.PANW",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-06-10",
+     "exit": "2026-07-23",
+     "days": 29,
+     "fill": 263.2200012207031,
+     "stop": 256.3254414541354,
+     "risk_pct": 0.026193145409139442,
+     "pnl": 0.7123665965136752,
+     "r": 7.142573572271455,
+     "ret": 0.18708646817398275,
+     "ret_invested": 0.08419754828942623,
+     "why": "trail",
+     "add_tries": 1,
+     "executions": [
+      {
+       "time": "2026-06-10",
+       "action": "entry",
+       "price": 263.2200012207031,
+       "shares": 0.01446579424468903
+      },
+      {
+       "time": "2026-06-29",
+       "action": "trim",
+       "price": 332.1655988863805,
+       "shares": 0.004339738273406709
+      },
+      {
+       "time": "2026-06-30",
+       "action": "add",
+       "price": 341.0199890136719,
+       "shares": 0.013644276027852686
+      },
+      {
+       "time": "2026-07-23",
+       "action": "trail",
+       "price": 325.6300048828125,
+       "shares": 0.023770331999135006
+      }
+     ]
+    },
+    "entry_close": 263.2200012207031,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 335.5799865722656,
+     "high": 336.57000732421875,
+     "low": 321.8699951171875,
+     "close": 325.6300048828125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SMCI",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-01-04",
+     "exit": "2024-03-19",
+     "days": 51,
+     "fill": 28.8799991607666,
+     "stop": 28.176417828084816,
+     "risk_pct": 0.024362235219092362,
+     "pnl": 0.6453901474396557,
+     "r": 140.90400201666134,
+     "ret": 3.4327364404413676,
+     "ret_invested": 1.3102544017206073,
+     "why": "trail",
+     "add_tries": 2,
+     "executions": [
+      {
+       "time": "2024-01-04",
+       "action": "entry",
+       "price": 28.8799991607666,
+       "shares": 0.0065100555522843015
+      },
+      {
+       "time": "2024-01-19",
+       "action": "trim",
+       "price": 35.91581248758446,
+       "shares": 0.0019530166656852904
+      },
+      {
+       "time": "2024-01-19",
+       "action": "add",
+       "price": 42.33599853515625,
+       "shares": 0.006510055552284302
+      },
+      {
+       "time": "2024-01-22",
+       "action": "add",
+       "price": 43.624000549316406,
+       "shares": 0.0006635906014496891
+      },
+      {
+       "time": "2024-03-19",
+       "action": "trail",
+       "price": 91.09700012207031,
+       "shares": 0.011730685040333002
+      }
+     ]
+    },
+    "entry_close": 28.8799991607666,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 88.86100006103516,
+     "high": 92.5,
+     "low": 86.30000305175781,
+     "close": 91.09700012207031
+    }
+   }
+  ],
+  "UNCAPPED_FAST": [
+   {
+    "trade": {
+     "code": "US.MSTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-07",
+     "exit": "2024-03-18",
+     "days": 27,
+     "fill": 50.80099868774414,
+     "stop": 49.296455952599864,
+     "risk_pct": 0.029616400740311653,
+     "pnl": 0.26062972638871956,
+     "r": 47.42399882870318,
+     "ret": 1.4045281540189438,
+     "ret_invested": 1.4045281540189438,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2024-02-07",
+       "action": "entry",
+       "price": 50.80099868774414,
+       "shares": 0.003652760929417235
+      },
+      {
+       "time": "2024-02-08",
+       "action": "trim",
+       "price": 55.31462689317697,
+       "shares": 0.0005479141394125852
+      },
+      {
+       "time": "2024-02-08",
+       "action": "trim",
+       "price": 58.323712363465525,
+       "shares": 0.0005479141394125852
+      },
+      {
+       "time": "2024-03-18",
+       "action": "trail",
+       "price": 150.2760009765625,
+       "shares": 0.0025569326505920646
+      }
+     ]
+    },
+    "entry_close": 50.80099868774414,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 171.84500122070312,
+     "high": 173.49000549316406,
+     "low": 144.50100708007812,
+     "close": 150.2760009765625
+    }
+   },
+   {
+    "trade": {
+     "code": "US.SNDK",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-01-05",
+     "exit": "2026-02-10",
+     "days": 25,
+     "fill": 274.0799865722656,
+     "stop": 266.3299865722656,
+     "risk_pct": 0.02827641703038608,
+     "pnl": 0.13464934968041692,
+     "r": 25.318663697667287,
+     "ret": 0.7159210933673371,
+     "ret_invested": 0.7159210933673371,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2026-01-05",
+       "action": "entry",
+       "price": 274.0799865722656,
+       "shares": 0.0006862174814456569
+      },
+      {
+       "time": "2026-01-06",
+       "action": "trim",
+       "price": 297.3299865722656,
+       "shares": 0.00010293262221684853
+      },
+      {
+       "time": "2026-01-06",
+       "action": "trim",
+       "price": 312.8299865722656,
+       "shares": 0.00010293262221684853
+      },
+      {
+       "time": "2026-02-10",
+       "action": "trail",
+       "price": 541.6400146484375,
+       "shares": 0.0004803522370119599
+      }
+     ]
+    },
+    "entry_close": 274.0799865722656,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 573.8800048828125,
+     "high": 582.280029296875,
+     "low": 540.1400756835938,
+     "close": 541.6400146484375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.COIN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-02-07",
+     "exit": "2024-03-14",
+     "days": 25,
+     "fill": 122.06999969482422,
+     "stop": 117.86716523783865,
+     "risk_pct": 0.034429708097752795,
+     "pnl": 0.12787546862587484,
+     "r": 20.015221408605235,
+     "ret": 0.6891182306101707,
+     "ret_invested": 0.6891182306101707,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2024-02-07",
+       "action": "entry",
+       "price": 122.06999969482422,
+       "shares": 0.0015201433902341196
+      },
+      {
+       "time": "2024-02-09",
+       "action": "trim",
+       "price": 142.15499877929688,
+       "shares": 0.00022802150853511792
+      },
+      {
+       "time": "2024-02-09",
+       "action": "trim",
+       "price": 143.08417197975206,
+       "shares": 0.00022802150853511792
+      },
+      {
+       "time": "2024-03-14",
+       "action": "trail",
+       "price": 233.6699981689453,
+       "shares": 0.0010641003731638836
+      }
+     ]
+    },
+    "entry_close": 122.06999969482422,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 245.0,
+     "high": 248.27000427246094,
+     "low": 227.24000549316406,
+     "close": 233.6699981689453
+    }
+   },
+   {
+    "trade": {
+     "code": "US.OPEN",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-08-14",
+     "exit": "2025-09-22",
+     "days": 26,
+     "fill": 3.0399999618530273,
+     "stop": 2.8879999637603757,
+     "risk_pct": 0.050000000000000086,
+     "pnl": 0.1016128329146027,
+     "r": 25.75921022131828,
+     "ret": 1.2879605110659162,
+     "ret_invested": 1.2879605110659162,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2025-08-14",
+       "action": "entry",
+       "price": 3.0399999618530273,
+       "shares": 0.025952095671656763
+      },
+      {
+       "time": "2025-08-15",
+       "action": "trim",
+       "price": 3.4959999561309822,
+       "shares": 0.003892814350748514
+      },
+      {
+       "time": "2025-08-18",
+       "action": "trim",
+       "price": 3.7999999523162855,
+       "shares": 0.003892814350748514
+      },
+      {
+       "time": "2025-09-22",
+       "action": "trail",
+       "price": 8.380000114440918,
+       "shares": 0.018166466970159733
+      }
+     ]
+    },
+    "entry_close": 3.0399999618530273,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 9.170000076293945,
+     "high": 9.449999809265137,
+     "low": 8.319999694824219,
+     "close": 8.380000114440918
+    }
+   },
+   {
+    "trade": {
+     "code": "US.AMD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-09-26",
+     "exit": "2025-11-04",
+     "days": 27,
+     "fill": 159.4600067138672,
+     "stop": 157.0500030517578,
+     "risk_pct": 0.015113530419159282,
+     "pnl": 0.09316091426699821,
+     "r": 30.973444832121935,
+     "ret": 0.4681181006564268,
+     "ret_invested": 0.4681181006564268,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2025-09-26",
+       "action": "entry",
+       "price": 159.4600067138672,
+       "shares": 0.0012480343240366008
+      },
+      {
+       "time": "2025-10-02",
+       "action": "trim",
+       "price": 168.6750030517578,
+       "shares": 0.0001872051486054901
+      },
+      {
+       "time": "2025-10-06",
+       "action": "trim",
+       "price": 226.44500732421875,
+       "shares": 0.0001872051486054901
+      },
+      {
+       "time": "2025-11-04",
+       "action": "trail",
+       "price": 250.0500030517578,
+       "shares": 0.0008736240268256206
+      }
+     ]
+    },
+    "entry_close": 159.4600067138672,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 250.35000610351562,
+     "high": 257.3800048828125,
+     "low": 247.38999938964844,
+     "close": 250.0500030517578
+    }
+   },
+   {
+    "trade": {
+     "code": "US.INTC",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-04-22",
+     "exit": "2026-05-15",
+     "days": 17,
+     "fill": 65.2699966430664,
+     "stop": 64.61729667663575,
+     "risk_pct": 0.00999999999999994,
+     "pnl": 0.08420493170824664,
+     "r": 50.86763464701192,
+     "ret": 0.5086763464701161,
+     "ret_invested": 0.5086763464701161,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2026-04-22",
+       "action": "entry",
+       "price": 65.2699966430664,
+       "shares": 0.002536193553202724
+      },
+      {
+       "time": "2026-04-23",
+       "action": "trim",
+       "price": 67.22809654235839,
+       "shares": 0.0003804290329804086
+      },
+      {
+       "time": "2026-04-24",
+       "action": "trim",
+       "price": 82.19999694824219,
+       "shares": 0.0003804290329804086
+      },
+      {
+       "time": "2026-05-15",
+       "action": "trail",
+       "price": 108.7699966430664,
+       "shares": 0.0017753354872419068
+      }
+     ]
+    },
+    "entry_close": 65.2699966430664,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 109.78500366210938,
+     "high": 110.56999969482422,
+     "low": 105.0199966430664,
+     "close": 108.7699966430664
+    }
+   },
+   {
+    "trade": {
+     "code": "US.RDDT",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2024-09-16",
+     "exit": "2024-11-15",
+     "days": 44,
+     "fill": 59.150001525878906,
+     "stop": 57.62997605621798,
+     "risk_pct": 0.0256978094750496,
+     "pnl": 0.08016620891866238,
+     "r": 31.36920865923103,
+     "ret": 0.8061199475079952,
+     "ret_invested": 0.8061199475079952,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2024-09-16",
+       "action": "entry",
+       "price": 59.150001525878906,
+       "shares": 0.001681267887952292
+      },
+      {
+       "time": "2024-09-18",
+       "action": "trim",
+       "price": 63.710077934861694,
+       "shares": 0.00025219018319284377
+      },
+      {
+       "time": "2024-09-19",
+       "action": "trim",
+       "price": 66.75012887418356,
+       "shares": 0.00025219018319284377
+      },
+      {
+       "time": "2024-11-15",
+       "action": "trail",
+       "price": 124.77999877929688,
+       "shares": 0.0011768875215666045
+      }
+     ]
+    },
+    "entry_close": 59.150001525878906,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 128.7899932861328,
+     "high": 131.6898956298828,
+     "low": 123.13999938964844,
+     "close": 124.77999877929688
+    }
+   },
+   {
+    "trade": {
+     "code": "US.BBAI",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-06-13",
+     "exit": "2025-07-11",
+     "days": 18,
+     "fill": 3.7200000286102295,
+     "stop": 3.6500000953674316,
+     "risk_pct": 0.01881718621086931,
+     "pnl": 0.07967581222937038,
+     "r": 28.332683304723083,
+     "ret": 0.5331413775985623,
+     "ret_invested": 0.5331413775985623,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2025-06-13",
+       "action": "entry",
+       "price": 3.7200000286102295,
+       "shares": 0.04017363841775953
+      },
+      {
+       "time": "2025-06-16",
+       "action": "trim",
+       "price": 3.929999828338623,
+       "shares": 0.00602604576266393
+      },
+      {
+       "time": "2025-06-16",
+       "action": "trim",
+       "price": 4.069999694824219,
+       "shares": 0.00602604576266393
+      },
+      {
+       "time": "2025-07-11",
+       "action": "trail",
+       "price": 6.440000057220459,
+       "shares": 0.02812154689243167
+      }
+     ]
+    },
+    "entry_close": 3.7200000286102295,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 7.0,
+     "high": 7.199999809265137,
+     "low": 6.389999866485596,
+     "close": 6.440000057220459
+    }
+   },
+   {
+    "trade": {
+     "code": "US.ARM",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-05-19",
+     "exit": "2026-06-05",
+     "days": 12,
+     "fill": 223.14999389648438,
+     "stop": 215.49959539879987,
+     "risk_pct": 0.034283659901121935,
+     "pnl": 0.07880637806959102,
+     "r": 12.232088636637982,
+     "ret": 0.4193607666988749,
+     "ret_invested": 0.4193607666988749,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2026-05-19",
+       "action": "entry",
+       "price": 223.14999389648438,
+       "shares": 0.0008421252532141775
+      },
+      {
+       "time": "2026-05-20",
+       "action": "trim",
+       "price": 246.1011893895379,
+       "shares": 0.00012631878798212662
+      },
+      {
+       "time": "2026-05-21",
+       "action": "trim",
+       "price": 266.8949890136719,
+       "shares": 0.00012631878798212662
+      },
+      {
+       "time": "2026-06-05",
+       "action": "trail",
+       "price": 342.92999267578125,
+       "shares": 0.0005894876772499242
+      }
+     ]
+    },
+    "entry_close": 223.14999389648438,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 369.75,
+     "high": 373.739990234375,
+     "low": 337.5513000488281,
+     "close": 342.92999267578125
+    }
+   },
+   {
+    "trade": {
+     "code": "US.RGTI",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-10-01",
+     "exit": "2025-10-17",
+     "days": 12,
+     "fill": 29.850000381469727,
+     "stop": 28.649999618530273,
+     "risk_pct": 0.040201030070485,
+     "pnl": 0.07445781463058722,
+     "r": 10.954626383263982,
+     "ret": 0.44038726464452366,
+     "ret_invested": 0.44038726464452366,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2025-10-01",
+       "action": "entry",
+       "price": 29.850000381469727,
+       "shares": 0.005664103661670525
+      },
+      {
+       "time": "2025-10-02",
+       "action": "trim",
+       "price": 33.450002670288086,
+       "shares": 0.0008496155492505787
+      },
+      {
+       "time": "2025-10-03",
+       "action": "trim",
+       "price": 36.9900016784668,
+       "shares": 0.0008496155492505787
+      },
+      {
+       "time": "2025-10-17",
+       "action": "trail",
+       "price": 46.380001068115234,
+       "shares": 0.003964872563169367
+      }
+     ]
+    },
+    "entry_close": 29.850000381469727,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 44.65999984741211,
+     "high": 48.25,
+     "low": 43.650001525878906,
+     "close": 46.380001068115234
+    }
+   },
+   {
+    "trade": {
+     "code": "US.HOOD",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-05-09",
+     "exit": "2025-07-31",
+     "days": 56,
+     "fill": 54.650001525878906,
+     "stop": 53.742000579833984,
+     "risk_pct": 0.016614838439024525,
+     "pnl": 0.07105931917560704,
+     "r": 38.731491960891006,
+     "ret": 0.6435174814325814,
+     "ret_invested": 0.6435174814325814,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2025-05-09",
+       "action": "entry",
+       "price": 54.650001525878906,
+       "shares": 0.002020554246363211
+      },
+      {
+       "time": "2025-05-12",
+       "action": "trim",
+       "price": 59.18000030517578,
+       "shares": 0.00030308313695448166
+      },
+      {
+       "time": "2025-05-12",
+       "action": "trim",
+       "price": 59.190006256103516,
+       "shares": 0.00030308313695448166
+      },
+      {
+       "time": "2025-07-31",
+       "action": "trail",
+       "price": 103.05000305175781,
+       "shares": 0.0014143879724542478
+      }
+     ]
+    },
+    "entry_close": 54.650001525878906,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 103.86499786376953,
+     "high": 109.05999755859375,
+     "low": 101.06999969482422,
+     "close": 103.05000305175781
+    }
+   },
+   {
+    "trade": {
+     "code": "US.RKLB",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-12-17",
+     "exit": "2026-01-21",
+     "days": 22,
+     "fill": 53.959999084472656,
+     "stop": 53.084999084472656,
+     "risk_pct": 0.016215715619828226,
+     "pnl": 0.07058871080821369,
+     "r": 28.212187917654884,
+     "ret": 0.45748081628584547,
+     "ret_invested": 0.45748081628584547,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2025-12-17",
+       "action": "entry",
+       "price": 53.959999084472656,
+       "shares": 0.0028595021622466947
+      },
+      {
+       "time": "2025-12-18",
+       "action": "trim",
+       "price": 56.584999084472656,
+       "shares": 0.00042892532433700417
+      },
+      {
+       "time": "2025-12-18",
+       "action": "trim",
+       "price": 58.334999084472656,
+       "shares": 0.00042892532433700417
+      },
+      {
+       "time": "2026-01-21",
+       "action": "trail",
+       "price": 87.81999969482422,
+       "shares": 0.0020016515135726867
+      }
+     ]
+    },
+    "entry_close": 53.959999084472656,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 90.0199966430664,
+     "high": 91.25,
+     "low": 82.70999908447266,
+     "close": 87.81999969482422
+    }
+   },
+   {
+    "trade": {
+     "code": "US.PLTR",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-01-16",
+     "exit": "2025-02-19",
+     "days": 22,
+     "fill": 69.23999786376953,
+     "stop": 68.36000061035156,
+     "risk_pct": 0.012709377246795604,
+     "pnl": 0.06637028306751264,
+     "r": 35.31167768178393,
+     "ret": 0.44878943287504475,
+     "ret_invested": 0.44878943287504475,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2025-01-16",
+       "action": "entry",
+       "price": 69.23999786376953,
+       "shares": 0.0021358659956763125
+      },
+      {
+       "time": "2025-01-17",
+       "action": "trim",
+       "price": 71.87998962402344,
+       "shares": 0.00032037989935144686
+      },
+      {
+       "time": "2025-01-22",
+       "action": "trim",
+       "price": 74.5,
+       "shares": 0.00032037989935144686
+      },
+      {
+       "time": "2025-02-19",
+       "action": "trail",
+       "price": 112.05999755859375,
+       "shares": 0.0014951061969734189
+      }
+     ]
+    },
+    "entry_close": 69.23999786376953,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 123.86000061035156,
+     "high": 125.41000366210938,
+     "low": 108.55999755859375,
+     "close": 112.05999755859375
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MRVL",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2026-05-19",
+     "exit": "2026-06-10",
+     "days": 15,
+     "fill": 176.18716430664062,
+     "stop": 170.63239572329755,
+     "risk_pct": 0.031527657563495466,
+     "pnl": 0.06499273513668076,
+     "r": 10.969820949352169,
+     "ret": 0.34585275842403396,
+     "ret_invested": 0.34585275842403396,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2026-05-19",
+       "action": "entry",
+       "price": 176.18716430664062,
+       "shares": 0.001066594413130788
+      },
+      {
+       "time": "2026-05-20",
+       "action": "trim",
+       "price": 192.85147005666985,
+       "shares": 0.0001599891619696182
+      },
+      {
+       "time": "2026-05-26",
+       "action": "trim",
+       "price": 211.14073181152344,
+       "shares": 0.0001599891619696182
+      },
+      {
+       "time": "2026-06-10",
+       "action": "trail",
+       "price": 252.47129821777344,
+       "shares": 0.0007466160891915516
+      }
+     ]
+    },
+    "entry_close": 176.18716430664062,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 263.37615966796875,
+     "high": 272.3419494628906,
+     "low": 252.14144897460938,
+     "close": 252.47129821777344
+    }
+   },
+   {
+    "trade": {
+     "code": "US.MU",
+     "side": 1,
+     "kind": "n1",
+     "entry": "2025-12-19",
+     "exit": "2026-02-04",
+     "days": 30,
+     "fill": 265.61431884765625,
+     "stop": 257.8851262218636,
+     "risk_pct": 0.029099307067951316,
+     "pnl": 0.06256132207248707,
+     "r": 11.439556356262562,
+     "ret": 0.33288316313201854,
+     "ret_invested": 0.33288316313201854,
+     "why": "trail",
+     "add_tries": 0,
+     "executions": [
+      {
+       "time": "2025-12-19",
+       "action": "entry",
+       "price": 265.61431884765625,
+       "shares": 0.0007075589109620514
+      },
+      {
+       "time": "2025-12-24",
+       "action": "trim",
+       "price": 288.8018967250343,
+       "shares": 0.0001061338366443077
+      },
+      {
+       "time": "2026-01-02",
+       "action": "trim",
+       "price": 304.26028197661964,
+       "shares": 0.0001061338366443077
+      },
+      {
+       "time": "2026-02-04",
+       "action": "trail",
+       "price": 379.1192932128906,
+       "shares": 0.0004952912376734361
+      }
+     ]
+    },
+    "entry_close": 265.61431884765625,
+    "fill_matches_close": true,
+    "initial_stop_valid": true,
+    "exit_ohlc": {
+     "open": 410.2862243652344,
+     "high": 412.6944580078125,
+     "low": 363.63177490234375,
+     "close": 379.1192932128906
+    }
+   }
+  ]
+ },
+ "objective": "2025_count_distance",
+ "spec_sha256": "f94c23f508f438efab1e3c53c971b49934dff38b7a67bf36c99c3b2396909a87",
+ "rejected": {
+  "EXEC4": [
+   "2025_holding_distance",
+   "march_start"
+  ],
+  "UNCAPPED": [
+   "march_start"
+  ],
+  "UNCAPPED_FAST": [
+   "march_start"
+  ]
+ },
+ "chosen": "R79",
+ "chosen_config": {
+  "signals": "C2",
+  "stop": "cap",
+  "exits": "X9",
+  "small_cap": false,
+  "gap_size": false,
+  "gross": 2.8,
+  "risk": 0.005,
+  "filter": "IDX50",
+  "rank": null,
+  "rank_n": 0,
+  "risk_high": 0.008,
+  "max_new": 4,
+  "bpath": 0.2,
+  "max_position": 0.5,
+  "strength": "K6",
+  "stop_min": 0.01,
+  "ep_opts": {
+   "hold_open": false
+  },
+  "rule_opts": {
+   "feedback": 5,
+   "risk_scale": "idx_pb16",
+   "exit_signal": "",
+   "add_r": 10.0,
+   "add_levels": [
+    10,
+    20
+   ]
+  },
+  "setup": "E11+E10+E2+EW1",
+  "bopts": {
+   "lookback": 120
+  }
+ }
+}

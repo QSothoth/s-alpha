@@ -6,6 +6,7 @@ scored against his public trades (notes/trades.csv) and against random entry on 
 from __future__ import annotations
 
 from dataclasses import replace
+import csv
 import json
 import sys
 from pathlib import Path
@@ -45,7 +46,8 @@ def us_arrays():
 
 
 def market_arrays(market):
-    """US: broad point-in-time panel; HK / CN: data/trend-scan lists chosen by 2026-10 liquidity (survivorship)."""
+    """Historical daily panels of 2026-10 liquidity-selected universes; historical filters do not remove
+    the initial universe's survivorship/selection bias in any of the three markets."""
     b = S.broad() if market == 'us' else luk.load(market)
     A = dict(days=b['days'] if market == 'us' else b['dates'], codes=b['codes'], market=market)
     for k in ('open', 'high', 'low', 'close', 'turnover'):
@@ -296,7 +298,8 @@ def stage_inputs(A, upto):
 
 def watch_lists(A):
     stack = prev(A['stack'])
-    wk = prev(weekly_ema(A['close'], A['days'], 9) > weekly_ema(A['close'], A['days'], 21))
+    w9 = weekly_ema(A['close'], A['days'], 9)
+    wk = prev(w9 > weekly_ema(A['close'], A['days'], 21))
     was_not = S._past_any(~A['stack'], 10)                     # some day in t-10..t-1 not stacked
     not_before = prev(was_not)                                 # ... shifted: some day in t-11..t-2
     with np.errstate(invalid='ignore'):
@@ -306,7 +309,8 @@ def watch_lists(A):
         big = prev(A['to20'] >= 100e6)                          # R22b: he only adds $100M+ names to watchlists
         fast = prev(A['adr'] >= 5)
     return {'V0': stack, 'V1': stack | wk, 'V2': above50, 'V3': stack & not_before, 'V4': ones,
-            'V5': (stack | wk) & big, 'V6': stack & big, 'V7': above50 & big, 'V8': (stack | wk) & fast, 'V9': big}
+            'V5': (stack | wk) & big, 'V6': stack & big, 'V7': above50 & big, 'V8': (stack | wk) & fast, 'V9': big,
+            'V10': stack | prev(A['close'] > w9)}
 
 
 def watch_choice():
@@ -391,7 +395,8 @@ def setups(A):
         e2 = prev(A['tight']) & e1
         e3 = o >= pc * (1 + np.fmax(.05, adrp / 100))
         e4 = (e9p > e21p) & (l <= e9p) & (h >= e9p)
-    return {'E1': e1, 'E2': e2, 'E3': e3, 'E4': e4, 'E5': e2 | e3 | e4}
+        e21 = (e9p > e21p) & (l <= e21p) & (A['close'] >= e21p)
+    return {'E1': e1, 'E2': e2, 'E3': e3, 'E4': e4, 'E5': e2 | e3 | e4, 'E21': e21}
 
 
 def top_per_day(m, score, n=10):
@@ -430,6 +435,7 @@ def setup_families(A, w):
             'E8': {'E2': top_per_day(w & s['E1'], prev(A['pr21']))},
             'E9': {'E2': top_per_day(w & s['E1'], prev(A['to20']))},
             'E10': {'E2': s['E1'] & near, 'E4': s['E4'] & near},
+            'E21': {'E21': s['E21']},
             'EW1': {'E2': weekly_cached(A)['EW1']}, 'EW2': {'E2': weekly_cached(A)['EW2']}}
 
 
@@ -808,6 +814,21 @@ def ew_index_up(A, pool, n):
     return prev((idx > luk.ema(idx, n))[:, 0][:, None])[:, 0]
 
 
+def benchmark_close(A, ticker):
+    """Actual US benchmark closes aligned by date; the research input must cover every evaluation session."""
+    key = '_benchmark_' + ticker
+    if key not in A:
+        path = luk.ROOT / 'data' / 'martin-luk-benchmarks-v1' / f'US.{ticker}.csv'
+        with path.open() as fh:
+            by_day = {row['time_key'][:10]: float(row['close']) for row in csv.DictReader(fh)}
+        close = np.array([by_day.get(str(d), np.nan) for d in A['days']])[:,None]
+        missing = (A['days'] >= FULL[0]) & ~np.isfinite(close[:,0])
+        if missing.any():
+            raise ValueError(f'{ticker} missing benchmark days: {A["days"][missing][:5]}')
+        A[key] = close
+    return A[key]
+
+
 def filter_days(entries, ok_day):
     return [e if ok_day[d] else [] for d, e in enumerate(entries)]
 
@@ -955,11 +976,14 @@ def pool_for(A, name=None):
     return prev(m)
 
 
-def system_signals(A, cfg=None):
+def system_signals(A, cfg=None, trace=None):
     cfg = cfg or {}
     pool = pool_for(A, cfg.get('pool'))
     k = pool & strength_lists(A, pool)[cfg.get('strength') or strength_choice()]
-    w = k & watch_lists(A)[cfg.get('watch') or watch_choice()]
+    watch_type = watch_lists(A)[cfg.get('watch') or watch_choice()]
+    w = k & watch_type
+    if trace is not None:
+        trace.update(strength=k, watch_type=watch_type)
     fams = setup_families(A, w)
     names = (cfg.get('setup') or setup_choice()).split('+')                # R46: 'E11+E2' is a union
     return pool, w, {(f'{n}:{x}' if len(names) > 1 else x): w & m for n in names for x, m in fams[n].items()}
@@ -1150,15 +1174,19 @@ def climax(A, gain):
         return (A['turnover'] > prior_high(A['turnover'], 252)) & (c / luk.lag(c, 10) - 1 >= gain)
 
 
-def index_risk_scale(A, pool, pb=1.6, ext=1.0, ext_at=.05, band=.01, which='both', below=None):
+def index_risk_scale(A, pool, pb=1.6, ext=1.0, ext_at=.05, band=.01, which='both', below=None,
+                     index_close=None):
     """R59: risk multiplier from the pool's equal-weight index as of the previous close: x `pb` when it sits within
     1% of its EMA9 or EMA21 while above its EMA50 (his "attack when the index pulls back to the 9/21"), x `ext`
     when it is more than `ext_at` above its EMA21 (overextended); 1 otherwise.  R62: `band` around the EMA,
     which='e21' counts only EMA21 pullbacks, and `below` (when set) is the multiplier below the EMA50."""
-    c = A['close']
     with np.errstate(invalid='ignore', divide='ignore'):
-        r = np.where(pool & np.isfinite(luk.lag(c)), c / luk.lag(c) - 1, np.nan)
-        idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+        if index_close is None:
+            c = A['close']
+            r = np.where(pool & np.isfinite(luk.lag(c)), c / luk.lag(c) - 1, np.nan)
+            idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+        else:
+            idx = index_close
         e9, e21, e50 = luk.ema(idx, 9), luk.ema(idx, 21), luk.ema(idx, 50)
         near = np.abs(idx / e21 - 1) <= band
         if which == 'both':
@@ -1178,6 +1206,9 @@ INDEX_SCALES = {'idx_pb16': dict(pb=1.6), 'idx_ext05': dict(pb=1.0, ext=.5), 'id
 
 
 def named_signal(A, pool, name):
+    if name == 'qqq_pb16':
+        idx = benchmark_close(A, 'QQQ') if A['market'] == 'us' else None
+        return index_risk_scale(A, pool, index_close=idx)
     """Day arrays the engine reads by name: 'climax<gain%>', 'ext<k>' (close at least k x ADR above the EMA9,
     his "extended"), and the index risk scales."""
     if name.startswith('climax'):
@@ -1206,14 +1237,24 @@ def ep_signal(A, pool, gap_min=.05, gap_adr=1.0, vol_mult=2.0, hold_open=True, n
         return pool & gap & vol & held & near
 
 
-def entries_close_stop(A, mask, mode, kind='n1', cap_max=.05, stop_min=0.0):
+def entries_close_stop(A, mask, mode, kind='n1', cap_max=.05, stop_min=0.0,
+                       stop_floor_adr=0.0, stop_reference='day_low'):
     """Close entries with the stop at the day's low; when that is wider than cap = min(5%, 0.5 ADR):
-    'skip' drops the trade (R24 N1), 'cap' moves the stop up to the cap, 'half' to half the cap (R30)."""
+    'skip' drops the trade (R24 N1), 'cap' moves the stop up to the cap, 'half' to half the cap (R30).
+    R78 optionally uses the prior low or an ADR-based stop floor; both use only prior-day ADR."""
     c, l = A['close'], A['low']
+    if stop_reference not in ('day_low', 'prior_low'):
+        raise ValueError(stop_reference)
+    if stop_reference == 'prior_low':
+        l = prev(l)
     cap = stop_cap(A, cap_max)
     out = [[] for _ in range(len(c))]
     for d, j in zip(*np.nonzero(mask)):
+        if d == 0:
+            continue
         if not (np.isfinite(c[d, j]) and np.isfinite(l[d, j]) and c[d, j] > 0):
+            continue
+        if stop_reference == 'prior_low' and l[d, j] >= c[d, j]:
             continue
         if mode == 'skip':
             if not (0 < (c[d, j] - l[d, j]) / c[d, j] <= cap[d, j]):
@@ -1224,6 +1265,9 @@ def entries_close_stop(A, mask, mode, kind='n1', cap_max=.05, stop_min=0.0):
             stop = max(l[d, j], c[d, j] * (1 - width))
         if stop_min and (c[d, j] - stop) / c[d, j] < stop_min:
             stop = c[d, j] * (1 - stop_min)
+        if stop_floor_adr:
+            floor = min(cap_max, stop_floor_adr * A['adr'][d - 1, j] / 100)
+            stop = min(stop, c[d, j] * (1 - floor))
         if stop < c[d, j]:
             out[d].append((-A['to20'][d - 1, j], j, 1, c[d, j], stop, kind))
     return out
@@ -1299,6 +1343,12 @@ def market_ok(A, pool, w, spec):
     """Days that allow new longs: 'S4' (watchlist breadth), 'IDX<n>' (pool equal-weight index above its EMA n),
     joined by '+' (all) or '|' (any)."""
     def one(x):
+        if x.startswith(('QQQ', 'IWM')):
+            n = int(x[3:])
+            if A['market'] != 'us':
+                return ew_index_up(A, pool, n)
+            idx = benchmark_close(A, x[:3])
+            return prev(idx > luk.ema(idx, n))[:,0]
         return breadth_ok(A, w) if x == 'S4' else ew_index_up(A, pool, int(x[3:]))
     if '|' in spec:
         out = None
@@ -1314,7 +1364,7 @@ def market_ok(A, pool, w, spec):
 def build_system(A, cfg, trace=None):
     """Entries, rules, signal mask and placebo pool for a configuration, in any market; `trace` (a dict) gets
     the entries after the stop rule ('raw'), the market filter ('filtered') and the daily cap ('capped')."""
-    pool, w, sig = system_signals(A, cfg)
+    pool, w, sig = system_signals(A, cfg, trace)
     ep = ep_signal(A, pool, **cfg.get('ep_opts', {}))
     if cfg['signals'] == 'NONE':
         mask = np.zeros_like(w)
@@ -1326,8 +1376,13 @@ def build_system(A, cfg, trace=None):
         mask = {'T1': lambda: union(fam), 'T2': lambda: rotate(A, fam, 20),
                 'T3': lambda: rotate(A, fam, 20, top_only=True), 'T4': lambda: rotate(A, fam, 40),
                 'T5': lambda: fam['HS'] | fam['EP'] | fam['PB']}[cfg['signals']]()
+    if trace is not None:
+        trace.update(pool=pool, watch=w, ep=ep, main_signal=mask)
     if cfg.get('bpath'):
-        mask = mask | base_path(A, pool, cfg['bpath'], **cfg.get('bopts', {}))
+        bp = base_path(A, pool, cfg['bpath'], **cfg.get('bopts', {}))
+        mask = mask | bp
+        if trace is not None:
+            trace['base_path'] = bp
     if cfg.get('wk_channel'):                          # R73: weekly breakouts anywhere in the pool
         wb = weekly_cached(A)
         for k in cfg['wk_channel'].split('+'):
@@ -1337,7 +1392,8 @@ def build_system(A, cfg, trace=None):
     if cfg.get('rank'):
         mask = top_per_day(mask, prev(A[cfg['rank']]), cfg['rank_n'])
     entries = entries_close_stop(A, mask, cfg['stop'], cap_max=cfg.get('stop_cap_max', .05),
-                                 stop_min=cfg.get('stop_min', 0.0))
+                                 stop_min=cfg.get('stop_min', 0.0), stop_floor_adr=cfg.get('stop_floor_adr', 0.0),
+                                 stop_reference=cfg.get('stop_reference', 'day_low'))
     if cfg['small_cap'] or cfg['gap_size']:
         adrp, to20p = prev(A['adr']), prev(A['to20'])
         entries = [[e[:6] + (None, .5 * adrp[d, e[1]] / 100 if cfg['gap_size'] else None,
@@ -1655,6 +1711,8 @@ def priority_score(A, name):
             return c / prev(c) - 1
         if name == 'pr21':
             x = A['pr21']
+        elif name == 'prior_gain':
+            x = c / prev(c) - 1
         elif name == 'pr126':
             x = A['pr126']
         elif name == 'r3':
@@ -1732,6 +1790,8 @@ def final(report):
         A = market_arrays(market)
         entries, rules, mask, pool = build_system(A, cfg)
         st, tr = run_rules(A, entries, FULL, pool, rules)
+        span = A['days'][(A['days'] >= FULL[0]) & (A['days'] <= FULL[1])]
+        st['data_span'] = [str(span[0]), str(span[-1])]
         years = sorted(st['by_year'])
         st['ew_hold_pool'] = ew_hold(A, pool, FULL)
         st['ew_hold_by_year'] = {y: ew_hold(A, pool, (f'{y}-01-01', f'{y}-12-31')) for y in years}
@@ -1794,6 +1854,11 @@ def diagnose(report):
                          step=STAGES[best], our_r=ours_t and round(ours_t['r'], 2),
                          our_ret=ours_t and round(ours_t['ret'], 3), our_days=ours_t and ours_t['days'],
                          our_why=ours_t and ours_t['why'], entries_that_day=n_day, his_place=place))
+        rows[-1]['input_days'] = [dict(day=str(A['days'][d]),
+            **{name: bool(trace[name][d,j]) for name in ('pool','strength','watch_type','watch','ep','main_signal','base_path') if name in trace},
+            prior_adr=float(A['adr'][d-1,j]), prior_turnover=float(A['to20'][d-1,j]),
+            gap=float(A['open'][d,j]/A['close'][d-1,j]-1),
+            relative_turnover=float(A['turnover'][d,j]/A['to20'][d-1,j])) for d in range(a,b+1) if d>0]
     by_year = {}
     for r in rows:
         y = by_year.setdefault(r['date'][:4], {k: 0 for k in STAGES})

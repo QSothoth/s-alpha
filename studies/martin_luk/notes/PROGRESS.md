@@ -1,5 +1,30 @@
 # 进度（中断后从这里恢复）
 
+## 当前任务：R75 起继续逼近（2026-10-18）
+
+- 用户新目标覆盖旧轮次上限：不设轮次上限，只有用户叫停或收益与行为记分板全部达标才结束。全样本内研究，最终冻结后才用未来直播交易前向验证。
+- 最新带入为 `reports/r81.json` 的 `chosen_config`（EMA9_STOP），按赢家持有行为目标选择；2025收益恶化，下一轮主目标修复收益。R75起点R74及每轮原始报告保留。
+- 已读根规范、技能和方法第 0/9 节、Martin 参考、旧轮次/最终结论和 diagnose。保留用户已有未提交修改。
+- R75 已预登记 `notes/rounds/R75.json` + `notes/PREREG_R75.md`；新增 `measure.py`，执行时点单测 3 项通过。运行入口：`nice -n 19 env OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 /opt/futu-opend/venv/bin/python -u -m studies.martin_luk.measure`。本轮日志 `/tmp/martin-r75.log`，成功后写 `reports/r75.json`；中断时先查进程和报告，避免重复启动。
+- R75 已完成：`reports/r75.json`、`reports/R75_RESULTS_CN.md` 与 ROUNDS 记分板。R74 精确复现；2026 年 1–7 月 +89.17%。他的票 + R74 收盘组合 +4821%，46/82 有完整分钟配对；不能维持“日 K 买他的票就亏”的旧结论。先修实际选股并配套高波动退出。单测 martin_luk 50 项、trader_replication 30 项通过，custody 194 项通过。
+- 字幕和两场访谈已复制到 `data/martin-luk-subs/`（Git 忽略，约 22MB），RULES 补录了明确无每日数量上限、两组流动性名单、短持主要与空头相关的原话及时间戳。
+- 资源：启动时可用内存约 2GB、磁盘 9.8GB；研究进程 nice 19、单进程/BLAS 单线程，峰值需继续观察。未取新行情、未消耗新历史额度。
+- R76 已完成（`reports/r76.json`、`R76_RESULTS_CN.md`、ROUNDS完整记分板）：4个排序+小仓位/快退出候选均不带入。RVOL_FAST赢随机、买到9/42和1/40、2025有640笔、赢家12.33交易日，但3月起跑−5.63%而被挡；涨幅两版跑输随机。继续带入R74。
+- R77分钟复测两次在收益计算前因数据守门终止。原异常163，规范复权并排除零量/畸形K后253（5处在合格池），收盘无>2%差异。`reports/r77_coverage_before.json`/`r77_coverage.json`、`notes/R77_DATA_FIX_CN.md`保存证据。无候选收益、无带入；复测未完成，不能记为策略失败。原R75的46对时戳完整不等于价格质量已通过。
+- R78完成，四种止损均不带入，仍R74。`reports/r78.json`、`R78_RESULTS_CN.md`、ROUNDS完整记分板。默认引擎与R74精确复现；新增累计投入回报和自然年多空利润归因补充口径。
+- R79完成：SH9/SH9_2D/SH7均因2025空头自然年利润占比为负而未改善主目标；前两者3月起跑也退步。仍R74，详见r79.json、R79_RESULTS_CN及ROUNDS。
+- R80完成：EXEC4/UNCAPPED/UNCAPPED_FAST均被3月起跑挡住；FAST到928笔但2025−0.67%，仍R74。详见r80.json、R80_RESULTS_CN、ROUNDS。
+- R81完成，按行为主目标带入EMA9_STOP：2024+191.18%、2025−11.20%、2026至7月+33.67%，买到6/42和0/40，2025有387笔、赢家8.08交易日，3月起跑+15.96%。收益恶化明确记录；不能称全部改善。新带入为r81.json chosen_config，替代此前R74。
+- R82完成，三个排序均未带入，仍R81 EMA9_STOP。RVOL_FAST的646笔/22.29%胜率/12.79%赢家有局部接近，但亏损/持有/起跑及2025收益未过门槛；详见r82.json、R82_RESULTS_CN、ROUNDS。
+- R83前输入层诊断完成，diagnose_r82.json保留：29笔无信号里10笔先卡强度、6笔观察名单、9笔形态、4笔股票池（条件可重叠）。原diagnose_r74.json保留。
+- R83完成：五个上游候选均未带入；实际买到未增或退步，部分持有/笔数也退步。仍R81，详见r83.json、R83_RESULTS_CN、ROUNDS。
+- R84完成，五个真实指数候选均未带入，仍R81 EMA9_STOP；有收益局部改善但买到/持有/起跑门槛未过。r84.json已写，候选头部成交审计通过。
+- R75–R84检查点计算已完成：diagnose/robust/final均成功，CHECKPOINT_R84_CN.md和checkpoint_r84.json已写，原R74报告另存。美股2024+191.18%/2025−11.20%/2026至7月+33.67%；港股全期−86.69%、A股+68.97%（均未调参）。起跑依赖仍明显，目标未完成。
+- 检查点正在核对提交树和测试，随后提交推送main；恢复时检查Git log/远端再判断推送状态。R77分钟未完成，不应误标为通过或失败。下一轮从R85编号，当前配置r84.json chosen_config（R81 EMA9_STOP）。
+- 最新验证martin_luk65、trader_replication45、custody194项通过。内存可用2.65GB，磁盘9.6GB；回测单进程nice19/BLAS1。分钟缓存约253MB忽略不提交。
+- OpenD已核查并重取5只已占用股票异常日期，以及已占用QQQ/IWM日线（data/martin-luk-benchmarks-v1，各1202根至2026-10-16）。两次前后额度均218/82，没有扣新额度；保留80给custody。基准数据已登记docs/DATA.md，本地未发布。
+- 后续：完成R77数据查证、R79空头复测，再推进每日上限/赢家持有/起跑稳健性。R75–R84首个十轮检查点跑diagnose/robust、测试、提交推送main。用户/其他任务新增扫描技能及共享扫描文件也已出现，保留且勿混入本任务提交；`.claude/`和`docs/prompts/`不暂存。
+
 目标：用户 2026-10-16 晚要求在现有数据上复刻 Martin Luk 的超额收益（/goal）。
 
 - [x] 资料调研：规则汇总在 PREREG_R1.md，出处在 SOURCES.md；他 2025 月度路径：3 月 +46%、4 月 +70%、5 月 +178%、6 月 +184%、7 月 +245%、8 月 +260%、9 月 +581%、10 月 +842%、11 月 +1358%、12 月 +970%

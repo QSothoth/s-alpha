@@ -1,0 +1,35 @@
+{
+  "stage": "upstream_ledger_barriers",
+  "base": [
+    "r82.json",
+    "chosen"
+  ],
+  "ref": "R82",
+  "objective": "bought_fraction_sum",
+  "draws": 100,
+  "seed": 1,
+  "candidates": {
+    "RETAIN20": {
+      "strength": "K2"
+    },
+    "WEEKLY9": {
+      "watch": "V10"
+    },
+    "PB21": {
+      "setup": "E11+E10+E2+EW1+E21"
+    },
+    "EP5": {
+      "ep_opts": {
+        "gap_adr": 0
+      }
+    },
+    "COMBINED": {
+      "strength": "K2",
+      "watch": "V10",
+      "setup": "E11+E10+E2+EW1+E21",
+      "ep_opts": {
+        "gap_adr": 0
+      }
+    }
+  }
+}

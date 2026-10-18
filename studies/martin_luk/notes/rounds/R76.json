@@ -1,0 +1,14 @@
+{
+  "stage": "priority_and_small_position_exits",
+  "base": ["r75.json", "chosen"],
+  "ref": "R75",
+  "objective": "bought_fraction_sum",
+  "draws": 100,
+  "seed": 1,
+  "candidates": {
+    "GAIN_FAST": {"priority": "gain", "max_position": 0.2, "rule_opts": {"trims": [3, 5], "trim_frac": 0.15, "trail": "e9", "add_r": 0, "add_levels": []}},
+    "RVOL_FAST": {"priority": "rvol", "max_position": 0.2, "rule_opts": {"trims": [3, 5], "trim_frac": 0.15, "trail": "e9", "add_r": 0, "add_levels": []}},
+    "DOLLAR_FAST": {"priority": "dollar_range", "max_position": 0.2, "rule_opts": {"trims": [3, 5], "trim_frac": 0.15, "trail": "e9", "add_r": 0, "add_levels": []}},
+    "GAIN_FAST_ADDS": {"priority": "gain", "max_position": 0.2, "rule_opts": {"trims": [3, 5], "trim_frac": 0.15, "trail": "e9"}}
+  }
+}

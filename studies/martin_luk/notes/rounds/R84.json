@@ -1,0 +1,39 @@
+{
+  "stage": "actual_benchmark_market_context",
+  "base": [
+    "r83.json",
+    "chosen"
+  ],
+  "ref": "R83",
+  "objective": "2025_log_distance",
+  "draws": 100,
+  "seed": 1,
+  "data_files": {
+    "data/martin-luk-benchmarks-v1/US.QQQ.csv": "cb28714aab4b77cb7509afc897aa5d23d3d6a6ad6d780829fe3e44c9e404cb30",
+    "data/martin-luk-benchmarks-v1/US.IWM.csv": "0c0f5ebc031dbb1e0fa5c0fdd6bc68f7e39c3b80ed86702567060e451c9a11f4"
+  },
+  "candidates": {
+    "QQQ50": {
+      "filter": "QQQ50"
+    },
+    "IWM50": {
+      "filter": "IWM50"
+    },
+    "EITHER": {
+      "filter": "QQQ50|IWM50"
+    },
+    "EITHER_SCALE": {
+      "filter": "QQQ50|IWM50",
+      "rule_opts": {
+        "risk_scale": "qqq_pb16"
+      }
+    },
+    "EITHER_SCALE_PB21": {
+      "filter": "QQQ50|IWM50",
+      "rule_opts": {
+        "risk_scale": "qqq_pb16"
+      },
+      "setup": "E11+E10+E2+EW1+E21"
+    }
+  }
+}
