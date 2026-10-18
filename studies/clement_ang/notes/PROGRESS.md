@@ -9,6 +9,7 @@
 - R11 全部否定；R9 配置的 robust / final / three 已出（检查点）。
 - R12 带入 Q2（余仓 20 EMA、同时 30 只、每天 10 笔：全段 +239%，2024 +27% / 2025 +63% / 2026 +64%，买到 7 笔）。
 - R13 全部否定；R12 配置的 robust / final / three 已出。
-- 下一步：R14。
-- 轮次统计：已用 13 / 40。
+- R14 全部否定；判为“再难改进”，写 `reports/FINAL_CN.md`。
+- 下一步：等用户决定是否冻结（R12 配置）；不冻结则做盘中执行近似与 2024 年台账补录。
+- 轮次统计：已用 14 / 40。
 - 运行：后台队列 `python -m studies.trader_replication.queue`（`TR_QUEUE_DIR` 指定队列目录），或 `$PY -m studies.clement_ang.replicate round R<n>`。
