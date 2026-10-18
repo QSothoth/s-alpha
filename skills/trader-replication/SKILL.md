@@ -17,21 +17,30 @@ description: 把一位公开过做法和交易记录的主观交易员（第一�
 4. **基线漏斗**：用现有最好的流程给他的选择段交易打分，看每笔丢在哪一环。
 5. **逐环节优化**：每环一轮或多轮（每环最多 20 轮），候选来自他的原话；选择段按“宽度上限内命中率最高、超额不为负”选，验证段只评一次；“更像他”和“有超额”分开记。某环怎么都过不了就如实记下，进入下一环。
 6. **完整系统**：组合各环节选择，美股、港股、A 股都跑（港股、A 股没有他的交易，只量超额），和同一名单随机入场的安慰剂、等权持有比较，按年拆开；美股另报验证段命中他交易的比例；与他公开的统计对照。
-7. **写结论**：逼近到什么程度、还差在哪（缺数据、无法机械化、规则本身没有超额）。
+7. **逼近他的收益**（第二阶段，见 METHOD_CN 第 9 节）：在完整系统上逐轮只改一处，按目标（例子里是“两个冠军年里较差的一年”）带入，要求跑赢同池安慰剂、命中不降，绝不带入更差的配置；每几轮做一次逐笔诊断（他的每笔交易卡在哪一步），“命中”和“实际买到”一起报。用户要求用满轮次时，每个环节最多 20 轮，候选仍须来自他的原话或诊断，不做网格搜索。
+8. **写结论**：逼近到什么程度、还差在哪（缺数据、无法机械化、规则本身没有超额、像他和赚钱是否背离）。
 
 ## 运行（以 Martin Luk 为例）
 
 ```bash
 cd /opt/opend-us-options
 PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
-for r in r19 r20 r21 r21b r22 r22b r23 r23b r23c r24 r24b r25 r26 r27 r27b r28; do
-  $PY -m studies.martin_luk.replicate $r          # 按顺序：后一轮读前一轮报告里的 chosen / passed
+# 第一阶段（逐环节像不像 + 超额）与第二阶段前半（带入规则）：按顺序，后一轮读前一轮报告里的 chosen
+for r in r19 r20 r21 r21b r22 r22b r23 r23b r23c r24 r24b r25 r26 r27 r27b r28 \
+         r29 r30 r31 r32 r33 r34 r35 r36 r37 r38 r39 r40 r41; do
+  $PY -m studies.martin_luk.replicate $r
 done
+# R42 起每轮写成 notes/rounds/R*.json（基础配置 + 候选改动），结果在 reports/r42.json 等
+for r in R42 R43 R44 R45 R46 R47 R48 R49 R50 R51 R52 R53 R54 R55 R56 R57 R58 R59 R60; do
+  $PY -m studies.martin_luk.replicate round $r
+done
+$PY -m studies.martin_luk.replicate diagnose r49.json   # 他的每笔有日期多头卡在哪一步
+$PY -m studies.martin_luk.replicate final r60.json      # 带入配置在美 / 港 / A 股的完整结果
 $PY -m unittest discover -s studies/trader_replication/tests -t .
 $PY -m unittest studies.martin_luk.tests.test_replicate
 ```
 
-每轮的预登记在 `studies/martin_luk/notes/PREREG_R*.md`，结果写 `studies/martin_luk/reports/r*_*.json`。一次只跑一个进程（两核机器满载会被外部停机）；R24 系列读 5 分钟样本、R28 跑三个市场，各约 10–20 分钟。
+每轮的预登记在 `studies/martin_luk/notes/PREREG_R*.md`，逐轮记录见 `notes/ROUNDS_CN.md`，结果写 `studies/martin_luk/reports/`。一次只跑一个进程（两核机器满载会被外部停机）；R24 系列读 5 分钟样本，第二阶段每轮（5 个候选 + 参照，各 100 次安慰剂）约 20 分钟。
 
 ## 换一个交易员
 

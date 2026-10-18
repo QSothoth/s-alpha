@@ -1104,23 +1104,31 @@ def climax(A, gain):
         return (A['turnover'] > prior_high(A['turnover'], 252)) & (c / luk.lag(c, 10) - 1 >= gain)
 
 
-def index_risk_scale(A, pool, pb=1.6, ext=1.0, ext_at=.05):
+def index_risk_scale(A, pool, pb=1.6, ext=1.0, ext_at=.05, band=.01, which='both', below=None):
     """R59: risk multiplier from the pool's equal-weight index as of the previous close: x `pb` when it sits within
     1% of its EMA9 or EMA21 while above its EMA50 (his "attack when the index pulls back to the 9/21"), x `ext`
-    when it is more than `ext_at` above its EMA21 (overextended); 1 otherwise."""
+    when it is more than `ext_at` above its EMA21 (overextended); 1 otherwise.  R62: `band` around the EMA,
+    which='e21' counts only EMA21 pullbacks, and `below` (when set) is the multiplier below the EMA50."""
     c = A['close']
     with np.errstate(invalid='ignore', divide='ignore'):
         r = np.where(pool & np.isfinite(luk.lag(c)), c / luk.lag(c) - 1, np.nan)
         idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
         e9, e21, e50 = luk.ema(idx, 9), luk.ema(idx, 21), luk.ema(idx, 50)
-        near = (np.abs(idx / e9 - 1) <= .01) | (np.abs(idx / e21 - 1) <= .01)
+        near = np.abs(idx / e21 - 1) <= band
+        if which == 'both':
+            near = near | (np.abs(idx / e9 - 1) <= band)
         out = np.where((idx > e50) & near, pb, 1.0)
         out = np.where(idx > e21 * (1 + ext_at), ext, out)
+        if below is not None:
+            out = np.where(idx <= e50, below, out)
     return prev(out)[:, 0]
 
 
 INDEX_SCALES = {'idx_pb16': dict(pb=1.6), 'idx_ext05': dict(pb=1.0, ext=.5), 'idx_both': dict(pb=1.6, ext=.5),
-                'idx_pb20': dict(pb=2.0), 'idx_ext05_3': dict(pb=1.0, ext=.5, ext_at=.03)}
+                'idx_pb20': dict(pb=2.0), 'idx_ext05_3': dict(pb=1.0, ext=.5, ext_at=.03),
+                'idx_pb16_b2': dict(pb=1.6, band=.02), 'idx_pb16_e21': dict(pb=1.6, which='e21'),
+                'idx_pb16_lo05': dict(pb=1.6, below=.5), 'idx_pb16_lo025': dict(pb=1.6, below=.25),
+                'idx_pb13': dict(pb=1.3)}
 
 
 def named_signal(A, pool, name):

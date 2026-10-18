@@ -1,0 +1,13 @@
+{
+ "stage": "combination",
+ "base": ["r59.json", "chosen"],
+ "ref": "R59",
+ "objective": "min_2024_2025",
+ "candidates": {
+  "CB1": {"setup": "E11+E10", "pool": "U5"},
+  "CB2": {"setup": "E11+E10", "rule_opts": {"exit_signal": "climax50"}},
+  "CB3": {"setup": "E11+E10", "pool": "U5", "rule_opts": {"exit_signal": "climax50"}},
+  "CB4": {"setup": "E11+E5", "watch": "V1"},
+  "CB5": {"setup": "E11+E10", "watch": "V1"}
+ }
+}
