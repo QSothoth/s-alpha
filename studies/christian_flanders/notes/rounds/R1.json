@@ -1,0 +1,13 @@
+{
+ "stage": "setups",
+ "base": ["", "base"],
+ "ref": "D0",
+ "objective": "hits_select",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "C1": {"setups": ["hi52", "ep"]},
+  "C2": {"setups": ["brk52", "ep"]},
+  "C3": {"setups": ["brk52", "ep", "pp", "vcp"]},
+  "C4": {"setups": ["brk52", "ep", "pp", "vcp"], "ep": {"near": 0.15}}
+ }
+}

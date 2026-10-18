@@ -1,0 +1,14 @@
+{
+ "stage": "entry_stop",
+ "base": ["r2.json", "chosen"],
+ "ref": "R2",
+ "objective": "behaviour",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "E1": {"entry": "level_pess"},
+  "E2": {"stop_cap": 0.06},
+  "E3": {"entry_by_kind": {"ep": "open_pct"}, "open_pct": 0.06},
+  "E4": {"entry": "close"},
+  "E5": {"entry": "level_pess", "stop_cap": 0.06}
+ }
+}

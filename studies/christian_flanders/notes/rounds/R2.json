@@ -1,0 +1,14 @@
+{
+ "stage": "pool",
+ "base": ["r1.json", "chosen"],
+ "ref": "C1",
+ "objective": "hits_select",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "P1": {"ep_pool": {"turnover": 5e6, "price": 5.0}},
+  "P2": {"ep_pool": {"turnover": 5e6, "price": 2.0}},
+  "P3": {"ep_pool": {"turnover": 5e6, "price": 2.0}, "pool": {"turnover": 10e6, "price": 2.0, "adr": 3.0}},
+  "P4": {"setups": ["brk52", "ep"], "pool": {"adr": 5.0}, "ep_pool": {"turnover": 5e6, "price": 2.0}},
+  "P5": {"setups": ["brk52", "ep"], "pool": {"adr": 5.0}, "strength": "rs90", "ep_pool": {"turnover": 5e6, "price": 2.0}}
+ }
+}

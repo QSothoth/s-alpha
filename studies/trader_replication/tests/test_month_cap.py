@@ -57,6 +57,21 @@ class MonthCapTests(unittest.TestCase):
         _, _, tr = Y.simulate(p, {}, Y.Rules(**RULES, month_loss_cap=.05), e, DATES[0], DATES[-1])
         self.assertEqual(sorted(t['entry'] for t in tr), ['2025-01-28', '2025-02-03', '2025-02-05'])
 
+    def test_opened_basis_ignores_a_winner_from_last_month_giving_back(self):
+        # B opened in January wins, then gives back in February: equity-based cap blocks 02-05, opened-based not
+        b = [(10, 10, 10, 10), (10, 13, 10, 13), (13, 13, 13, 13), (13, 13, 13, 13), (12, 12.1, 11.9, 12),
+             (11.5, 11.6, 11.4, 11.5), (11.5, 11.6, 11.4, 11.5)]
+        a = [(10, 10.1, 9.9, 10)] * 7
+        p = px(a, b)
+        e = [[] for _ in DATES]
+        e[0].append((0, 1, 1, 10.0, 5.0, 'b'))
+        e[6].append((0, 0, 1, 10.0, 9.5, 'a'))
+        kw = dict(RULES, risk=.05, month_loss_cap=.01)
+        _, _, tr = Y.simulate(p, {}, Y.Rules(**kw), e, DATES[0], DATES[-1])
+        self.assertEqual(sorted(t['entry'] for t in tr), ['2025-01-28'])
+        _, _, tr = Y.simulate(p, {}, Y.Rules(**kw, month_cap_basis='opened'), e, DATES[0], DATES[-1])
+        self.assertEqual(sorted(t['entry'] for t in tr), ['2025-01-28', '2025-02-05'])
+
 
 if __name__ == '__main__':
     unittest.main()

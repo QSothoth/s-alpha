@@ -1,0 +1,14 @@
+{
+ "stage": "sizing",
+ "base": ["r5.json", "chosen"],
+ "ref": "R5",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "S1": {"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075}},
+  "S2": {"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005]}},
+  "S3": {"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}},
+  "S4": {"rule_opts": {"risk": 0.005, "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}},
+  "S5": {"rule_opts": {"risk": 0.005, "feedback": 4, "risk_low": 0.0025, "risk_high": 0.015, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}}
+ }
+}

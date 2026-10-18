@@ -42,6 +42,7 @@ DRAFT = dict(
 )
 
 EP = dict(gap=.10, rvol=0.0, near=None)     # gap >= 10% (his "ideally 10% or more"); rvol, near: optional
+PP = dict(gain=1.0, flag=10, depth=.25)     # up 100% within 40 days, then a flag of at most 25% (Minervini's power play)
 
 
 class Flanders(study.Study):
@@ -61,8 +62,13 @@ class Flanders(study.Study):
         return panels.arrays(market)
 
     # ----- named day arrays the engine reads -----
+    def pool_dependent(self, name):
+        return name == 'sig_all'
+
     def named(self, A, pool, name):
         F = A['F']
+        if name == 'sig_all':
+            return A['sig_all']
         if name.startswith('sma'):
             return F.sma(int(name[3:]))
         if name.startswith('ema'):
@@ -84,6 +90,8 @@ class Flanders(study.Study):
         p = cfg.get('pool', {})
         with np.errstate(invalid='ignore'):
             m = F.liquid(p.get('turnover', 20e6)) & (F.adr >= p.get('adr', 3.0))
+            if A['market'] == 'us' and p.get('price', 5.0) != 5.0:
+                m = (F.to20 >= p.get('turnover', 20e6)) & (F.raw >= p['price']) & (F.adr >= p.get('adr', 3.0))
             if p.get('above50', True):
                 m &= F.c > F.sma(50)
         return m
@@ -111,6 +119,7 @@ class Flanders(study.Study):
         if 'hi52' in names:
             st = [x for x in S.ChristianFlanders().run(F)['setups'] if x.kind == 'triggered'][0]
             out['hi52'] = (st.mask, st.price, F.l)
+        pool = lag(self.pool(A, cfg))                         # known before the day's trades
         if 'ep' in names:
             o = dict(EP, **cfg.get('ep', {}))
             with np.errstate(invalid='ignore', divide='ignore'):
@@ -118,10 +127,37 @@ class Flanders(study.Study):
                 if o['rvol']:
                     m &= F.turnover >= o['rvol'] * lag(F.to20)      # the whole day's turnover: known at the close
                 if o['near'] is not None:
-                    m &= F.o >= (1 - o['near']) * lag(F.hi(252))
-                m &= F.liquid(cfg.get('pool', {}).get('turnover', 20e6))
+                    m &= F.o >= (1 - o['near']) * lag(F.hi(252))   # gaps into (or near) the 52-week high
+                m &= lag(self.ep_pool(A, cfg))
             out['ep'] = (m, F.o, F.l)
+        with np.errstate(invalid='ignore', divide='ignore'):
+            if 'brk52' in names:                                    # any break of the prior 52-week high
+                prior = lag(F.hi(252))
+                m = pool & (F.h > prior)
+                out['brk52'] = (m, np.fmax(F.o, prior), F.l)
+            if 'pp' in names:                                       # power play / high tight flag
+                o = dict(PP, **cfg.get('pp', {}))
+                flag_hi = lag(F.hi(o['flag']))
+                m = (pool & lag(F.hi(40) / F.lo(40) >= 1 + o['gain'])
+                     & lag(F.range(o['flag']) <= o['depth'] * 100) & lag(F.c >= (1 - o['depth']) * F.hi(40))
+                     & (F.h > flag_hi))
+                out['pp'] = (m, np.fmax(F.o, flag_hi), F.l)
+            if 'vcp' in names:                                      # contractions with supply drying up
+                pivot = lag(F.hi(10))
+                ready = ((F.range(5) < F.range(5, 5)) & (F.range(5, 5) < F.range(10, 10)) & (F.range(5) <= 10)
+                         & (F.vol(10) < F.vol(50)) & (F.c >= .95 * F.hi(10)))
+                m = pool & lag(ready) & (F.h > pivot)
+                out['vcp'] = (m, np.fmax(F.o, pivot), F.l)
         return out
+
+    def ep_pool(self, A, cfg):
+        """Names an EP can come from: the pool's turnover and price floors only (an EP may gap from below its
+        50-day; his liquidity worry is the spread, not the trend)."""
+        p = cfg.get('ep_pool', cfg.get('pool', {}))
+        F = A['F']
+        with np.errstate(invalid='ignore'):
+            return (F.to20 >= p.get('turnover', 20e6)) & (F.raw >= p.get('price', 5.0)) if A['market'] == 'us' \
+                else F.liquid(0)
 
     def entries(self, A, cfg, masks):
         F = A['F']
@@ -130,6 +166,7 @@ class Flanders(study.Study):
         prio = self.priority(A, cfg)
         out = [[] for _ in range(len(c))]
         for kind, (m, level, stop) in masks.items():
+            mode = cfg.get('entry_by_kind', {}).get(kind, cfg.get('entry', 'level'))
             for d, j in zip(*np.nonzero(m)):
                 if d == 0 or not np.isfinite(c[d, j]):
                     continue
@@ -156,7 +193,10 @@ class Flanders(study.Study):
                 elif mode == 'open_pct' and l[d, j] <= s:
                     exit0 = s                                      # a fixed stop below the open: exact
                 pr = prio[d, j]
-                out[d].append((pr if np.isfinite(pr) else 0.0, int(j), 1, float(fill), float(s), kind, exit0))
+                pr = pr if np.isfinite(pr) else 0.0
+                if cfg.get('ep_first'):
+                    pr = pr - 10.0 * (kind == 'ep')             # the day's EPs before its breakouts
+                out[d].append((pr, int(j), 1, float(fill), float(s), kind, exit0))
         return out
 
     def priority(self, A, cfg):
@@ -180,10 +220,11 @@ class Flanders(study.Study):
     def build(self, A, cfg, trace=None):
         pool = self.pool(A, cfg)
         ok = self.strength_ok(A, cfg)
-        masks = {k: (m & ok & (pool if k != 'ep' else True), lv, st) for k, (m, lv, st) in self.setups(A, cfg).items()}
+        masks = {k: (m & ok, lv, st) for k, (m, lv, st) in self.setups(A, cfg).items()}   # each carries its pool
         mask = np.zeros(pool.shape, bool)
         for m, _, _ in masks.values():
             mask |= m
+        A['sig_all'] = mask                        # a new buy point on a name already held: his pyramid adds
         entries = self.entries(A, cfg, masks)
         if trace is not None:
             trace.update(pool=pool, strength=ok, **{f'setup_{k}': m for k, (m, _, _) in masks.items()})

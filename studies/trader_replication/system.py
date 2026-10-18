@@ -63,6 +63,8 @@ class Rules:
     month_loss_cap: float = 0.0     # > 0: no new trades for the rest of a calendar month once equity (as of the previous
     month_cap_ladder: tuple = ()    # close) is this far below the month's opening equity; after 1, 2, ... losing
                                     # months in a row the cap is month_cap_ladder[0], [1], ... (the last one repeats)
+    month_cap_basis: str = 'equity'  # 'opened': measure the month by the trades opened in it (realized plus marked at
+                                    # the previous close, as a fraction of the month's opening equity) instead
     buy_cost: float = .0005
     sell_cost: float = .0005
     margin_rate: float = .07        # yearly, on long value above equity
@@ -120,6 +122,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         raise ValueError('add_signal_stop')
     peak = 1.0
     cash, pos, trades, curve = 1.0, {}, [], []
+    month_trades = []
     recent_positions = deque(maxlen=rules.feedback or 1)
     opened_feedback = None
     allowed_management = {'max_position', 'trims', 'trim_frac', 'trail', 'add_r', 'add_levels'}
@@ -216,6 +219,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         flow = -val * (1 + rules.buy_cost) if side > 0 else val * (1 - rules.sell_cost)
         cash += flow
         pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow, invested=val, management=policy)
+        month_trades.append(pos[j])
         if rules.feedback_opened:
             recent_positions.append(pos[j])
         initial_trail = trail3 if alt else ema.get(policy.trail)
@@ -252,16 +256,26 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         return True
 
     month_open, month_losses, month_cap, month_blocked = 1.0, 0, rules.month_loss_cap, False
+    if rules.month_cap_basis not in ('equity', 'opened'):
+        raise ValueError('month_cap_basis')
+
+    def month_pnl(d):
+        """Profit of the trades opened this month, marked at the previous close."""
+        return sum(q.cash + (q.side * q.size * last(q.j, d - 1) if q.size > 0 else 0.0) for q in month_trades)
+
     for d in range(d0, d1):
         equity = cash + value(d - 1) if d > d0 else 1.0
         if rules.month_loss_cap > 0:
             if d > d0 and str(dates[d])[:7] != str(dates[d - 1])[:7]:     # a new month opens at the previous close
-                month_losses = month_losses + 1 if equity < month_open else 0
+                lost = month_pnl(d) < 0 if rules.month_cap_basis == 'opened' else equity < month_open
+                month_losses = month_losses + 1 if lost else 0
+                month_trades.clear()
                 ladder = rules.month_cap_ladder
                 month_cap = ladder[min(month_losses, len(ladder)) - 1] if month_losses and ladder \
                     else rules.month_loss_cap
                 month_open, month_blocked = equity, False
-            month_blocked = month_blocked or equity <= month_open * (1 - month_cap)
+            now = month_open + month_pnl(d) if rules.month_cap_basis == 'opened' else equity
+            month_blocked = month_blocked or now <= month_open * (1 - month_cap)
         peak = max(peak, equity)
         alt = trail3 is not None and (rules.trail_alt_dd > 0 or alt_days is not None) \
             and (rules.trail_alt_dd <= 0 or equity < peak * (1 - rules.trail_alt_dd)) \

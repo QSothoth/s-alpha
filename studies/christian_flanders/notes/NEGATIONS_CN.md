@@ -1,0 +1,30 @@
+# Christian Flanders 否定登记表
+
+每个没被带入的候选一行（自动写入）；“当时的配置”一列是那一轮的基础配置报告。下游大改后，用 `negations` 动作列出依赖旧配置的行，在新配置上重测。
+
+| 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
+|---|---|---|---|---|---|---|---|
+| R1 | setups | C2 | `{"setups": ["brk52", "ep"]}` | :base | C1 | gates: width<=30；全区间 +173%（带入 +208%） | open |
+| R1 | setups | C3 | `{"setups": ["brk52", "ep", "pp", "vcp"]}` | :base | C1 | gates: width<=30；全区间 +89%（带入 +208%） | open |
+| R1 | setups | C4 | `{"setups": ["brk52", "ep", "pp", "vcp"], "ep": {"near": 0.15}}` | :base | C1 | gates: width<=30；全区间 +55%（带入 +208%） | open |
+| R2 | pool | P1 | `{"ep_pool": {"turnover": 5000000.0, "price": 5.0}}` | r1.json:chosen | P2 | objective below P2；全区间 +453%（带入 +628%） | open |
+| R2 | pool | P3 | `{"ep_pool": {"turnover": 5000000.0, "price": 2.0}, "pool": {"turnover": 10000000.0, "price": 2.0, "adr": 3.0}}` | r1.json:chosen | P2 | objective below P2；全区间 +628%（带入 +628%） | open |
+| R2 | pool | P4 | `{"setups": ["brk52", "ep"], "pool": {"adr": 5.0}, "ep_pool": {"turnover": 5000000.0, "price": 2.0}}` | r1.json:chosen | P2 | objective below P2；全区间 +307%（带入 +628%） | open |
+| R2 | pool | P5 | `{"setups": ["brk52", "ep"], "pool": {"adr": 5.0}, "strength": "rs90", "ep_pool": {"turnover": 5000000.0, "price": 2.0}}` | r1.json:chosen | P2 | objective below P2；全区间 +269%（带入 +628%） | open |
+| R3 | entry_stop | E1 | `{"entry": "level_pess"}` | r2.json:chosen | E2 | objective below E2；全区间 +419%（带入 +261%） | open |
+| R3 | entry_stop | E3 | `{"entry_by_kind": {"ep": "open_pct"}, "open_pct": 0.06}` | r2.json:chosen | E2 | gates: placebo；全区间 -40%（带入 +261%） | open |
+| R3 | entry_stop | E4 | `{"entry": "close"}` | r2.json:chosen | E2 | gates: placebo；全区间 -18%（带入 +261%） | open |
+| R3 | entry_stop | E5 | `{"entry": "level_pess", "stop_cap": 0.06}` | r2.json:chosen | E2 | objective below E2；全区间 +486%（带入 +261%） | open |
+| R4 | daily_choice | K2 | `{"ep_first": true}` | r3.json:chosen | K1 | objective below K1；全区间 +1039%（带入 +351%） | open |
+| R4 | daily_choice | K3 | `{"max_new": 3}` | r3.json:chosen | K1 | objective below K1；全区间 +296%（带入 +351%） | open |
+| R4 | daily_choice | K4 | `{"rule_opts": {"max_open": 12}}` | r3.json:chosen | K1 | objective below K1；全区间 +242%（带入 +351%） | open |
+| R4 | daily_choice | K5 | `{"ep_first": true, "rule_opts": {"max_open": 12}}` | r3.json:chosen | K1 | objective below K1；全区间 +899%（带入 +351%） | open |
+| R5 | exits | X2 | `{"rule_opts": {"trail": "ema21"}}` | r4.json:chosen | X1 | gates: bought；全区间 +218%（带入 +463%） | open |
+| R5 | exits | X3 | `{"rule_opts": {"trail": "sma20"}}` | r4.json:chosen | X1 | gates: bought；全区间 +139%（带入 +463%） | open |
+| R5 | exits | X4 | `{"rule_opts": {"trail": "sma50"}}` | r4.json:chosen | X1 | gates: placebo, bought；全区间 -1%（带入 +463%） | open |
+| R5 | exits | X5 | `{"rule_opts": {"trail": "ema21", "trim_signal": "ext200_120", "trim_signal_frac": 0.5}}` | r4.json:chosen | X1 | objective below X1；全区间 +434%（带入 +463%） | open |
+| R6 | sizing | S1 | `{"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075}}` | r5.json:chosen | R5 | objective below R5；全区间 +354%（带入 +463%） | open |
+| R6 | sizing | S2 | `{"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005]}}` | r5.json:chosen | R5 | gates: bought；全区间 +114%（带入 +463%） | open |
+| R6 | sizing | S3 | `{"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}}` | r5.json:chosen | R5 | gates: bought；全区间 +207%（带入 +463%） | open |
+| R6 | sizing | S4 | `{"rule_opts": {"risk": 0.005, "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}}` | r5.json:chosen | R5 | gates: bought；全区间 +187%（带入 +463%） | open |
+| R6 | sizing | S5 | `{"rule_opts": {"risk": 0.005, "feedback": 4, "risk_low": 0.0025, "risk_high": 0.015, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}}` | r5.json:chosen | R5 | gates: bought；全区间 +34%（带入 +463%） | open |

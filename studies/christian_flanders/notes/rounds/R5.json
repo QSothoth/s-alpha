@@ -1,0 +1,14 @@
+{
+ "stage": "exits",
+ "base": ["r4.json", "chosen"],
+ "ref": "R4",
+ "objective": "behaviour",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "X1": {"rule_opts": {"trim_day": 3, "trim_day_frac": 0.5}},
+  "X2": {"rule_opts": {"trail": "ema21"}},
+  "X3": {"rule_opts": {"trail": "sma20"}},
+  "X4": {"rule_opts": {"trail": "sma50"}},
+  "X5": {"rule_opts": {"trail": "ema21", "trim_signal": "ext200_120", "trim_signal_frac": 0.5}}
+ }
+}

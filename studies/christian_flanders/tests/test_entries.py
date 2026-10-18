@@ -56,6 +56,33 @@ class EpEntryTests(unittest.TestCase):
         self.assertAlmostEqual(e[4], 11.2 * .99)                 # a 0.4% stop is widened to 1%
 
 
+class BreakoutTests(unittest.TestCase):
+    def test_brk52_fills_at_the_prior_high_or_the_open_above_it(self):
+        rows = [(10, 10.2, 9.8, 10)] * 260 + [(10.1, 10.6, 10.0, 10.5)]
+        A = panel(rows)
+        m, level, stop = R.STUDY.setups(A, dict(R.DRAFT, setups=['brk52'], pool=dict(above50=False)))['brk52']
+        self.assertTrue(m[260, 0])
+        self.assertFalse(m[259, 0])
+        self.assertAlmostEqual(level[260, 0], 10.2)
+        rows[-1] = (10.4, 10.6, 10.3, 10.5)                       # opened above the prior high
+        A = panel(rows)
+        m, level, _ = R.STUDY.setups(A, dict(R.DRAFT, setups=['brk52'], pool=dict(above50=False)))['brk52']
+        self.assertAlmostEqual(level[260, 0], 10.4)
+
+    def test_power_play_breaks_the_flag_after_a_doubling(self):
+        rows = [(10, 10.2, 9.8, 10)] * 40
+        rows += [(10 + i, 10.5 + i, 9.8 + i, 10.4 + i) for i in range(12)]          # 10 -> 22 in 12 days
+        rows += [(21, 21.6, 20.0, 21.0)] * 10                                        # flag: 20-21.6 (8%)
+        rows += [(21.2, 22.4, 21.0, 22.2)]                                           # breaks the flag high
+        A = panel(rows)
+        m, level, stop = R.STUDY.setups(A, dict(R.DRAFT, setups=['pp'], pool=dict(above50=False)))['pp']
+        T = len(rows) - 1
+        self.assertTrue(m[T, 0])
+        self.assertFalse(m[T - 1, 0])
+        self.assertAlmostEqual(level[T, 0], 21.6)
+        self.assertAlmostEqual(stop[T, 0], 21.0)
+
+
 class DraftTests(unittest.TestCase):
     def test_draft_setup_is_the_board_screen(self):
         rows = [(10 + .01 * i, 10.2 + .01 * i, 9.8 + .01 * i, 10 + .01 * i) for i in range(300)]

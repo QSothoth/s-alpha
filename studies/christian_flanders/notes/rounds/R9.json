@@ -1,0 +1,14 @@
+{
+ "stage": "phase2",
+ "base": ["r8.json", "chosen"],
+ "ref": "R8",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "V1": {"rule_opts": {"risk": 0.005}},
+  "V2": {"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075}},
+  "V3": {"rule_opts": {"max_gross": 2.0, "max_position": 0.5}},
+  "V4": {"rule_opts": {"risk": 0.005, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "month_cap_basis": "opened"}},
+  "V5": {"max_new": 3}
+ }
+}

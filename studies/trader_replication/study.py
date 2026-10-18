@@ -300,7 +300,7 @@ class Study:
     def passes(st, ref, gates):
         """Gate names: 'placebo' (full-period total above the placebo median), 'hits' / 'bought' (ledger hits /
         trades bought, selection + validation, at least the reference's), 'behaviour' (behaviour gap no larger
-        than the reference's), 'positive' (every year positive)."""
+        than the reference's), 'positive' (every year positive), 'width<=N' (median signals a day at most N)."""
         fails = []
         for g in gates:
             if g == 'placebo' and not st['total'] > st['placebo']['median']:
@@ -313,6 +313,8 @@ class Study:
                 fails.append('behaviour')
             elif g == 'positive' and min(st['by_year'].values()) <= 0:
                 fails.append('positive')
+            elif g.startswith('width<=') and st['signals_per_day']['median'] > float(g[7:]):
+                fails.append(g)                        # median signals a day above his workload
         return fails
 
     def round(self, name):

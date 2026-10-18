@@ -1,0 +1,14 @@
+{
+ "stage": "daily_choice",
+ "base": ["r3.json", "chosen"],
+ "ref": "R3",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "K1": {"priority": "rs"},
+  "K2": {"ep_first": true},
+  "K3": {"max_new": 3},
+  "K4": {"rule_opts": {"max_open": 12}},
+  "K5": {"ep_first": true, "rule_opts": {"max_open": 12}}
+ }
+}
