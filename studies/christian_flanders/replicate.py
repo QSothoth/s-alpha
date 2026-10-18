@@ -262,7 +262,8 @@ class Flanders(study.Study):
             trace['capped'] = entries              # the daily cap is the engine's (successful opens, as the board)
         costs = study.COSTS[A['market']]
         ro = {k: tuple(v) if isinstance(v, list) else v for k, v in cfg.get('rule_opts', {}).items()}
-        rules = replace(Y.Rules(), buy_cost=costs[0], sell_cost=costs[1], max_new_long=cfg.get('max_new', 0), **ro)
+        kw = {'buy_cost': costs[0], 'sell_cost': costs[1], **ro}    # rule_opts may override the costs (robust)
+        rules = replace(Y.Rules(), max_new_long=cfg.get('max_new', 0), **kw)
         placebo_pool = pool | (masks['ep'][0] if 'ep' in masks else False)
         return entries, rules, mask, placebo_pool
 

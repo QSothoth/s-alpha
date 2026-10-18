@@ -83,3 +83,8 @@
 | R18 | pairs | F3 | `{"close_any": ["hi52"]}` | r17.json:chosen | R17 | gates: bought；全区间 +180%（带入 +48%） | open |
 | R18 | pairs | F4 | `{"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"], "close_any": ["hi52", "pp"]}` | r17.json:chosen | R17 | gates: bought；全区间 +109%（带入 +48%） | open |
 | R18 | pairs | F5 | `{"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"], "close_any": ["hi52", "pp"], "rule_opts": {"max_open": 10}}` | r17.json:chosen | R17 | gates: bought；全区间 +84%（带入 +48%） | open |
+| R19 | pairs | G1 | `{"close_any": ["hi52"], "rule_opts": {"max_open": 10}}` | r18.json:chosen | R18 | gates: bought；全区间 +176%（带入 +48%） | open |
+| R19 | pairs | G2 | `{"close_any": ["hi52"], "max_new": 3}` | r18.json:chosen | R18 | gates: bought；全区间 +103%（带入 +48%） | open |
+| R19 | pairs | G3 | `{"close_any": ["hi52"], "max_new": 3, "rule_opts": {"max_open": 10}}` | r18.json:chosen | R18 | objective below R18；全区间 +132%（带入 +48%） | open |
+| R19 | pairs | G4 | `{"close_any": ["hi52"], "kind_order": ["ep", "hi52"]}` | r18.json:chosen | R18 | gates: bought；全区间 +120%（带入 +48%） | open |
+| R19 | pairs | G5 | `{"close_any": ["hi52"], "rule_opts": {"max_open": 10, "max_gross": 1.5}}` | r18.json:chosen | R18 | gates: bought；全区间 +146%（带入 +48%） | open |

@@ -1,0 +1,14 @@
+{
+ "stage": "pairs",
+ "base": ["r12.json", "chosen"],
+ "ref": "R12",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "S1": {"pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}},
+  "S2": {"rule_opts": {"risk": 0.0075}},
+  "S3": {"rule_opts": {"max_gross": 3.0}},
+  "S4": {"setups": ["fine", "pb", "ep", "brk52"]},
+  "S5": {"pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}, "rule_opts": {"risk": 0.0075}}
+ }
+}
