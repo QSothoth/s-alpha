@@ -1,0 +1,32 @@
+{
+  "stage": "distinct_trade_attempt_accounting",
+  "base": [
+    "r105.json",
+    "chosen"
+  ],
+  "measurement_only": true,
+  "candidates": {},
+  "objective": "bought_fraction_sum",
+  "coverage_accounting": "one_to_one",
+  "source_report": "r105.json",
+  "reference": "RETRY_EXEC4",
+  "fixed_accounts": [
+    "CLOSE",
+    "RETRY_EXEC4",
+    "FIRST_ORH",
+    "RECOVERY_ORH",
+    "RECOVERY_FEEDBACK",
+    "RECOVERY_EARLY"
+  ],
+  "audit_source_sha256": "a9f1ceea689f34392d81836093bf042205a0015ad6f822d21405a0e42e782828",
+  "prereg_r105_sha256": "9d6d58ca71a1324af51f6b7bf9dcc16e861fd140a22088854284466718c3b901",
+  "selection": "对R105固定账户重算逐笔覆盖及原目标/门槛，收益/随机/笔数/持有/起跑完全不变；按更正的主目标、2025收益距离及R105原同分顺序，失败回退RETRY_EXEC4；仅更新条件参照，全市场不变。",
+  "limits": [
+    "no_new_trading_rules",
+    "no_new_returns_or_random_draws",
+    "retain_legacy_counts",
+    "one_real_entry_per_his_attempt",
+    "global_carry_unchanged",
+    "no_new_data_quota"
+  ]
+}

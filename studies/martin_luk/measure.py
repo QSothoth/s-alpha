@@ -13,6 +13,51 @@ import numpy as np
 from . import replicate as R
 
 
+def match_attempts(records, entries, exact=False):
+    """Match distinct long entries to ledger intervals without reusing events across segments."""
+    if len({r['id'] for r in records}) != len(records):
+        raise ValueError('duplicate ledger ids')
+    available=defaultdict(list)
+    seen=set()
+    for i,t in enumerate(entries):
+        if t.get('side',1)<=0:
+            continue
+        time=t.get('entry_time',t['entry'])
+        key=t['code'],time
+        if key in seen:
+            raise ValueError('duplicate actual entry event: '+str(key))
+        seen.add(key)
+        available[t['code']].append((time,i))
+    for values in available.values():
+        values.sort()
+    assignments={}
+    # Earliest interval end, then earliest available event, maximizes interval-point matches.
+    for r in sorted(records,key=lambda r:(r['date'] if exact else r['window_hi'],r['date'],r['id'])):
+        lo,hi=(r['date'],r['date']) if exact else (r['window_lo'],r['window_hi'])
+        values=available.get(r['code'],[])
+        for index,(time,event) in enumerate(values):
+            if lo<=time[:10]<=hi:
+                assignments[r['id']]=dict(event_index=event,time=time,code=r['code'])
+                values.pop(index)
+                break
+    return assignments
+
+
+def account_attempts(st):
+    """Correct only ledger coverage; preserve the old stock-day counts and all account results."""
+    out=dict(st)
+    out['legacy_bought']=st.get('legacy_bought',{k:st[k] for k in ('bought','bought_entry_date')})
+    records=st['ledger_pairs']
+    out['matched_attempts']={}
+    for key,exact in (('bought',False),('bought_entry_date',True)):
+        matches=match_attempts(records,st['entry_timeline'],exact)
+        out['matched_attempts'][key]=matches
+        out[key]={part:[sum(r['id'] in matches for r in records if r['segment']==part),
+                        sum(r['segment']==part for r in records)] for part in ('select','validate')}
+    out['coverage_accounting']='one_to_one'
+    return out
+
+
 def context(A, pool, rules):
     px = {k: A[k] for k in ('open', 'high', 'low', 'close', 'codes')}
     px['dates'] = A['days']

@@ -1343,6 +1343,8 @@ def market_ok(A, pool, w, spec):
     """Days that allow new longs: 'S4' (watchlist breadth), 'IDX<n>' (pool equal-weight index above its EMA n),
     joined by '+' (all) or '|' (any)."""
     def one(x):
+        if x == 'NONE':
+            return np.ones(len(A['days']),bool)
         if x.startswith(('QQQ', 'IWM')):
             n = int(x[3:])
             if A['market'] != 'us':

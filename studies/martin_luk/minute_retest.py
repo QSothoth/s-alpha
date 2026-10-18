@@ -180,7 +180,7 @@ def entry_stop(bars, bar, lod, cap, floor, mode=None):
 
 def trigger_day(bars, flags, levels, cap, floor, b_start, trigger_mode=None, hourly=None, stop_mode=None, trace=None):
     """Completed-bar decision using prior-day eligibility and only bars at/before that close."""
-    if trigger_mode not in (None,'previous_bar','hourly_pullback'):
+    if trigger_mode not in (None,'previous_bar','hourly_pullback','opening_range'):
         raise ValueError('unknown trigger mode: '+str(trigger_mode))
     if trigger_mode=='hourly_pullback' and hourly is None:
         raise ValueError('hourly pullback needs completed-hour support')
@@ -218,13 +218,15 @@ def trigger_day(bars, flags, levels, cap, floor, b_start, trigger_mode=None, hou
         leader = base and (fill > pdh or ((dipped9 or dipped21) and bounce))
         earlier = (watch or base) and bounce and (trigger_mode=='previous_bar' or
                    (trigger_mode=='hourly_pullback' and hour_touch and bool(np.any(fill>hourly[b]))))
-        if not (w or ep or leader or earlier):
+        opening_range = trigger_mode=='opening_range' and (watch or base) and fill>bars[first,1]
+        if not (w or ep or leader or earlier or opening_range):
             continue
         stop = entry_stop(bars,b,lod,cap,floor,stop_mode)
         if stop is None:
             continue
         if trace is not None:
-            trace.append('+'.join(label for label,ok in zip(('watch','ep','leader','earlier'),(w,ep,leader,earlier)) if ok))
+            trace.append('+'.join(label for label,ok in zip(('watch','ep','leader','earlier','opening_range'),
+                                                           (w,ep,leader,earlier,opening_range)) if ok))
         return b, float(fill), float(stop)
     return None
 
@@ -338,10 +340,21 @@ def ledger_pairs(A, located, trades):
     return records
 
 
+def weekly_reclaim_watch(A,pool,watch,scanned):
+    """Add already-scanned names above the previous day's running-week EMA9."""
+    above=R.prev(A['close']>R.weekly_ema(A['close'],A['days'],9))
+    return watch | (pool & scanned & above)
+
+
 def prepare(spec, cfg, rehab=None, coverage_name='r77_coverage.json', origins=None):
     full = R.us_arrays()
     full_entries, rules, mask, pool = R.build_system(full, cfg)
     _, w, _ = R.system_signals(full, cfg)
+    watch_modes={opts.get('watch_mode') for opts in spec['candidates'].values()}
+    if not watch_modes<={None,'weekly_reclaim'}:
+        raise ValueError('unknown minute watch mode')
+    recovery=weekly_reclaim_watch(full,pool,w,R.strength_lists(full,pool)['K9']) \
+        if 'weekly_reclaim' in watch_modes else None
     day_ok = R.market_ok(full, pool, w, cfg['filter'])
     market_masks={cfg['filter']:day_ok}
     for opts in spec['candidates'].values():
@@ -372,6 +385,8 @@ def prepare(spec, cfg, rehab=None, coverage_name='r77_coverage.json', origins=No
     A.update(days=full['days'][first:last_day], codes=full['codes'][cols], market='us')
     daily_ema = {k: v[first:last_day, cols].copy() if v.ndim == 2 else v[first:last_day].copy() for k, v in ema.items()}
     mask, pool, w = (x[first:last_day, cols].copy() for x in (mask, pool, w))
+    if recovery is not None:
+        recovery=recovery[first:last_day,cols].copy()
     day_ok = day_ok[first:last_day]
     market_masks={k:v[first:last_day] for k,v in market_masks.items()}
     variant_market={name:market_masks[opts.get('market_filter',cfg['filter'])]
@@ -483,6 +498,8 @@ def prepare(spec, cfg, rehab=None, coverage_name='r77_coverage.json', origins=No
                 opening=float(bars[d,np.flatnonzero(valid[d])[0],0])
                 diagnosis=dict(code=str(code),day=str(A['days'][d]),market_ok=bool(day_ok[d]),
                                market_ok_by_variant={name:bool(gate[d]) for name,gate in variant_market.items()},
+                               watch_by_variant={name:bool(recovery[d,j] if opts.get('watch_mode') else w[d,j])
+                                                 for name,opts in spec['candidates'].items()},
                                pool=bool(pool[d,j]),watch=bool(w[d,j]),leader=bool(base[d,j]),
                                gap=bool(opening>=levels[1]*(1+levels[5])),daily_signal=bool(mask[d,j]),
                                raw_price_triggers={})
@@ -491,16 +508,18 @@ def prepare(spec, cfg, rehab=None, coverage_name='r77_coverage.json', origins=No
                 continue
             hit_cache={};trace_cache={}
             for name, opts in spec['candidates'].items():
-                key=(bool(opts.get('reentry')),opts['bar_start'],opts.get('trigger_mode'),opts.get('stop_mode'),opts.get('reentry_mode'))
+                key=(bool(opts.get('reentry')),opts['bar_start'],opts.get('trigger_mode'),opts.get('stop_mode'),
+                     opts.get('reentry_mode'),opts.get('watch_mode'))
                 if key not in hit_cache:
                     trace_cache[key]=[]
+                    variant_flags=(recovery[d,j],*flags[1:]) if opts.get('watch_mode') else flags
                     extra=dict(trigger_mode=opts.get('trigger_mode'),hourly=hour[d] if hour is not None else None,
                                stop_mode=opts.get('stop_mode'),trace=trace_cache[key] if origins is not None else None)
                     if opts.get('reentry'):
-                        hit_cache[key]=reentry_day(bars[d],flags,levels,cap,cfg['stop_min'],opts['bar_start'],
+                        hit_cache[key]=reentry_day(bars[d],variant_flags,levels,cap,cfg['stop_min'],opts['bar_start'],
                                                   reentry_mode=opts.get('reentry_mode'),**extra)
                     else:
-                        hit=trigger_day(bars[d],flags,levels,cap,cfg['stop_min'],opts['bar_start'],**extra)
+                        hit=trigger_day(bars[d],variant_flags,levels,cap,cfg['stop_min'],opts['bar_start'],**extra)
                         hit_cache[key]=[hit] if hit else []
                 hits=hit_cache[key]
                 if diagnosis is not None:
@@ -583,7 +602,7 @@ def replayed_placebo(st, reference, draws, seed):
 
 
 def evaluate(A,px,ema,rules,entries,pool,located,draws,seed,coverage=None,record_ledger=False,stop_policy=None,
-             origins=None,replay_reference=None):
+             origins=None,replay_reference=None,coverage_accounting='stock_day'):
     attempts={(str(A['codes'][j]),t.entry_date):[] for rows in located.values() for t,j,_,_ in rows} \
         if coverage and coverage.get('ledger_funnel') else None
     if attempts is not None and origins is not None:
@@ -689,6 +708,8 @@ def evaluate(A,px,ema,rules,entries,pool,located,draws,seed,coverage=None,record
     a=int(np.searchsorted(dates,'2026-01-01'));b=int(np.searchsorted(dates,'2026-07-31',side='right'))-1
     st['2026_jan_jul']=float(curve[b]/curve[a-1]-1)
     st['march_start']=R.Y.stats(*one('2024-03-01'))['by_year']
+    if coverage_accounting=='one_to_one':
+        st=M.account_attempts(st)
     if replay_reference is not None:
         st['placebo']=replayed_placebo(st,replay_reference,draws,seed)
         st['placebo_reused_after_exact_replay']=True
@@ -705,7 +726,16 @@ def evaluate(A,px,ema,rules,entries,pool,located,draws,seed,coverage=None,record
 
 def run(round_name='R77'):
     path=R.ROUNDS/f'{round_name}.json';spec=json.loads(path.read_text());cfg=R.system_config_after(spec['base'][0])
-    prior_report=json.loads((R.I.OUT/spec['base'][0]).read_text()) if spec.get('ledger_funnel') else {}
+    prior_report=json.loads((R.I.OUT/spec.get('reproduction_reference',spec['base'][0])).read_text()) \
+        if spec.get('ledger_funnel') else {}
+    accounting=spec.get('coverage_accounting','stock_day')
+    if accounting not in ('stock_day','one_to_one'):
+        raise ValueError('unknown coverage accounting')
+    if prior_report.get('coverage_accounting')=='one_to_one' and accounting!='one_to_one':
+        raise ValueError('a corrected reference requires one-to-one accounting')
+    if accounting=='one_to_one' and not (spec.get('record_entry_origins') and
+                                         (spec.get('record_ledger') or spec.get('ledger_diagnostic'))):
+        raise ValueError('one-to-one accounting needs ledger records and actual entry events')
     replay=None
     if spec.get('replay_reference'):
         assert spec.get('measurement_only')
@@ -713,8 +743,9 @@ def run(round_name='R77'):
         assert hashlib.sha256(frozen.read_bytes()).hexdigest()==spec['replay_sha256']
         replay=json.loads(frozen.read_text())
     assert len(spec['candidates'])<=5
-    for file,expected in spec.get('data_files',{}).items():
-        assert hashlib.sha256(Path(file).read_bytes()).hexdigest()==expected,file
+    for file,expected in (spec.get('data_files',{})|spec.get('source_files',{})).items():
+        with Path(file).open('rb') as source:
+            assert hashlib.file_digest(source,'sha256').hexdigest()==expected,file
     if 'manifest_sha256' in spec:
         manifest=R.I.OUT/f'{round_name.lower()}_input_manifest.json'
         assert hashlib.sha256(manifest.read_bytes()).hexdigest()==spec['manifest_sha256']
@@ -768,7 +799,8 @@ def run(round_name='R77'):
                           stop_policy=dict(mode=spec['candidates'].get(name,{}).get('stop_mode'),floor=cfg['stop_min'])
                           if spec.get('record_stop_geometry') else None,
                           origins=origins[name] if origins is not None else None,
-                          replay_reference=replay['sample'][name] if replay is not None else None)
+                          replay_reference=replay['sample'][name] if replay is not None else None,
+                          coverage_accounting=accounting)
         if record_ledger:
             for metric in ('bought','bought_entry_date'):
                 st[metric+'_full_denominator']={k:[v[0],out['global_scoreboard'][metric][k][1]]
@@ -785,6 +817,7 @@ def run(round_name='R77'):
         out['sample'][name]=st;out['price_audit'][name]=audit
         print(round_name,'result',name,json.dumps({k:st[k] for k in ('by_year','total','placebo','bought','march_start')},default=float),flush=True)
         (R.I.OUT/f'{round_name.lower()}.partial.json').write_text(json.dumps(out,indent=1,default=float))
+    out['coverage_accounting']=accounting
     out['rejected']={}
     if spec.get('measurement_only'):
         out.update(measurement_only=True,sample_passed=[],replay_reference=spec.get('replay_reference'))

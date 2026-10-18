@@ -5,11 +5,62 @@ from types import SimpleNamespace
 import numpy as np
 
 from studies.martin_luk.minute_retest import trigger_day,weekly_levels,normalize_bars,minute_indicators,first_break,cap_signal_stream,reentry_day,minute_priority,minute_kind,hourly_support,entry_stop
-from studies.martin_luk.minute_retest import ledger_pairs,replayed_placebo
+from studies.martin_luk.minute_retest import ledger_pairs,replayed_placebo,weekly_reclaim_watch
 from studies.martin_luk.replicate import bought
 
 
 class MinuteRetestTests(unittest.TestCase):
+    def test_rank_group_management_and_actual_cap_work_together(self):
+        from studies.trader_replication import system as Y
+        bars=np.array([[10,10,10,10,1,100],[10,10,10,10,1,100]],float)
+        px={k:np.array([[10.,10.],[11.,11.]]) for k in ('open','high','low','close')}
+        px.update(codes=np.array(['FAST','LIQUID']),dates=np.array(['2025-01-02 09:40','2025-01-02 09:45']),
+                  session=np.array([0,0]),daily_close=np.array([False,True]))
+        rules=Y.Rules(risk=.05,max_position=.5,max_gross=1,max_new_long=1,
+                      buy_cost=0,sell_cost=0,margin_rate=0,trims=(),trail='',
+                      management_by_kind={'thin':{'max_position':.2,'trims':(3,5),'trim_frac':.15,
+                                                   'trail':'e9','add_r':0,'add_levels':()}})
+        for mode,code,profit in [(None,'LIQUID',.05),('gain','FAST',.02)]:
+            entries=[]
+            for j,prior_close,turnover in [(0,9.,50e6),(1,9.9,200e6)]:
+                priority=minute_priority(bars,1,prior_close,turnover,mode)
+                kind=minute_kind('signal',{'liquidity_groups':True},turnover)
+                entries.append((priority,j,1,10.,9.,kind))
+            _,_,trades=Y.simulate(px,{},rules,[entries,[]],px['dates'][0],px['dates'][-1],audit=True)
+            self.assertEqual(len(trades),1);self.assertEqual(trades[0]['code'],code)
+            self.assertAlmostEqual(trades[0]['pnl'],profit)
+
+    def test_first_opening_range_uses_completed_close_and_original_eligibility(self):
+        bars=np.array([[10,10.2,9.9,10,1,1],[10,10.3,10,10.2,1,1],
+                       [10.2,10.5,10.1,10.4,1,1],[10.4,99,1,90,1,1]],np.float32)
+        flags=(True,False,False,False,False,False)
+        args=(flags,(20,10,8,7,np.nan,.05,1000),.05,.01,1)
+        self.assertIsNone(trigger_day(bars[:3],*args))
+        self.assertIsNone(trigger_day(bars[:2],*args,trigger_mode='opening_range'))
+        trace=[];hit=trigger_day(bars,*args,trigger_mode='opening_range',trace=trace)
+        self.assertEqual(hit[0],2);self.assertEqual(hit[1],float(bars[2,3]))
+        self.assertEqual(trace,['opening_range'])
+        self.assertEqual(hit,trigger_day(bars[:3],*args,trigger_mode='opening_range'))
+        self.assertIsNone(trigger_day(bars[:3],(False,)*6,*args[1:],trigger_mode='opening_range'))
+        missing=np.vstack([np.full((1,6),np.nan),bars[:3]])
+        self.assertEqual(trigger_day(missing,*args,trigger_mode='opening_range')[0],3)
+        old_args=((True,True,False,False,False,False),(10.1,10,8,7,np.nan,.05,1000),.05,.01,1)
+        self.assertEqual(trigger_day(bars,*old_args),trigger_day(bars,*old_args,trigger_mode='opening_range'))
+
+    def test_weekly_reclaim_uses_prior_close_and_requires_scan_and_pool(self):
+        days=np.array(['2025-01-06','2025-01-07','2025-01-08','2025-01-09','2025-01-10',
+                       '2025-01-13','2025-01-14','2025-01-15'])
+        close=np.full((8,4),10.);close[5:]=11
+        pool=np.ones_like(close,bool);pool[:,2]=False
+        scanned=np.ones_like(pool);scanned[:,1]=False
+        watch=np.zeros_like(pool);watch[:,3]=True
+        a=dict(close=close,days=days)
+        actual=weekly_reclaim_watch(a,pool,watch,scanned)
+        self.assertFalse(actual[5,0]);self.assertTrue(actual[6,0])
+        self.assertFalse(actual[:,1:3].any());self.assertTrue(actual[:,3].all())
+        changed=dict(a,close=close.copy());changed['close'][6:]=1
+        np.testing.assert_equal(weekly_reclaim_watch(changed,pool,watch,scanned)[:7],actual[:7])
+
     def test_reentry_recheck_waits_for_current_setup_and_preserves_first_entry(self):
         bars=np.array([[10,10.2,9.9,10,1,1],[10,10.5,10,10.4,1,1],
                        [10.4,10.4,9.7,9.9,1,1],[9.9,10.1,9.9,10,1,1],

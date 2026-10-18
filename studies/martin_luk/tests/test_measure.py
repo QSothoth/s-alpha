@@ -8,7 +8,7 @@ from copy import deepcopy
 
 import numpy as np
 
-from studies.martin_luk.measure import (complete_trigger, behavior, calendar_profit, append_short_prices,
+from studies.martin_luk.measure import (complete_trigger, behavior, calendar_profit, append_short_prices, match_attempts, account_attempts,
                                        period_attribution, entry_feedback, compare_start_entries)
 from studies.trader_replication import system as Y
 from studies.martin_luk.continue_round import failures, objective
@@ -16,6 +16,49 @@ from studies.martin_luk import replicate as R
 
 
 class MeasurementTests(unittest.TestCase):
+    def test_attempt_accounting_preserves_returns_and_legacy_counts(self):
+        pairs=[dict(id=k,code='X',date='2026-06-11',window_lo='2026-06-11',window_hi='2026-06-11',segment='validate')
+               for k in ('first','retry')]
+        old=dict(total=.5,by_year={'2025':.2},bought={'select':[0,0],'validate':[2,2]},
+                 bought_entry_date={'select':[0,0],'validate':[2,2]},ledger_pairs=pairs,
+                 entry_timeline=[dict(code='X',entry='2026-06-11 09:40')])
+        fixed=account_attempts(old)
+        self.assertEqual(fixed['bought']['validate'],[1,2])
+        self.assertEqual(fixed['bought_entry_date']['validate'],[1,2])
+        self.assertEqual(fixed['legacy_bought']['bought'],old['bought'])
+        self.assertEqual(old['bought']['validate'],[2,2])
+        self.assertEqual(fixed['total'],old['total']);self.assertEqual(fixed['by_year'],old['by_year'])
+        self.assertEqual(account_attempts(fixed),fixed)
+
+    def test_attempt_matching_does_not_reuse_one_entry_for_same_day_reentry(self):
+        records=[dict(id=x,code='X',date='2026-06-11',window_lo='2026-06-11',window_hi='2026-06-11')
+                 for x in ('first','retry')]
+        events=[dict(code='X',entry='2026-06-11 09:40')]
+        for exact in (False,True):
+            self.assertEqual(len(match_attempts(records,events,exact=exact)),1)
+            result=match_attempts(records,events+[dict(code='X',entry='2026-06-11 13:30')],exact=exact)
+            self.assertEqual(len(result),2)
+            self.assertEqual(result['retry']['time'],'2026-06-11 13:30')
+        with self.assertRaises(ValueError):match_attempts(records,events*2)
+
+    def test_attempt_matching_handles_overlapping_windows_and_segment_reuse(self):
+        records=[dict(id='wide',code='X',date='2026-03-31',window_lo='2026-03-30',window_hi='2026-04-02',segment='select'),
+                 dict(id='narrow',code='X',date='2026-04-01',window_lo='2026-04-01',window_hi='2026-04-01',segment='validate')]
+        events=[dict(code='X',entry='2026-04-01 10:00'),dict(code='X',entry='2026-04-02 10:00')]
+        result=match_attempts(records,events)
+        self.assertEqual(result['narrow']['event_index'],0)
+        self.assertEqual(result['wide']['event_index'],1)
+        self.assertEqual(len(match_attempts(records,events[:1])),1)
+        self.assertEqual(set(match_attempts(records,events,exact=True)),{'narrow'})
+
+    def test_attempt_matching_counts_new_long_entries_not_carried_positions_or_shorts(self):
+        record=dict(id='a',code='X',date='2026-06-11',window_lo='2026-06-11',window_hi='2026-06-11')
+        events=[dict(code='X',entry='2026-06-10 10:00',exit='2026-06-12 10:00',side=1),
+                dict(code='X',entry='2026-06-11 10:00',side=-1)]
+        self.assertEqual(match_attempts([record],events),{})
+        events.append(dict(code='X',entry='2026-06-11',entry_time='2026-06-11 13:30',side=1))
+        self.assertEqual(match_attempts([record],events)['a']['time'],'2026-06-11 13:30')
+
     def test_early_trend_group_uses_only_previous_day_and_prior_month(self):
         a=dict(close=np.full((25,1),12.),e9=np.full((25,1),11.),e21=np.full((25,1),10.),
                e50=(9+np.arange(25)*.01)[:,None])
