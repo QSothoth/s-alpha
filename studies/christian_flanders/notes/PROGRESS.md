@@ -6,6 +6,7 @@
 - R14 全部否定；R15 带入 C4 EP 量比 ≥ 3（全段 +48%，2024 +18% / 2025 +88%，买到 11 笔）。
 - R16 全部否定。
 - R17 全部否定（E1 加 power play 全段 +123%，但买到他的从 11 降到 8）。
-- 下一步：R18。
-- 轮次统计：已用 17 / 40。
+- R18 全部否定；R15 配置的 robust / final / three 已出（检查点）。
+- 下一步：R19；另查 final 的等权持有基准为何异常。
+- 轮次统计：已用 18 / 40。
 - 运行：后台队列 `python -m studies.trader_replication.queue`（`TR_QUEUE_DIR` 指定队列目录），或单独 `$PY -m studies.christian_flanders.replicate round R<n>`；诊断 `diagnose r<n>.json`、三层对照 `three r<n>.json`。

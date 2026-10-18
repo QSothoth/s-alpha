@@ -6,6 +6,7 @@
 - R8 全部否定。
 - R9 带入 M3（2 倍总仓位 + 0.5% 风险：全段 +184%，2024 +14% / 2025 +80% / 2026 +39%，回撤 50%，买到 7 笔）。
 - R10 全部否定。
-- 下一步：R11。
-- 轮次统计：已用 10 / 40。
+- R11 全部否定；R9 配置的 robust / final / three 已出（检查点）。
+- 下一步：R12。
+- 轮次统计：已用 11 / 40。
 - 运行：后台队列 `python -m studies.trader_replication.queue`（`TR_QUEUE_DIR` 指定队列目录），或 `$PY -m studies.clement_ang.replicate round R<n>`。
