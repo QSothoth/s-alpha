@@ -1,0 +1,15 @@
+{
+ "stage": "pairs",
+ "base": ["r11.json", "chosen"],
+ "ref": "R11",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "Q1": {"rule_opts": {"trail": "ema20", "max_open": 30, "risk": 0.0075}},
+  "Q2": {"rule_opts": {"trail": "ema20", "max_open": 30}, "max_new": 10},
+  "Q3": {"rule_opts": {"trail": "ema20", "max_open": 30}, "pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}},
+  "Q4": {"rule_opts": {"trail": "ema20", "max_open": 30, "max_position": 0.5}},
+  "Q5": {"rule_opts": {"trail": "ema20", "max_open": 30, "risk": 0.0075},
+         "pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}}
+ }
+}

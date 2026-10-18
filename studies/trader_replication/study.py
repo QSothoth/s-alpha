@@ -50,9 +50,13 @@ def merged(base, change):
     return out
 
 
-def ew_hold(A, pool, seg):
-    """Equal-weight daily-rebalanced holding of the pool names between ISO dates."""
+def ew_hold(A, pool, seg, lagged=False):
+    """Equal-weight daily-rebalanced holding of the pool names between ISO dates.  lagged=False keeps the
+    historical figure, which holds day t's return on names in day t's pool (a pool that reads day t's close is
+    look-ahead: it overstates the benchmark); lagged=True uses the pool as of t-1."""
     c = A['close']
+    if lagged:
+        pool = lag(pool)
     with np.errstate(invalid='ignore', divide='ignore'):
         r = np.where(pool & np.isfinite(lag(c)), c / lag(c) - 1, np.nan)
     m = (A['days'] >= seg[0]) & (A['days'] <= seg[1])
@@ -546,6 +550,9 @@ class Study:
             years = sorted(st['by_year'])
             st['ew_hold_pool'] = ew_hold(A, pool, self.full)
             st['ew_hold_by_year'] = {y: ew_hold(A, pool, (f'{y}-01-01', f'{y}-12-31')) for y in years}
+            st['ew_hold_lagged'] = ew_hold(A, pool, self.full, lagged=True)
+            st['ew_hold_lagged_by_year'] = {y: ew_hold(A, pool, (f'{y}-01-01', f'{y}-12-31'), lagged=True)
+                                            for y in years}
             st['trades_by_year'] = {y: year_trades(tr, y) for y in years}
             st['why'] = {w: sum(t['why'] == w for t in tr) for w in sorted({t['why'] for t in tr})}
             if market == self.home[0]:

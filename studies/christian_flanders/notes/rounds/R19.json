@@ -1,0 +1,14 @@
+{
+ "stage": "pairs",
+ "base": ["r18.json", "chosen"],
+ "ref": "R18",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "G1": {"close_any": ["hi52"], "rule_opts": {"max_open": 10}},
+  "G2": {"close_any": ["hi52"], "max_new": 3},
+  "G3": {"close_any": ["hi52"], "max_new": 3, "rule_opts": {"max_open": 10}},
+  "G4": {"close_any": ["hi52"], "kind_order": ["ep", "hi52"]},
+  "G5": {"close_any": ["hi52"], "rule_opts": {"max_open": 10, "max_gross": 1.5}}
+ }
+}
