@@ -70,6 +70,10 @@ def run(name):
         entries, rules, _, pool = R.build_system(A, config)
         px, ema = M.context(A, pool, rules)
         st, trades = M.summarize(A, px, ema, rules, entries, located, spec['draws'], pool)
+        if config.get('trend_phase_groups'):
+            st['behavior_by_entry_kind'] = {
+                kind:M.behavior([t for t in trades if t['kind'] == kind])
+                for kind in sorted({t['kind'] for t in trades})}
         short_actual = {(t['code'],t['entry']) for t in trades if t['side'] < 0}
         st['short_bought_entry_date'] = {
             k:[sum((str(A['codes'][j]),t.entry_date) in short_actual for t,j,_,_ in rows),len(rows)]

@@ -388,6 +388,157 @@ def r75():
     print('R75 saved', out['coverage_counts'], flush=True)
 
 
+def period_attribution(A, curve, dates, trades, rules, start, end):
+    """Reconcile an interval's marked PnL with audited fills and independently calculated financing."""
+    columns = {str(code): j for j, code in enumerate(A['codes'])}
+    first = int(np.searchsorted(dates, start))
+    last = int(np.searchsorted(dates, end, side='right')) - 1
+    equity0 = float(curve[first - 1]) if first else 1.
+    net = float(curve[last]) - equity0
+    d0 = int(np.searchsorted(A['days'], start)) - 1
+    d1 = int(np.searchsorted(A['days'], end, side='right')) - 1
+
+    def mark(code, d, shares):
+        if abs(shares) < 1e-12:
+            return 0.
+        j = columns[code]
+        while d > 0 and not np.isfinite(A['close'][d, j]):
+            d -= 1
+        assert d >= 0 and np.isfinite(A['close'][d, j]), (code, d)
+        return float(A['close'][d, j]) * shares
+
+    events = defaultdict(list)
+    rows = []
+    for t in trades:
+        shares0 = shares1 = cash = 0.
+        for e in t['executions']:
+            if e['action'] == 'end':
+                continue  # the curve marks inventory; a terminal record is not a cash fill
+            day = e['time'][:10]
+            opening = e['action'] in ('entry', 'add')
+            delta = e['shares'] * (1 if opening else -1)
+            if t['side'] > 0:
+                events[day].append((t['code'], delta))
+            if day < start:
+                shares0 += delta
+            if day <= end:
+                shares1 += delta
+            if start <= day <= end:
+                buy = (t['side'] > 0) == opening
+                cash += e['shares'] * e['price'] * (-(1 + rules.buy_cost) if buy else 1 - rules.sell_cost)
+        if t['entry'][:10] <= end and t['exit'][:10] >= start:
+            pnl = cash + t['side'] * (mark(t['code'], d1, shares1) - mark(t['code'], d0, shares0))
+            rows.append(dict(code=t['code'], entry=t['entry'], exit=t['exit'], why=t['why'],
+                             old_position=t['entry'][:10] < start, pnl=pnl,
+                             contribution=pnl / equity0, opening_value=mark(t['code'], d0, shares0),
+                             ret=t['ret'], days=t['days']))
+    holdings = defaultdict(float)
+    finance = 0.
+    for i, day in enumerate(dates[:last + 1]):
+        d = int(np.searchsorted(A['days'], day))
+        if str(day) >= start:
+            gross_long = sum(mark(code, d - 1, size) for code, size in holdings.items())
+            previous_equity = float(curve[i - 1]) if i else 1.
+            finance += rules.margin_rate / 252 * max(0., gross_long - previous_equity)
+        for code, delta in events[str(day)]:
+            holdings[code] += delta
+            if abs(holdings[code]) < 1e-12:
+                del holdings[code]
+    old = sum(x['pnl'] for x in rows if x['old_position'])
+    new = sum(x['pnl'] for x in rows if not x['old_position'])
+    residual = net - old - new + finance
+    assert abs(residual) < 1e-8 * max(1., equity0), residual
+    return dict(equity_start=equity0, equity_end=float(curve[last]), period_return=net / equity0,
+                old_contribution=old / equity0, new_contribution=new / equity0,
+                financing_contribution=-finance / equity0, residual=residual, rows=rows)
+
+
+def entry_feedback(trades, day, rules):
+    """Daily close entry sees today's ordinary exits, but not future or terminal closures."""
+    assert not rules.feedback_opened
+    closed = [t for t in trades if t['exit'][:10] < day or
+              (t['exit'][:10] == day and t['entry'][:10] < day and t['why'] != 'end')]
+    recent = sum(t['r'] for t in closed[-rules.feedback:]) if rules.feedback and len(closed) >= rules.feedback else None
+    risk = rules.risk
+    if recent is not None and recent < 0:
+        risk = rules.risk_low
+    elif recent is not None and recent > 0 and rules.risk_high:
+        risk = rules.risk_high
+    return dict(closed_r=recent, risk_before_index_scale=risk)
+
+
+def compare_start_entries(full, fresh, full_trades, fresh_trades, rules):
+    key = lambda t: (t['code'], t['entry'])
+    left = {key(t): t for t in full['rows'] if not t['old_position']}
+    right = {key(t): t for t in fresh['rows'] if not t['old_position']}
+
+    def unique(rows, other):
+        out = []
+        for k in sorted(rows):
+            t = rows[k]
+            held = [dict(entry=x['entry'], exit=x['exit']) for x in other
+                    if x['code'] == t['code'] and x['entry'] < t['entry'] and
+                    (x['exit'] > t['entry'] or x['exit'] == t['entry'] and x['why'] == 'end')]
+            out.append(dict(t, other_path_held=held))
+        return out
+
+    shared = [dict(code=k[0], entry=k[1], full=left[k], march=right[k],
+                   full_feedback=entry_feedback(full_trades, k[1], rules),
+                   march_feedback=entry_feedback(fresh_trades, k[1], rules)) for k in sorted(left.keys() & right.keys())]
+    return dict(common=shared, full_only=unique({k: v for k, v in left.items() if k not in right}, fresh_trades),
+                march_only=unique({k: v for k, v in right.items() if k not in left}, full_trades))
+
+
+def start_layers(name='R95'):
+    """Fixed start-date attribution; every arm is diagnostic and cannot replace the carried configuration."""
+    path = R.ROUNDS / f'{name}.json'
+    spec = json.loads(path.read_text())
+    assert spec['measurement_only'] and not spec['eligible_for_carry'] and len(spec['candidates']) <= 5
+    A = R.us_arrays()
+    located = {k: [x for x in R.located_longs(A, part) if x[0].dated]
+               for k, part in zip(('select', 'validate'), R.L.split(R.L.load(R.LEDGER), R.CUTOFF))}
+    out = dict(chosen='R81', chosen_config=R.system_config_after(spec['base'][0]), measurement_only=True,
+               spec_sha256=hashlib.sha256(path.read_bytes()).hexdigest(), configs={}, full={},
+               attribution={}, price_audit={})
+    actual = {}
+    for key, arm in spec['candidates'].items():
+        source = json.loads((R.I.OUT / arm['source'][0]).read_text())
+        source_key = source['chosen'] if arm['source'][1] == 'chosen' else arm['source'][1]
+        cfg = source['chosen_config'] if arm['source'][1] == 'chosen' else source['configs'][source_key]
+        cfg = R.merged(cfg, arm.get('change', {}))
+        entries, rules, _, pool = R.build_system(A, cfg)
+        px, ema = context(A, pool, rules)
+        st, tr = summarize(A, px, ema, rules, entries, located, spec['draws'], pool)
+        if not arm.get('change'):
+            prior = source['full'][source_key]
+            assert abs(st['total'] - prior['total']) < 1e-10
+            assert all(abs(st['by_year'][y] - v) < 1e-10 for y, v in prior['by_year'].items())
+        curve, dates, replay = R.Y.simulate(px, ema, rules, entries, *R.FULL, audit=True)
+        assert replay == tr
+        late_curve, late_dates, late = R.Y.simulate(px, ema, rules, entries, spec['period'][0], R.FULL[1], audit=True)
+        full = period_attribution(A, curve, dates, tr, rules, *spec['period'])
+        fresh = period_attribution(A, late_curve, late_dates, late, rules, *spec['period'])
+        assert abs(fresh['period_return'] - st['march_start']['2024']) < 1e-10
+        pairs = compare_start_entries(full, fresh, tr, late, rules)
+        out['configs'][key], out['full'][key] = cfg, st
+        out['attribution'][key] = dict(full=full, march=fresh, entries=pairs)
+        out['price_audit'][key] = dict(full=price_audit(A, tr), march=price_audit(A, late))
+        actual[key] = tr
+        print(name, key, dict(full_year=st['by_year']['2024'], full_after_march=full['period_return'],
+              old=full['old_contribution'], new=full['new_contribution'], march=fresh['period_return'],
+              common=len(pairs['common']), full_only=len(pairs['full_only']), march_only=len(pairs['march_only'])), flush=True)
+        (R.I.OUT / f'{name.lower()}.partial.json').write_text(json.dumps(out, indent=1, default=float))
+    old = {(t['code'], t['entry']): t for t in actual['R74']}
+    current = {(t['code'], t['entry']): t for t in actual['R81']}
+    out['shared_entry_exit_comparison'] = [dict(code=k[0], entry=k[1], R74=old[k], R81=current[k])
+                                         for k in sorted(old.keys() & current.keys())]
+    (R.I.OUT / f'{name.lower()}.json').write_text(json.dumps(out, indent=1, default=float))
+    (R.I.OUT / f'{name.lower()}.partial.json').unlink()
+
+
 if __name__ == '__main__':
     import sys
-    short_layers(sys.argv[1]) if len(sys.argv)>1 else r75()
+    if len(sys.argv) > 1:
+        start_layers(sys.argv[1]) if sys.argv[1] == 'R95' else short_layers(sys.argv[1])
+    else:
+        r75()

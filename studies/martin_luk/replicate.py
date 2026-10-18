@@ -1403,6 +1403,10 @@ def build_system(A, cfg, trace=None):
         trace['raw'] = entries
     if cfg.get('liquidity_groups'):
         entries = liquidity_groups(A, entries)
+    if cfg.get('trend_phase_groups'):
+        if cfg.get('liquidity_groups'):
+            raise ValueError('Combine phase and liquidity management explicitly before using both')
+        entries = trend_phase_groups(A, entries)
     if cfg['filter'] and cfg['filter'] != 'NONE':
         entries = filter_days(entries, market_ok(A, pool, w, cfg['filter']))
     if cfg.get('priority') == 'theme':
@@ -1438,6 +1442,15 @@ def build_system(A, cfg, trace=None):
     if cfg.get('rule_opts'):
         rules = replace(rules, **{k: tuple(v) if isinstance(v, list) else v for k, v in cfg['rule_opts'].items()})
     return entries, rules, mask, pool
+
+
+def trend_phase_groups(A, entries):
+    """Freeze early-trend management from completed history, never from the entry day's move."""
+    c, e9, e21, e50 = (A[k] for k in ('close', 'e9', 'e21', 'e50'))
+    strong = prev((c > e50) & (e9 > e21) & (e21 > e50)) & (prev(e50) > prev(prev(e50)))
+    early = strong & S._past_any(c <= e50, 21)
+    return [[e[:5] + ('early_trend',) + e[6:] if early[d, e[1]] else e for e in day]
+            for d, day in enumerate(entries)]
 
 
 def liquidity_groups(A, entries):

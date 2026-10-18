@@ -1,0 +1,17 @@
+{
+  "stage": "start_date_attribution",
+  "base": ["r94.json", "chosen"],
+  "objective": "measure_inventory_feedback_and_entry_path_gap",
+  "measurement_only": true,
+  "eligible_for_carry": false,
+  "draws": 31,
+  "seed": 1,
+  "period": ["2024-03-01", "2024-12-31"],
+  "candidates": {
+    "R81": {"source": ["r94.json", "chosen"]},
+    "EARLY": {"source": ["r94.json", "NOADD_EXEC4_EARLY"]},
+    "R81_NO_FEEDBACK": {"source": ["r94.json", "chosen"], "change": {"rule_opts": {"feedback": 0}}},
+    "EARLY_NO_FEEDBACK": {"source": ["r94.json", "NOADD_EXEC4_EARLY"], "change": {"rule_opts": {"feedback": 0}}},
+    "R74": {"source": ["r74.json", "chosen"]}
+  }
+}

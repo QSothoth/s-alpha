@@ -91,7 +91,7 @@ class Pos:
     management: Rules | None = None
 
 
-def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False):
+def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False, entry_audit=None):
     """Run between ISO dates; return (equity array, dates, trades).
 
     px: dict of (days x codes) 'open', 'high', 'low', 'close' and 'dates', 'codes';  ema: dict name -> array;
@@ -100,6 +100,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     Optional px['session'] numbers trading days and px['daily_close'] marks their final bars. Stops/trims
     run every bar; daily management and financing retain their daily clocks. px['mark'] may contain
     forward-filled, already observed closes for valuation only; never use it as tradable OHLC.
+    entry_audit optionally maps requested (code, ISO day) keys to lists receiving attempt outcomes;
+    it records the first rejecting constraint without changing execution or logging other dates.
     """
     o, h, l, c, dates = px['open'], px['high'], px['low'], px['close'], px['dates']
     session = px.get('session', np.arange(len(dates)))
@@ -167,14 +169,29 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             if audit:
                 trades[-1]['executions'] = q.executions
 
+    def record_attempt(j, d, reason, equity, fill, stop, proposed_value=None):
+        if entry_audit is None:
+            return
+        key=(str(px['codes'][j]),str(dates[d])[:10])
+        if key in entry_audit:
+            entry_audit[key].append(dict(time=str(dates[d]),reason=reason,fill=float(fill),stop=float(stop),
+                                         equity=float(equity),gross=float(gross(d)),
+                                         successful_longs_before=new_longs,proposed_value=proposed_value))
+
     def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None):
         nonlocal cash
-        if j in pos or not np.isfinite(fill) or fill <= 0:
+        if j in pos:
+            record_attempt(j,d,'already_held',equity,fill,stop)
+            return
+        if not np.isfinite(fill) or fill <= 0:
+            record_attempt(j,d,'invalid_fill',equity,fill,stop)
             return
         if rules.max_open and len(pos) >= rules.max_open:
+            record_attempt(j,d,'max_open',equity,fill,stop)
             return
         risk = abs(fill - stop) / fill
         if not (0 < risk < 1) or (stop - fill) * side >= 0:
+            record_attempt(j,d,'invalid_stop',equity,fill,stop)
             return
         frac = rules.risk
         recent = opened_feedback if rules.feedback_opened else (
@@ -192,7 +209,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         width = risk if size_risk is None else max(risk, size_risk)
         val = min(frac * equity / width, cap * equity, rules.max_gross * equity - gross(d))
         if val <= .001 * equity:
+            record_attempt(j,d,'no_capacity',equity,fill,stop,float(val))
             return
+        record_attempt(j,d,'opened',equity,fill,stop,float(val))
         size = val / fill
         flow = -val * (1 + rules.buy_cost) if side > 0 else val * (1 - rules.sell_cost)
         cash += flow
@@ -342,8 +361,10 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         for e in sorted(todays, key=lambda x: x[0]):
             pr, j, side, fill, stop, kind = e[:6]
             if month_blocked:
-                break
+                record_attempt(j,d,'month_blocked',eq_now,fill,stop)
+                continue
             if side > 0 and rules.max_new_long and new_longs >= rules.max_new_long:
+                record_attempt(j,d,'daily_success_cap',eq_now,fill,stop)
                 continue
             had = j in pos
             opened = open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,

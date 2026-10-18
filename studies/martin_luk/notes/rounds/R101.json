@@ -1,0 +1,3487 @@
+{
+  "stage": "minute_structural_stop_and_capacity",
+  "base": [
+    "r100.json",
+    "chosen"
+  ],
+  "ref": "RETRY_EXEC4",
+  "objective": "bought_fraction_sum",
+  "candidates": {
+    "RETRY_EXEC4": {
+      "bar_start": 1,
+      "reentry": true,
+      "max_new": 0,
+      "rule_opts": {
+        "max_new_long": 4
+      }
+    },
+    "LOD3": {
+      "bar_start": 1,
+      "reentry": true,
+      "max_new": 0,
+      "rule_opts": {
+        "max_new_long": 4
+      },
+      "stop_mode": "lod3"
+    },
+    "LOD3_UNCAPPED": {
+      "bar_start": 1,
+      "reentry": true,
+      "max_new": 0,
+      "rule_opts": {
+        "max_new_long": 0
+      },
+      "stop_mode": "lod3"
+    },
+    "BAR3": {
+      "bar_start": 1,
+      "reentry": true,
+      "max_new": 0,
+      "rule_opts": {
+        "max_new_long": 4
+      },
+      "stop_mode": "bar3"
+    },
+    "BAR3_UNCAPPED": {
+      "bar_start": 1,
+      "reentry": true,
+      "max_new": 0,
+      "rule_opts": {
+        "max_new_long": 0
+      },
+      "stop_mode": "bar3"
+    }
+  },
+  "draws": 31,
+  "seed": 1,
+  "sources": {
+    "US.AA": {
+      "path": "data/preopen-s20-k5-raw-a/k5/AA.csv",
+      "sha256": "cb8efc1d7215951dcc1a7ffbcac6b64a6923649542ddbebe6d037723ed2810e3",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.AAOI": {
+      "path": "data/preopen-s20-k5-raw-b/k5/AAOI.csv",
+      "sha256": "5cfd2c8e89feb3a4e9ae5eaac249e957bb5d2ac74046890fea40dfa0032ef143",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.AAPL": {
+      "path": "data/preopen-us-k5-raw/k5/AAPL.csv",
+      "sha256": "126f87477ca8a00da03f240e7860a541606f7a22f4eb73754efe464c3a85c362",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.ABAT": {
+      "path": "data/martin-luk-k5-r8/ABAT.csv.gz",
+      "sha256": "a475667abf84053db116f3ce3dffc127796aa1d157f4d049add13ba6277ed684",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ABVX": {
+      "path": "data/preopen-s20-k5-raw-b/k5/ABVX.csv",
+      "sha256": "a94ea9e7a15a4efcd7b2ff354ab951db3e619ffd3de8d7e4c51d506c105cd328",
+      "span": [
+        "2023-10-20",
+        "2026-09-24"
+      ],
+      "rows": 57000,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.ACAD": {
+      "path": "data/preopen-s20-k5-raw-b/k5/ACAD.csv",
+      "sha256": "01934747c2f37cc8dae6f8378e93d17f406cf5b12608ddbc85022b413b6ecf1d",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131388,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.ACHC": {
+      "path": "data/martin-luk-k5-r8/ACHC.csv.gz",
+      "sha256": "23c741ca28791e839d5dc2726adfedb95a92bb75d73ca71039c2bc3064c57f48",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ACMR": {
+      "path": "data/martin-luk-k5-r8/ACMR.csv.gz",
+      "sha256": "0aa3d99b8cedfabf68456329968b81528286b6d848fc4e1681d602e5cebb2efb",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ACVA": {
+      "path": "data/martin-luk-k5-r8/ACVA.csv.gz",
+      "sha256": "6fbc477c74b2b7e9f91e30159a935fa6123886ca8af10d2cc5920f4894e58540",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ADMA": {
+      "path": "data/martin-luk-k5-r8/ADMA.csv.gz",
+      "sha256": "ccb52f7c4db5a104b9d9df8bf911d7997889356c802fb81db7e7722135472854",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ADNT": {
+      "path": "data/martin-luk-k5-r8/ADNT.csv.gz",
+      "sha256": "0bd4d102b7894e4440f52886ada30baa7e1d5e84ca4b47f6c231ba29bbb0e93c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ADTN": {
+      "path": "data/martin-luk-k5-r8/ADTN.csv.gz",
+      "sha256": "572a6d50dcb0dcaf9edf08bf21d5b39f68fc2c0f31673ffa0f8c96606359662c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AEO": {
+      "path": "data/martin-luk-k5-r8/AEO.csv.gz",
+      "sha256": "8bae7ef5a419bf58c05adf8f3de657e8a61ab6c6b6141677edda08e76b26f994",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AG": {
+      "path": "data/preopen-s20-k5-raw-a/k5/AG.csv",
+      "sha256": "b50a455d10df6d1e3c32e0296bd2e8846fdbbabd8de3164ca24bcce903c35b03",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.AGL": {
+      "path": "data/martin-luk-k5-r8/AGL.csv.gz",
+      "sha256": "884bd2acee77bb53bda16bee8d5025d39395bf50d09e7bc95850912b51454033",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AGPU": {
+      "path": "data/martin-luk-k5-r8/AGPU.csv.gz",
+      "sha256": "9c98f84a81fd703e1c5dabe03580d4b0a8702479d70f56f6c19be03f19c2a01e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AIP": {
+      "path": "data/martin-luk-k5-r8/AIP.csv.gz",
+      "sha256": "731ee3b61ff25c8e2a3ea96e371ec6849981cbcac3d8388c758925dc9c98ae40",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AISP": {
+      "path": "data/martin-luk-k5-r8/AISP.csv.gz",
+      "sha256": "3a748e383368a39d76809727d9556d30e5bdc86e8ebbe72bc68f6f6c2caed862",
+      "span": [
+        "2023-12-11",
+        "2026-10-16"
+      ],
+      "rows": 55476,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ALB": {
+      "path": "data/preopen-s20-k5-raw-a/k5/ALB.csv",
+      "sha256": "0f13b4be05437f5478bceb5f278bec564bde2d9968da770b50af79b7a4dae7b3",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.ALB.PRA": {
+      "path": "data/martin-luk-k5-r8/ALB.PRA.csv.gz",
+      "sha256": "612fa7c709dadab5739f28b8aa0db9be2e7ae44bacb9bdb2e7dd973aadd31a5e",
+      "span": [
+        "2024-03-13",
+        "2026-10-16"
+      ],
+      "rows": 50640,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AMD": {
+      "path": "data/preopen-us-k5-raw/k5/AMD.csv",
+      "sha256": "3e7d8a450d1078e91093ac0e3b5322d18d9ba702c81ae13c41be864c97dc8328",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.AMKR": {
+      "path": "data/martin-luk-k5-r8/AMKR.csv.gz",
+      "sha256": "75965ebd1c63f5fbe155279ba73ab3d991dba567523e96932b41fc1d5ce9faaa",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AMPG": {
+      "path": "data/martin-luk-k5-r8/AMPG.csv.gz",
+      "sha256": "2387eb8b9a089e2a8fd88dc2612c04193cd944392b711053ed5e7038bcff7023",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AMPL": {
+      "path": "data/martin-luk-k5-r8/AMPL.csv.gz",
+      "sha256": "346d04dc350a08a16d4bde79b83e3ca271319ba17b10c57b43da8a738bc916fb",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AMRC": {
+      "path": "data/martin-luk-k5-r8/AMRC.csv.gz",
+      "sha256": "53918fde65db9695028803aaac3fa7b63fe1e44486f1fbdcb213fd765af1aa7d",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AMZN": {
+      "path": "data/preopen-us-k5-raw/k5/AMZN.csv",
+      "sha256": "1f84c0bc6bab743204b845e02d93cdd860aa4efd67c0e01cd58a3a1c7ee75779",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.ANAB": {
+      "path": "data/martin-luk-k5-r8/ANAB.csv.gz",
+      "sha256": "222d28bf749443b4e78ccaf8a75026932b11ba12c7e2afcd449d2949e7492a64",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ANET": {
+      "path": "data/martin-luk-k5-r8/ANET.csv.gz",
+      "sha256": "157071e360e051bfd3fcd7bdb1311d36d5f85effc9b6e9596f06f9a8157a3310",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.APEI": {
+      "path": "data/martin-luk-k5-r8/APEI.csv.gz",
+      "sha256": "8c9f3204be24a9c7b1ba8dd45ebe453e27f53d800a51a9fda22958527cab649f",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.APLD": {
+      "path": "data/preopen-s20-k5-raw-b/k5/APLD.csv",
+      "sha256": "e7251121e77454ce7bdecd6ec6bf77bee98762baed89751fff81967b42c792e2",
+      "span": [
+        "2021-04-19",
+        "2026-09-24"
+      ],
+      "rows": 106188,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.APO": {
+      "path": "data/p3-k5-validation-raw/k5/APO.csv",
+      "sha256": "9e1e0784a35790487d78c16619bd8ea8277daa583081648a7e236de95d0588bf",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.ARM": {
+      "path": "data/p3-k5-validation-raw/k5/ARM.csv",
+      "sha256": "f77af7d20ba75e2e25d965bbe974640fe5965a8a406c95c5d17b1a04127fa1ab",
+      "span": [
+        "2023-09-14",
+        "2026-09-25"
+      ],
+      "rows": 59106,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.ARTL": {
+      "path": "data/martin-luk-k5-r8/ARTL.csv.gz",
+      "sha256": "e553ee499d1954762c78e61ee8216ced0f482318782b24db869e96ae6525a774",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AS": {
+      "path": "data/martin-luk-k5-r8/AS.csv.gz",
+      "sha256": "19cc83851d04caece76dcf046334b184d1713c40f90ddc396c63a25943d30a39",
+      "span": [
+        "2024-02-01",
+        "2026-10-16"
+      ],
+      "rows": 52824,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ASML": {
+      "path": "data/martin-luk-k5-r8/ASML.csv.gz",
+      "sha256": "1a0cec6612dded8b7a7841def0c5b448b8046d18d20631b4501b7a64dd67e581",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ASND": {
+      "path": "data/martin-luk-k5-r8/ASND.csv.gz",
+      "sha256": "f4579765f39e6ee8be9ba2cb16e3c2e12056750f4eef9daf89425809aa0adda9",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ASO": {
+      "path": "data/martin-luk-k5-r8/ASO.csv.gz",
+      "sha256": "5fb0f0257bf9a0926233eed1d2799d3e615a6be67bfce0fe446413d449d6aa35",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ASTS": {
+      "path": "data/p3-k5-validation-raw/k5/ASTS.csv",
+      "sha256": "1c408f6444deeb7003e2c57866a2781e379dcf8fa7966a6e0589809f898449b7",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.ATEX": {
+      "path": "data/martin-luk-k5-r8/ATEX.csv.gz",
+      "sha256": "c132f90989a07a12d6bbc3056d8de020f6339e63e6b368c0a9f8617fda4814d8",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AVBP": {
+      "path": "data/martin-luk-k5-r8/AVBP.csv.gz",
+      "sha256": "a4981c85da5ae4b5aa628b419de253c881069a36c4026603e6434a6f693ef53c",
+      "span": [
+        "2024-01-26",
+        "2026-10-16"
+      ],
+      "rows": 53136,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.AVGO": {
+      "path": "data/preopen-us-k5-raw/k5/AVGO.csv",
+      "sha256": "5bcd0f26b1f208b3c2e362a7a60adc25a36f1b734f919ec2017a631ff2cfb8c1",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.AVTX": {
+      "path": "data/preopen-s20-k5-raw-b/k5/AVTX.csv",
+      "sha256": "6c5b165843f56e62a37dc55838dc0ffdc18a712c4bae4dec1c98c27b050009ee",
+      "span": [
+        "2021-08-16",
+        "2026-09-24"
+      ],
+      "rows": 99714,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.AZTA": {
+      "path": "data/martin-luk-k5-r8/AZTA.csv.gz",
+      "sha256": "a7ffac3dd1c98b9d03049ceb863873cab3cb9cfdcd8c61b9e1aed802fd5b8725",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.B": {
+      "path": "data/martin-luk-k5-r8/B.csv.gz",
+      "sha256": "37049e53fc1643e13164c9dd91f41c13ab77683b279e1c6c0540ad1aa6005d4a",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BA": {
+      "path": "data/p3-k5-validation-raw/k5/BA.csv",
+      "sha256": "e0b41c15a6058dfc707a78a8df1703f38cab578c3af976ed6e45770fc5e8fa8b",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.BAC": {
+      "path": "data/p3-k5-validation-raw/k5/BAC.csv",
+      "sha256": "60354a895c4d48745ef03a83c2bad7705ec61cce6ab5b06c967e8674d537204a",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.BB": {
+      "path": "data/p3-k5-validation-raw/k5/BB.csv",
+      "sha256": "b6f108b4bf7ce4e0813dc7b20148de095f725d654b8c2577f4eb861bbff6436a",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.BBAI": {
+      "path": "data/martin-luk-k5-r8/BBAI.csv.gz",
+      "sha256": "a739d131ab4e2ce592df2bffdbd420f8d4d8721aedfa16759ee3e0726593b098",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BBWI": {
+      "path": "data/martin-luk-k5-r8/BBWI.csv.gz",
+      "sha256": "d8918a5be50b9927d30cb23bf4e0f5eb92025abbd2ca4fc4c3da1ab04480c84f",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BE": {
+      "path": "data/p3-k5-validation-raw/k5/BE.csv",
+      "sha256": "208426606db22245fa9f8d993afc054ca60b437d346555bd858d390599027f40",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.BEKE": {
+      "path": "data/martin-luk-k5-r8/BEKE.csv.gz",
+      "sha256": "6527c80a4c7f57ad842b723d51f0035ab833defbadd2b6b3169880c55293befa",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BIDU": {
+      "path": "data/martin-luk-k5-r8/BIDU.csv.gz",
+      "sha256": "360f5d8f292b4bdbdbdcb6373109fd1fde112ab24007899787f40e720c17e065",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BLTE": {
+      "path": "data/martin-luk-k5-r8/BLTE.csv.gz",
+      "sha256": "b747277ef9f97ee327771b83e2966ffd07b3939515511e462e12646060c48f2c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BLZE": {
+      "path": "data/martin-luk-k5-r8/BLZE.csv.gz",
+      "sha256": "2d9b6b6d0d83fb2a8f61f2bffe57fc0150c8077a14f07e610164e07ac778df6d",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BMNR": {
+      "path": "data/p3-k5-validation-raw/k5/BMNR.csv",
+      "sha256": "725461a2624e0ce7e7ad165441f8359cc827569dcf627844146607cf9fbe95d0",
+      "span": [
+        "2023-10-16",
+        "2026-09-25"
+      ],
+      "rows": 56138,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.BNC": {
+      "path": "data/martin-luk-k5-r8/BNC.csv.gz",
+      "sha256": "e4252948424a91d91ee4f9b02d072cb3418f74c4fd0cda72916a76f49ac5704d",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BOBS": {
+      "path": "data/martin-luk-k5-r8/BOBS.csv.gz",
+      "sha256": "d73840cb45d19f2451c90774590611e83cec747a56c5d29718133de9b33412a1",
+      "span": [
+        "2026-02-05",
+        "2026-10-16"
+      ],
+      "rows": 13728,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BTU": {
+      "path": "data/martin-luk-k5-r8/BTU.csv.gz",
+      "sha256": "95a12174b130cd1132581579ed72424e6372660c29287f18fbd035c4748cd86f",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BW": {
+      "path": "data/martin-luk-k5-r8/BW.csv.gz",
+      "sha256": "2987c39e726c98a7ed4d03d2dfabe916f9173e4e37bb3340b3f15761e7e75e35",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BWA": {
+      "path": "data/martin-luk-k5-r8/BWA.csv.gz",
+      "sha256": "c2238eb9da95293214d7a4a53b81ddabb3939c6f361762c8a949235ed48c04cf",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BYND": {
+      "path": "data/martin-luk-k5-r8/BYND.csv.gz",
+      "sha256": "6b09ea804474d45fa022d36065401c8c403b2e94034a2798a627b69ebd238dad",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.BZ": {
+      "path": "data/martin-luk-k5-r8/BZ.csv.gz",
+      "sha256": "406ce84a64757057d20e0e0111a5df33b8081097f199fb83170fafd4d41fa3cc",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CCJ": {
+      "path": "data/martin-luk-k5-r8/CCJ.csv.gz",
+      "sha256": "76db8d312a792dc519f1c24e97c14957088269cd06b15c51db7861a82d17136c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CDE": {
+      "path": "data/preopen-s20-k5-raw-a/k5/CDE.csv",
+      "sha256": "2a2cc33971f5bf9cbe20bf2d994fcb8b7c43c17a267af2722b47b74a5d5be873",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.CLDX": {
+      "path": "data/martin-luk-k5-r8/CLDX.csv.gz",
+      "sha256": "9c467e2c47694d377f5b936082c1cfd9afdbe8c2e9ec58beced3d5eb0a0ccba8",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CLF": {
+      "path": "data/preopen-s20-k5-raw-a/k5/CLF.csv",
+      "sha256": "d3652f098c3c36941b6b6e246e2aba8dfa08217fe8920741e62d1fa726cc5716",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.CLRO": {
+      "path": "data/martin-luk-k5-r8/CLRO.csv.gz",
+      "sha256": "b02eea4887db00c35faabdcad19d142234f81807694d10744904b724ab38a015",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CMCL": {
+      "path": "data/martin-luk-k5-r8/CMCL.csv.gz",
+      "sha256": "509f62e9b238b4bdb03acae1790721adfc81d24f096b5eabfa20dd7e19dc135e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.COHR": {
+      "path": "data/martin-luk-k5-r8/COHR.csv.gz",
+      "sha256": "b39c8421def6dd097bd1fdf37bd299fc35c274443947ad97c51e1f72f65354dd",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.COIN": {
+      "path": "data/p3-k5-validation-raw/k5/COIN.csv",
+      "sha256": "77c6a048a9a4aed7cd1682d2a8545348fce28b12e2840c17cb42dd51d1f6b235",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.CRI": {
+      "path": "data/martin-luk-k5-r8/CRI.csv.gz",
+      "sha256": "a863f568b9abb898997f458de8943f13c6e4399ffca14ae51a94db7f3a34574c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CRML": {
+      "path": "data/preopen-s20-k5-raw-a/k5/CRML.csv",
+      "sha256": "24d408a410e284c048eddfb1e9cc7744337708a9e9fccdcba705a7f92fba1734",
+      "span": [
+        "2024-02-20",
+        "2026-09-24"
+      ],
+      "rows": 50562,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.CROX": {
+      "path": "data/martin-luk-k5-r8/CROX.csv.gz",
+      "sha256": "1c7160a73e2cfc06fd98f58d953b97be3ef55828edc40d247679f1a42bef39d8",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CRS": {
+      "path": "data/martin-luk-k5-r8/CRS.csv.gz",
+      "sha256": "493e8fce3dc8178008db9e973c48a247661f7f84de86c9afbfb37da6785bd77e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CRSP": {
+      "path": "data/martin-luk-k5-r8/CRSP.csv.gz",
+      "sha256": "8431ec11c985d637af1d16c5deb7109b63f001e9af9d2cdebd934cffce96dcb6",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CRTO": {
+      "path": "data/martin-luk-k5-r8/CRTO.csv.gz",
+      "sha256": "42cf46a4c6c26032dcdb8c207be3939ba922fd8a47f5c5381195a12cacfcad12",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CRWV": {
+      "path": "data/p3-k5-validation-raw/k5/CRWV.csv",
+      "sha256": "34ca6860c4939de9400a562f353e4094410d6e77dc0e88e568c53f045574e5df",
+      "span": [
+        "2025-03-28",
+        "2026-09-25"
+      ],
+      "rows": 29220,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.CUE": {
+      "path": "data/martin-luk-k5-r8/CUE.csv.gz",
+      "sha256": "235eb2db6a163eb173dd952bee627b76268c43d57ad97ca1c6c49b1c3d176d7b",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.CVLT": {
+      "path": "data/martin-luk-k5-r8/CVLT.csv.gz",
+      "sha256": "97669c2f4173c7b3064aaa11c8cbc3871ff617379d1b3e59976a71a34d18c042",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.DELL": {
+      "path": "data/p3-k5-validation-raw/k5/DELL.csv",
+      "sha256": "3c289d1c8adc0715b1d4d90491fccedbe439ef96d46152c31058e945c9f91264",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.DNTH": {
+      "path": "data/martin-luk-k5-r8/DNTH.csv.gz",
+      "sha256": "da932ab9980a69adbc136ce399a40810ee6c76357fb2b1e47e5072034e592130",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.DPRO": {
+      "path": "data/martin-luk-k5-r8/DPRO.csv.gz",
+      "sha256": "3e3c8c1350447fb4f4f69c1f3e9ca2018f64fdbdf2b934b52a91e173c79b9b3a",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.DQ": {
+      "path": "data/martin-luk-k5-r8/DQ.csv.gz",
+      "sha256": "dab5e1640c2b369e172cedcebc3992c23fedd0fb711da09663f29d09bfaae91e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.DXPE": {
+      "path": "data/martin-luk-k5-r8/DXPE.csv.gz",
+      "sha256": "c91dd21ea378c811982fded3be48abe40b653c355f84ba6bafdaee04ac73dc92",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.DXYZ": {
+      "path": "data/martin-luk-k5-r8/DXYZ.csv.gz",
+      "sha256": "951c5d9648f745cba8a2b2f3fcc10c93275d268b60e505c957e20e609ff67bdf",
+      "span": [
+        "2024-03-26",
+        "2026-10-16"
+      ],
+      "rows": 49938,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.EDU": {
+      "path": "data/martin-luk-k5-r8/EDU.csv.gz",
+      "sha256": "28f6cbb1145fb41134d5da3fdcbed9d913d8467601b2ae0514329bacce4d2910",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ENLT": {
+      "path": "data/martin-luk-k5-r8/ENLT.csv.gz",
+      "sha256": "93775877937732602723d761b9f2d112c1bd8582452412a8358ac65d2fbf3caf",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.EOSE": {
+      "path": "data/p3-k5-validation-raw/k5/EOSE.csv",
+      "sha256": "6492389cb913c731afc8bc5e6c7f9606542bd237ba29693cb7dd3e88abdabdcb",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.ERAS": {
+      "path": "data/martin-luk-k5-r8/ERAS.csv.gz",
+      "sha256": "511e3c4e5e62a5015394637e07695836d6c7565c130834b7a062bee9cdd4d2f7",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ETOR": {
+      "path": "data/martin-luk-k5-r8/ETOR.csv.gz",
+      "sha256": "009ee4b9b46fc7dc8e86b48613ee4ba15a4ed836d896754c77965df42b5511ea",
+      "span": [
+        "2025-05-14",
+        "2026-10-16"
+      ],
+      "rows": 27894,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.EVC": {
+      "path": "data/martin-luk-k5-r8/EVC.csv.gz",
+      "sha256": "97d4397680e3d9efdaa6e5a9d625c7c9348f4db1a4b4280e7adefe2536747fa0",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.EZPW": {
+      "path": "data/martin-luk-k5-r8/EZPW.csv.gz",
+      "sha256": "411c739430f7bd851a6f18c0b9c6018210cb393f92369661f836f3ea24b683cb",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.F": {
+      "path": "data/p3-k5-validation-raw/k5/F.csv",
+      "sha256": "04727604e39dc99cadd515a2869b0abab27e2cbaa9a995a1135528017d4c27c2",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.FBIN": {
+      "path": "data/martin-luk-k5-r8/FBIN.csv.gz",
+      "sha256": "eb8d229ea20591b418f8e46a59f26a9a5f12db819e2fc0f7c54bf3899409fdd8",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.FCEL": {
+      "path": "data/martin-luk-k5-r8/FCEL.csv.gz",
+      "sha256": "3292ef4cdc373f681feccbdce89a7789a911e02338acc336863e5f48f2bd2d3c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.FDMT": {
+      "path": "data/martin-luk-k5-r8/FDMT.csv.gz",
+      "sha256": "e94ad98ee03aef1f245fe5624eccfc019b7e0a43ccb5f36c2b1e553479b1cbed",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.FIVE": {
+      "path": "data/martin-luk-k5-r8/FIVE.csv.gz",
+      "sha256": "7e23f8e4c29ab3db0c415272118b6e880d18f02a0c5cda788547d6520d112d47",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.FRPT": {
+      "path": "data/martin-luk-k5-r8/FRPT.csv.gz",
+      "sha256": "87304d574f8a50541cccc6fa9b0914ecb3e21c97edb092afb7192abbe5424767",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.FSLY": {
+      "path": "data/preopen-s20-k5-raw-b/k5/FSLY.csv",
+      "sha256": "d22380c9684928c2734abd389a594653ed2901ca6d6b25ecfbe3d8deacf40390",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.FTDR": {
+      "path": "data/martin-luk-k5-r8/FTDR.csv.gz",
+      "sha256": "219c7047b2e7aee41042ec7fcbf9d36504588fbd6dd4194a3a9bb9ee77204b0b",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.FVRR": {
+      "path": "data/martin-luk-k5-r8/FVRR.csv.gz",
+      "sha256": "48cf6732d3d4a3fbbee2f30fd527b02dbf188f7075dcb0f3400481e036328eda",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.GDC": {
+      "path": "data/martin-luk-k5-r8/GDC.csv.gz",
+      "sha256": "d8983d2474bc3e4787d7506b31e794f0a56279f93c09bd3cef8cbca33ba22523",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.GEO": {
+      "path": "data/martin-luk-k5-r8/GEO.csv.gz",
+      "sha256": "90cc736c6ce42700f53c4bd58d7fd1f4f317570ae2c7b8e01494c7eb2139deb3",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.GLP": {
+      "path": "data/martin-luk-k5-r8/GLP.csv.gz",
+      "sha256": "ca081426dbf41c8c3dc6dc76df7d0e4525d8c191ba4362ebfcb0041e4bd10370",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.GME": {
+      "path": "data/p3-k5-validation-raw/k5/GME.csv",
+      "sha256": "2a7844b26130e02a2a8d2aa761c3268617a0a16e8aa963e16463ee3ced0bdcbd",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.GOOGL": {
+      "path": "data/preopen-us-k5-raw/k5/GOOGL.csv",
+      "sha256": "6cbdfedd90248c765c878b0ba044ee4581d47855fcf462ac142f89ece65ecd52",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.GPRE": {
+      "path": "data/martin-luk-k5-r8/GPRE.csv.gz",
+      "sha256": "86d859fe255f9fbb17baf53723ddcf5bed1075adbb88783c2651944b996215c0",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.GRBK": {
+      "path": "data/martin-luk-k5-r8/GRBK.csv.gz",
+      "sha256": "3fe99dc647f8cad3ebddc9ba0ef519b7037e99390ef2f49e8ffbc56b409d6ed9",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.GTX": {
+      "path": "data/martin-luk-k5-r8/GTX.csv.gz",
+      "sha256": "dea2fcc9aa9dc04d70a32d424a69de54562f54cf521fd208f1a2bbe75651e692",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.GWRE": {
+      "path": "data/martin-luk-k5-r8/GWRE.csv.gz",
+      "sha256": "26e2c74a48cd9eb999bccb59e6e244177329d8e0ad60a07bbb696d7c670a21bf",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.HE": {
+      "path": "data/martin-luk-k5-r8/HE.csv.gz",
+      "sha256": "aecd2c6c6733a9d4b75d50c5d6550b15d81bf7a22180ad39d16f6fb0091f8d6a",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.HIMS": {
+      "path": "data/preopen-s20-k5-raw-a/k5/HIMS.csv",
+      "sha256": "e766f72dff5e94420d35f94997037a13667eecdba3fcaa048f0ed623bb1eba0f",
+      "span": [
+        "2021-01-11",
+        "2026-09-24"
+      ],
+      "rows": 111414,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.HL": {
+      "path": "data/preopen-s20-k5-raw-a/k5/HL.csv",
+      "sha256": "0612ce27146e5a3242447fa00aa98f87042b2d25954083993a60d41b5a9a5b6a",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.HMY": {
+      "path": "data/martin-luk-k5-r8/HMY.csv.gz",
+      "sha256": "957be94241152e654dba4b9d85bf6574c5baaf3794ecbb100ea94efab4a59b31",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.HNST": {
+      "path": "data/martin-luk-k5-r8/HNST.csv.gz",
+      "sha256": "a4697435b1582e58666a2d30920ed95b3ee69e3355565a6449057d3af6b2920e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.HOOD": {
+      "path": "data/p3-k5-validation-raw/k5/HOOD.csv",
+      "sha256": "a5edb73a7ffccc8b762875d9ceb4c46fbe72e56fcb81dfa85119822e03b40d9f",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.HP": {
+      "path": "data/martin-luk-k5-r8/HP.csv.gz",
+      "sha256": "5b5ff42ba5ee2116652983bcddebbb68c7a86a2c4f78e8d7892aa7b8678c1c7c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.HPP": {
+      "path": "data/martin-luk-k5-r8/HPP.csv.gz",
+      "sha256": "2af7ba7e1ffe6f69b3ecfa8381895b12c4cc54f76fb3fa7513ade87a26590548",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.HUN": {
+      "path": "data/martin-luk-k5-r8/HUN.csv.gz",
+      "sha256": "81e6df7542003a6f21c3b9c37626e0dcefa82a2aeeb9c7b45f4b51977749194a",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.HYLN": {
+      "path": "data/martin-luk-k5-r8/HYLN.csv.gz",
+      "sha256": "b445c7917f9f8b3028edde5c3e7ef4fbe30fd77eed67b58c4c238952f5df5fde",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.HZO": {
+      "path": "data/martin-luk-k5-r8/HZO.csv.gz",
+      "sha256": "d2531a25a90999ebafafe02102fb08ddb35dafa8909b464070c452bc11c71e83",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.IBRX": {
+      "path": "data/preopen-s20-k5-raw-b/k5/IBRX.csv",
+      "sha256": "90085cfa36028fa970542b5b412b50202843b6e84b3162f6ad6927df84267cb9",
+      "span": [
+        "2021-03-01",
+        "2026-09-24"
+      ],
+      "rows": 108840,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.IBTA": {
+      "path": "data/martin-luk-k5-r8/IBTA.csv.gz",
+      "sha256": "54fa1ab0d6db563e601c16ff049f5ecee292123fb0828bd641b670587fc3fb9f",
+      "span": [
+        "2024-04-18",
+        "2026-10-16"
+      ],
+      "rows": 48690,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ICLR": {
+      "path": "data/martin-luk-k5-r8/ICLR.csv.gz",
+      "sha256": "9466b7aca5b7505ba16609c2fdfe96b0588a2f730a8d35bf5240449a79a4e72b",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.IDYA": {
+      "path": "data/martin-luk-k5-r8/IDYA.csv.gz",
+      "sha256": "e24d03e7b798030dfc40f0cc4f42dd1bc537857d29e62d14214d23650c991154",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.IMNM": {
+      "path": "data/martin-luk-k5-r8/IMNM.csv.gz",
+      "sha256": "32d08292958c7081b9c26750fbc2862ad7e1620173d70208bede53ac57611801",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.IMRX": {
+      "path": "data/martin-luk-k5-r8/IMRX.csv.gz",
+      "sha256": "83f22588044031aa7e9fb24ef4d2c3fe7ccbd9d249ae1cfdf921ff3633e0615e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.INHD": {
+      "path": "data/martin-luk-k5-r8/INHD.csv.gz",
+      "sha256": "ed1210813f9f7b0d9a3617ae5b6deb604f00e9efe95762c04fce88b0363d3260",
+      "span": [
+        "2023-12-14",
+        "2026-10-16"
+      ],
+      "rows": 52512,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.INTC": {
+      "path": "data/preopen-us-k5-raw/k5/INTC.csv",
+      "sha256": "68d2ecbb657d0945b67add96da87390ed02102e7151471b85fe3fe1c5a9baf01",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.IONQ": {
+      "path": "data/preopen-s20-k5-raw-b/k5/IONQ.csv",
+      "sha256": "4dfd5820e2ea924472727ffed1b53e9c70f79456104dc32c9093090e4359497a",
+      "span": [
+        "2021-09-21",
+        "2026-09-24"
+      ],
+      "rows": 97764,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.IOVA": {
+      "path": "data/preopen-s20-k5-raw-a/k5/IOVA.csv",
+      "sha256": "7a1c70dcd24d39db29b46e8ebf01b5b72a5459fb17408ee52d33327bee3b7e51",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.IPI": {
+      "path": "data/martin-luk-k5-r8/IPI.csv.gz",
+      "sha256": "b61565ab4c29807ca14358544f439dbd739ba2fcce16ede6520be587adadf71a",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.IREN": {
+      "path": "data/preopen-s20-k5-raw-b/k5/IREN.csv",
+      "sha256": "41fd302c1f6627f5448b9d98c4e5bf4db3ac4327fc9c6ea02a24d15a81828ffe",
+      "span": [
+        "2021-11-17",
+        "2026-09-24"
+      ],
+      "rows": 94566,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.IRWD": {
+      "path": "data/martin-luk-k5-r8/IRWD.csv.gz",
+      "sha256": "034838765051b78ea1546cbff6233d0080a804058bba12cbc281a85d4c259b69",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.JBIO": {
+      "path": "data/martin-luk-k5-r8/JBIO.csv.gz",
+      "sha256": "a35cf369fff95177685d702d3a5170fca14ce9707df70f29dbf179c5d25d4a7f",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.JD": {
+      "path": "data/martin-luk-k5-r8/JD.csv.gz",
+      "sha256": "e8ca30a4e7cf6f29ff19aeb32912a68d0678f57eb1dcf3c704c9c4b4d8b11c01",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.JOYY": {
+      "path": "data/martin-luk-k5-r8/JOYY.csv.gz",
+      "sha256": "b861f673d22bc1b0eb3f19ea594829ed6cba5e5551a54d5c13987c77a932ee3c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.KEYS": {
+      "path": "data/martin-luk-k5-r8/KEYS.csv.gz",
+      "sha256": "fea9ae890e6b49e82379b4f849e4318feab6e8136171f31ed7e91d3f62ebe55e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.KGC": {
+      "path": "data/preopen-s20-k5-raw-a/k5/KGC.csv",
+      "sha256": "a69b5a3c781c06dc838722c7f762b769fdfcbdb7efde9f010f2f5360117ae132",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.KNSA": {
+      "path": "data/martin-luk-k5-r8/KNSA.csv.gz",
+      "sha256": "5a3b0a7f666e2378a2fa9bd33ce52f469abac39519c21ef792e07434353d3d18",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.KNX": {
+      "path": "data/martin-luk-k5-r8/KNX.csv.gz",
+      "sha256": "3b54579be50252036e0613882156f63b6abc8a9ad23c9c46d6a1777b6129e0b4",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.KOD": {
+      "path": "data/preopen-s20-k5-raw-a/k5/KOD.csv",
+      "sha256": "76f0a818c25bc40e7786e54bcf534e9594ea0c76bc0331ea1219d375e3560e61",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.KRUS": {
+      "path": "data/martin-luk-k5-r8/KRUS.csv.gz",
+      "sha256": "43d0987212a5a6b904901813a1d87f17ba7cfb04c59664ca56a609e08cdef4ab",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.LAC": {
+      "path": "data/martin-luk-k5-r8/LAC.csv.gz",
+      "sha256": "25d43005dfd545c657f3165bfb3008dadb06b88b4ced567fbb5b75ea684f5090",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.LAR": {
+      "path": "data/martin-luk-k5-r8/LAR.csv.gz",
+      "sha256": "bfc1078a171bb063892e326ea8a42f5eb3239b9090b6b4c3d5b68c2092ec7edc",
+      "span": [
+        "2023-10-04",
+        "2026-10-16"
+      ],
+      "rows": 59184,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.LAUR": {
+      "path": "data/martin-luk-k5-r8/LAUR.csv.gz",
+      "sha256": "3f8e97e41cec83e058c179075d4df0a0c6ea397f1f102b3d6f506d0ce096376a",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.LGN": {
+      "path": "data/martin-luk-k5-r8/LGN.csv.gz",
+      "sha256": "fe5936ecd7d5271430e60e22ddb1377343c15c7a023f0c0e69a7e4838b3355e0",
+      "span": [
+        "2025-09-12",
+        "2026-10-16"
+      ],
+      "rows": 21456,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.LONA": {
+      "path": "data/martin-luk-k5-r8/LONA.csv.gz",
+      "sha256": "7ae7677fac219cb1000bf06c06b504d7ff1ca68fc135ecc87b672e4174207bc5",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.LQDA": {
+      "path": "data/preopen-s20-k5-raw-a/k5/LQDA.csv",
+      "sha256": "de601e2c97e04e1f5a9f66ffa027b816e77c0642958290d458715ff86e34b7c8",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.MARA": {
+      "path": "data/p3-k5-validation-raw/k5/MARA.csv",
+      "sha256": "ea5cb3fd0cf9463ebe6920bfd89a4ed5b24ae57c279acfc65987614dbafb1ec3",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.MD": {
+      "path": "data/martin-luk-k5-r8/MD.csv.gz",
+      "sha256": "127f941dc6aad0dfa6e19a660230dd72fc71673d1b0622ba204ae8d8bc3f8b71",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MEDP": {
+      "path": "data/martin-luk-k5-r8/MEDP.csv.gz",
+      "sha256": "a37070ca265d9d0d2f57929c503d3fb113d0af1f55699f4af1ad96c6f013dfa4",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.META": {
+      "path": "data/preopen-us-k5-raw/k5/META.csv",
+      "sha256": "5efd22dcaf1297f63c7babfa0262d848da555ee736b34f7dc0261d8503808113",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.MGNX": {
+      "path": "data/martin-luk-k5-r8/MGNX.csv.gz",
+      "sha256": "19d9d7b4b23ddf6d085876466bb5b58bb7d188da6df8b152d06e9f3fafb544e3",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MIAX": {
+      "path": "data/martin-luk-k5-r8/MIAX.csv.gz",
+      "sha256": "5a521a218f1cd1a2495d6cca0fddc1c0d24456d5695b987f593a635883365a2a",
+      "span": [
+        "2025-08-14",
+        "2026-10-16"
+      ],
+      "rows": 23016,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MLAB": {
+      "path": "data/martin-luk-k5-r8/MLAB.csv.gz",
+      "sha256": "262e98faa4c5860a8ba2244688730ef8ba17af5501e92247393d8ea71cd985e8",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MLTX": {
+      "path": "data/martin-luk-k5-r8/MLTX.csv.gz",
+      "sha256": "b658a5bd436386991e956d712a68bdba05c3bb28aff2cb9982bbaa8a63260eb6",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MOD": {
+      "path": "data/martin-luk-k5-r8/MOD.csv.gz",
+      "sha256": "b7891baccfc73d13b99324e5e051ff2ba2e7aef5d3ce9d3b8d80e37860b20197",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MOH": {
+      "path": "data/martin-luk-k5-r8/MOH.csv.gz",
+      "sha256": "0c4162cb558772f1a85d5aae4ef59512c22618954ec4fecf93b72c4bed93da0d",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MP": {
+      "path": "data/preopen-s20-k5-raw-a/k5/MP.csv",
+      "sha256": "3fa7b7387299f3609b131001f5501019f09dc2d3c898882c8b41aa3e478a73ce",
+      "span": [
+        "2020-11-09",
+        "2026-09-24"
+      ],
+      "rows": 114618,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.MPLT": {
+      "path": "data/martin-luk-k5-r8/MPLT.csv.gz",
+      "sha256": "61b0611910db285d895c65cb36d5f2a9dcebdcd22a51272b709f3b76acb6a972",
+      "span": [
+        "2025-10-27",
+        "2026-10-16"
+      ],
+      "rows": 19038,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MRNA": {
+      "path": "data/p3-k5-validation-raw/k5/MRNA.csv",
+      "sha256": "bef0bda835e0c46c1f48a7c846d8422ed090759cae17ca03b1b951cbc0dce4f8",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.MRVL": {
+      "path": "data/p3-k5-validation-raw/k5/MRVL.csv",
+      "sha256": "f26560134bfd04b2f8544e906aac7a54be0df0e8020a7ce440375179ced0f4d3",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.MRX": {
+      "path": "data/martin-luk-k5-r8/MRX.csv.gz",
+      "sha256": "765b9cde8529ffa6d8ba1dbb17e5ecca1bc1dbb91198d937bbc593887effe9b7",
+      "span": [
+        "2024-04-25",
+        "2026-10-16"
+      ],
+      "rows": 48300,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MSFT": {
+      "path": "data/preopen-us-k5-raw/k5/MSFT.csv",
+      "sha256": "18f1a636ef31424e22de378d38b3d938f4730ecb07467f1a8ee56fd06cccc596",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.MSTR": {
+      "path": "data/p3-k5-validation-raw/k5/MSTR.csv",
+      "sha256": "7f3b6fb38021260fe5f6ac386a16b1e5b441743732fdcaf943bdca7135331672",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.MU": {
+      "path": "data/preopen-us-k5-raw/k5/MU.csv",
+      "sha256": "ad394d57af344dd1af6ea982e45fbf65086e148eaf36e8784c8bec3c9c9bbef0",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.MUSA": {
+      "path": "data/martin-luk-k5-r8/MUSA.csv.gz",
+      "sha256": "f36580f3cc91a7f5148f49224c9509abc48029c67bb8a6d211301b86608b33d2",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MWH": {
+      "path": "data/martin-luk-k5-r8/MWH.csv.gz",
+      "sha256": "f473887c794286342c5dd05621a06afd7a2ecef3fc236891c4f2dbcbeaee4dbe",
+      "span": [
+        "2026-02-11",
+        "2026-10-16"
+      ],
+      "rows": 13416,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.MYRG": {
+      "path": "data/martin-luk-k5-r8/MYRG.csv.gz",
+      "sha256": "ae1ae1bee60fa0d9315bd81ac0bcf5d0658f5a71aac5ca41028e5ad71c6aca40",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NAVN": {
+      "path": "data/martin-luk-k5-r8/NAVN.csv.gz",
+      "sha256": "e0659626067f7058c6113546c1682aa90353dc1b931a7ba1975cba104ec2253f",
+      "span": [
+        "2025-10-30",
+        "2026-10-16"
+      ],
+      "rows": 18804,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NBIS": {
+      "path": "data/p3-k5-validation-raw/k5/NBIS.csv",
+      "sha256": "4b17b7b6644b9e53926efc66e34ac4e4c02578f453b17ae0d748200ee429e1d1",
+      "span": [
+        "2024-10-21",
+        "2026-09-25"
+      ],
+      "rows": 37572,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.NEOG": {
+      "path": "data/martin-luk-k5-r8/NEOG.csv.gz",
+      "sha256": "d352af7e9c399bfa758da8bff649025286dab6ba17ac36283a1ef2b0b6bbe777",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NFLX": {
+      "path": "data/p3-k5-validation-raw/k5/NFLX.csv",
+      "sha256": "c6c7cfa248c6a795b37806645d30417303afc6d991fda911bc2605765463ddab",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.NHC": {
+      "path": "data/martin-luk-k5-r8/NHC.csv.gz",
+      "sha256": "a21f543435a1f7c39be9f8dc450d8875d89a47888d0299f356f7963f8cf6643f",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NKE": {
+      "path": "data/p3-k5-validation-raw/k5/NKE.csv",
+      "sha256": "1afe4020d0728bd8d460455e8991c91724d62c9bd0e6f214102067265a11737c",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.NOK": {
+      "path": "data/p3-k5-validation-raw/k5/NOK.csv",
+      "sha256": "3303edd75f6790a0cec92609e02d266238b8724c05de3a1638bc1d61a19e659e",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.NOVT": {
+      "path": "data/martin-luk-k5-r8/NOVT.csv.gz",
+      "sha256": "2e48943668104678e247898b5dce1ce32d4314c19c92a23d163a58f3205077ab",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NTAP": {
+      "path": "data/martin-luk-k5-r8/NTAP.csv.gz",
+      "sha256": "83acf65e889bc537c456156f87a8b14aac5e0ccd3c15de789bc44c966c921ccd",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NTGR": {
+      "path": "data/martin-luk-k5-r8/NTGR.csv.gz",
+      "sha256": "ee7703ce1159cca4ea0bc8312d9ac8afb2093d4ff28460078f048f7c2a549d39",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NTSK": {
+      "path": "data/martin-luk-k5-r8/NTSK.csv.gz",
+      "sha256": "923ab8d56f395967cb3eef3412f8c33ec25dcbdb8db58dd6c0e7488a23c854b3",
+      "span": [
+        "2025-09-18",
+        "2026-10-16"
+      ],
+      "rows": 21144,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NUTX": {
+      "path": "data/martin-luk-k5-r8/NUTX.csv.gz",
+      "sha256": "733cae104e3d3fd935bbf4b589422b27882bff050df92ecf20939f561cc0038f",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NVAX": {
+      "path": "data/martin-luk-k5-r8/NVAX.csv.gz",
+      "sha256": "142e601b92e7cee4400c7acff27b333bea427aa2661f0520e82a297ffedad69a",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.NVDA": {
+      "path": "data/preopen-us-k5-raw/k5/NVDA.csv",
+      "sha256": "41e2eb5f642c4c5781e3c2147ca616fb2c6f77253c4f5ee85d4cf28c624e0b80",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.NVO": {
+      "path": "data/p3-k5-validation-raw/k5/NVO.csv",
+      "sha256": "4362b5a1be4437b072f30232d79fd07f646c5fa7918b846d8442c9ca7966a9ef",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.OCUL": {
+      "path": "data/martin-luk-k5-r8/OCUL.csv.gz",
+      "sha256": "60b3f77a49d3408ea35f1170d08ee110cb2f61d5775de2f2d3f2990b9d6dc3c5",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.OII": {
+      "path": "data/martin-luk-k5-r8/OII.csv.gz",
+      "sha256": "e3c63064317b77419be934ec49ecebbe96a8184ed73e2083d6df4e7e99aba82b",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.OKTA": {
+      "path": "data/martin-luk-k5-r8/OKTA.csv.gz",
+      "sha256": "909a967bdc70ed44d29d011eef6ac5d1218e2364d45749c1e400245b3281eeb4",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.OLN": {
+      "path": "data/martin-luk-k5-r8/OLN.csv.gz",
+      "sha256": "5dcdb0aae3ad791bacc44384302334cb0f0b9dcb02f4d8984af8ec45e593d434",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ONDS": {
+      "path": "data/p3-k5-validation-raw/k5/ONDS.csv",
+      "sha256": "d76f8cbe00ec1bfd956c94c4a91df5d3feac4744e5d154643dabbc75af648e37",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.ONON": {
+      "path": "data/martin-luk-k5-r8/ONON.csv.gz",
+      "sha256": "38e3efba9f4d1e9090d7d47f4d6c34e341f675b1689873f12a61570240da2e01",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ORCL": {
+      "path": "data/p3-k5-validation-raw/k5/ORCL.csv",
+      "sha256": "ba75243269003bb375156b19c76476259eb3bd4e0758f3e6654bd2e8a0baefe8",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.ORCL.PRD": {
+      "path": "data/martin-luk-k5-r8/ORCL.PRD.csv.gz",
+      "sha256": "8c1855d9a9bd5f3f1e032850bc3d2ab0fd10df0a43dfeb1afe12509dc73bcefb",
+      "span": [
+        "2026-02-10",
+        "2026-10-16"
+      ],
+      "rows": 13494,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.OSCR": {
+      "path": "data/martin-luk-k5-r8/OSCR.csv.gz",
+      "sha256": "ac305a7555b42e225d09279a6f09cd7e85ffbfd85ebe70bfd1c9ea800fb05adb",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PAGS": {
+      "path": "data/martin-luk-k5-r8/PAGS.csv.gz",
+      "sha256": "13f8052f62a2eaf5572e31ae53ce1774cc0ae87ef7f2326eee3077c80da609fb",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PCG": {
+      "path": "data/p3-k5-validation-raw/k5/PCG.csv",
+      "sha256": "1e69fdba37f0c69afca0daf592257624bcd2e2262d91abe6d70417cb762169fa",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.PDD": {
+      "path": "data/martin-luk-k5-r8/PDD.csv.gz",
+      "sha256": "3186769eef463dcb33dd4a17d3ca7fb6308490d1d146704b7fcb817d38dde374",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PDFS": {
+      "path": "data/martin-luk-k5-r8/PDFS.csv.gz",
+      "sha256": "84036a736f65efadb191abc04a45840191c9fbb1609251962825802c59128a07",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PFE": {
+      "path": "data/p3-k5-validation-raw/k5/PFE.csv",
+      "sha256": "d20b91f68c2743d5316538ada8955ee6e7fa5e363608e8afa32f8db60413888c",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.PLTR": {
+      "path": "data/p3-k5-validation-raw/k5/PLTR.csv",
+      "sha256": "f362a9e24af5f7f7319c79b76052fb4eaab4f137e811849f7aaab28991ffff9d",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.PNRG": {
+      "path": "data/martin-luk-k5-r8/PNRG.csv.gz",
+      "sha256": "7b19f5675f78ff1a1b217783786a06c8e2802d84aa698f1806bdadd1b5fd665b",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PRG": {
+      "path": "data/martin-luk-k5-r8/PRG.csv.gz",
+      "sha256": "8d812d4f6e5535363bd491f6d4d8dab0c33924d47745882e3b5041174b16157d",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PRIM": {
+      "path": "data/martin-luk-k5-r8/PRIM.csv.gz",
+      "sha256": "ab4ecd50a88fe3ca1133beb1029c53d7dd0570ca5b7e220e699bda7dc564b314",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PRME": {
+      "path": "data/martin-luk-k5-r8/PRME.csv.gz",
+      "sha256": "940c960387b5a6d45a911db4ae9988438275202e369029f4fbf0d0bf21e33569",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PSIX": {
+      "path": "data/martin-luk-k5-r8/PSIX.csv.gz",
+      "sha256": "4520af3f3a57679a58a3207687053d8c87b68b0c384947c2e05d793c1f6c6bf8",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PTCT": {
+      "path": "data/martin-luk-k5-r8/PTCT.csv.gz",
+      "sha256": "4c458ab9f7555eee46a256b3a41222e76f53b8378e02af4bb98c8bd090c4a0ca",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PTGX": {
+      "path": "data/martin-luk-k5-r8/PTGX.csv.gz",
+      "sha256": "1098b75d93a3457b85213dbfef3803d8c4038fa3d48cf0a01cc7086ae4abdc02",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.PWR": {
+      "path": "data/martin-luk-k5-r8/PWR.csv.gz",
+      "sha256": "c213c00d84bf5184d29946fcdf099a35d0d996006ddbfd2c7f2be0123becc64c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.QBTS": {
+      "path": "data/preopen-s20-k5-raw-b/k5/QBTS.csv",
+      "sha256": "769a742e5af666ec47bc12bf7fedf01d5f90de50397afe57b15320d721a12489",
+      "span": [
+        "2022-07-26",
+        "2026-09-24"
+      ],
+      "rows": 81264,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.RARE": {
+      "path": "data/preopen-s20-k5-raw-b/k5/RARE.csv",
+      "sha256": "8feedfbd2b47f96fca602256ba9176b086b4d3044eec42a608fdf9035e069ced",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.RCL": {
+      "path": "data/martin-luk-k5-r8/RCL.csv.gz",
+      "sha256": "137068f9c15cb408e3fbad0ca4177a1c36fc51c7a26c967332e543c11562ffd8",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.RDDT": {
+      "path": "data/martin-luk-k5-r8/RDDT.csv.gz",
+      "sha256": "53151f04714bda73ade0c2bdf198157bd4ca8752b5a85358373797ecc00e6044",
+      "span": [
+        "2024-03-21",
+        "2026-10-16"
+      ],
+      "rows": 50172,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.REAL": {
+      "path": "data/martin-luk-k5-r8/REAL.csv.gz",
+      "sha256": "1a2a4b2e2e93f08d59834471ac848d1ca53e7086e3b7cf33a4e46c7b51cb2c6b",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.RGTI": {
+      "path": "data/preopen-s20-k5-raw-b/k5/RGTI.csv",
+      "sha256": "1b5fbace99e7bf893addef8dc933a5006bb1c4469ed3d85e0836c5813a21f004",
+      "span": [
+        "2022-02-22",
+        "2026-09-24"
+      ],
+      "rows": 89532,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.RH": {
+      "path": "data/martin-luk-k5-r8/RH.csv.gz",
+      "sha256": "e9e02e70d5ee4e1995abb78009d7a5340d9eb276421b743a49026b16ae38996c",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.RILY": {
+      "path": "data/martin-luk-k5-r8/RILY.csv.gz",
+      "sha256": "48b48f1b3926c536fa25ddafa167ad3b8d2f650723b60acec079eda4a096b891",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.RIOT": {
+      "path": "data/preopen-s20-k5-raw-b/k5/RIOT.csv",
+      "sha256": "682b07acc5ebcb5f24a70664d1ce50bdcfdb5effdf03ff47feb4c18976df244b",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.RIVN": {
+      "path": "data/p3-k5-validation-raw/k5/RIVN.csv",
+      "sha256": "7aba46721424df986d8d60607e1d41b5464dbe5fff0aefb5361cebc625bf40e4",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.RKLB": {
+      "path": "data/p3-k5-validation-raw/k5/RKLB.csv",
+      "sha256": "736cae92d5db9823139bcff793c6cf5d69a11320826655076803f4f9ed426817",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.ROKU": {
+      "path": "data/martin-luk-k5-r8/ROKU.csv.gz",
+      "sha256": "884ad14c1b7cc0d34f219c0502d46e40488ce22aee518ba191452811a4773272",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.RPD": {
+      "path": "data/martin-luk-k5-r8/RPD.csv.gz",
+      "sha256": "49b2500e8ddea36cdf7594f2d8847d6b68a5d33e7005c7388c67ecc3bfb02157",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.RXST": {
+      "path": "data/martin-luk-k5-r8/RXST.csv.gz",
+      "sha256": "5c5e4b3db87c9e5a47dd61571cd30746468a161d913d2460c53db4f807589d15",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.S": {
+      "path": "data/martin-luk-k5-r8/S.csv.gz",
+      "sha256": "09aab9b7d8e20e9f63864e36456565b4d981b5b64f90589ded785503b538eb43",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SA": {
+      "path": "data/martin-luk-k5-r8/SA.csv.gz",
+      "sha256": "f86278ff4d551b154a942f85fe9317b5a9e450a26e6282b88de84986bd599935",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SATL": {
+      "path": "data/martin-luk-k5-r8/SATL.csv.gz",
+      "sha256": "4a0f49a391dd29377dacf782b3d2dd414e9144c3ff4d10653fb152bc5c0f144e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SCCO": {
+      "path": "data/martin-luk-k5-r8/SCCO.csv.gz",
+      "sha256": "004a4c79277d89834b0cedeb9ec3fb5143d518695a5f4d21a9d7711b70cfc1a3",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SEB": {
+      "path": "data/martin-luk-k5-r8/SEB.csv.gz",
+      "sha256": "6161477347a8dc6499b2b6ab11c658bcc7cf7e322b02359281b94c75b77800df",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SIG": {
+      "path": "data/martin-luk-k5-r8/SIG.csv.gz",
+      "sha256": "06b02bf19a5ce232b562cc61bb2b08b3b3a59f4ae8e7729f7fcccc242c98cc79",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SITM": {
+      "path": "data/martin-luk-k5-r8/SITM.csv.gz",
+      "sha256": "bf141b3650a2d0f17538d1da03f02eb63f59609b9ef5a60125fd1f2f57c2226d",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SKE": {
+      "path": "data/martin-luk-k5-r8/SKE.csv.gz",
+      "sha256": "6c32d7fc9c82f5c21f88278819abf019b9c6053e9969b1701b5d8eeecb292584",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SKHY": {
+      "path": "data/preopen-us-k5-raw/k5/SKHY.csv",
+      "sha256": "b8bcb5483d232ff00a855764069510fc8a857f372918bba2887960bd87deff94",
+      "span": [
+        "2026-07-10",
+        "2026-09-24"
+      ],
+      "rows": 4212,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.SLDP": {
+      "path": "data/martin-luk-k5-r8/SLDP.csv.gz",
+      "sha256": "845e83647c810ba39b012652685ca2f1662800e99de22b047b27e612b317bd55",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SLS": {
+      "path": "data/preopen-s20-k5-raw-a/k5/SLS.csv",
+      "sha256": "b6129f9726071fbd8a68dd6d647444eae4a1a44c5ddb6d195e2c36af7ea8a252",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.SMCI": {
+      "path": "data/preopen-s20-k5-raw-b/k5/SMCI.csv",
+      "sha256": "26cbe161557f0ded08cd26067b38ec48a3e2508db0091b5708eeaa1d7294070a",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.SMMT": {
+      "path": "data/martin-luk-k5-r8/SMMT.csv.gz",
+      "sha256": "c3c32aab74ecbb450014e8b9c4490d9ed1b6c03b53360658a6efeb9bcadb5132",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SNDK": {
+      "path": "data/preopen-us-k5-raw/k5/SNDK.csv",
+      "sha256": "a8a8d1d48d0869c54d9172f93459d868df5c5fef933d4feed990d61eb67396cb",
+      "span": [
+        "2025-02-13",
+        "2026-09-24"
+      ],
+      "rows": 31482,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.SNEX": {
+      "path": "data/martin-luk-k5-r8/SNEX.csv.gz",
+      "sha256": "c24265bde5dc050272b61f9a782b24679f898c0980eefc1e01e618be899b4da7",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SOFI": {
+      "path": "data/p3-k5-validation-raw/k5/SOFI.csv",
+      "sha256": "5955a7e00b641e717ab63829fb370cfc54ba2279f8442dfcdc62a2e468e36eda",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.SPHL": {
+      "path": "data/martin-luk-k5-r8/SPHL.csv.gz",
+      "sha256": "fd66fa083ec69614e4eedc593984b4fd1fabad38a238f1232f83b3e72540eb60",
+      "span": [
+        "2024-10-17",
+        "2026-10-16"
+      ],
+      "rows": 38898,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SPRC": {
+      "path": "data/martin-luk-k5-r8/SPRC.csv.gz",
+      "sha256": "5d65612e5d2480a1dac12a9677151f88cbf7d50ff2af0c7d5d1e4bc60584f7d4",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SPRY": {
+      "path": "data/martin-luk-k5-r8/SPRY.csv.gz",
+      "sha256": "44abf40995167ff5c6bece448eb10fc6e29dbd45af3cc478fd3230c3f0b77f5e",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.STAA": {
+      "path": "data/martin-luk-k5-r8/STAA.csv.gz",
+      "sha256": "8b1256d90b05c0f9f42639cabf0fa9a826736089df4ab18daa01a4cfb332444b",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.STTK": {
+      "path": "data/martin-luk-k5-r8/STTK.csv.gz",
+      "sha256": "defe61e17a21a551ffea7d77b84b50ca71f26f18bec55ea4f687c1824959d740",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.SVRA": {
+      "path": "data/preopen-s20-k5-raw-b/k5/SVRA.csv",
+      "sha256": "478377b41e03fe3c1d17bbaecf429cf7be6d0ff7a909fc336578ed450ee215d8",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.TDS": {
+      "path": "data/martin-luk-k5-r8/TDS.csv.gz",
+      "sha256": "5b7584d21c14aaa121ef6f4a4f2c1af53b1a1daa648efb148ff77d0f9dee4ce3",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TECH": {
+      "path": "data/martin-luk-k5-r8/TECH.csv.gz",
+      "sha256": "86c7cd7fa7d00f149d76fa5d4e0e57201dc38ce9c4c74c8112cf35230b283320",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TEM": {
+      "path": "data/preopen-s20-k5-raw-b/k5/TEM.csv",
+      "sha256": "b6cde3f33e2138afad9a66a4886f7fd72a934e54025f1a8266853ccc61c9c5da",
+      "span": [
+        "2024-06-14",
+        "2026-09-24"
+      ],
+      "rows": 44322,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.TGLS": {
+      "path": "data/martin-luk-k5-r8/TGLS.csv.gz",
+      "sha256": "3acf9f386e40528e9fd6c772bca73b050693d8c163695364c29fc24b7148d743",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.THRM": {
+      "path": "data/martin-luk-k5-r8/THRM.csv.gz",
+      "sha256": "e6ed434db668f00111f80ffae08641b558367aea0f7933ed94ea90e17529afb1",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TIC": {
+      "path": "data/martin-luk-k5-r8/TIC.csv.gz",
+      "sha256": "350e4ea91bff2e6c9bd1ffc585aacd58f3b55a08db7ad9bce41289ac02a328b0",
+      "span": [
+        "2024-12-30",
+        "2026-10-16"
+      ],
+      "rows": 35070,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TIGO": {
+      "path": "data/martin-luk-k5-r8/TIGO.csv.gz",
+      "sha256": "d635615f82db30197871ec20f0bc6df68083299b25efc79e416453c801321790",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TMDX": {
+      "path": "data/martin-luk-k5-r8/TMDX.csv.gz",
+      "sha256": "9cfb2dbdd535af4ff7913632c7bb87a46a8d118d8f485c9a765e221fe0e38395",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TOST": {
+      "path": "data/martin-luk-k5-r8/TOST.csv.gz",
+      "sha256": "8c2645a1f9ea0c0efbab9cd35e000457184437f04d5e12447f9f5f1fee47beb2",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TPB": {
+      "path": "data/martin-luk-k5-r8/TPB.csv.gz",
+      "sha256": "4e9a754f8dab80cc14011656302826a01feb71e83b1bd851ca1317867b23b0a8",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TSHA": {
+      "path": "data/martin-luk-k5-r8/TSHA.csv.gz",
+      "sha256": "bd8e7704c32cb56ed763aba3ca8be54d01ededbc6395db9fa922e42140abfb3a",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TSLA": {
+      "path": "data/preopen-us-k5-raw/k5/TSLA.csv",
+      "sha256": "7282d0b59ef2353b911ca55e7aac959c75341d696c602485bc04227240abf5b2",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-24",
+      "source_fetched_at": "2026-09-25T03:47:43.693117Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.TSM": {
+      "path": "data/martin-luk-k5-r8/TSM.csv.gz",
+      "sha256": "63e75aeea0fe34faa9cc7f8b747e35d0e06f5bcd8a2599b5a3f23cd9ffdc399d",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.TTD": {
+      "path": "data/preopen-s20-k5-raw-b/k5/TTD.csv",
+      "sha256": "9f82bf2ca531f0361e9df2ba51e3cd3135b1093fbd57a75b0a90d194e6ab89dd",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.U": {
+      "path": "data/preopen-s20-k5-raw-b/k5/U.csv",
+      "sha256": "6909794aab12447a9cca30c6b02a6ffd9f9139f14a8aa457eeac7e970ad8061a",
+      "span": [
+        "2020-09-18",
+        "2026-09-24"
+      ],
+      "rows": 117426,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:38.069283Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.UCTT": {
+      "path": "data/martin-luk-k5-r8/UCTT.csv.gz",
+      "sha256": "26bb1bc0a4342f76f41883bd695734fd718e620a21c98fc7c19cd8c54ea86cfa",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.UEC": {
+      "path": "data/preopen-s20-k5-raw-a/k5/UEC.csv",
+      "sha256": "9bc91b755f1f9cbf2ef72425a67901a558a625b6c35f0d2393001c6f59f08910",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.ULS": {
+      "path": "data/martin-luk-k5-r8/ULS.csv.gz",
+      "sha256": "95cd8d74b445ce1d1c6d729d038baaac9cd578d6b9f412a1572d3c09b3f854c5",
+      "span": [
+        "2024-04-12",
+        "2026-10-16"
+      ],
+      "rows": 49002,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.USAR": {
+      "path": "data/preopen-s20-k5-raw-a/k5/USAR.csv",
+      "sha256": "e55cd5b3cc966e058bc0cc248bb166fd9b3a07e53425f420e83c57fab5cbc97f",
+      "span": [
+        "2023-07-17",
+        "2026-09-24"
+      ],
+      "rows": 62304,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.UUUU": {
+      "path": "data/preopen-s20-k5-raw-a/k5/UUUU.csv",
+      "sha256": "ea55eb90ae8a7c54d149809fa607ba4283b98767dbd66a1860b485990afebb21",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.VECO": {
+      "path": "data/martin-luk-k5-r8/VECO.csv.gz",
+      "sha256": "0ef58a36fc2a82049bbb1120c71cd66c525246d5eb3cd66620be4355b6aeccf5",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.VERX": {
+      "path": "data/martin-luk-k5-r8/VERX.csv.gz",
+      "sha256": "70d57879323b79f9a8c2fa5dec42eb2d782639d96dbff2a7fc788d9a48d43f5b",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.VET": {
+      "path": "data/martin-luk-k5-r8/VET.csv.gz",
+      "sha256": "ff917affbe5b22067466dbc34c4bbd74fe80765bfba17fe5de94b280f5a1dcb3",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.VIAV": {
+      "path": "data/martin-luk-k5-r8/VIAV.csv.gz",
+      "sha256": "87d5cb933870ccec6c41fc678d1670d7440b9765ef5a1135d9ee9223ccbba2ff",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.VKTX": {
+      "path": "data/preopen-s20-k5-raw-a/k5/VKTX.csv",
+      "sha256": "50665eca3d11dcd5d8888da7a62ea44997c21f9e1ef6b0cc54c3775ae20b4d3e",
+      "span": [
+        "2020-01-02",
+        "2026-09-24"
+      ],
+      "rows": 131466,
+      "source_asof": "2026-09-25",
+      "source_fetched_at": "2026-09-25T08:27:36.177096Z",
+      "requested_end": "2026-09-24"
+    },
+    "US.VSXY": {
+      "path": "data/martin-luk-k5-r8/VSXY.csv.gz",
+      "sha256": "ef63654fb316957dcea8695e11f95f2e552a3fe1b1fca218ddaf3dfc855b7222",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.VZLA": {
+      "path": "data/martin-luk-k5-r8/VZLA.csv.gz",
+      "sha256": "f8c25d9788ed002e289ec90feed8e80b3804e4154a870e00bfca93839771db6d",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.WAL": {
+      "path": "data/martin-luk-k5-r8/WAL.csv.gz",
+      "sha256": "63c29c3ca7a590190ef846847c72a1627126027d7978c3c47ff75b8c88b469e5",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.WBD": {
+      "path": "data/p3-k5-validation-raw/k5/WBD.csv",
+      "sha256": "d04533668fe84e5315217bc35211332b74e20e61e5ed4c45666bc77386cf0f9f",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.WBI": {
+      "path": "data/martin-luk-k5-r8/WBI.csv.gz",
+      "sha256": "b5803c10ad45d0dea74c62748f5f85cca6cafa9da961c2c723ff17505d9a185f",
+      "span": [
+        "2025-09-17",
+        "2026-10-16"
+      ],
+      "rows": 21222,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.WCC": {
+      "path": "data/martin-luk-k5-r8/WCC.csv.gz",
+      "sha256": "ff6abb271640ce60d7ea99be56ae2bc838491edf495037cba57b5997b4acfc00",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.WLK": {
+      "path": "data/martin-luk-k5-r8/WLK.csv.gz",
+      "sha256": "56c979a4f2d417ff3f3b22a2457140bad9ebd5f177c7d4fca9f02e59de39f9b0",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.WMT": {
+      "path": "data/p3-k5-validation-raw/k5/WMT.csv",
+      "sha256": "cc7264c961bd85a089ed217c57072e97635d1d942b755f17c82a53b7918ffe1f",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.WSC": {
+      "path": "data/martin-luk-k5-r8/WSC.csv.gz",
+      "sha256": "9a51fe35fae6a256eedb20e33a3ee1c995d6cb60c72d9bcb14bf23d72afcc121",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.WSM": {
+      "path": "data/martin-luk-k5-r8/WSM.csv.gz",
+      "sha256": "7ecabd4611cd29be0ba6bf646a438432ff75c9429f3203a17b4b7318619dc061",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.WULF": {
+      "path": "data/p3-k5-validation-raw/k5/WULF.csv",
+      "sha256": "5eb95644e4f099dbc647d301bde019db967b11259ebf535a82536f24dca92190",
+      "span": [
+        "2023-05-01",
+        "2026-09-25"
+      ],
+      "rows": 66402,
+      "source_asof": "2026-09-26",
+      "source_fetched_at": "2026-09-26T11:13:53-0400",
+      "requested_end": "2026-09-25"
+    },
+    "US.XTND": {
+      "path": "data/martin-luk-k5-r8/XTND.csv.gz",
+      "sha256": "56215291a2a39e4da55495e467bdb0b9d34d5fcfd5be4504da46ed588117c557",
+      "span": [
+        "2025-03-06",
+        "2026-10-16"
+      ],
+      "rows": 31638,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ZBIO": {
+      "path": "data/martin-luk-k5-r8/ZBIO.csv.gz",
+      "sha256": "0a327c18093a7a92f2bd810e0c4da1f7d0a56895b9bc58c67979f3f5ad9dcd7c",
+      "span": [
+        "2024-09-13",
+        "2026-10-16"
+      ],
+      "rows": 40770,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ZS": {
+      "path": "data/martin-luk-k5-r8/ZS.csv.gz",
+      "sha256": "97f4845595d94781171d37e35cabe4c13df0402498fd8df214f561ad5d8418a4",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    },
+    "US.ZYME": {
+      "path": "data/martin-luk-k5-r8/ZYME.csv.gz",
+      "sha256": "6d7e101f17c37093d71cb094c15e45186d1bb2018990d5778ae4b30c21481154",
+      "span": [
+        "2023-10-02",
+        "2026-10-16"
+      ],
+      "rows": 59340,
+      "source_asof": "2026-10-17",
+      "source_batch_finished_at": "2026-10-17T14:26:37+00:00",
+      "requested_end": "2026-10-16"
+    }
+  },
+  "end": "2026-09-24",
+  "cache": "r101",
+  "scope": "all_existing_284_sources_common_period",
+  "data_policy": "provider_conditional_diagnostic",
+  "carry": "unchanged_full_market_requires_separate_validation",
+  "record_ledger": true,
+  "verify_global_baseline": true,
+  "manifest_sha256": "3fda41be89a9fc9e8e6416e2c863c4c4ba2691200bd5a683519d7ae9d0b0103d",
+  "constraints": [
+    "no_new_history_quota",
+    "single_process_nice19_blas1",
+    "same_pool_random_median",
+    "no_behavior_regression",
+    "march_start_not_worse"
+  ],
+  "hypothesis": "当前市况放行21个股票日首次触发中13个LOD风险足够窄，7个可用前根/触发K低点收窄，1个两者均宽；先改善结构风险筛选再重测名额，而不是继续强行压窄止损或只无限额。",
+  "selection": "窗口买到比例之和严格提高，随机/分段买到/笔数/持有/3月起跑全部不过退；多版过关按主目标、2025收益对数距离排序，同分优先BAR3_UNCAPPED、LOD3_UNCAPPED、BAR3、LOD3。都不过则保留RETRY_EXEC4条件参照，全市场R81。",
+  "ledger_funnel": true,
+  "diagnostic_sha256": "97619bb3c07994e3a440f859fb56035cd2d69e2cf3a9228e844c6dcf7dbadf01",
+  "record_stop_geometry": true
+}

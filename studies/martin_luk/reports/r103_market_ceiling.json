@@ -1,0 +1,328 @@
+{
+ "scope": "R102_283_stock_minute_subset_IDX50_full_window_upper_bound_not_full_market",
+ "source_sha256": {
+  "r102.json": "1371f2a4411be1e8f0bb5df9d6995df1e1238abc1a412b246b4e801af723c4a1",
+  "r102_window_input.json": "552ccdfb0070e652f5dbf9c80e8e6036778049b54bae6c294443523d23c72023",
+  "r99_coverage.json": "6f39f53bfa95d359943c0920d0aaa911a6fd327bb4a47c451557ee3f96950ec7"
+ },
+ "segments": {
+  "select": {
+   "full_denominator": 42,
+   "minute_covered": 23,
+   "all_window_market_blocked": [
+    {
+     "id": "S01",
+     "code": "US.RIVN",
+     "window": [
+      "2025-11-25",
+      "2025-11-25"
+     ],
+     "days": [
+      {
+       "day": "2025-11-25",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": true,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": true,
+        "INDEX_RVOL_SPLIT": true
+       }
+      }
+     ]
+    },
+    {
+     "id": "S07",
+     "code": "US.QBTS",
+     "window": [
+      "2026-01-02",
+      "2026-01-02"
+     ],
+     "days": [
+      {
+       "day": "2026-01-02",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": true,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": true,
+        "INDEX_RVOL_SPLIT": true
+       }
+      }
+     ]
+    },
+    {
+     "id": "S34",
+     "code": "US.DELL",
+     "window": [
+      "2026-03-10",
+      "2026-03-10"
+     ],
+     "days": [
+      {
+       "day": "2026-03-10",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    },
+    {
+     "id": "S35",
+     "code": "US.MRVL",
+     "window": [
+      "2026-03-31",
+      "2026-03-31"
+     ],
+     "days": [
+      {
+       "day": "2026-03-31",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    }
+   ],
+   "maximum_possible_bought": 19,
+   "required_strictly_over_half": 22,
+   "also_blocked_entire_window_under_R99_INDEX": [
+    "S34",
+    "S35"
+   ],
+   "R99_INDEX_conservative_upper_bound": 21,
+   "R99_INDEX_bound_note": "仅统计IDX50封锁集合中INDEX仍封锁的窗口，因此是真实上限的宽松上界；未假定其他窗口都获放行。",
+   "existing_shape_without_market_ceiling": 17,
+   "existing_shape_with_market_ceiling": 13,
+   "no_original_trigger": [
+    "I27",
+    "S02",
+    "S04",
+    "S11",
+    "S19",
+    "S34"
+   ]
+  },
+  "validate": {
+   "full_denominator": 40,
+   "minute_covered": 25,
+   "all_window_market_blocked": [
+    {
+     "id": "V13",
+     "code": "US.AMD",
+     "window": [
+      "2026-04-02",
+      "2026-04-02"
+     ],
+     "days": [
+      {
+       "day": "2026-04-02",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    },
+    {
+     "id": "V33",
+     "code": "US.BMNR",
+     "window": [
+      "2026-07-30",
+      "2026-07-30"
+     ],
+     "days": [
+      {
+       "day": "2026-07-30",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    },
+    {
+     "id": "V43",
+     "code": "US.MSTR",
+     "window": [
+      "2026-09-17",
+      "2026-09-17"
+     ],
+     "days": [
+      {
+       "day": "2026-09-17",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    },
+    {
+     "id": "V44",
+     "code": "US.MSTR",
+     "window": [
+      "2026-09-17",
+      "2026-09-17"
+     ],
+     "days": [
+      {
+       "day": "2026-09-17",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    },
+    {
+     "id": "V45",
+     "code": "US.BMNR",
+     "window": [
+      "2026-09-17",
+      "2026-09-17"
+     ],
+     "days": [
+      {
+       "day": "2026-09-17",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    },
+    {
+     "id": "V46",
+     "code": "US.PLTR",
+     "window": [
+      "2026-09-17",
+      "2026-09-17"
+     ],
+     "days": [
+      {
+       "day": "2026-09-17",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    },
+    {
+     "id": "V47",
+     "code": "US.PLTR",
+     "window": [
+      "2026-09-18",
+      "2026-09-18"
+     ],
+     "days": [
+      {
+       "day": "2026-09-18",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": true,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": true,
+        "INDEX_RVOL_SPLIT": true
+       }
+      }
+     ]
+    },
+    {
+     "id": "V48",
+     "code": "US.TSLA",
+     "window": [
+      "2026-09-17",
+      "2026-09-17"
+     ],
+     "days": [
+      {
+       "day": "2026-09-17",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": false,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": false,
+        "INDEX_RVOL_SPLIT": false
+       }
+      }
+     ]
+    },
+    {
+     "id": "V49",
+     "code": "US.TSLA",
+     "window": [
+      "2026-09-18",
+      "2026-09-18"
+     ],
+     "days": [
+      {
+       "day": "2026-09-18",
+       "prior_R99_gates": {
+        "RETRY_EXEC4": false,
+        "INDEX": true,
+        "GAIN_SPLIT": false,
+        "INDEX_GAIN_SPLIT": true,
+        "INDEX_RVOL_SPLIT": true
+       }
+      }
+     ]
+    }
+   ],
+   "maximum_possible_bought": 16,
+   "required_strictly_over_half": 21,
+   "also_blocked_entire_window_under_R99_INDEX": [
+    "V13",
+    "V33",
+    "V43",
+    "V44",
+    "V45",
+    "V46",
+    "V48"
+   ],
+   "R99_INDEX_conservative_upper_bound": 18,
+   "R99_INDEX_bound_note": "仅统计IDX50封锁集合中INDEX仍封锁的窗口，因此是真实上限的宽松上界；未假定其他窗口都获放行。",
+   "existing_shape_without_market_ceiling": 14,
+   "existing_shape_with_market_ceiling": 9,
+   "no_original_trigger": [
+    "V02",
+    "V03",
+    "V08",
+    "V09",
+    "V13",
+    "V26",
+    "V27",
+    "V33",
+    "V35",
+    "V48",
+    "V49"
+   ]
+  }
+ }
+}

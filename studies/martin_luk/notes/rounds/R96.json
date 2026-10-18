@@ -1,0 +1,14 @@
+{
+  "stage": "early_trend_management",
+  "base": ["r95.json", "chosen"],
+  "ref": "R95",
+  "objective": "2025_log_distance",
+  "draws": 31,
+  "seed": 1,
+  "candidates": {
+    "PHASE21": {"trend_phase_groups": true, "rule_opts": {"management_by_kind": {"early_trend": {"trail": "e21"}}}},
+    "PHASE21_PARTIAL": {"trend_phase_groups": true, "rule_opts": {"management_by_kind": {"early_trend": {"trail": "e21"}}, "trims": [3, 5], "trim_frac": 0.15, "add_r": 0, "add_levels": []}},
+    "PHASE21_EXEC4": {"trend_phase_groups": true, "max_new": 0, "rule_opts": {"management_by_kind": {"early_trend": {"trail": "e21"}}, "trims": [3, 5], "trim_frac": 0.15, "add_r": 0, "add_levels": [], "max_new_long": 4}},
+    "PHASE21_UNCAPPED": {"trend_phase_groups": true, "max_new": 0, "rule_opts": {"management_by_kind": {"early_trend": {"trail": "e21"}}, "trims": [3, 5], "trim_frac": 0.15, "add_r": 0, "add_levels": []}}
+  }
+}

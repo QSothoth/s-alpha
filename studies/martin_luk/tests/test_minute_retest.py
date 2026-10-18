@@ -1,12 +1,247 @@
 """Only information already available at a five-minute close may trigger entry."""
 import unittest
+from types import SimpleNamespace
 
 import numpy as np
 
-from studies.martin_luk.minute_retest import trigger_day,weekly_levels,normalize_bars,minute_indicators,first_break
+from studies.martin_luk.minute_retest import trigger_day,weekly_levels,normalize_bars,minute_indicators,first_break,cap_signal_stream,reentry_day,minute_priority,minute_kind,hourly_support,entry_stop
+from studies.martin_luk.minute_retest import ledger_pairs,replayed_placebo
+from studies.martin_luk.replicate import bought
 
 
 class MinuteRetestTests(unittest.TestCase):
+    def test_reentry_recheck_waits_for_current_setup_and_preserves_first_entry(self):
+        bars=np.array([[10,10.2,9.9,10,1,1],[10,10.5,10,10.4,1,1],
+                       [10.4,10.4,9.7,9.9,1,1],[9.9,10.1,9.9,10,1,1],
+                       [10,10.1,9.9,10,1,1],[10,10.1,9.9,10,1,1],
+                       [10,10.25,10,10.2,1,1],[10.2,10.5,10.1,10.4,1,1]],np.float32)
+        args=((True,True,False,False,False,False),(10.3,10,8,7,np.nan,.05,1000),.05,.01,1)
+        old=reentry_day(bars,*args)
+        self.assertEqual([h[0] for h in old],[1,6])
+        for mode in ('setup','opening_range'):
+            with self.subTest(mode=mode):
+                trace=[];hits=reentry_day(bars,*args,reentry_mode=mode,trace=trace)
+                self.assertEqual([h[0] for h in hits],[1,7])
+                self.assertEqual(hits[0],old[0])
+                self.assertEqual(trace,['watch','reentry'])
+                self.assertEqual(reentry_day(bars[:7],*args,reentry_mode=mode),old[:1])
+                fill=float(bars[7,3]);lod=float(bars[2,2])
+                self.assertEqual(hits[1][2],min(max(lod,fill*.95),fill*.99))
+        with self.assertRaises(ValueError):reentry_day(bars,*args,reentry_mode='unknown')
+
+    def test_opening_range_reentry_keeps_waiting_above_original_first_bar_high(self):
+        bars=np.array([[10,11,9.9,10,1,1],[10,10.5,10,10.4,1,1],
+                       [10.4,10.4,9.7,9.9,1,1],[9.9,10.1,9.9,10,1,1],
+                       [10,10.1,9.9,10,1,1],[10,10.1,9.9,10,1,1],
+                       [10,10.25,10,10.2,1,1],[10.2,10.4,10.1,10.4,1,1],
+                       [10.4,11.3,10.4,11.2,1,1]],float)
+        args=((True,True,False,False,False,False),(10.3,10,8,7,np.nan,.05,1000),.05,.01,1)
+        hits=reentry_day(bars,*args,reentry_mode='opening_range')
+        self.assertEqual([h[0] for h in hits],[1,8])
+        self.assertEqual([h[0] for h in reentry_day(bars[:8],*args,reentry_mode='opening_range')],[1])
+        future=np.vstack([bars,[11.2,100,1,90,1,1]])
+        self.assertEqual(reentry_day(future,*args,reentry_mode='opening_range')[:2],hits)
+
+    def test_window_executions_use_both_bounds_and_do_not_count_carried_or_short(self):
+        A=dict(codes=np.array(['US.X']),days=np.array(['2025-01-02','2025-01-03','2025-01-06','2025-01-07']))
+        t=SimpleNamespace(id='A',entry_date='2025-01-03',precision='exact',outcome='win',r_multiple=2)
+        loc={'select':[(t,0,0,2)],'validate':[(t,0,0,2)]}
+        trades=[dict(code='US.X',entry=e,exit=z,side=s,executions=[]) for e,z,s in [
+            ('2025-01-01','2025-01-07',1),('2025-01-02','2025-01-02',1),
+            ('2025-01-03','2025-01-06',-1),('2025-01-06','2025-01-07',1),
+            ('2025-01-07','2025-01-07',1)]]
+        pairs=ledger_pairs(A,loc,trades)
+        for p in pairs:
+            self.assertEqual([x['entry'] for x in p['window_executions']],['2025-01-02','2025-01-06'])
+            self.assertEqual(p['executions'],[])
+            self.assertEqual(p['carried_this_date'],[dict(entry='2025-01-01',exit='2025-01-07')])
+            self.assertEqual(bought(A,trades,loc[p['segment']]),1)
+        exact=dict(code='US.X',entry='2025-01-03',exit='2025-01-03',side=1,executions=[{'action':'entry'}])
+        p=ledger_pairs(A,loc,[exact])[0]
+        self.assertEqual(len(p['executions']),1)
+        self.assertEqual(p['executions'][0]['order_events'],exact['executions'])
+        self.assertIn('executions',exact)
+
+    def test_frozen_random_reuse_rejects_changed_real_account_or_draws(self):
+        keys=('total','by_year','2026_jan_jul','behavior','bought','bought_entry_date','march_start')
+        st=dict.fromkeys(keys,1);ref=dict(st,placebo=dict(draws=31,seed=1,median=-.2))
+        self.assertEqual(replayed_placebo(st,ref,31,1),ref['placebo'])
+        for key in keys:
+            with self.assertRaises(AssertionError):replayed_placebo(dict(st,**{key:2}),ref,31,1)
+        with self.assertRaises(AssertionError):replayed_placebo(st,ref,30,1)
+        with self.assertRaises(AssertionError):replayed_placebo(st,ref,31,2)
+
+    def test_origin_trace_is_passive_and_reentry_is_not_a_new_watch_trigger(self):
+        bars=np.array([[10.1,10.2,10,10.1,1,1],[10.1,10.4,10.1,10.3,1,1],
+                       [10.3,10.3,9.7,9.9,1,1],[9.9,10.1,9.9,10,1,1],
+                       [10,10.1,9.9,10,1,1],[10,10.1,9.9,10,1,1],
+                       [10,10.3,10,10.2,1,1]],float)
+        args=((True,True,False,False,True,False),(10.25,10.1,8,7,np.nan,.05,1000),.05,.01,1)
+        trace=[];hits=reentry_day(bars,*args,trace=trace)
+        self.assertEqual(hits,reentry_day(bars,*args))
+        self.assertEqual(trace,['watch+leader','reentry'])
+        prefix=[]
+        self.assertEqual(trigger_day(bars[:2],*args,trace=prefix),hits[0])
+        self.assertEqual(prefix,trace[:1])
+
+    def test_default_stop_preserves_existing_float32_first_entry_arithmetic(self):
+        bars=np.array([[10,10.2,9.8,10,1,1],[10,10.5,10,10.4,1,1]],np.float32)
+        expected=min(max(bars[0,2],bars[1,3]*.95),bars[1,3]*.99)
+        self.assertEqual(entry_stop(bars,1,bars[0,2],.05,.01),expected)
+        hit=trigger_day(bars,(True,True,False,False,False,False),(10.3,10,8,7,np.nan,.05,1000),.05,.01,1)
+        self.assertEqual(hit[2],float(expected))
+
+    def test_structural_stop_prefers_lod_and_never_moves_wide_structure_to_cap(self):
+        bars=np.array([[10.2,10.4,10.1,10.2,1,1],[10.2,10.5,10.2,10.3,1,1]],float)
+        self.assertAlmostEqual(entry_stop(bars,1,10.1,.05,.01,'bar3'),10.1)
+        bars[0,2]=9.5
+        self.assertIsNone(entry_stop(bars,1,9.5,.05,.01,'lod3'))
+        self.assertAlmostEqual(entry_stop(bars,1,9.5,.05,.01,'bar3'),10.3*.99)
+        bars[1,2]=9.6
+        self.assertIsNone(entry_stop(bars,1,9.5,.05,.01,'bar3'))
+        self.assertAlmostEqual(entry_stop(bars,1,9.5,.05,.01),10.3*.95)
+        with self.assertRaises(ValueError):entry_stop(bars,1,9.5,.05,.01,'unknown')
+
+    def test_structural_filter_waits_for_later_valid_trigger_not_a_fake_failed_trade(self):
+        bars=np.array([[10,10.2,9.8,10,1,1],[10,10.4,10,10.3,1,1],
+                       [10.3,10.3,9.9,10.08,1,1],[10,11,1,10.8,1,1]],float)
+        args=((True,True,False,False,False,False),(10.05,10,8,7,np.nan,.05,1000),.05,.01,1)
+        self.assertEqual(trigger_day(bars,*args)[0],1)
+        self.assertIsNone(trigger_day(bars[:2],*args,stop_mode='lod3'))
+        hit=trigger_day(bars,*args,stop_mode='lod3')
+        self.assertEqual(hit,(2,10.08,9.8))
+        self.assertEqual(hit,trigger_day(bars[:3],*args,stop_mode='lod3'))
+        self.assertEqual(reentry_day(bars,*args,stop_mode='lod3')[0],hit)
+
+    def test_structural_stop_uses_only_current_and_previous_completed_bar(self):
+        bars=np.array([[10.2,10.4,10,10.3,1,1],[10.3,10.6,10.3,10.5,1,1],
+                       [10.5,100,1,90,1,1]],float)
+        hit=entry_stop(bars,1,9,.05,.01,'bar3')
+        self.assertAlmostEqual(hit,10.3)
+        self.assertEqual(hit,entry_stop(bars[:2],1,9,.05,.01,'bar3'))
+        self.assertIsNone(entry_stop(bars,1,9,.005,.01,'bar3'))
+        bars[0,:4]=np.nan
+        self.assertEqual(hit,entry_stop(bars,1,9,.05,.01,'bar3'))
+
+    def test_reentry_applies_structure_policy_to_each_new_attempt(self):
+        bars=np.array([[10.1,10.2,10,10.1,1,1],[10.1,10.4,10.1,10.3,1,1],
+                       [10.3,10.3,9.7,9.9,1,1],[9.9,10.1,9.9,10,1,1],
+                       [10,10.1,9.9,10,1,1],[10,10.1,9.9,10,1,1],
+                       [10,10.3,10,10.2,1,1]],float)
+        args=((True,True,False,False,False,False),(10.25,10.1,8,7,np.nan,.05,1000),.05,.01,1)
+        self.assertEqual([h[0] for h in reentry_day(bars,*args,stop_mode='lod3')],[1])
+        hits=reentry_day(bars,*args,stop_mode='bar3')
+        self.assertEqual([h[0] for h in hits],[1,6])
+        self.assertEqual(hits[1][2],10.)
+        self.assertEqual(hits[:1],reentry_day(bars[:6],*args,stop_mode='bar3'))
+
+    def test_hourly_support_waits_for_completed_hour_and_carries_partial_session(self):
+        bars=np.full((2,78,6),10.)
+        bars[0,12:24,:4]=12
+        bars[0,24:36,:4]=14
+        bars[0,36:42,:4]=16
+        bars[0,42:]=np.nan
+        support=hourly_support(bars)
+        self.assertTrue(np.isnan(support[0,:24]).all())
+        self.assertAlmostEqual(support[0,24,0],10.4)
+        self.assertAlmostEqual(support[0,24,1],10+2/11)
+        self.assertAlmostEqual(support[0,41,0],11.12)
+        self.assertAlmostEqual(support[1,0,0],12.096)
+        changed=bars.copy();changed[0,30:,:4]=100
+        np.testing.assert_equal(hourly_support(changed)[0,:30],support[0,:30])
+        changed=bars.copy();changed[1]=200
+        np.testing.assert_equal(hourly_support(changed)[0],support[0])
+
+    def test_previous_bar_branch_keeps_eligibility_and_reentry_first_trigger(self):
+        bars=np.array([[10,10.2,9.9,10,1,1],[10,10.5,10,10.4,1,1],
+                       [10.4,11,10.4,10.8,1,1]],float)
+        flags=(True,False,False,False,False,False)
+        levels=(12,10,8,7,np.nan,.05,1000)
+        self.assertIsNone(trigger_day(bars,flags,levels,.05,.01,1))
+        args=(bars,flags,levels,.05,.01,1)
+        hit=trigger_day(*args,trigger_mode='previous_bar')
+        self.assertEqual(hit[:2],(1,10.4))
+        self.assertEqual(reentry_day(*args,trigger_mode='previous_bar')[0],hit)
+        self.assertEqual(trigger_day(bars[:2],*args[1:],trigger_mode='previous_bar'),hit)
+        self.assertIsNone(trigger_day(bars,(False,)*6,levels,.05,.01,1,trigger_mode='previous_bar'))
+
+    def test_hourly_pullback_requires_known_rising_support_touch_and_reclaim(self):
+        bars=np.array([[10,10.2,9.9,10,1,1],[10,10.5,10,10.4,1,1]],float)
+        args=(bars,(True,False,False,False,False,False),(12,10,8,7,np.nan,.05,1000),.05,.01,1)
+        for line in (8,11,np.nan):
+            self.assertIsNone(trigger_day(*args,trigger_mode='hourly_pullback',hourly=np.full((2,2),line)))
+        support=np.full((2,2),10.)
+        self.assertEqual(trigger_day(*args,trigger_mode='hourly_pullback',hourly=support)[:2],(1,10.4))
+        with self.assertRaises(ValueError):trigger_day(*args,trigger_mode='hourly_pullback')
+
+    def test_hourly_new_branch_does_not_cross_missing_preceding_bar(self):
+        bars=np.array([[10,10.2,9.9,10,1,1],[np.nan]*6,[10,10.5,10,10.4,1,1]],float)
+        flags=(True,False,False,False,False,False);levels=(12,10,8,7,np.nan,.05,1000)
+        for mode in ('previous_bar','hourly_pullback'):
+            self.assertIsNone(trigger_day(bars,flags,levels,.05,.01,1,trigger_mode=mode,hourly=np.full((3,2),10.)))
+
+    def test_minute_rank_uses_completed_prefix_and_keeps_chronological_priority(self):
+        bars=np.array([[10,11,10,11,100,1000],[11,12,11,12,100,2000],
+                       [12,13,12,13,100,900000]],float)
+        for mode,score in [('gain',-.2),('rvol',-.03)]:
+            rank=minute_priority(bars,1,10,100000,mode)
+            self.assertAlmostEqual(rank[0],score)
+            changed=bars.copy();changed[2]=[100,200,100,200,1e9,1e9]
+            self.assertEqual(rank,minute_priority(changed,1,10,100000,mode))
+        a=minute_priority(bars,0,10,100000,'gain')
+        b=minute_priority(bars,1,10,200000,'gain')
+        self.assertLess(b,a)
+        capped=cap_signal_stream([[(a,'early')],[(b,'late')]],1)
+        self.assertEqual(capped,[[(a,'early')],[]])
+
+    def test_minute_liquidity_boundary_and_invalid_volume_bar(self):
+        self.assertEqual(minute_kind('signal',{'liquidity_groups':True},100e6-1),'thin')
+        self.assertEqual(minute_kind('signal',{'liquidity_groups':True},100e6),'premier')
+        self.assertEqual(minute_kind('signal',{},1),'signal')
+        bars=np.array([[10,10,10,10,100,1000],[np.nan,np.nan,np.nan,np.nan,1e6,1e9]],float)
+        self.assertEqual(minute_priority(bars,1,10,100000,'rvol'),(-.01,-100000.))
+
+    def test_reentry_waits_for_failed_setup_and_three_completed_new_bars(self):
+        bars=np.array([[10,10.2,9.8,10,100,1000],[10,10.5,10,10.4,100,1000],
+                       [10.4,10.4,9.7,9.9,100,1000],
+                       [9.9,10.1,9.9,10,100,1000],[10,10.1,9.9,10,100,1000],
+                       [10,10.1,9.9,10,100,1000],[10,10.3,10,10.2,100,1000],
+                       [10.2,10.5,10.1,10.4,100,1000]],float)
+        args=((True,True,False,False,False,False),(10.3,10,10,9,np.nan,.05,10000),.05,.01,1)
+        hits=reentry_day(bars,*args)
+        self.assertEqual([h[0] for h in hits],[1,6])
+        self.assertEqual(hits[0],trigger_day(bars,*args))
+        self.assertEqual(hits[:1],reentry_day(bars[:6],*args))
+        self.assertEqual(hits,reentry_day(bars[:7],*args))
+        changed=bars.copy();changed[7,:4]=[10.2,100,1,50]
+        self.assertEqual(reentry_day(changed,*args),hits)
+        # A missing completed bar invalidates the new range.
+        changed=bars.copy();changed[4]=np.nan
+        self.assertEqual(len(reentry_day(changed[:7],*args)),1)
+        # Calling the next session starts a fresh state, not an inherited failed setup.
+        self.assertEqual(reentry_day(bars,*args),hits)
+
+    def test_entry_bar_low_cannot_retroactively_fail_a_new_setup(self):
+        bars=np.array([[10,10.2,9.8,10,100,1000],[10,10.5,8,10.4,100,1000]]+
+                      [[10.4,10.5,10.3,10.4,100,1000]]*3+
+                      [[10.4,10.7,10.3,10.6,100,1000]],float)
+        args=((True,True,False,False,False,False),(10.3,10,10,9,np.nan,.05,10000),.05,.01,1)
+        self.assertEqual(len(reentry_day(bars,*args)),1)
+
+    def test_raw_cap_uses_chronology_then_priority_and_resets_next_session(self):
+        stream=[[(2,'a'),(1,'b')],[(0,'c'),(-1,'d')],[(-5,'e')],[(0,'f')],[(0,'g')],[]]
+        capped=cap_signal_stream(stream,3,bars_per_session=3)
+        self.assertEqual(capped,[[(1,'b'),(2,'a')],[(-1,'d')],[],[(0,'f')],[(0,'g')],[]])
+        self.assertEqual(cap_signal_stream(stream[:2],3,bars_per_session=3),capped[:2])
+        self.assertEqual(len(stream[1]),2)
+
+    def test_zero_raw_cap_preserves_every_attempt_for_engine_and_daily_control(self):
+        stream=[[(2,'a'),(1,'b')],[(0,'c')],[]]
+        for bars in (1,78):
+            self.assertEqual(cap_signal_stream(stream,0,bars),[[(1,'b'),(2,'a')],[(0,'c')],[]])
+        with self.assertRaises(ValueError):
+            cap_signal_stream(stream,-1)
+
     def test_old_source_is_not_unadjusted_for_actions_after_its_fetch(self):
         days=np.array(['2025-01-02','2025-01-03'])
         bars=np.array([[[10,11,9,10,100,1000]],[[10,11,9,10,100,1000]]],float)

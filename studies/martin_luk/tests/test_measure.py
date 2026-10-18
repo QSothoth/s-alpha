@@ -8,13 +8,93 @@ from copy import deepcopy
 
 import numpy as np
 
-from studies.martin_luk.measure import complete_trigger, behavior, calendar_profit, append_short_prices
+from studies.martin_luk.measure import (complete_trigger, behavior, calendar_profit, append_short_prices,
+                                       period_attribution, entry_feedback, compare_start_entries)
 from studies.trader_replication import system as Y
 from studies.martin_luk.continue_round import failures, objective
 from studies.martin_luk import replicate as R
 
 
 class MeasurementTests(unittest.TestCase):
+    def test_early_trend_group_uses_only_previous_day_and_prior_month(self):
+        a=dict(close=np.full((25,1),12.),e9=np.full((25,1),11.),e21=np.full((25,1),10.),
+               e50=(9+np.arange(25)*.01)[:,None])
+        a['close'][0]=8.
+        entry=(0,0,1,12.,11.,'n1',None,.03,.2)
+        entries=[[entry] for _ in range(25)]
+        out=R.trend_phase_groups(a,entries)
+        self.assertEqual(out[1][0][5],'n1')
+        self.assertEqual(out[2][0][5],'early_trend')
+        self.assertEqual(out[21][0][5],'early_trend')
+        self.assertEqual(out[22][0][5],'n1')
+        self.assertEqual(out[21][0][6:],entry[6:])
+        for name in a: a[name][21:]=9999.
+        self.assertEqual(out[21],R.trend_phase_groups(a,entries)[21])
+        a['e50'][20]=a['e50'][19]
+        self.assertEqual(R.trend_phase_groups(a,entries)[21][0][5],'n1')
+
+    def test_frozen_early_trend_policy_uses_its_own_ema_for_next_day_stop(self):
+        c=np.repeat(np.array([10.,11.,10.5,9.8])[:,None],2,axis=1)
+        px={k:c.copy() for k in ('open','high','low','close')}
+        px.update(codes=np.array(['EARLY','NORMAL']),dates=np.array(['2025-01-02','2025-01-03','2025-01-06','2025-01-07']))
+        ema={k:np.repeat(np.array(v)[:,None],2,axis=1) for k,v in
+             {'e9':[9.9,10.9,10.8,10.4],'e21':[9.5,9.8,10.,10.]}.items()}
+        entries=[[(0,0,1,10.,9.,'early_trend'),(1,1,1,10.,9.,'n1')],[],[],[]]
+        rules=Y.Rules(trail='e9',trims=(),arm_trail_on_entry=True,stop_ema_buffer=.01,
+                      management_by_kind={'early_trend':dict(trail='e21')})
+        _,_,tr=Y.simulate(px,ema,rules,entries,px['dates'][0],px['dates'][-1],audit=True)
+        by={t['code']:t for t in tr}
+        self.assertEqual((by['NORMAL']['exit'],by['NORMAL']['why']),('2025-01-06','gap_stop'))
+        self.assertEqual((by['EARLY']['exit'],by['EARLY']['why']),('2025-01-07','gap_stop'))
+        self.assertEqual(by['EARLY']['executions'][-1]['price'],9.8)
+
+    def test_period_attribution_marks_old_inventory_and_reconciles_actual_financing(self):
+        c=np.array([[10,20],[11,20],[11,18],[13,17],[12,18],[14,16.]],float)
+        days=np.array(['2024-02-27','2024-02-28','2024-02-29','2024-03-01','2024-03-04','2024-12-31'])
+        px={k:c.copy() for k in ('open','high','low','close')}
+        px.update(dates=days,codes=np.array(['OLD','NEW']))
+        a=dict(px,days=days)
+        rules=Y.Rules(risk=.1,max_position=2,max_gross=3,trims=(2,),trim_frac=.15,add_r=2,
+                      short_trims=(),trail='',short_max_days=0,buy_cost=.001,sell_cost=.001)
+        entries=[[(0,0,1,10.,9.,'old')],[],[],[],[(0,1,-1,18.,19.,'new')],[]]
+        curve,dates,tr=Y.simulate(px,{},rules,entries,days[0],days[-1],audit=True)
+        out=period_attribution(a,curve,dates,tr,rules,'2024-03-01','2024-12-31')
+        self.assertAlmostEqual(out['equity_start'],curve[2])
+        self.assertGreater(out['old_contribution'],0)
+        self.assertGreater(out['new_contribution'],0)
+        self.assertLess(out['financing_contribution'],0)
+        self.assertAlmostEqual(out['residual'],0)
+        self.assertAlmostEqual(sum(out[k] for k in ('old_contribution','new_contribution','financing_contribution')),
+                               curve[-1]/curve[2]-1)
+        self.assertTrue(any(e['action']=='add' for t in tr for e in t['executions']))
+        self.assertTrue(any(e['action']=='trim' for t in tr for e in t['executions']))
+        for t in tr:
+            for event in t['executions']:
+                if event['action']=='end': event['price']=9999.
+        self.assertEqual(out,period_attribution(a,curve,dates,tr,rules,'2024-03-01','2024-12-31'))
+
+    def test_entry_feedback_excludes_future_and_terminal_exits(self):
+        rows=[dict(entry='2024-02-01',exit='2024-02-28',why='stop',r=-1),
+              dict(entry='2024-02-29',exit='2024-03-01',why='trail',r=2),
+              dict(entry='2024-02-01',exit='2024-03-01',why='end',r=1000),
+              dict(entry='2024-03-01',exit='2024-03-01',why='stop',r=-500),
+              dict(entry='2024-02-01',exit='2024-03-04',why='trail',r=9999)]
+        rules=Y.Rules(feedback=2,risk=.005,risk_low=.002,risk_high=.008)
+        out=entry_feedback(rows,'2024-03-01',rules)
+        self.assertEqual(out,dict(closed_r=1,risk_before_index_scale=.008))
+        rows[-1]['r']=-9999
+        self.assertEqual(out,entry_feedback(rows,'2024-03-01',rules))
+        self.assertEqual(entry_feedback(rows,'2024-02-29',rules)['risk_before_index_scale'],.005)
+
+    def test_same_day_ordinary_exit_does_not_block_a_close_entry(self):
+        fresh=dict(rows=[dict(code='A',entry='2024-03-01',exit='2024-03-04',why='stop',old_position=False)])
+        old=[dict(code='A',entry='2024-02-01',exit='2024-03-01',why='stop')]
+        out=compare_start_entries(dict(rows=[]),fresh,old,[],Y.Rules())
+        self.assertEqual(out['march_only'][0]['other_path_held'],[])
+        old[0]['exit']='2024-03-04'
+        out=compare_start_entries(dict(rows=[]),fresh,old,[],Y.Rules())
+        self.assertEqual(len(out['march_only'][0]['other_path_held']),1)
+
     def test_short_rejection_uses_previous_ema_and_previous_slope(self):
         a={'e9':np.array([[12.],[11.],[100.]]),'e21':np.array([[15.],[15.],[15.]]),
            'e50':np.array([[20.],[20.],[20.]]),'high':np.array([[10.],[10.],[11.1]]),
