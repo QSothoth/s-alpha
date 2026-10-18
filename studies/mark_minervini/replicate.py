@@ -40,7 +40,7 @@ class Minervini(CF.Flanders):
     id, name = 'mark_minervini', 'Mark Minervini'
     root = ROOT / 'studies' / 'mark_minervini'
     ledger = root / 'notes' / 'trades.csv'
-    cutoff = '2025-01-01'           # PREREG_R1: selection = trades whose window starts before this day
+    cutoff = '2025-01-01'           # PREREG_R0: selection = trades whose window starts before this day
     full = ('2024-01-02', '2026-10-16')   # the template needs the 200-day line rising for a month
     home = ('us',)
     his = {}                        # his championship year (2021) is outside the data

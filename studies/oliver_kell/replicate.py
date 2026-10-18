@@ -38,7 +38,7 @@ class Kell(CF.Flanders):
     id, name = 'oliver_kell', 'Oliver Kell'
     root = ROOT / 'studies' / 'oliver_kell'
     ledger = root / 'notes' / 'trades.csv'
-    cutoff = '2025-01-01'           # PREREG_R1: selection = trades whose window starts before this day
+    cutoff = '2024-05-01'           # PREREG_R0: selection = trades whose window starts before this day
     full = ('2023-04-03', '2026-10-16')
     home = ('us',)
     his = {}                        # his championship year (2020) is outside the data
