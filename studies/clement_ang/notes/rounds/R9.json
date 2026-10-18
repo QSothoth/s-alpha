@@ -1,0 +1,14 @@
+{
+ "stage": "exposure_exits",
+ "base": ["r8.json", "chosen"],
+ "ref": "R8",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "M1": {"rule_opts": {"max_gross": 1.5}},
+  "M2": {"rule_opts": {"max_gross": 2.0}},
+  "M3": {"rule_opts": {"max_gross": 2.0, "risk": 0.005}},
+  "M4": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.1}},
+  "M5": {"rule_opts": {"max_gross": 2.0, "trim_signal": "atr50x7", "trim_signal_frac": 0.1}}
+ }
+}

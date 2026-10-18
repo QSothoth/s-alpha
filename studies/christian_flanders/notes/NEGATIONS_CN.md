@@ -64,3 +64,7 @@
 | R14 | pyramid_exposure | B3 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low", "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01, "max_gross": 2.0, "max_position": 0.5}}` | r13.json:chosen | R13 | objective below R13；全区间 -1%（带入 +77%） | open |
 | R14 | pyramid_exposure | B4 | `{"rule_opts": {"add_levels": [1.0, 2.0], "add_frac": 0.5, "max_gross": 2.0, "max_position": 0.5}}` | r13.json:chosen | R13 | gates: placebo；全区间 -36%（带入 +77%） | open |
 | R14 | pyramid_exposure | B5 | `{"rule_opts": {"add_levels": [1.0, 2.0], "add_frac": 0.5, "max_gross": 2.0, "max_position": 0.5, "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01}}` | r13.json:chosen | R13 | gates: placebo；全区间 -51%（带入 +77%） | open |
+| R15 | exits_2025 | C1 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7}}` | r14.json:chosen | C4 | gates: bought；全区间 +56%（带入 +48%） | open |
+| R15 | exits_2025 | C2 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7, "trail": "ema21"}}` | r14.json:chosen | C4 | objective below C4；全区间 +22%（带入 +48%） | open |
+| R15 | exits_2025 | C3 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7, "trail": "sma50"}}` | r14.json:chosen | C4 | gates: placebo, bought；全区间 -1%（带入 +48%） | open |
+| R15 | exits_2025 | C5 | `{"rule_opts": {"month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "month_cap_basis": "opened"}}` | r14.json:chosen | C4 | gates: placebo, bought；全区间 -21%（带入 +48%） | open |

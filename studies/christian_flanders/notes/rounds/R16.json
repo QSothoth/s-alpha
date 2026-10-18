@@ -1,0 +1,14 @@
+{
+ "stage": "exits_2025",
+ "base": ["r15.json", "chosen"],
+ "ref": "R15",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "D1": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7}},
+  "D2": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.5}},
+  "D3": {"rule_opts": {"trim_signal": "atr50x5", "trim_signal_frac": 0.7}},
+  "D4": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7, "trail": "ema21"}},
+  "D5": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7}, "ep": {"far_low": 1.0}}
+ }
+}
