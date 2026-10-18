@@ -1,0 +1,15 @@
+{
+ "stage": "pairs",
+ "base": ["r17.json", "chosen"],
+ "ref": "R17",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "F1": {"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"], "max_new": 3},
+  "F2": {"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"], "rule_opts": {"max_open": 10}},
+  "F3": {"close_any": ["hi52"]},
+  "F4": {"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"], "close_any": ["hi52", "pp"]},
+  "F5": {"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"], "close_any": ["hi52", "pp"],
+         "rule_opts": {"max_open": 10}}
+ }
+}
