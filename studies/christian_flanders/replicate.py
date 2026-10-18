@@ -41,7 +41,7 @@ DRAFT = dict(
                    trims=()),
 )
 
-EP = dict(gap=.10, rvol=0.0, near=None)     # gap >= 10% (his "ideally 10% or more"); rvol, near: optional
+EP = dict(gap=.10, rvol=0.0, near=None, far_low=None)   # gap >= 10% (his "ideally 10% or more"); the rest optional
 PP = dict(gain=1.0, flag=10, depth=.25)     # up 100% within 40 days, then a flag of at most 25% (Minervini's power play)
 
 
@@ -128,6 +128,10 @@ class Flanders(study.Study):
                     m &= F.turnover >= o['rvol'] * lag(F.to20)      # the whole day's turnover: known at the close
                 if o['near'] is not None:
                     m &= F.o >= (1 - o['near']) * lag(F.hi(252))   # gaps into (or near) the 52-week high
+                if o['far_low'] is not None:                         # not an EP near the lows (a new listing:
+                    low = np.fmin.accumulate(np.where(np.isnan(F.l), np.inf, F.l), axis=0)   # its lowest so far)
+                    low = np.where(np.isfinite(F.lo(252)), F.lo(252), low)
+                    m &= F.o >= (1 + o['far_low']) * lag(low)
                 m &= lag(self.ep_pool(A, cfg))
             out['ep'] = (m, F.o, F.l)
         with np.errstate(invalid='ignore', divide='ignore'):
@@ -142,6 +146,12 @@ class Flanders(study.Study):
                      & lag(F.range(o['flag']) <= o['depth'] * 100) & lag(F.c >= (1 - o['depth']) * F.hi(40))
                      & (F.h > flag_hi))
                 out['pp'] = (m, np.fmax(F.o, flag_hi), F.l)
+            if 'pb' in names:                                       # pullback into the 10 / 20 EMA, then its high
+                e10, e20 = F.ema(10), F.ema(20)
+                ready = (F.l <= e10 * 1.01) & (F.c >= e20) & (e10 > e20) & (F.c > F.sma(50))
+                level = lag(F.h)
+                m = pool & lag(ready) & (F.h > level)
+                out['pb'] = (m, np.fmax(F.o, level), F.l)
             if 'vcp' in names:                                      # contractions with supply drying up
                 pivot = lag(F.hi(10))
                 ready = ((F.range(5) < F.range(5, 5)) & (F.range(5, 5) < F.range(10, 10)) & (F.range(5) <= 10)

@@ -1,0 +1,14 @@
+{
+ "stage": "selection",
+ "base": ["r2.json", "chosen"],
+ "ref": "R2",
+ "objective": "hits_select",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "F1": {"fine": {"near": 0.25}},
+  "F2": {"fine": {"tight": 3.0}},
+  "F3": {"fine": {"near": 0.25, "tight": 3.0}},
+  "F4": {"fine": {"near": 0.25, "tight": 3.0}, "setups": ["fine", "pb"]},
+  "F5": {"fine": {"near": 0.25, "tight": 3.0}, "setups": ["fine", "pb"], "filter": "IDX20"}
+ }
+}

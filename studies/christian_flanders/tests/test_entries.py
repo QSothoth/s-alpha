@@ -56,6 +56,25 @@ class EpEntryTests(unittest.TestCase):
         self.assertAlmostEqual(e[4], 11.2 * .99)                 # a 0.4% stop is widened to 1%
 
 
+    def test_far_low_drops_an_ep_near_the_52_week_low(self):
+        self.assertEqual(len(self.entries((11.2, 11.9, 11.0, 11.5), 'close', ep={'far_low': .05})), 1)
+        self.assertEqual(len(self.entries((11.2, 11.9, 11.0, 11.5), 'close', ep={'far_low': .20})), 0)
+
+
+class PullbackTests(unittest.TestCase):
+    def test_pullback_breaks_the_pullback_day_high(self):
+        rows = [(10 + .05 * i, 10.2 + .05 * i, 9.9 + .05 * i, 10.1 + .05 * i) for i in range(80)]
+        c = rows[-1][3]
+        rows += [(c - .3, c - .2, c - .9, c - .3)]                  # dips to the 10 EMA, holds the 20
+        rows += [(c - .3, c + .2, c - .4, c + .1)]                  # breaks that day's high
+        A = panel(rows)
+        cfg = dict(R.DRAFT, setups=['pb'], pool=dict(turnover=1e6, adr=0.0, above50=False))
+        m, level, stop = R.STUDY.setups(A, cfg)['pb']
+        self.assertTrue(m[-1, 0])
+        self.assertFalse(m[-2, 0])
+        self.assertAlmostEqual(level[-1, 0], c - .2)
+
+
 class BreakoutTests(unittest.TestCase):
     def test_brk52_fills_at_the_prior_high_or_the_open_above_it(self):
         rows = [(10, 10.2, 9.8, 10)] * 260 + [(10.1, 10.6, 10.0, 10.5)]

@@ -32,3 +32,16 @@
 | R7 | exact_entry | W3 | `{"rule_opts": {"trail": "ema21", "trim_signal": "ext200_120", "trim_signal_frac": 0.5}}` | r6.json:chosen | W2 | gates: bought；全区间 +43%（带入 +54%） | open |
 | R7 | exact_entry | W4 | `{"stop_cap": 0.0}` | r6.json:chosen | W2 | gates: placebo, bought；全区间 +4%（带入 +54%） | open |
 | R7 | exact_entry | W5 | `{"ep_first": true}` | r6.json:chosen | W2 | gates: placebo, bought；全区间 +3%（带入 +54%） | open |
+| R8 | phase2 | U1 | `{"rule_opts": {"trail": "ema21"}}` | r7.json:chosen | R7 | gates: bought；全区间 +73%（带入 +54%） | open |
+| R8 | phase2 | U2 | `{"setups": ["brk52", "ep"], "pool": {"adr": 5.0}}` | r7.json:chosen | R7 | gates: bought；全区间 +44%（带入 +54%） | open |
+| R8 | phase2 | U3 | `{"rule_opts": {"trim_day": 5}}` | r7.json:chosen | R7 | objective below R7；全区间 +47%（带入 +54%） | open |
+| R8 | phase2 | U4 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low"}}` | r7.json:chosen | R7 | objective below R7；全区间 +42%（带入 +54%） | open |
+| R8 | phase2 | U5 | `{"setups": ["hi52", "ep", "pp", "vcp"]}` | r7.json:chosen | R7 | gates: placebo；全区间 -17%（带入 +54%） | open |
+| R9 | phase2 | V2 | `{"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075}}` | r8.json:chosen | V1 | objective below V1；全区间 +35%（带入 +31%） | open |
+| R9 | phase2 | V3 | `{"rule_opts": {"max_gross": 2.0, "max_position": 0.5}}` | r8.json:chosen | V1 | objective below V1；全区间 +54%（带入 +31%） | open |
+| R9 | phase2 | V4 | `{"rule_opts": {"risk": 0.005, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "month_cap_basis": "opened"}}` | r8.json:chosen | V1 | gates: bought；全区间 +78%（带入 +31%） | open |
+| R9 | phase2 | V5 | `{"max_new": 3}` | r8.json:chosen | V1 | gates: bought；全区间 +53%（带入 +31%） | open |
+| R10 | selection | X2 | `{"ep": {"near": null, "far_low": 0.5}, "setups": ["hi52", "ep", "pb"]}` | r9.json:chosen | X1 | gates: placebo, bought, width<=30；全区间 -6%（带入 +77%） | open |
+| R10 | selection | X3 | `{"ep": {"near": null, "far_low": 0.5}, "rule_opts": {"max_open": 12}}` | r9.json:chosen | X1 | objective below X1；全区间 +14%（带入 +77%） | open |
+| R10 | selection | X4 | `{"ep": {"near": null, "far_low": 0.5}, "setups": ["hi52", "ep", "pb"], "rule_opts": {"max_open": 12}}` | r9.json:chosen | X1 | gates: placebo, bought, width<=30；全区间 -1%（带入 +77%） | open |
+| R10 | selection | X5 | `{"ep": {"near": null, "far_low": 1.0}, "setups": ["hi52", "ep", "pb"], "rule_opts": {"max_open": 12}}` | r9.json:chosen | X1 | gates: placebo, bought, width<=30；全区间 -5%（带入 +77%） | open |

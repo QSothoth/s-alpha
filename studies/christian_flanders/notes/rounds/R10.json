@@ -1,0 +1,14 @@
+{
+ "stage": "selection",
+ "base": ["r9.json", "chosen"],
+ "ref": "R9",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "X1": {"ep": {"near": null, "far_low": 0.5}},
+  "X2": {"ep": {"near": null, "far_low": 0.5}, "setups": ["hi52", "ep", "pb"]},
+  "X3": {"ep": {"near": null, "far_low": 0.5}, "rule_opts": {"max_open": 12}},
+  "X4": {"ep": {"near": null, "far_low": 0.5}, "setups": ["hi52", "ep", "pb"], "rule_opts": {"max_open": 12}},
+  "X5": {"ep": {"near": null, "far_low": 1.0}, "setups": ["hi52", "ep", "pb"], "rule_opts": {"max_open": 12}}
+ }
+}

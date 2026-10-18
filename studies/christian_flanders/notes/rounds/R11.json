@@ -1,0 +1,14 @@
+{
+ "stage": "capacity_order",
+ "base": ["r10.json", "chosen"],
+ "ref": "R10",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "Y1": {"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0}},
+  "Y2": {"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0}, "priority": "rvol"},
+  "Y3": {"max_new": 3, "rule_opts": {"max_open": 12, "max_gross": 2.0}},
+  "Y4": {"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0, "risk": 0.0025}},
+  "Y5": {"max_new": 4, "rule_opts": {"max_open": 12, "max_gross": 2.0}, "priority": "rvol", "ep_first": true}
+ }
+}

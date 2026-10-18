@@ -31,6 +31,7 @@ DRAFT = dict(
     rule_opts=dict(risk=.003, max_position=.30, max_gross=1.0, max_open=8, trail='sma20', arm_trail_on_entry=True,
                    trims=()),
 )
+FINE = dict(adr=4.0, near=.10, atr50=4.0, tight=2.0)   # the board's fine screen (CA1 + researcher values)
 
 
 class Clement(CF.Flanders):
@@ -49,9 +50,22 @@ class Clement(CF.Flanders):
         out = {k: v for k, v in super().setups(A, dict(cfg, setups=[s for s in cfg.get('setups', [])
                                                                      if s in ('ep', 'brk52', 'pp', 'vcp')])).items()}
         names = cfg.get('setups', ['fine'])
-        if 'fine' in names:
+        if 'fine' in names and not cfg.get('fine'):
             st = [x for x in S.ClementAng().run(F)['setups'] if x.kind == 'triggered'][0]
             out['fine'] = (st.mask & ~st.skip, st.price, F.l)
+        elif 'fine' in names:                                   # the board's fine screen with its researcher values
+            o = dict(FINE, **cfg['fine'])                       # replaced (near the high, tightness, extension)
+            adr, atr = F.adr, F.atr14
+            p = cfg.get('pool', {})
+            with np.errstate(invalid='ignore'):
+                wide = ((F.c > F.sma(50)) & (F.c > F.sma(200)) & F.liquid(p.get('turnover', 50e6))
+                        & (adr >= p.get('adr', 3.0)))
+                fine = (wide & (adr >= o['adr']) & (F.c >= (1 - o['near']) * F.hi(252))
+                        & ((F.c - F.sma(50)) < o['atr50'] * atr) & (F.range(5) <= o['tight'] * adr))
+            trig, entry = S.triggered_from(F, fine, F.h)
+            with np.errstate(invalid='ignore'):
+                chase = entry - F.l > .6 * lag(atr)
+            out['fine'] = (trig & ~chase, entry, F.l)
         if 'pb' in names:                                       # pullback into the 10 / 20 EMA in an up cycle
             e10, e20, s50 = F.ema(10), F.ema(20), F.sma(50)
             with np.errstate(invalid='ignore'):

@@ -1,0 +1,15 @@
+{
+ "stage": "selection_order",
+ "base": ["r3.json", "chosen"],
+ "ref": "R3",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "G1": {"setups": ["fine", "pb"], "fine": {"near": 0.25, "tight": 3.0}, "priority": "rs"},
+  "G2": {"setups": ["fine", "pb"], "fine": {"near": 0.25, "tight": 3.0}, "max_new": 5},
+  "G3": {"setups": ["fine", "pb"], "fine": {"near": 0.25, "tight": 3.0}, "priority": "rs", "max_new": 5},
+  "G4": {"setups": ["fine", "pb", "ep"], "fine": {"near": 0.25, "tight": 3.0}, "priority": "rs", "max_new": 5},
+  "G5": {"setups": ["fine", "pb"], "fine": {"near": 0.25, "tight": 3.0}, "priority": "rs", "max_new": 5,
+         "filter": "IDX20"}
+ }
+}

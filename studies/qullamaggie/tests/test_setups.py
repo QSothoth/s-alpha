@@ -33,6 +33,14 @@ class SetupTests(unittest.TestCase):
         cfg = dict(cfg, stop_adr={'ep': 1.0})
         self.assertEqual(len([x for x in R.STUDY.entries(A, cfg, R.STUDY.setups(A, cfg))[30] if x[1] == 0]), 0)
 
+    def test_green_light_needs_both_lines_rising_the_day_before(self):
+        rows = [(10 + .1 * i, 10.2 + .1 * i, 9.8 + .1 * i, 10 + .1 * i) for i in range(40)] + [(9, 9.1, 8, 8)] * 3
+        A = panel(rows)
+        ok = R.STUDY.market_ok(A, dict(R.DRAFT, filter='light'))
+        self.assertFalse(ok[20])                                   # the 20-day line is not there yet
+        self.assertTrue(ok[40])                                    # yesterday: rising lines, 10 above 20
+        self.assertFalse(ok[42])                                   # the 10-day line turned down
+
 
 if __name__ == '__main__':
     unittest.main()

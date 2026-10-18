@@ -39,11 +39,11 @@ class Qullamaggie(CF.Flanders):
     root = ROOT / 'studies' / 'qullamaggie'
     ledger = root / 'notes' / 'trades.csv'
     cutoff = '2023-09-01'           # PREREG_R1: selection = trades whose window starts before this day
-    full = ('2023-04-03', '2026-10-16')     # 63 sessions in: the 3-month leg of his strength exists
+    full = ('2023-02-01', '2026-10-16')     # 21 sessions in: the 1-month leg of his strength exists
     home = ('us',)
     his = {}                        # no audited year inside the data
     his_behaviour = dict(win=.25)   # S03: 25% win rate in 2019
-    starts = ('2023-04-03', '2023-05-01', '2023-06-01', '2023-09-01', '2024-01-02', '2025-01-02')
+    starts = ('2023-02-01', '2023-04-03', '2023-06-01', '2023-09-01', '2024-01-02', '2025-01-02')
     base = DRAFT
 
     def setups(self, A, cfg):
@@ -66,6 +66,23 @@ class Qullamaggie(CF.Flanders):
                     m = m & (F.o / lag(F.c) - 1 >= o['gap'])
             out['ep'] = (m, x.price, F.l)
         return out
+
+    def market_ok(self, A, cfg):
+        """'light': his green light on the pool's equal-weight index (QQQ in his words): the 10-day line above the
+        20-day and both rising, as of the day before (1AJIzXSkfyM@00:35:30, VdQSDGZBLQE@00:55:30)."""
+        if cfg.get('filter') != 'light':
+            return super().market_ok(A, cfg)
+        F = A['F']
+
+        def f():
+            prev = lag(F.c)
+            with np.errstate(invalid='ignore', divide='ignore'):
+                r = np.where(F.rank_pool & np.isfinite(prev), F.c / prev - 1, np.nan)
+                idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))
+            s10, s20 = S.rolling(idx[:, None], 10, 'mean')[:, 0], S.rolling(idx[:, None], 20, 'mean')[:, 0]
+            with np.errstate(invalid='ignore'):
+                return (s10 > s20) & (s10 > lag(s10)) & (s20 > lag(s20))
+        return lag(F.get('qull_light', f))
 
     def entries(self, A, cfg, masks):
         """The draft's entries, then his stop-width rule on the actual fill: skip when (fill - stop) / fill is wider
