@@ -153,6 +153,20 @@ class SystemTests(unittest.TestCase):
                               p['dates'][0], p['dates'][-1])
         self.assertEqual((tr[0]['why'], tr[0]['exit']), ('trail', '2025-01-04'))
 
+    def test_alternative_trail_on_flagged_days(self):
+        rows = [(10, 10, 10, 10), (10.5, 11, 10.4, 11), (11.2, 11.6, 11.1, 11.5), (11.4, 11.5, 11.0, 11.2)]
+        p = px(rows)
+        ema = {'e9': np.array([[9.0], [10.0], [11.0], [11.3]]), 'e21': np.array([[9.0], [9.5], [10.0], [10.5]])}
+        base = dict(trail='e21', trims=(), trail_alt='e9', **NOCOST)
+        ema['calm'] = np.array([False] * 4)
+        _, _, tr = Y.simulate(p, ema, Y.Rules(trail_alt_days='calm', **base), one(4, 0, 1, 10.0, 9.5),
+                              p['dates'][0], p['dates'][-1])
+        self.assertEqual(tr[0]['why'], 'end')
+        ema['late'] = np.array([False, False, False, True])
+        _, _, tr = Y.simulate(p, ema, Y.Rules(trail_alt_days='late', **base), one(4, 0, 1, 10.0, 9.5),
+                              p['dates'][0], p['dates'][-1])
+        self.assertEqual((tr[0]['why'], tr[0]['exit']), ('trail', '2025-01-04'))
+
     def test_breakeven_moves_the_stop_to_the_fill(self):
         rows = [(10, 10, 10, 10), (10.5, 11.6, 10.4, 11), (10.2, 10.3, 9.6, 9.8)]
         _, _, tr = self.run_(rows, one(3, 0, 1, 10.0, 9.5), trims=(), breakeven_r=3)

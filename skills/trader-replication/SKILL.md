@@ -31,11 +31,12 @@ for r in r19 r20 r21 r21b r22 r22b r23 r23b r23c r24 r24b r25 r26 r27 r27b r28 \
   $PY -m studies.martin_luk.replicate $r
 done
 # R42 起每轮写成 notes/rounds/R*.json（基础配置 + 候选改动），结果在 reports/r42.json 等
-for r in R42 R43 R44 R45 R46 R47 R48 R49 R50 R51 R52 R53 R54 R55 R56 R57 R58 R59 R60; do
-  $PY -m studies.martin_luk.replicate round $r
+for n in $(seq 42 74); do
+  $PY -m studies.martin_luk.replicate round R$n
 done
-$PY -m studies.martin_luk.replicate diagnose r49.json   # 他的每笔有日期多头卡在哪一步
-$PY -m studies.martin_luk.replicate final r60.json      # 带入配置在美 / 港 / A 股的完整结果
+$PY -m studies.martin_luk.replicate diagnose r74.json   # 他的每笔有日期多头卡在哪一步、头部交易
+$PY -m studies.martin_luk.replicate robust r74.json     # 邻近参数、起始日期、成本加倍（只报告）
+$PY -m studies.martin_luk.replicate final r74.json      # 带入配置在美 / 港 / A 股的完整结果
 $PY -m unittest discover -s studies/trader_replication/tests -t .
 $PY -m unittest studies.martin_luk.tests.test_replicate
 ```

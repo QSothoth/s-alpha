@@ -429,7 +429,53 @@ def setup_families(A, w):
             'E7': {'E2': s['E2'] & near, 'E3': s['E3'] & near, 'E4': s['E4'] & near},
             'E8': {'E2': top_per_day(w & s['E1'], prev(A['pr21']))},
             'E9': {'E2': top_per_day(w & s['E1'], prev(A['to20']))},
-            'E10': {'E2': s['E1'] & near, 'E4': s['E4'] & near}}
+            'E10': {'E2': s['E1'] & near, 'E4': s['E4'] & near},
+            'EW1': {'E2': weekly_cached(A)['EW1']}, 'EW2': {'E2': weekly_cached(A)['EW2']}}
+
+
+def weekly_breakouts(A):
+    """R73: the first break of the last completed week's high, after that week was an inside week ('EW1') or a
+    weekly pin bar ('EW2': lower wick >= 2 x body, close in the top third).  Weeks start on Monday; only completed
+    weeks are used, and the break must be the first one this week (earlier days this week stayed below)."""
+    D = np.array(A['days'], dtype='datetime64[D]').astype('int64')
+    wk = (D + 3) // 7
+    o, h, l, c = A['open'], A['high'], A['low'], A['close']
+    ids, start = np.unique(wk, return_index=True)
+    end = np.r_[start[1:], len(wk)]
+    n, N = len(ids), c.shape[1]
+    WO, WH, WL, WC = (np.full((n, N), np.nan) for _ in range(4))
+    for k in range(n):
+        for r in range(start[k], end[k]):
+            WO[k] = np.where(np.isnan(WO[k]), o[r], WO[k])
+            WH[k] = np.fmax(WH[k], h[r])
+            WL[k] = np.fmin(WL[k], l[r])
+            WC[k] = np.where(np.isfinite(c[r]), c[r], WC[k])
+    with np.errstate(invalid='ignore'):
+        inside = np.zeros((n, N), bool)
+        inside[1:] = (WH[1:] <= WH[:-1]) & (WL[1:] >= WL[:-1])
+        body = np.abs(WC - WO)
+        pin = ((np.fmin(WO, WC) - WL) >= 2 * body) & ((WC - WL) >= (2 / 3) * (WH - WL)) & (WH > WL)
+    k_of = np.searchsorted(ids, wk)
+    ew1, ew2 = np.zeros_like(c, bool), np.zeros_like(c, bool)
+    wtd = np.full(N, np.nan)                                     # this week's high before today
+    for t in range(len(wk)):
+        k = k_of[t]
+        if t == 0 or k != k_of[t - 1]:
+            wtd = np.full(N, np.nan)
+        if k > 0:
+            level = WH[k - 1]
+            with np.errstate(invalid='ignore'):
+                first = (h[t] > level) & ~(wtd > level)
+            ew1[t] = first & inside[k - 1]
+            ew2[t] = first & pin[k - 1]
+        wtd = np.fmax(wtd, h[t])
+    return {'EW1': ew1, 'EW2': ew2}
+
+
+def weekly_cached(A):
+    if '_weekly' not in A:
+        A['_weekly'] = weekly_breakouts(A)
+    return A['_weekly']
 
 
 def union(fam):
@@ -716,7 +762,7 @@ def run_rules(A, entries, seg, pool, rules, placebo=100):
     px = dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'])
     if 'w9' in (rules.trail, rules.trail_after_trim) and 'w9' not in A:
         A['w9'] = weekly_ema(A['close'], A['days'], 9)
-    names = (rules.exit_signal, rules.trim_signal, rules.risk_scale)
+    names = (rules.exit_signal, rules.trim_signal, rules.risk_scale, rules.trail_alt_days)
     for k in names:
         if k and (k not in A or k.startswith('idx_')):            # index scales depend on the pool
             A[k] = named_signal(A, pool, k)
@@ -1139,6 +1185,10 @@ def named_signal(A, pool, name):
     if name.startswith('ext'):
         with np.errstate(invalid='ignore'):
             return A['close'] >= A['e9'] * (1 + int(name[3:]) * A['adr'] / 100)
+    if name.startswith('idx_run'):                    # R74: index above its EMA50 on each of the last n closes
+        up = ew_index_up(A, pool, 50).astype(float)
+        n = int(name[len('idx_run'):])
+        return luk.rolling_mean(up[:, None], n)[:, 0] >= 1
     if name in INDEX_SCALES:
         return index_risk_scale(A, pool, **INDEX_SCALES[name])
     raise ValueError(name)
@@ -1278,6 +1328,10 @@ def build_system(A, cfg, trace=None):
                 'T5': lambda: fam['HS'] | fam['EP'] | fam['PB']}[cfg['signals']]()
     if cfg.get('bpath'):
         mask = mask | base_path(A, pool, cfg['bpath'], **cfg.get('bopts', {}))
+    if cfg.get('wk_channel'):                          # R73: weekly breakouts anywhere in the pool
+        wb = weekly_cached(A)
+        for k in cfg['wk_channel'].split('+'):
+            mask = mask | (pool & wb[k])
     if A['market'] == 'cn':
         mask = mask & ~limit_up(A)
     if cfg.get('rank'):

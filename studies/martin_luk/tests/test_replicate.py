@@ -160,6 +160,27 @@ class RotationTests(unittest.TestCase):
         self.assertTrue(R.rotate(A, {'X': x, 'Y': y}, lookback=3, lag=2)[6, 0])
 
 
+class WeeklyTests(unittest.TestCase):
+    def test_inside_week_breakout_fires_once_on_the_first_break(self):
+        days = np.array(['2025-01-06', '2025-01-07', '2025-01-13', '2025-01-14', '2025-01-20', '2025-01-21',
+                         '2025-01-22'])
+        # week 1: 9-12; week 2 (inside): 9.5-11.5; week 3: Mon stays below 11.5, Tue breaks it, Wed breaks again
+        rows = [(10, 12, 9, 11), (11, 11.5, 10, 10.5), (10.5, 11.5, 9.5, 10), (10, 11, 9.8, 10.8),
+                (10.8, 11.2, 10.5, 11), (11, 11.9, 10.9, 11.8), (11.8, 12.4, 11.6, 12.2)]
+        a = np.array(rows, float)
+        A = {'days': days, 'open': a[:, :1], 'high': a[:, 1:2], 'low': a[:, 2:3], 'close': a[:, 3:4]}
+        w = R.weekly_breakouts(A)
+        self.assertEqual(w['EW1'][:, 0].tolist(), [False, False, False, False, False, True, False])
+
+    def test_weekly_pin_bar(self):
+        days = np.array(['2025-01-06', '2025-01-07', '2025-01-13'])
+        # week 1: open 10, low 8, high 10.3, close 10.2 -> lower wick 2 >= 2 x body 0.2, close in the top third
+        rows = [(10, 10.1, 8, 9), (9, 10.3, 9, 10.2), (10.2, 10.5, 10.1, 10.4)]
+        a = np.array(rows, float)
+        A = {'days': days, 'open': a[:, :1], 'high': a[:, 1:2], 'low': a[:, 2:3], 'close': a[:, 3:4]}
+        self.assertEqual(R.weekly_breakouts(A)['EW2'][:, 0].tolist(), [False, False, True])
+
+
 class MaskTests(unittest.TestCase):
     def test_prev_shifts_one_day(self):
         x = np.array([[True], [False], [True]])

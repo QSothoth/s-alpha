@@ -44,6 +44,9 @@ class Rules:
     add_levels: tuple = ()          # several R levels instead of add_r, one add at each; an add the position or gross
                                     # caps leave no room for still uses up its level (no breakeven then)
     risk_scale: str = ''            # 1-D (days) array in `ema`: risk per new trade is multiplied by its value that day
+    trail_alt: str = ''             # EMA name the close trail uses instead while the conditions below hold
+    trail_alt_dd: float = 0.0       # > 0: ... while equity (as of the previous close) is this far below its peak
+    trail_alt_days: str = ''        # 1-D bool array in `ema`: ... on these days (both set: both must hold)
     buy_cost: float = .0005
     sell_cost: float = .0005
     margin_rate: float = .07        # yearly, on long value above equity
@@ -81,6 +84,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
     trail2 = ema.get(rules.trail_after_trim) if rules.trail_after_trim else None
     sig_trim = ema[rules.trim_signal] if rules.trim_signal else None
     scale = ema[rules.risk_scale] if rules.risk_scale else None
+    trail3 = ema[rules.trail_alt] if rules.trail_alt else None
+    alt_days = ema[rules.trail_alt_days] if rules.trail_alt_days else None
+    peak = 1.0
     cash, pos, trades, curve = 1.0, {}, [], []
 
     def last(j, d):
@@ -161,6 +167,10 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
 
     for d in range(d0, d1):
         equity = cash + value(d - 1) if d > d0 else 1.0
+        peak = max(peak, equity)
+        alt = trail3 is not None and (rules.trail_alt_dd > 0 or alt_days is not None) \
+            and (rules.trail_alt_dd <= 0 or equity < peak * (1 - rules.trail_alt_dd)) \
+            and (alt_days is None or bool(alt_days[d]))
         longs = sum(q.size * last(q.j, d - 1) for q in pos.values() if q.side > 0)
         cash -= rules.margin_rate / 252 * max(0.0, longs - equity)
         for q in list(pos.values()):
@@ -191,7 +201,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
                 continue
             if rules.breakeven_r and (best - (q.fill + s * rules.breakeven_r * R)) * s >= 0:
                 q.stop = max(q.stop, q.fill) if s > 0 else min(q.stop, q.fill)
-            tr_ = trail2 if trail2 is not None and q.trims else trail
+            tr_ = trail3 if alt else (trail2 if trail2 is not None and q.trims else trail)
             if tr_ is not None and np.isfinite(tr_[d, j]):
                 if (c[d, j] - tr_[d, j]) * s > 0:
                     q.armed = True
