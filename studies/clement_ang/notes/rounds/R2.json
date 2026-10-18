@@ -1,0 +1,22 @@
+{
+ "stage": "exits_capacity",
+ "base": ["r1.json", "chosen"],
+ "ref": "R1",
+ "objective": "behaviour",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "K1": {"rule_opts": {"trims": [2], "trim_frac": 0.3333, "breakeven_r": 2.0, "trail": "ema10",
+                       "trim_signal": "atr50x8", "trim_signal_frac": 0.3333}},
+  "K2": {"rule_opts": {"trims": [2], "trim_frac": 0.3333, "breakeven_r": 2.0, "trail": "ema10",
+                       "trim_signal": "atr50x8", "trim_signal_frac": 0.3333, "max_open": 20}, "max_new": 3},
+  "K3": {"rule_opts": {"trims": [2], "trim_frac": 0.3333, "breakeven_r": 2.0, "trail": "ema10",
+                       "trim_signal": "atr50x8", "trim_signal_frac": 0.3333, "max_open": 20}, "max_new": 3,
+         "setups": ["fine", "pb"]},
+  "K4": {"rule_opts": {"trims": [2], "trim_frac": 0.3333, "breakeven_r": 2.0, "trail": "ema10",
+                       "trim_signal": "atr50x8", "trim_signal_frac": 0.3333, "max_open": 20}, "max_new": 3,
+         "setups": ["fine", "pb", "ep"], "ep_pool": {"turnover": 5000000.0, "price": 2.0}},
+  "K5": {"rule_opts": {"trims": [2], "trim_frac": 0.3333, "breakeven_r": 2.0, "trail": "ema10",
+                       "trim_signal": "atr50x8", "trim_signal_frac": 0.3333, "max_open": 20}, "max_new": 3,
+         "setups": ["fine", "pb"], "filter": "IDX20"}
+ }
+}

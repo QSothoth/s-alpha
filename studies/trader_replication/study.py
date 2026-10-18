@@ -137,7 +137,8 @@ class Study:
     home = ('us',)                   # markets he trades (rounds tune only here)
     his = {}                         # year -> his published numbers (ret, win, avg_win, avg_loss, days_win, ...)
     his_behaviour = {}               # behaviour targets for gap() when not per year
-    draws = 100                      # placebo draws per run
+    draws = 100                      # placebo draws for a carried configuration and final
+    screen_draws = 50                # placebo draws while screening a round's candidates
     base = {}                        # the configuration a round with base ["", "base"] starts from
 
     # ----- trader-specific -----
@@ -334,14 +335,25 @@ class Study:
         ls, lv = self.ledger_sets(A)
         out = dict(name=name, stage=spec.get('stage', ''), base=spec['base'], configs=cfgs, full={},
                    objective=objective, gates=gates, market=market)
+        draws = spec.get('draws', self.screen_draws)
         for k, cfg in cfgs.items():
-            st, _ = self.evaluate(A, cfg, ls, lv)
+            st, _ = self.evaluate(A, cfg, ls, lv, placebo=draws)
             out['full'][k] = st
             self.print_row(name, k, st)
         res = out['full']
         fails = {k: self.passes(res[k], res[ref], gates) for k in cfgs if k != ref}
         ok = [k for k in fails if not fails[k]]
         best = max(ok + [ref], key=lambda k: self.score(res[k], objective))     # never carry a worse system
+        while draws < self.draws:                  # the carried configuration gets the full placebo
+            st, _ = self.evaluate(A, cfgs[best], ls, lv, placebo=self.draws)
+            st['placebo_screen'] = res[best]['placebo']
+            res[best] = st
+            self.print_row(name, best + f' ({self.draws} draws)', st)
+            if best == ref or not self.passes(st, res[ref], gates):
+                break
+            fails[best] = self.passes(st, res[ref], gates)
+            ok.remove(best)
+            best = max(ok + [ref], key=lambda k: self.score(res[k], objective))
         out.update(chosen=best, chosen_config=cfgs[best], failed_gates=fails)
         print(name, 'chosen', best, objective, self.score(res[best], objective), flush=True)
         self.out.mkdir(parents=True, exist_ok=True)
@@ -482,9 +494,15 @@ class Study:
         for t in sorted(tr, key=lambda t: -t['pnl'])[:15]:
             print('DIAG top trade', {k: (round(v, 3) if isinstance(v, float) else v) for k, v in t.items()})
         self.out.mkdir(parents=True, exist_ok=True)
-        (self.out / f'diagnose_{Path(report).stem or "base"}.json').write_text(
+        (self.out / f'diagnose_{self.tag(report, key)}.json').write_text(
             json.dumps(out, indent=1, default=float), encoding='utf-8')
         return out
+
+    @staticmethod
+    def tag(report, key):
+        """Report file suffix: the round report's stem, plus the key when it is not the chosen one."""
+        stem = Path(report).stem or 'base'
+        return stem if key == 'chosen' else f'{stem}_{key}'
 
     @staticmethod
     def trace_masks(trace):
@@ -509,7 +527,7 @@ class Study:
             print('ROBUST start', start, f"full {st['total']:+.3f} dd {st['maxdd']:.2f}",
                   {a: round(b, 3) for a, b in st['by_year'].items()}, flush=True)
         self.out.mkdir(parents=True, exist_ok=True)
-        (self.out / f'robust_{Path(report).stem}.json').write_text(json.dumps(out, indent=1, default=float),
+        (self.out / f'robust_{self.tag(report, key)}.json').write_text(json.dumps(out, indent=1, default=float),
                                                                     encoding='utf-8')
         return out
 
@@ -546,7 +564,7 @@ class Study:
                   flush=True)
             del A
         self.out.mkdir(parents=True, exist_ok=True)
-        (self.out / f'final_{Path(report).stem or "base"}.json').write_text(
+        (self.out / f'final_{self.tag(report, key)}.json').write_text(
             json.dumps(out, indent=1, default=float), encoding='utf-8')
         return out
 
@@ -606,7 +624,7 @@ class Study:
         for p in per:
             print('THREE', p)
         self.out.mkdir(parents=True, exist_ok=True)
-        (self.out / f'three_{Path(report).stem or "base"}.json').write_text(
+        (self.out / f'three_{self.tag(report, key)}.json').write_text(
             json.dumps(out, indent=1, default=float), encoding='utf-8')
         return out
 

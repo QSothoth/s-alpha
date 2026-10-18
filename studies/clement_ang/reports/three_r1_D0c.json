@@ -1,0 +1,362 @@
+{
+ "report": "r1.json",
+ "config": {
+  "setups": [
+   "fine"
+  ],
+  "entry": "close",
+  "stop_min": 0.01,
+  "stop_cap": 0.0,
+  "priority": "strength",
+  "max_new": 2,
+  "strength": "",
+  "filter": "",
+  "pool": {
+   "turnover": 50000000.0,
+   "adr": 3.0,
+   "above50": true
+  },
+  "rule_opts": {
+   "risk": 0.003,
+   "max_position": 0.3,
+   "max_gross": 1.0,
+   "max_open": 8,
+   "trail": "sma20",
+   "arm_trail_on_entry": true,
+   "trims": []
+  }
+ },
+ "layer1": {
+  "n": 21,
+  "wins": 15,
+  "losses": 5,
+  "r_known": [],
+  "published": {
+   "2024": {
+    "ret": 0.793,
+    "win": 0.3,
+    "avg_win": 0.054,
+    "avg_loss": -0.021,
+    "days_win": 3,
+    "days_loss": 0.8,
+    "per_year": 800
+   },
+   "2025": {
+    "ret": 1.404,
+    "win": 0.3,
+    "avg_win": 0.054,
+    "avg_loss": -0.021,
+    "days_win": 3,
+    "days_loss": 0.8,
+    "per_year": 1294
+   }
+  }
+ },
+ "layer2": {
+  "n": 19,
+  "mean_r": 5.512105263157895,
+  "median_r": 1.75,
+  "win": 0.631578947368421,
+  "mean_ret": 0.18636842105263157,
+  "behaviour": {
+   "trades": 19,
+   "per_year": 6.8302425106990015,
+   "per_day": 0.02710413694721826,
+   "win": 0.631578947368421,
+   "avg_win": 0.3649630278127967,
+   "avg_loss": -0.11977502664405297,
+   "days_win": 31.916666666666668,
+   "days_loss": 6.142857142857143,
+   "median_days_win": 29.5,
+   "median_days_loss": 4.0,
+   "top10_share": 0.25925905544772154,
+   "entry_weight_mean": 0.06854966233094408,
+   "entry_weight_max": 0.29533857588307794,
+   "open_mean": 0.6077032810271041,
+   "open_max": 4
+  },
+  "sum_r": 104.73
+ },
+ "layer3": {
+  "n": 494,
+  "mean_r": 0.0028740559157228868,
+  "total": -0.019587274649302544,
+  "by_year": {
+   "2024": 0.02702665381915148,
+   "2025": -0.042077848577319665,
+   "2026": -0.0034547839312681905
+  },
+  "behaviour": {
+   "trades": 494,
+   "per_year": 177.58630527817405,
+   "per_day": 0.7047075606276747,
+   "win": 0.20242914979757085,
+   "avg_win": 0.18002645953242818,
+   "avg_loss": -0.03920914304468028,
+   "days_win": 23.08,
+   "days_loss": 3.918781725888325,
+   "median_days_win": 20.0,
+   "median_days_loss": 2.0,
+   "top10_share": 0.9012907653469484,
+   "entry_weight_mean": 0.10309837212437162,
+   "entry_weight_max": 0.30212546986862115,
+   "open_mean": 5.4950071326676175,
+   "open_max": 8
+  },
+  "bought": 0
+ },
+ "per_trade": [
+  {
+   "id": "A08",
+   "ticker": "CRNC",
+   "date": "2025-01-03",
+   "setup": "ep",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": -0.7,
+   "our_ret": -0.323,
+   "our_days": 14,
+   "our_why": "trail"
+  },
+  {
+   "id": "A09",
+   "ticker": "GEV",
+   "date": "2025-01-21",
+   "setup": "pullback",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": -3.71,
+   "our_ret": -0.185,
+   "our_days": 4,
+   "our_why": "gap_stop"
+  },
+  {
+   "id": "A11",
+   "ticker": "RR",
+   "date": "2025-02-13",
+   "setup": "vcp",
+   "his_outcome": "loss",
+   "his_r": null,
+   "our_r": -0.79,
+   "our_ret": -0.096,
+   "our_days": 1,
+   "our_why": "trail"
+  },
+  {
+   "id": "A17",
+   "ticker": "PLTR",
+   "date": "2025-04-24",
+   "setup": "breakout",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 1.75,
+   "our_ret": 0.111,
+   "our_days": 29,
+   "our_why": "trail"
+  },
+  {
+   "id": "A18",
+   "ticker": "PLTR",
+   "date": "2025-05-06",
+   "setup": "pullback",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": null,
+   "our_ret": null,
+   "our_days": null,
+   "our_why": null
+  },
+  {
+   "id": "A19",
+   "ticker": "HOOD",
+   "date": "2025-05-08",
+   "setup": "breakout",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 18.6,
+   "our_ret": 0.846,
+   "our_days": 58,
+   "our_why": "trail"
+  },
+  {
+   "id": "A20",
+   "ticker": "NFLX",
+   "date": "2025-04-24",
+   "setup": "breakout",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 3.06,
+   "our_ret": 0.139,
+   "our_days": 52,
+   "our_why": "trail"
+  },
+  {
+   "id": "A21",
+   "ticker": "FUTU",
+   "date": "2025-07-09",
+   "setup": "breakout",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": -0.07,
+   "our_ret": -0.006,
+   "our_days": 17,
+   "our_why": "trail"
+  },
+  {
+   "id": "A22",
+   "ticker": "ORCL",
+   "date": "2025-09-10",
+   "setup": "ep",
+   "his_outcome": "loss",
+   "his_r": null,
+   "our_r": -1.02,
+   "our_ret": -0.05,
+   "our_days": 1,
+   "our_why": "stop"
+  },
+  {
+   "id": "A26",
+   "ticker": "TSLA",
+   "date": "2025-12-09",
+   "setup": "pullback",
+   "his_outcome": "loss",
+   "his_r": null,
+   "our_r": 1.48,
+   "our_ret": 0.031,
+   "our_days": 13,
+   "our_why": "trail"
+  },
+  {
+   "id": "A27",
+   "ticker": "TSLA",
+   "date": "2025-12-15",
+   "setup": "breakout",
+   "his_outcome": "loss",
+   "his_r": null,
+   "our_r": null,
+   "our_ret": null,
+   "our_days": null,
+   "our_why": null
+  },
+  {
+   "id": "A29",
+   "ticker": "PAAS",
+   "date": "2025-12-09",
+   "setup": "breakout",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 1.4,
+   "our_ret": 0.127,
+   "our_days": 35,
+   "our_why": "trail"
+  },
+  {
+   "id": "A31",
+   "ticker": "WDC",
+   "date": "2026-01-09",
+   "setup": "pullback",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 4.83,
+   "our_ret": 0.349,
+   "our_days": 30,
+   "our_why": "trail"
+  },
+  {
+   "id": "A32",
+   "ticker": "LMND",
+   "date": "2026-01-12",
+   "setup": "pullback",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.01,
+   "our_ret": -0.102,
+   "our_days": 2,
+   "our_why": "stop"
+  },
+  {
+   "id": "A33",
+   "ticker": "UCTT",
+   "date": "2026-04-02",
+   "setup": "pullback",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 2.11,
+   "our_ret": 0.139,
+   "our_days": 18,
+   "our_why": "trail"
+  },
+  {
+   "id": "A34",
+   "ticker": "STM",
+   "date": "2026-04-06",
+   "setup": "breakout",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 40.24,
+   "our_ret": 1.045,
+   "our_days": 54,
+   "our_why": "trail"
+  },
+  {
+   "id": "A35",
+   "ticker": "NBIS",
+   "date": "2026-04-06",
+   "setup": "pullback",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 4.49,
+   "our_ret": 0.203,
+   "our_days": 16,
+   "our_why": "trail"
+  },
+  {
+   "id": "A36",
+   "ticker": "ARM",
+   "date": "2026-03-31",
+   "setup": "ep",
+   "his_outcome": "loss",
+   "his_r": null,
+   "our_r": -1.01,
+   "our_ret": -0.076,
+   "our_days": 4,
+   "our_why": "stop"
+  },
+  {
+   "id": "A37",
+   "ticker": "ARM",
+   "date": "2026-04-07",
+   "setup": "pullback",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 26.01,
+   "our_ret": 1.135,
+   "our_days": 45,
+   "our_why": "trail"
+  },
+  {
+   "id": "A40",
+   "ticker": "DDOG",
+   "date": "2026-05-07",
+   "setup": "ep",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 4.18,
+   "our_ret": 0.205,
+   "our_days": 23,
+   "our_why": "trail"
+  },
+  {
+   "id": "A41",
+   "ticker": "NET",
+   "date": "2026-05-27",
+   "setup": "pullback",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 4.89,
+   "our_ret": 0.049,
+   "our_days": 10,
+   "our_why": "trail"
+  }
+ ]
+}
