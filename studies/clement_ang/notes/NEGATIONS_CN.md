@@ -58,3 +58,8 @@
 | R12 | pairs | Q3 | `{"rule_opts": {"trail": "ema20", "max_open": 30}, "pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}}` | r11.json:chosen | Q2 | objective below Q2；全区间 +229%（带入 +239%） | open |
 | R12 | pairs | Q4 | `{"rule_opts": {"trail": "ema20", "max_open": 30, "max_position": 0.5}}` | r11.json:chosen | Q2 | gates: bought；全区间 +134%（带入 +239%） | open |
 | R12 | pairs | Q5 | `{"rule_opts": {"trail": "ema20", "max_open": 30, "risk": 0.0075}, "pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}}` | r11.json:chosen | Q2 | gates: bought；全区间 +148%（带入 +239%） | open |
+| R13 | pairs | S1 | `{"pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}}` | r12.json:chosen | R12 | objective below R12；全区间 +228%（带入 +239%） | open |
+| R13 | pairs | S2 | `{"rule_opts": {"risk": 0.0075}}` | r12.json:chosen | R12 | gates: bought；全区间 +128%（带入 +239%） | open |
+| R13 | pairs | S3 | `{"rule_opts": {"max_gross": 3.0}}` | r12.json:chosen | R12 | gates: bought；全区间 +122%（带入 +239%） | open |
+| R13 | pairs | S4 | `{"setups": ["fine", "pb", "ep", "brk52"]}` | r12.json:chosen | R12 | gates: bought, width<=30；全区间 +97%（带入 +239%） | open |
+| R13 | pairs | S5 | `{"pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}, "rule_opts": {"risk": 0.0075}}` | r12.json:chosen | R12 | gates: bought；全区间 +136%（带入 +239%） | open |
