@@ -714,7 +714,7 @@ def system_entries(A, sig):
 
 def run_rules(A, entries, seg, pool, rules, placebo=100):
     px = dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'])
-    if rules.trail == 'w9' and 'w9' not in A:
+    if 'w9' in (rules.trail, rules.trail_after_trim) and 'w9' not in A:
         A['w9'] = weekly_ema(A['close'], A['days'], 9)
     names = (rules.exit_signal, rules.trim_signal, rules.risk_scale)
     for k in names:
@@ -1754,7 +1754,43 @@ def diagnose(report):
         print('DIAG', r)
     print('DIAG by year', by_year)
     print('DIAG top names', {y: [(c, round(v, 3)) for c, v in x] for y, x in top.items()})
+    for t in sorted(tr, key=lambda t: -t['pnl'])[:15]:
+        print('DIAG top trade', {k: (round(v, 3) if isinstance(v, float) else v) for k, v in t.items()})
     (I.OUT / 'diagnose.json').write_text(json.dumps(out, indent=1, default=float))
+
+
+def robust(report):
+    """How fragile is the chosen configuration?  Real runs only (no placebo): start-date shifts, one-step neighbours
+    of the knobs the rounds tuned, the add / risk-scale / climax rules switched off, and doubled costs.  Reported,
+    never used to choose."""
+    cfg = json.loads((I.OUT / report).read_text())['chosen_config']
+    A = us_arrays()
+    ro = cfg.get('rule_opts', {})
+    variants = {'base': {}, 'max_new 3': {'max_new': 3}, 'max_new 5': {'max_new': 5},
+                'risk x0.8': {'risk': cfg['risk'] * .8, 'risk_high': cfg.get('risk_high', 0) * .8},
+                'risk x1.2': {'risk': cfg['risk'] * 1.2, 'risk_high': cfg.get('risk_high', 0) * 1.2},
+                'max_position .4': {'max_position': .4}, 'max_position .6': {'max_position': .6},
+                'gross 2.4': {'gross': 2.4}, 'gross 3.2': {'gross': 3.2},
+                'stop_min .008': {'stop_min': .008}, 'stop_min .012': {'stop_min': .012},
+                'no adds': {'rule_opts': {'add_r': 0.0, 'add_levels': []}},
+                'no risk scale': {'rule_opts': {'risk_scale': ''}},
+                'no climax exit': {'rule_opts': {'exit_signal': ''}},
+                'costs x2': {'rule_opts': {'buy_cost': .001, 'sell_cost': .001}}}
+    out = {'report': report, 'config': cfg, 'variants': {}, 'starts': {}}
+    for name, change in variants.items():
+        c = merged(cfg, change)
+        entries, rules, mask, pool = build_system(A, c)
+        st = run_rules(A, entries, FULL, pool, rules, placebo=0)[0]
+        out['variants'][name] = {k: st[k] for k in ('total', 'maxdd', 'per_year', 'win', 'by_year')}
+        print('ROBUST', name, f"full {st['total']:+.3f} dd {st['maxdd']:.2f}",
+              {a: round(b, 3) for a, b in st['by_year'].items()}, flush=True)
+    entries, rules, mask, pool = build_system(A, cfg)
+    for start in ('2024-01-02', '2024-02-01', '2024-03-01', '2024-04-01', '2024-07-01', '2025-01-02'):
+        st = run_rules(A, entries, (start, FULL[1]), pool, rules, placebo=0)[0]
+        out['starts'][start] = {k: st[k] for k in ('total', 'maxdd', 'by_year')}
+        print('ROBUST start', start, f"full {st['total']:+.3f} dd {st['maxdd']:.2f}",
+              {a: round(b, 3) for a, b in st['by_year'].items()}, flush=True)
+    (I.OUT / 'robust.json').write_text(json.dumps(out, indent=1, default=float))
 
 
 ROUNDS = Path(__file__).resolve().parent / 'notes' / 'rounds'
@@ -1787,6 +1823,8 @@ elif __name__ == '__main__' and sys.argv[1] == 'final':
     final(sys.argv[2])
 elif __name__ == '__main__' and sys.argv[1] == 'diagnose':
     diagnose(sys.argv[2])
+elif __name__ == '__main__' and sys.argv[1] == 'robust':
+    robust(sys.argv[2])
 elif __name__ == '__main__':
     {'r19': r19, 'r20': r20, 'r21': r21, 'r21b': r21b, 'r22': r22, 'r22b': r22b, 'r23': r23, 'r23b': r23b, 'r23c': r23c, 'r24': r24, 'r24b': r24b, 'r25': r25, 'r26': r26,
      'r27': r27, 'r27b': r27b, 'r28': r28, 'r29': r29, 'r30': r30, 'r31': r31, 'r32': r32, 'r33': r33, 'r34': r34, 'r35': r35, 'r36': r36, 'r37': r37, 'r38': r38, 'r39': r39, 'r40': r40, 'r41': r41}[sys.argv[1]]()

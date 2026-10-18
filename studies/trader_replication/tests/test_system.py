@@ -180,6 +180,15 @@ class SystemTests(unittest.TestCase):
         self.assertEqual(tr[0]['why'], 'stop')
         self.assertAlmostEqual(tr[0]['pnl'], 2 * size0 * 10.0 - size0 * 10.0 - size0 * 11.0)
 
+    def test_two_add_levels_each_add_once(self):
+        # fill 10, R = 0.5: +2R = 11 on day 1, +4R = 12 on day 2; the position ends with three times its size
+        rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 12, 11, 12), (12, 13, 12, 13)]
+        p = px(rows)
+        _, _, tr = Y.simulate(p, {}, Y.Rules(trail='', trims=(), add_levels=(2, 4), max_position=10, max_gross=10,
+                                             **NOCOST), one(4, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1])
+        size0 = .005 / .05 / 10.0
+        self.assertAlmostEqual(tr[0]['pnl'], size0 * (13 - 10) + size0 * (13 - 11) + size0 * (13 - 12))
+
     def test_risk_scale_multiplies_the_risk_of_new_trades(self):
         rows = [(10, 10, 10, 10), (10, 10.2, 9.4, 9.6)]
         p = px(rows)

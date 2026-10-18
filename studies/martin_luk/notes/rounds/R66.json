@@ -1,0 +1,13 @@
+{
+ "stage": "market",
+ "base": ["r65.json", "chosen"],
+ "ref": "R65",
+ "objective": "min_2024_2025",
+ "candidates": {
+  "SF1": {"filter": "NONE", "rule_opts": {"risk_scale": "idx_pb16_lo05", "risk_low": 0.0025}},
+  "SF2": {"filter": "NONE", "rule_opts": {"risk_scale": "idx_pb16_lo025", "risk_low": 0.0025}},
+  "SF3": {"filter": "NONE", "rule_opts": {"risk_scale": "idx_pb16_lo05", "risk_low": 0.001}},
+  "SF4": {"rule_opts": {"risk_low": 0.0025}},
+  "SF5": {"filter": "NONE", "rule_opts": {"risk_scale": "idx_pb16_lo025", "risk_low": 0.001}}
+ }
+}

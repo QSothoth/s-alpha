@@ -41,6 +41,8 @@ class Rules:
     trim_signal_frac: float = 0.0   # fraction for signal trims (0 = trim_frac)
     add_r: float = 0.0              # > 0: once a long closes at least this R above its fill, buy add_frac of the original
     add_frac: float = 1.0           # size at that close (once) and move the whole stop to the original fill
+    add_levels: tuple = ()          # several R levels instead of add_r, one add at each; an add the position or gross
+                                    # caps leave no room for still uses up its level (no breakeven then)
     risk_scale: str = ''            # 1-D (days) array in `ema`: risk per new trade is multiplied by its value that day
     buy_cost: float = .0005
     sell_cost: float = .0005
@@ -113,7 +115,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
             trades.append(dict(code=str(px['codes'][q.j]), side=q.side, kind=q.kind, entry=str(dates[q.d0]),
                                exit=str(dates[d]), days=d - q.d0, fill=q.fill, stop=q.stop0,
                                risk_pct=abs(q.fill - q.stop0) / q.fill, pnl=q.cash,
-                               r=q.cash / risk if risk > 0 else 0.0, ret=q.cash / gross0, why=why))
+                               r=q.cash / risk if risk > 0 else 0.0, ret=q.cash / gross0, why=why, add_tries=q.adds))
 
     def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None):
         nonlocal cash
@@ -203,7 +205,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
                 close_part(q, (rules.trim_signal_frac or rules.trim_frac) * q.size0, c[d, j], d, 'signal_trim')
                 if j not in pos:
                     continue
-            if rules.add_r and s > 0 and not q.adds and c[d, j] >= q.fill + rules.add_r * R:
+            levels_add = rules.add_levels or ((rules.add_r,) if rules.add_r else ())
+            if s > 0 and q.adds < len(levels_add) and c[d, j] >= q.fill + levels_add[q.adds] * R:
                 add_pos(q, c[d, j], d)
             if sig_exit is not None and s > 0 and sig_exit[d, j]:
                 close_part(q, q.size, c[d, j], d, 'signal')
