@@ -1,0 +1,14 @@
+{
+ "stage": "retest_exposure",
+ "base": ["r16.json", "chosen"],
+ "ref": "R16",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "E1": {"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"]},
+  "E2": {"rule_opts": {"risk": 0.0075}},
+  "E3": {"rule_opts": {"max_gross": 2.0, "max_open": 12}},
+  "E4": {"rule_opts": {"max_gross": 2.0, "max_open": 12, "risk": 0.0075}},
+  "E5": {"rule_opts": {"trim_day": 5}}
+ }
+}

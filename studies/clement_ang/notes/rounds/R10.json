@@ -1,0 +1,14 @@
+{
+ "stage": "retest_after_exposure",
+ "base": ["r9.json", "chosen"],
+ "ref": "R9",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "N1": {"rule_opts": {"trail": "ema20"}},
+  "N2": {"pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}},
+  "N3": {"filter": "IDX20"},
+  "N4": {"rule_opts": {"max_open": 30}},
+  "N5": {"rule_opts": {"risk": 0.0075}}
+ }
+}
