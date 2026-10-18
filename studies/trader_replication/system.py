@@ -1,9 +1,11 @@
 """Daily-bar portfolio of a replicated trader: close-confirmed entries, fixed-risk sizing, partials, EMA trail,
 both sides, and a placebo that swaps every entry for a random name from the same list on the same day.
 
-Entries are tuples (priority, column, side, fill, stop, kind[, day_exit]) placed on day d and filled at `fill` on
-day d (normally that day's close); management starts on day d + 1.  side is +1 (long) or -1 (short).  An intraday
-entry that was already stopped later the same day carries its exit price as day_exit.
+Entries are tuples (priority, column, side, fill, stop, kind[, day_exit[, size_risk[, max_position]]]) placed on
+day d and filled at `fill` on day d (normally that day's close); management starts on day d + 1.  side is +1 (long)
+or -1 (short).  An intraday entry that was already stopped later the same day carries its exit price as day_exit;
+size_risk (a fraction of the fill) sizes the trade when it is wider than the stop distance (gap risk), and
+max_position caps that trade below rules.max_position (small caps).  The placebo keeps both overrides.
 Same-day ordering is conservative: when a day reaches both the stop and a partial level, the stop comes first
 unless the open is already beyond the partial level.
 """
@@ -27,6 +29,7 @@ class Rules:
     nft_days: int = 0               # > 0: exit at that day's close if the trade is still on the wrong side of its fill
     feedback: int = 0               # > 0: risk_low per trade while the last `feedback` closed trades sum to < 0 R
     risk_low: float = .0025
+    risk_high: float = 0.0          # > 0: risk per trade while the last `feedback` closed trades sum to > 0 R
     short_trims: tuple | None = None  # shorts' partial levels (None = same as longs)
     short_max_days: int = 0           # shorts' holding limit (0 = same as longs)
     buy_cost: float = .0005
@@ -97,7 +100,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
                                risk_pct=abs(q.fill - q.stop0) / q.fill, pnl=q.cash,
                                r=q.cash / risk if risk > 0 else 0.0, ret=q.cash / gross0, why=why))
 
-    def open_pos(j, side, fill, stop, kind, d, equity):
+    def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None):
         nonlocal cash
         if j in pos or not np.isfinite(fill) or fill <= 0:
             return
@@ -105,9 +108,15 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
         if not (0 < risk < 1) or (stop - fill) * side >= 0:
             return
         frac = rules.risk
-        if rules.feedback and len(trades) >= rules.feedback and sum(t['r'] for t in trades[-rules.feedback:]) < 0:
-            frac = rules.risk_low
-        val = min(frac * equity / risk, rules.max_position * equity, rules.max_gross * equity - gross(d))
+        if rules.feedback and len(trades) >= rules.feedback:
+            recent = sum(t['r'] for t in trades[-rules.feedback:])
+            if recent < 0:
+                frac = rules.risk_low
+            elif recent > 0 and rules.risk_high > 0:
+                frac = rules.risk_high
+        cap = rules.max_position if max_pos is None else min(rules.max_position, max_pos)
+        width = risk if size_risk is None else max(risk, size_risk)
+        val = min(frac * equity / width, cap * equity, rules.max_gross * equity - gross(d))
         if val <= .001 * equity:
             return
         size = val / fill
@@ -171,12 +180,13 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None):
                     continue
                 k = int(placebo.choice(cand))
                 pct = abs(fill - stop) / fill
-                swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), 'placebo'))
+                swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), 'placebo', None) + tuple(e[7:9]))
             todays = swapped
         for e in sorted(todays, key=lambda x: x[0]):
             pr, j, side, fill, stop, kind = e[:6]
             had = j in pos
-            open_pos(j, side, fill, stop, kind, d, eq_now)
+            open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,
+                     e[8] if len(e) > 8 else None)
             if len(e) > 6 and e[6] is not None and j in pos and not had:     # intraday entry stopped the same day
                 close_part(pos[j], pos[j].size, e[6], d, 'stop_day0')
         curve.append(cash + value(d))

@@ -104,6 +104,25 @@ class SystemTests(unittest.TestCase):
         curve, _, tr = self.run_(rows, e, feedback=1, risk_low=.0025)
         self.assertAlmostEqual(curve[-1], (1 - .005) * (1 - .0025))
 
+    def test_positive_feedback_raises_the_next_risk(self):
+        rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 11, 11, 11), (11, 11, 10.4, 10.4)]
+        e = [[(0, 0, 1, 10.0, 9.5, 'x')], [], [(0, 0, 1, 11.0, 10.5, 'x')], []]
+        rules = dict(feedback=1, risk_low=.0025, risk_high=.01, trims=(), max_days=1)
+        curve, _, tr = self.run_(rows, e, **rules)
+        first = .005 / .05 * .10                     # 10% of equity, +10%, closed by the 1-day limit
+        self.assertEqual([t['why'] for t in tr], ['time', 'stop'])
+        self.assertAlmostEqual(tr[1]['r'], -1.0)
+        self.assertAlmostEqual(curve[-1], (1 + first) * (1 - .01))   # after a winner the next trade risks 1%
+
+    def test_size_risk_and_position_cap_overrides(self):
+        rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 11, 11, 11)]
+        e = [[(0, 0, 1, 10.0, 9.9, 'x', None, .05)], [], []]          # stop 1% away, sized as if 5%
+        curve, _, _ = self.run_(rows, e, trims=(), max_position=1.0)
+        self.assertAlmostEqual(curve[-1], 1 + .005 / .05 * .10)       # 10% of equity gains 10%
+        e = [[(0, 0, 1, 10.0, 9.9, 'x', None, None, .2)], [], []]     # stop 1% wants 50%, capped at 20%
+        curve, _, _ = self.run_(rows, e, trims=(), max_position=.3)
+        self.assertAlmostEqual(curve[-1], 1 + .2 * .10)
+
     def test_placebo_draws_from_the_pool(self):
         a = np.array([[10, 10, 10, 10], [10, 11, 10, 11]], float)
         p = {'open': np.repeat(a[:, :1], 2, 1), 'high': np.repeat(a[:, 1:2], 2, 1), 'low': np.repeat(a[:, 2:3], 2, 1),

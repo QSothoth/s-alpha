@@ -972,6 +972,346 @@ def r28():
     (I.OUT / 'r28_system.json').write_text(json.dumps(out, indent=1))
 
 
+def close_outcomes(A, horizon=10, up=.20, down=.07, window=20):
+    """From day t's close: return `horizon` closes later, and whether +up comes before -down within `window` days."""
+    c, h, l = A['close'], A['high'], A['low']
+    T = len(c)
+    fwd = np.full_like(c, np.nan)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        fwd[:-horizon] = c[horizon:] / c[:-horizon] - 1
+    win = np.full_like(c, np.nan)
+    for t in range(T - window):
+        decided = np.zeros(c.shape[1], bool)
+        res = np.zeros(c.shape[1])
+        with np.errstate(invalid='ignore', divide='ignore'):
+            for k in range(1, window + 1):
+                dn = (l[t + k] / c[t] - 1 <= -down) & ~decided
+                decided |= dn
+                upk = (h[t + k] / c[t] - 1 >= up) & ~decided
+                res[upk] = 1
+                decided |= upk
+        win[t] = np.where(np.isfinite(c[t]), res, np.nan)
+    return fwd, win
+
+
+def r29():
+    A = us_arrays()
+    trades = L.load(LEDGER)
+    sel, _ = L.split(trades, CUTOFF)
+    longs24 = [x for x in located_longs(A, sel) if x[0].window_lo < '2025-01-01']
+    days = A['days']
+    st = stage_inputs(A, 23)
+    pool, k, w = st['pool'], st['k'], st['w']
+    fams = setup_families(A, w)
+    e11 = union(fams['E11'])
+    c, l = A['close'], A['low']
+    with np.errstate(invalid='ignore', divide='ignore'):
+        feasible = (c > l) & ((c - l) / c <= stop_cap(A))
+    breadth = breadth_ok(A, w)[:, None] & np.ones_like(w)
+    stages = [('U4 pool', pool), ('K9 strength', k), ('V8 watchlist', w), ('E11 setup', e11),
+              ('S4 breadth', breadth), ('stop feasible', feasible)]
+    out = {'funnel_2024_longs': F.funnel(stages, longs24, A['has'])}
+    for r in out['funnel_2024_longs']:
+        print('R29 funnel', r['stage'], f"{r['hits']}/{r['n']}", 'lost', r['lost'], flush=True)
+    # per-trade: which daily setups fire on his 2024 entry windows
+    per = {}
+    for t, j, a, b in longs24:
+        per[t.id] = dict(ticker=t.ticker, setup=t.setup, in_w=bool(w[a:b + 1, j].any()),
+                         fires=[n for n in ('E1', 'E2', 'E3', 'E4', 'E11', 'E12')
+                                if union(fams[n])[a:b + 1, j].any()])
+    out['his_2024_trades'] = per
+    for i, v in per.items():
+        print('R29 his', i, v, flush=True)
+    # setup families inside the watchlist, 2024 by quarter
+    fwd, win = close_outcomes(A)
+    q = np.array([str(d)[:4] + 'Q' + str((int(str(d)[5:7]) - 1) // 3 + 1) for d in days]).astype(str)
+    rows = (days >= '2024-01-02') & (days <= '2024-12-31')
+    fam_out = {}
+    for n in ('E1', 'E2', 'E3', 'E4', 'E11', 'E12', 'any'):
+        m = w if n == 'any' else w & union(fams[n])
+        res = {}
+        for qq in sorted(str(x) for x in set(q[rows])):
+            r_ = rows & (q == qq)
+            mm = m & r_[:, None]
+            f_, w_ = fwd[mm], win[mm]
+            res[qq] = dict(n=int(np.isfinite(f_).sum()), fwd10=float(np.nanmean(f_)) if np.isfinite(f_).any() else None,
+                           hit20=float(np.nanmean(w_)) if np.isfinite(w_).any() else None)
+        fam_out[n] = res
+        print('R29 family', n, {a: (b['n'], round(100 * b['fwd10'], 2) if b['fwd10'] is not None else None,
+                                     round(100 * b['hit20'], 1) if b['hit20'] is not None else None)
+                                 for a, b in res.items()}, flush=True)
+    out['families_2024'] = fam_out
+    # the combined system's 2024 trades
+    pool_, w_, sig = system_signals(A)
+    entries = filter_days(system_entries(A, sig), breadth_ok(A, w_))
+    px = dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=days, codes=A['codes'])
+    curve, dd, tr = Y.simulate(px, {'e9': A['e9'], 'e21': A['e21']}, chosen_rules(), entries, *SEGS['select'])
+    by_m = {}
+    for t in tr:
+        mth = t['entry'][:7]
+        g = by_m.setdefault(mth, dict(n=0, pnl=0.0, wins=0))
+        g['n'] += 1
+        g['pnl'] += float(t['pnl'])
+        g['wins'] += int(t['ret'] > 0)
+    by_why = {}
+    for t in tr:
+        g = by_why.setdefault(t['why'], dict(n=0, pnl=0.0))
+        g['n'] += 1
+        g['pnl'] += float(t['pnl'])
+    r = np.array([t['r'] for t in tr])
+    rp = np.array([t['risk_pct'] for t in tr])
+    out['system_2024'] = dict(total=float(curve[-1] - 1), by_month=by_m, by_exit=by_why,
+                              r_quantiles=[float(x) for x in np.percentile(r, [10, 25, 50, 75, 90, 99])],
+                              stop_quantiles=[float(x) for x in np.percentile(rp, [10, 25, 50, 75, 90])],
+                              top_winners=sorted(((t['code'], t['entry'], round(t['r'], 1)) for t in tr),
+                                                 key=lambda x: -x[2])[:10])
+    print('R29 system 2024', {a: b for a, b in out['system_2024'].items()}, flush=True)
+    (I.OUT / 'r29_diagnosis.json').write_text(json.dumps(out, indent=1))
+
+
+def ep_signal(A, pool):
+    """His pre-market gapper scan, without the leader list: gap >= max(5%, ADR), double volume, holds the open."""
+    o, c = A['open'], A['close']
+    with np.errstate(invalid='ignore', divide='ignore'):
+        gap = o >= prev(c) * (1 + np.fmax(.05, prev(A['adr']) / 100))
+        vol = A['turnover'] >= 2 * prev(A['to20'])
+        return pool & gap & vol & (c >= o)
+
+
+def entries_close_stop(A, mask, mode, kind='n1'):
+    """Close entries with the stop at the day's low; when that is wider than cap = min(5%, 0.5 ADR):
+    'skip' drops the trade (R24 N1), 'cap' moves the stop up to the cap, 'half' to half the cap (R30)."""
+    c, l = A['close'], A['low']
+    cap = stop_cap(A)
+    out = [[] for _ in range(len(c))]
+    for d, j in zip(*np.nonzero(mask)):
+        if not (np.isfinite(c[d, j]) and np.isfinite(l[d, j]) and c[d, j] > 0):
+            continue
+        if mode == 'skip':
+            if not (0 < (c[d, j] - l[d, j]) / c[d, j] <= cap[d, j]):
+                continue
+            stop = l[d, j]
+        else:
+            width = cap[d, j] if mode == 'cap' else cap[d, j] / 2
+            stop = max(l[d, j], c[d, j] * (1 - width))
+        if stop < c[d, j]:
+            out[d].append((-A['to20'][d - 1, j], j, 1, c[d, j], stop, kind))
+    return out
+
+
+def add_fidelity(A, file, masks, tag):
+    """Signal-day hit rate of his dated longs for each candidate's signal mask (selection and validation)."""
+    trades = L.load(LEDGER)
+    sel, val = L.split(trades, CUTOFF)
+    ls = [x for x in located_longs(A, sel) if x[0].dated]
+    lv = [x for x in located_longs(A, val) if x[0].dated]
+    path = I.OUT / file
+    out = json.loads(path.read_text())
+    out['fidelity'] = {}
+    for k, m in masks.items():
+        rs, rv = F.recall(m, ls, A['has']), F.recall(m, lv, A['has'])
+        out['fidelity'][k] = dict(select=(rs['hits'], rs['n']), validate=(rv['hits'], rv['n']),
+                                  width=F.width(m, A['days'], '2024-01-02', '2026-03-31'))
+        print(tag, 'fidelity', k, out['fidelity'][k], flush=True)
+    path.write_text(json.dumps(out, indent=1))
+
+
+def r30():
+    A = us_arrays()
+    st = stage_inputs(A, 23)
+    pool, w = st['pool'], st['w']
+    _, sig = signal_inputs(A)
+    base = union(sig)
+    ep = ep_signal(A, pool)
+    ok = breadth_ok(A, w)
+    masks = {'C0': base, 'C1': base, 'C2': base | ep, 'C3': ep, 'C4': base | ep}
+    modes = {'C0': 'skip', 'C1': 'cap', 'C2': 'cap', 'C3': 'cap', 'C4': 'half'}
+    rules = chosen_rules()
+    cands = {k: (filter_days(entries_close_stop(A, masks[k], modes[k]), ok), rules) for k in masks}
+    pick_and_validate(A, cands, pool, 'r30_entry_days.json', 'R30')
+    add_fidelity(A, 'r30_entry_days.json', masks, 'R30')
+
+
+EXITS['X5'] = dict(trims=(), trail='e21')
+BASE_CONFIG = dict(signals='C2', stop='cap', exits='X0', small_cap=False, gap_size=False, gross=2.0, risk=.005,
+                   filter='S4', rank=None, rank_n=0)
+CARRY = ['r31_exits_sizing.json', 'r32_exposure.json', 'r33_rotation.json', 'r34_base_path.json']                   # carry rounds in order; each later round extends this list
+
+
+def system_config():
+    """The configuration carried forward by the latest finished carry round (BASE_CONFIG = R30's C2)."""
+    cfg = dict(BASE_CONFIG)
+    for name in CARRY:
+        path = I.OUT / name
+        if path.exists():
+            cfg = json.loads(path.read_text())['chosen_config']
+    return cfg
+
+
+def build_system(A, cfg):
+    """Entries, rules, signal mask and placebo pool for a configuration, in any market."""
+    pool, w, sig = system_signals(A)
+    if cfg['signals'] == 'NONE':
+        mask = np.zeros_like(w)
+    elif cfg['signals'] in ('C0', 'C1', 'C2', 'C3'):
+        base = union(sig)
+        mask = {'C0': base, 'C1': base, 'C2': base | ep_signal(A, pool), 'C3': ep_signal(A, pool)}[cfg['signals']]
+    else:                                              # R33 families and rotation
+        fam = families(A, pool, w)
+        mask = {'T1': lambda: union(fam), 'T2': lambda: rotate(A, fam, 20),
+                'T3': lambda: rotate(A, fam, 20, top_only=True), 'T4': lambda: rotate(A, fam, 40),
+                'T5': lambda: fam['HS'] | fam['EP'] | fam['PB']}[cfg['signals']]()
+    if cfg.get('bpath'):
+        mask = mask | base_path(A, pool, cfg['bpath'])
+    if A['market'] == 'cn':
+        mask = mask & ~limit_up(A)
+    if cfg.get('rank'):
+        mask = top_per_day(mask, prev(A[cfg['rank']]), cfg['rank_n'])
+    entries = entries_close_stop(A, mask, cfg['stop'])
+    if cfg['small_cap'] or cfg['gap_size']:
+        adrp, to20p = prev(A['adr']), prev(A['to20'])
+        entries = [[e[:6] + (None, .5 * adrp[d, e[1]] / 100 if cfg['gap_size'] else None,
+                             .20 if cfg['small_cap'] and to20p[d, e[1]] < 100e6 else None) for e in lst]
+                   for d, lst in enumerate(entries)]
+    if cfg['filter'] == 'S4':
+        entries = filter_days(entries, breadth_ok(A, w))
+    elif cfg['filter'] == 'IDX50':
+        entries = filter_days(entries, ew_index_up(A, pool, 50))
+    if cfg.get('max_new'):
+        entries = [sorted(lst, key=lambda e: e[0])[:cfg['max_new']] for lst in entries]
+    rules = replace(RULES, **EXITS[cfg['exits']], max_gross=cfg['gross'], risk=cfg['risk'],
+                    feedback=10 if cfg.get('risk_high') else 0, risk_low=cfg['risk'],
+                    risk_high=cfg.get('risk_high', 0.0),
+                    buy_cost=COSTS[A['market']][0], sell_cost=COSTS[A['market']][1])
+    return entries, rules, mask, pool
+
+
+def carry_round(cfgs, file, tag, ref):
+    """R31+: choose on 2024 by total return among candidates above their placebo median whose selection-trade
+    signal-day hits are at least the reference's; validate the choice once; report every candidate's years."""
+    A = us_arrays()
+    trades = L.load(LEDGER)
+    sel, val = L.split(trades, CUTOFF)
+    ls = [x for x in located_longs(A, sel) if x[0].dated]
+    lv = [x for x in located_longs(A, val) if x[0].dated]
+    out = {'configs': cfgs, 'select': {}, 'years': {}, 'fidelity': {}, 'validate': {}}
+    built = {}
+    for k, cfg in cfgs.items():
+        entries, rules, mask, pool = build_system(A, cfg)
+        built[k] = (entries, rules, pool)
+        out['select'][k] = run_rules(A, entries, SEGS['select'], pool, rules)[0]
+        out['years'][k] = run_rules(A, entries, ('2024-01-02', '2026-10-16'), pool, rules, placebo=0)[0]['by_year']
+        rs, rv = F.recall(mask, ls, A['has']), F.recall(mask, lv, A['has'])
+        out['fidelity'][k] = dict(select=[rs['hits'], rs['n']], validate=[rv['hits'], rv['n']])
+        s = out['select'][k]
+        print(tag, k, f"2024 {s['total']:+.3f} placebo median {s['placebo']['median']:+.3f} rank "
+              f"{s['placebo']['rank']:.2f} trades {s['trades']} win {s['win']:.3f} "
+              f"avg {s['avg_win']:+.3f}/{s['avg_loss']:+.3f} R {s['exp_r']:+.2f}",
+              'years', {a: round(b, 3) for a, b in out['years'][k].items()}, 'fid', out['fidelity'][k], flush=True)
+    need = out['fidelity'][ref]['select'][0]
+    ok = [k for k in cfgs if k != ref and out['select'][k]['total'] > out['select'][k]['placebo']['median']
+          and out['fidelity'][k]['select'][0] >= need]
+    best = max(ok + [ref], key=lambda k: out['select'][k]['total'])           # never carry a worse system
+    entries, rules, pool = built[best]
+    v = out['validate'][best] = run_rules(A, entries, SEGS['validate'], pool, rules)[0]
+    out['chosen'], out['chosen_config'] = best, cfgs[best]
+    out['validated'] = bool(v['total'] > v['placebo']['p90'] and v['ci_r'][0] > 0)
+    print(tag, 'validate', best, f"{v['total']:+.3f} placebo median {v['placebo']['median']:+.3f} p90 "
+          f"{v['placebo']['p90']:+.3f} R {v['exp_r']:+.2f} {[round(x, 2) for x in v['ci_r']]}", flush=True)
+    print(tag, 'chosen', best, 'validated', out['validated'])
+    (I.OUT / file).write_text(json.dumps(out, indent=1))
+
+
+def r31():
+    b = dict(BASE_CONFIG)
+    q1 = dict(b, exits='X2')
+    carry_round({'Q1': q1, 'Q2': dict(q1, small_cap=True), 'Q3': dict(q1, gap_size=True),
+                 'Q4': dict(q1, small_cap=True, gap_size=True), 'Q5': dict(b, exits='X5'), 'C2': b},
+                'r31_exits_sizing.json', 'R31', ref='C2')
+
+
+def r32():
+    q1 = system_config_after('r31_exits_sizing.json')
+    p2 = dict(q1, risk_high=.01)
+    carry_round({'P1': dict(q1, gross=2.8), 'P2': p2, 'P3': dict(q1, max_new=4), 'P4': dict(p2, gross=2.8),
+                 'P5': dict(p2, gross=2.8, max_new=4), 'Q1': q1}, 'r32_exposure.json', 'R32', ref='Q1')
+
+
+def families(A, pool, w):
+    """R33 setup families (signal masks on day t, all knowable at day t's close)."""
+    fams = setup_families(A, w)
+    e9p, e21p = prev(A['e9']), prev(A['e21'])
+    with np.errstate(invalid='ignore'):
+        pb = w & (e9p > e21p) & (A['low'] <= e9p) & (A['close'] >= e9p)
+    return {'BO': w & union(fams['E6']), 'EP': ep_signal(A, pool), 'HS': w & union(fams['E11']), 'PB': pb}
+
+
+def rotate(A, fams, lookback, top_only=False, lag=5):
+    """Keep, each day, the families whose signals of the last `lookback` days (outcome known: signal day <= d-lag)
+    had a positive mean `lag`-day return from the close; top_only keeps the single best of them."""
+    c = A['close']
+    T = len(c)
+    fwd = np.full_like(c, np.nan)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        fwd[:-lag] = c[lag:] / c[:-lag] - 1
+    daily = {}
+    for k, m in fams.items():
+        x = np.where(m & np.isfinite(fwd), fwd, 0.0)
+        daily[k] = (x.sum(1), (m & np.isfinite(fwd)).sum(1))
+    keep = {k: np.zeros(T, bool) for k in fams}
+    for d in range(T):
+        hi, lo = d - lag, d - lag - lookback + 1
+        if hi < 0:
+            continue
+        lo = max(lo, 0)
+        score = {}
+        for k, (s, n) in daily.items():
+            cnt = n[lo:hi + 1].sum()
+            if cnt:
+                score[k] = s[lo:hi + 1].sum() / cnt
+        good = {k: v for k, v in score.items() if v > 0}
+        if top_only and good:
+            good = {max(good, key=good.get): 0}
+        for k in good:
+            keep[k][d] = True
+    out = np.zeros_like(c, bool)
+    for k, m in fams.items():
+        out |= m & keep[k][:, None]
+    return out
+
+
+def r33():
+    p = system_config_after('r32_exposure.json')
+    carry_round({t: dict(p, signals=t) for t in ('T1', 'T2', 'T3', 'T4', 'T5')} | {'P5': p},
+                'r33_rotation.json', 'R33', ref='P5')
+
+
+def base_path(A, pool, top=.10):
+    """R34 B path: a 6-month leader (top `top` on 126-day returns within 60 days) in a weekly uptrend, sitting
+    near its daily 9/21 EMA, breaking the prior-day high or touching and holding the EMA9 / EMA21."""
+    c, h, l = A['close'], A['high'], A['low']
+    e9p, e21p = prev(A['e9']), prev(A['e21'])
+    with np.errstate(invalid='ignore', divide='ignore'):
+        leader = S._past_any((A['pr126'] >= 1 - top) & A['rank_pool'], 60)
+        weekly = prev(weekly_ema(c, A['days'], 9) > weekly_ema(c, A['days'], 21))
+        near = prev((np.abs(c / A['e9'] - 1) <= .03) | (np.abs(c / A['e21'] - 1) <= .03))
+        trigger = (h > prev(h)) | ((l <= e9p) & (c >= e9p)) | ((l <= e21p) & (c >= e21p))
+    return pool & leader & weekly & near & trigger
+
+
+def r34():
+    p = system_config_after('r32_exposure.json')
+    l1 = dict(p, bpath=.10)
+    carry_round({'L1': l1, 'L2': dict(l1, filter=None), 'L3': dict(l1, filter='IDX50'),
+                 'L4': dict(p, signals='NONE', bpath=.10), 'L5': dict(l1, bpath=.20), 'P5': p},
+                'r34_base_path.json', 'R34', ref='P5')
+
+
+def system_config_after(name):
+    """The configuration a given carry round chose (for building the next round on top of it)."""
+    return json.loads((I.OUT / name).read_text())['chosen_config']
+
+
 if __name__ == '__main__':
     {'r19': r19, 'r20': r20, 'r21': r21, 'r21b': r21b, 'r22': r22, 'r22b': r22b, 'r23': r23, 'r23b': r23b, 'r23c': r23c, 'r24': r24, 'r24b': r24b, 'r25': r25, 'r26': r26,
-     'r27': r27, 'r27b': r27b, 'r28': r28}[sys.argv[1]]()
+     'r27': r27, 'r27b': r27b, 'r28': r28, 'r29': r29, 'r30': r30, 'r31': r31, 'r32': r32, 'r33': r33, 'r34': r34}[sys.argv[1]]()

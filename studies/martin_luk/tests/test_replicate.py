@@ -46,6 +46,55 @@ class TriggerTests(unittest.TestCase):
         self.assertIsNone(R.first_trigger(o5, h5, l5, 'E2', pdh=10.5, e9p=9.0))
 
 
+def tiny(rows, adr=8.0, to20=100e6, turnover=None):
+    """A one-stock panel: rows of (open, high, low, close)."""
+    a = np.array(rows, float)
+    T = len(a)
+    A = {k: a[:, i:i + 1] for i, k in enumerate(('open', 'high', 'low', 'close'))}
+    A['adr'] = np.full((T, 1), adr)
+    A['to20'] = np.full((T, 1), to20)
+    A['turnover'] = np.full((T, 1), to20) if turnover is None else np.array(turnover, float)[:, None]
+    return A
+
+
+class EntryTests(unittest.TestCase):
+    def test_close_entry_stop_modes(self):
+        # cap = min(5%, 0.5 x 8%) = 4%; the day ran from 9.0 to close 10.0, so the low is 10% away
+        A = tiny([(9.5, 9.6, 9.4, 9.5), (9.0, 10.1, 9.0, 10.0)])
+        m = np.array([[False], [True]])
+        self.assertEqual(R.entries_close_stop(A, m, 'skip'), [[], []])
+        (e,) = R.entries_close_stop(A, m, 'cap')[1]
+        self.assertAlmostEqual(e[4], 9.6)                 # stop moved up to close x (1 - 4%)
+        (e,) = R.entries_close_stop(A, m, 'half')[1]
+        self.assertAlmostEqual(e[4], 9.8)
+        B = tiny([(9.5, 9.6, 9.4, 9.5), (9.8, 10.1, 9.8, 10.0)])   # low 2% away: the low itself
+        (e,) = R.entries_close_stop(B, m, 'cap')[1]
+        self.assertAlmostEqual(e[4], 9.8)
+
+    def test_ep_needs_gap_volume_and_holding_the_open(self):
+        rows = [(10, 10, 10, 10), (11.0, 11.5, 10.8, 11.2), (10.2, 10.3, 10.0, 10.1), (11.5, 11.6, 10.9, 11.0)]
+        A = tiny(rows, adr=4.0, to20=100e6, turnover=[1e8, 3e8, 1e8, 3e8])
+        pool = np.ones((4, 1), bool)
+        # day 1: gap 10% >= 5%, volume 3x, close >= open -> EP; day 3: gap from 10.1 to 11.5 but closes below the open
+        self.assertEqual(R.ep_signal(A, pool)[:, 0].tolist(), [False, True, False, False])
+
+
+class RotationTests(unittest.TestCase):
+    def test_rotation_only_uses_finished_outcomes(self):
+        # rising prices; with lag 2 and lookback 3, day d looks at signals from days d-4 .. d-2
+        c = np.array([[10.0], [10.5], [11.0], [11.5], [12.0], [12.5], [13.0]])
+        A = {'close': c}
+        y = np.zeros((7, 1), bool)
+        x = np.zeros((7, 1), bool)
+        x[[0, 6], 0] = True
+        keep = R.rotate(A, {'X': x, 'Y': y}, lookback=3, lag=2)
+        self.assertFalse(keep[6, 0])      # day 0 is outside days 2..4: no feedback, family off
+        x[5, 0] = True                    # day 5's outcome needs day 7's close: not usable on day 6
+        self.assertFalse(R.rotate(A, {'X': x, 'Y': y}, lookback=3, lag=2)[6, 0])
+        x[3, 0] = True                    # day 3's outcome uses day 5's close: usable on day 6
+        self.assertTrue(R.rotate(A, {'X': x, 'Y': y}, lookback=3, lag=2)[6, 0])
+
+
 class MaskTests(unittest.TestCase):
     def test_prev_shifts_one_day(self):
         x = np.array([[True], [False], [True]])
