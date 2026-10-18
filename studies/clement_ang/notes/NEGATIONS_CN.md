@@ -31,3 +31,7 @@
 | R6 | order | I2 | `{"priority": "turnover", "setups": ["fine", "pb"], "pb": {"fine": true}}` | r5.json:chosen | I3 | objective below I3；全区间 +73%（带入 +117%） | open |
 | R6 | order | I4 | `{"priority": "turnover", "fine": {"near": 0.25, "tight": 3.0}}` | r5.json:chosen | I3 | objective below I3；全区间 +59%（带入 +117%） | open |
 | R6 | order | I5 | `{"priority": "turnover", "setups": ["fine", "pb"], "pb": {"fine": true}, "filter": "IDX20"}` | r5.json:chosen | I3 | objective below I3；全区间 +60%（带入 +117%） | open |
+| R7 | entry_capacity | J1 | `{"max_new": 8}` | r6.json:chosen | J4 | objective below J4；全区间 +104%（带入 +73%） | open |
+| R7 | entry_capacity | J2 | `{"close_any": ["pb"]}` | r6.json:chosen | J4 | objective below J4；全区间 +106%（带入 +73%） | open |
+| R7 | entry_capacity | J3 | `{"max_new": 8, "close_any": ["pb"]}` | r6.json:chosen | J4 | objective below J4；全区间 +114%（带入 +73%） | open |
+| R7 | entry_capacity | J5 | `{"max_new": 8, "close_any": ["pb"], "rule_opts": {"max_open": 30}}` | r6.json:chosen | J4 | objective below J4；全区间 +115%（带入 +73%） | open |

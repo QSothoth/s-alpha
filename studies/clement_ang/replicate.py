@@ -81,7 +81,24 @@ class Clement(CF.Flanders):
                 level = lag(F.h)
                 m = pool & lag(ready) & (F.h > level)
             out['pb'] = (m, np.fmax(F.o, level), F.l)
+        if cfg.get('rs_phase'):                                 # his RS phase, as of the day before
+            ok = lag(self.rs_phase(F))
+            out = {k: (v[0] & ok if k in ('fine', 'pb') else v[0], v[1], v[2]) for k, v in out.items()}
         return out
+
+    @staticmethod
+    def rs_phase(F):
+        """The relative-strength line (close / the pool's equal-weight index) above its own 21-day EMA, and that
+        EMA rising (zw96@01:31:01)."""
+        def f():
+            prev = lag(F.c)
+            with np.errstate(invalid='ignore', divide='ignore'):
+                r = np.where(F.rank_pool & np.isfinite(prev), F.c / prev - 1, np.nan)
+                idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+                line = F.c / idx
+                e = S.ema(line, 21)
+                return (line > e) & (e > lag(e))
+        return F.get('rs_phase', f)
 
 
 STUDY = Clement()

@@ -59,3 +59,8 @@
 | R13 | order | A3 | `{"priority": "turnover", "rule_opts": {"max_open": 12}}` | r12.json:chosen | R12 | gates: placebo；全区间 -14%（带入 +77%） | open |
 | R13 | order | A4 | `{"priority": "turnover", "max_new": 3}` | r12.json:chosen | R12 | gates: placebo；全区间 -18%（带入 +77%） | open |
 | R13 | order | A5 | `{"priority": "turnover", "kind_order": ["ep", "hi52"]}` | r12.json:chosen | R12 | gates: placebo；全区间 -22%（带入 +77%） | open |
+| R14 | pyramid_exposure | B1 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low", "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01}}` | r13.json:chosen | R13 | objective below R13；全区间 +61%（带入 +77%） | open |
+| R14 | pyramid_exposure | B2 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low", "max_gross": 2.0, "max_position": 0.5}}` | r13.json:chosen | R13 | objective below R13；全区间 +42%（带入 +77%） | open |
+| R14 | pyramid_exposure | B3 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_max": 2, "add_signal_stop": "low", "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01, "max_gross": 2.0, "max_position": 0.5}}` | r13.json:chosen | R13 | objective below R13；全区间 -1%（带入 +77%） | open |
+| R14 | pyramid_exposure | B4 | `{"rule_opts": {"add_levels": [1.0, 2.0], "add_frac": 0.5, "max_gross": 2.0, "max_position": 0.5}}` | r13.json:chosen | R13 | gates: placebo；全区间 -36%（带入 +77%） | open |
+| R14 | pyramid_exposure | B5 | `{"rule_opts": {"add_levels": [1.0, 2.0], "add_frac": 0.5, "max_gross": 2.0, "max_position": 0.5, "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01}}` | r13.json:chosen | R13 | gates: placebo；全区间 -51%（带入 +77%） | open |

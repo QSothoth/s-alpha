@@ -1,0 +1,14 @@
+{
+ "stage": "exits_2025",
+ "base": ["r14.json", "chosen"],
+ "ref": "R14",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "C1": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7}},
+  "C2": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7, "trail": "ema21"}},
+  "C3": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.7, "trail": "sma50"}},
+  "C4": {"ep": {"rvol": 3.0}},
+  "C5": {"rule_opts": {"month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "month_cap_basis": "opened"}}
+ }
+}

@@ -19,6 +19,18 @@ class SetupTests(unittest.TestCase):
         mine = R.STUDY.setups(A, dict(R.DRAFT, fine=dict(R.FINE)))['fine'][0]     # explicit values: the same
         np.testing.assert_array_equal(mine, st.mask & ~st.skip)
 
+    def test_rs_phase_only_narrows(self):
+        rows = [(10 + .02 * i, 10.3 + .02 * i, 9.9 + .02 * i, 10.2 + .02 * i) for i in range(300)]
+        A = panel(rows)
+        cfg = dict(R.DRAFT, setups=['fine', 'pb'], pool=dict(turnover=1e6, adr=0.0, above50=False))
+        a = R.STUDY.setups(A, cfg)
+        b = R.STUDY.setups(A, dict(cfg, rs_phase=True))
+        for k in ('fine', 'pb'):
+            self.assertTrue((b[k][0] <= a[k][0]).all())
+        ph = R.STUDY.rs_phase(A['F'])
+        self.assertTrue(ph[-1, 0])                                   # name 0 rises while the others are flat
+        self.assertFalse(ph[-1, 1])
+
     def test_fine_values_relax(self):
         rows = [(10 + .02 * i, 10.3 + .02 * i, 9.9 + .02 * i, 10.2 + .02 * i) for i in range(300)]
         A = panel(rows)

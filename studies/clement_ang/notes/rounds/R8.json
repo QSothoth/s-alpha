@@ -1,0 +1,14 @@
+{
+ "stage": "rs_sizing",
+ "base": ["r7.json", "chosen"],
+ "ref": "R7",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "L1": {"rs_phase": true},
+  "L2": {"rule_opts": {"risk": 0.005}},
+  "L3": {"rule_opts": {"feedback": 1, "risk_low": 0.0015}},
+  "L4": {"rule_opts": {"month_loss_cap": 0.05, "month_cap_ladder": [0.025], "month_cap_basis": "opened"}},
+  "L5": {"rule_opts": {"risk": 0.005, "feedback": 1, "risk_low": 0.0025}}
+ }
+}
