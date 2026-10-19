@@ -1,0 +1,14 @@
+{
+ "stage": "ep_market",
+ "base": ["r1.json", "chosen"],
+ "ref": "R1",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "S1": {"filter": "", "rule_opts": {"risk_scale": "lighthalf"}},
+  "S2": {"ep": {"min_gap": 0.08}},
+  "S3": {"ep": {"liquid": 5000000.0}},
+  "S4": {"filter": "", "rule_opts": {"risk_scale": "lighthalf"}, "ep": {"min_gap": 0.08}},
+  "S5": {"filter": "", "rule_opts": {"risk_scale": "lighthalf"}, "ep": {"min_gap": 0.08, "liquid": 5000000.0}}
+ }
+}

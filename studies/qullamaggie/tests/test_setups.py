@@ -18,6 +18,16 @@ class SetupTests(unittest.TestCase):
         np.testing.assert_array_equal(mine['brk'][0], [s for s in st if s.kind == 'triggered'][0].mask)
         np.testing.assert_array_equal(mine['ep'][0], [s for s in st if s.name == 'EP'][0].mask)
 
+    def test_ep_values_default_to_the_board(self):
+        A = self.ep_rows((10.9, 11.5, 10.8, 11.2))
+        A['F'].v[-1] = 5e6
+        a = R.STUDY.setups(A, R.DRAFT)['ep'][0]
+        b = R.STUDY.setups(A, dict(R.DRAFT, ep={'min_gap': .10, 'liquid': 20e6, 'heavy': 3.0}))['ep'][0]
+        np.testing.assert_array_equal(a, b)
+        self.assertFalse(a[-1, 0])                                   # a 9% gap is below the board's 10%
+        c = R.STUDY.setups(A, dict(R.DRAFT, ep={'min_gap': .08}))['ep'][0]
+        self.assertTrue(c[-1, 0])
+
     def ep_rows(self, last):
         rows = [list(r) for r in BASE]
         return panel([tuple(r) for r in rows] + [last])
@@ -40,6 +50,8 @@ class SetupTests(unittest.TestCase):
         self.assertFalse(ok[20])                                   # the 20-day line is not there yet
         self.assertTrue(ok[40])                                    # yesterday: rising lines, 10 above 20
         self.assertFalse(ok[42])                                   # the 10-day line turned down
+        s = R.STUDY.named(A, None, 'lighthalf')
+        self.assertEqual((s[40], s[42]), (1.0, .5))
 
 
 if __name__ == '__main__':

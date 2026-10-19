@@ -60,6 +60,9 @@ class Qullamaggie(CF.Flanders):
             m = x.mask
             o = cfg.get('ep', {})
             with np.errstate(invalid='ignore', divide='ignore'):
+                if 'min_gap' in o or 'liquid' in o or 'heavy' in o:   # the board's EP with its values replaced
+                    m = (F.liquid(o.get('liquid', 20e6)) & (F.o / lag(F.c) - 1 >= o.get('min_gap', .10))
+                         & (F.v >= o.get('heavy', 3.0) * lag(F.vol(20))))
                 if o.get('quiet'):                              # S01: not up in the prior months
                     m = m & lag(F.ret(63) < o['quiet'])
                 if o.get('gap'):
@@ -83,6 +86,13 @@ class Qullamaggie(CF.Flanders):
             with np.errstate(invalid='ignore'):
                 return (s10 > s20) & (s10 > lag(s10)) & (s20 > lag(s20))
         return lag(F.get('qull_light', f))
+
+    def named(self, A, pool, name):
+        """'lighthalf': risk x1 on a green light (as of the day before), x0.5 otherwise ("fewer trades or smaller
+        size", 1AJIzXSkfyM@00:36:30)."""
+        if name == 'lighthalf':
+            return np.where(self.market_ok(A, dict(filter='light')), 1.0, .5)
+        return super().named(A, pool, name)
 
     def entries(self, A, cfg, masks):
         """The draft's entries, then his stop-width rule on the actual fill: skip when (fill - stop) / fill is wider
