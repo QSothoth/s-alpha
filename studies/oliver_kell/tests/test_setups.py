@@ -68,6 +68,14 @@ class SetupTests(unittest.TestCase):
         self.assertTrue(m[-1, 0])
         self.assertFalse(m[-2, 0])
 
+    def test_board_strength_exists_before_a_year_of_bars(self):
+        rows = [(10 + .05 * i, 10.2 + .05 * i, 9.9 + .05 * i, 10.1 + .05 * i) for i in range(80)]
+        A = panel(rows)
+        st = R.STUDY.strength_ok(A, dict(R.DRAFT, strength='st90'))
+        rs = R.STUDY.strength_ok(A, dict(R.DRAFT, strength='rs90'))
+        self.assertTrue(st[-1, 0])                                   # name 0 leads on the 1 / 3-month legs
+        self.assertFalse(rs[-1, 0])                                  # the 12-month leg does not exist yet
+
     def test_exit_signals(self):
         rows = [(10, 10.2, 9.8, 10)] * 15 + [(13.5, 13.6, 13.4, 13.5), (9, 9.1, 8.9, 9)]
         A = panel(rows)

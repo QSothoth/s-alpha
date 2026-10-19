@@ -1,0 +1,13 @@
+{
+ "stage": "upstream",
+ "base": ["r6.json", "chosen"],
+ "ref": "R6",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "B1": {"strength": "st90"},
+  "B2": {"pool": {"turnover": 100000000.0, "adr": 2.0, "above50": false}},
+  "B3": {"strength": "st90", "pool": {"turnover": 100000000.0, "adr": 2.0, "above50": false}},
+  "B4": {"strength": "st90", "pool": {"turnover": 50000000.0, "adr": 2.0, "above50": false}}
+ }
+}

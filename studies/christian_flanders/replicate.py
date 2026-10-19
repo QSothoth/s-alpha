@@ -102,6 +102,8 @@ class Flanders(study.Study):
             return np.ones(F.c.shape, bool)
         if s.startswith('rs'):
             return lag(self.rs(A)) >= int(s[2:]) / 100
+        if s.startswith('st'):                          # the board's strength (best of 1 / 3 / 6-month percentiles)
+            return lag(S.strength(F)) >= int(s[2:]) / 100
         if s == 'up100':
             with np.errstate(invalid='ignore'):
                 return lag(F.c >= 2 * F.lo(252))
