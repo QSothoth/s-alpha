@@ -47,6 +47,9 @@ class FlandersShortTests(unittest.TestCase):
         self.assertAlmostEqual(e[3], last * .88)                        # sold at the open
         self.assertAlmostEqual(e[4], last * .88 * 1.03)
         self.assertIsNone(e[6])                                         # the high 0.89 never reached the stop
+        z3 = R.STUDY.short_setups(A, {'setups': ['gap200'], 'gap_stop': 'sma150'})[0]['gap200']
+        (e,) = [x for x in SH.short_entries(A, {'gap200': z3}, {})[len(rows) - 1] if x[1] == 0]
+        self.assertAlmostEqual(e[4], A['F'].sma(150)[-2, 0] * 1.01)      # yesterday's 150-day, plus 1%
         A2 = panel(rows[:k] + [rows[k - 1]] + rows[k + 1:])             # without the rejected rally: no short
         z2 = R.STUDY.short_setups(A2, {'setups': ['gap200']})[0]['gap200']
         self.assertFalse(z2['armed'][-1, 0])

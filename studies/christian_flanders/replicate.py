@@ -303,6 +303,8 @@ class Flanders(study.Study):
             out['r200'] = dict(armed=pool & under, level=lag(s200))
         if 'gap200' in names:
             out['gap200'] = dict(armed=pool & gap, at_open=True)
+            if sc.get('gap_stop') == 'sma150':       # S2: MU "tapped the 150 and got within 20 cents of my stop":
+                out['gap200']['stop_line'] = lag(F.sma(150)) * 1.01     # the stop just above yesterday's 150-day
         return out, pool
 
     def his_entry(self, A, d, j, cfg):
