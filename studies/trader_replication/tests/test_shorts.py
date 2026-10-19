@@ -1,0 +1,123 @@
+"""The short side (shorts.py): the stop rule, the day's order (longs before shorts), the market gate's timing, the
+wrapper passing a long-only configuration through untouched, and the engine's cover on the next day."""
+import unittest
+from dataclasses import replace
+
+import numpy as np
+
+from studies.trader_replication import shorts as SH, system as Y
+
+
+def arrays(rows, n=1):
+    """rows: (open, high, low, close) of one name; n copies side by side."""
+    a = np.array(rows, float)
+    rep = lambda k: np.repeat(a[:, k:k + 1], n, axis=1)
+    days = np.array(['2025-01-%02d' % (i + 1) for i in range(len(a))])
+    return dict(open=rep(0), high=rep(1), low=rep(2), close=rep(3), raw=rep(3), to20=np.full((len(a), n), 50e6),
+                adr=np.full((len(a), n), 5.0), has=np.isfinite(rep(3)), days=days,
+                codes=np.array([f'US.S{j}' for j in range(n)]), market='us')
+
+
+ROWS = [(10, 10.2, 9.8, 10), (10, 10.4, 9.7, 10.0), (10.6, 10.8, 10.1, 10.5), (10.2, 10.3, 9.5, 9.6)]
+
+
+class FakeStudy:
+    """A long system that buys name 0 on day 1; its short setup flags name 1 on day 1."""
+    root = None
+    ledger = None
+
+    def build(self, A, cfg, trace=None):
+        e = [[] for _ in A['days']]
+        e[1].append((5.0, 0, 1, 10.0, 9.7, 'long'))
+        rules = Y.Rules(buy_cost=0, sell_cost=0, margin_rate=0, trail='', trims=(), risk=.01, max_position=10.0,
+                        max_gross=10.0)
+        return e, rules, np.zeros(A['close'].shape, bool), np.ones(A['close'].shape, bool)
+
+    def short_setups(self, A, sc):
+        m = np.zeros(A['close'].shape, bool)
+        m[1, 1] = True
+        return {'x': m}, np.ones(A['close'].shape, bool)
+
+    def px(self, A):
+        return dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'])
+
+    def ema_inputs(self, A, pool, rules):
+        return {}
+
+
+class StopRuleTests(unittest.TestCase):
+    def test_stop_is_the_day_high_with_a_one_percent_floor(self):
+        A = arrays(ROWS)
+        m = np.zeros((4, 1), bool)
+        m[1, 0] = True
+        (e,) = SH.short_entries(A, {'x': m}, {})[1]
+        self.assertEqual((e[2], e[3], e[4], e[5]), (-1, 10.0, 10.4, 's_x'))
+        A['high'][1, 0] = 10.02                          # high only 0.2% above the close: the floor takes over
+        (e,) = SH.short_entries(A, {'x': m}, {})[1]
+        self.assertAlmostEqual(e[4], 10.1)
+
+    def test_cap_moves_a_wide_stop_down(self):
+        A = arrays(ROWS)
+        m = np.zeros((4, 1), bool)
+        m[1, 0] = True
+        (e,) = SH.short_entries(A, {'x': m}, {'stop_cap': .02})[1]
+        self.assertAlmostEqual(e[4], 10.2)
+
+    def test_risk_mult_sizes_through_size_risk(self):
+        A = arrays(ROWS)
+        m = np.zeros((4, 1), bool)
+        m[1, 0] = True
+        (e,) = SH.short_entries(A, {'x': m}, {'risk_mult': .5})[1]
+        self.assertAlmostEqual(e[7], .04 / .5)
+
+
+class OrderAndGateTests(unittest.TestCase):
+    def test_longs_come_before_shorts_whatever_their_priority(self):
+        longs = [[(9.0, 0, 1, 10, 9, 'l')]]
+        shorts = [[(-1e9, 1, -1, 10, 11, 's_x')]]
+        day = sorted(SH.combine(longs, shorts)[0], key=lambda e: e[0])
+        self.assertEqual([e[2] for e in day], [1, -1])
+
+    def test_gate_uses_the_previous_close(self):
+        A = arrays([(10, 10, 10, 10)] * 3, n=1)
+        A['close'] = np.array([[10.0], [8.0], [8.0]])
+        A['raw'] = A['close']
+        A['_short_index'] = np.array([1.0, .5, .5])       # the index falls on day 1
+        g = SH.gate_days(A, 'below3')
+        self.assertEqual(list(g), [False, False, True])  # day 1's fall allows shorts from day 2 on
+
+
+class WrapperTests(unittest.TestCase):
+    def test_long_only_configuration_is_passed_through(self):
+        A = arrays(ROWS, n=2)
+        st = SH.LongShort(FakeStudy())
+        e1, r1, _, p1 = st.build(A, {'x': 1})
+        e2, r2, _, p2 = FakeStudy().build(A, {'x': 1})
+        self.assertEqual(e1, e2)
+        self.assertEqual(r1, r2)
+
+    def test_short_entered_at_the_close_and_covered_at_the_open_above_its_stop(self):
+        A = arrays(ROWS, n=2)
+        st = SH.LongShort(FakeStudy())
+        e, rules, _, pool = st.build(A, {'short': {'setups': ['x'], 'borrow': 0.0}})
+        self.assertEqual([x[2] for x in sorted(e[1], key=lambda x: x[0])], [1, -1])
+        curve, _, tr = Y.simulate(st.px(A), {}, rules, e, A['days'][0], A['days'][-1], audit=True)
+        (s,) = [t for t in tr if t['side'] < 0]
+        self.assertEqual((s['entry'], s['fill'], s['stop']), ('2025-01-02', 10.0, 10.4))
+        self.assertEqual((s['exit'], s['why']), ('2025-01-03', 'gap_stop'))   # opens 10.6 > 10.4
+        self.assertEqual(s['executions'][-1]['price'], 10.6)
+        self.assertLess(s['pnl'], 0)
+
+    def test_short_rules_get_their_own_management(self):
+        r = SH.short_rules(Y.Rules(), {'trail': 'ema10', 'trims': [2, 4], 'trim_frac': .25, 'max_days': 5}, ['s_x'])
+        self.assertEqual(r.management_by_kind['s_x'], {'trail': 'ema10', 'trim_frac': .25})
+        self.assertEqual((r.short_trims, r.short_max_days, r.borrow_rate), ((2, 4), 5, SH.BORROW))
+
+    def test_short_only_drops_the_longs(self):
+        A = arrays(ROWS, n=2)
+        only, _, _ = SH.LongShort(FakeStudy()).short_only(A, {'short': {'setups': ['x']}})
+        self.assertEqual([e[2] for lst in only for e in lst], [-1])
+
+
+if __name__ == '__main__':
+    unittest.main()

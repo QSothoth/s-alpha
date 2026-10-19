@@ -117,6 +117,27 @@ class Qullamaggie(CF.Flanders):
         return keep
 
 
+    def short_setups(self, A, sc):
+        """The parabolic short (RULES 4.3, S01): as of the day before, a name up at least `large` (50%) from its
+        20-day low when large (20-day turnover >= large_turnover, 500M USD: no market caps in the data, a stated
+        proxy) or `small` (300%) otherwise, after at least `streak` (3) up closes in a row; on day t it turns: 'red'
+        (close below the open and below the prior close; his first red 5-minute bar / opening-range-low break on
+        daily bars) or 'pdl' (close below the prior day's low).  Pool: 20-day turnover >= 20M USD and price >= 5 as
+        of t-1 (his liquidity floor), which is also the placebo pool."""
+        F = A['F']
+        pool = lag(F.liquid(sc.get('turnover', 20e6)))
+        with np.errstate(invalid='ignore', divide='ignore'):
+            up = F.c > lag(F.c)
+            streak = np.ones(up.shape, bool)
+            for k in range(1, sc.get('streak', 3) + 1):
+                streak &= lag(up, k)
+            run = lag(F.c / F.lo(20) - 1)
+            large = lag(F.to20) >= sc.get('large_turnover', 500e6)
+            para = streak & (run >= np.where(large, sc.get('large', .5), sc.get('small', 3.0)))
+            turn = {'red': (F.c < F.o) & (F.c < lag(F.c)), 'pdl': F.c < lag(F.l)}[sc.get('trigger', 'red')]
+        return {'para': pool & para & turn}, pool
+
+
 STUDY = Qullamaggie()
 
 if __name__ == '__main__':

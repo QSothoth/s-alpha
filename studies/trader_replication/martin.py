@@ -60,6 +60,9 @@ class Martin(study.Study):
     def build(self, A, cfg, trace=None):
         return self.R.build_system(A, cfg, trace)
 
+    def short_setups(self, A, sc):
+        return self.R.short_setups(A, sc)
+
     def named(self, A, pool, name):
         if name == 'w9':
             return self.R.weekly_ema(A['close'], A['days'], 9)

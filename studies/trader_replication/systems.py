@@ -29,8 +29,12 @@ class System:
                                                                                                   self.version)
 
     def load(self):
+        """(study, configuration); the study is wrapped by shorts.LongShort, which adds the short side when the
+        configuration has a 'short' dict and otherwise calls the study's own build unchanged."""
         if not hasattr(self, '_loaded'):
-            self._loaded = self.loader()
+            from .shorts import wrap
+            st, cfg = self.loader()
+            self._loaded = wrap(st), cfg
         return self._loaded
 
     @property

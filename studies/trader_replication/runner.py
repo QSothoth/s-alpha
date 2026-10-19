@@ -25,6 +25,9 @@ OUT = Path(__file__).resolve().parent / 'reports'
 WHY = {'stop': '跌破止损', 'gap_stop': '跳空跌破止损', 'trim': '按 R 分批', 'trail': '收盘跌破跟踪线',
        'signal': '信号离场', 'signal_trim': '信号分批', 'signal_trim2': '信号分批', 'day_trim': '到期分批',
        'stop_day0': '当天止损', 'time': '持有到期', 'no_follow': '没有延续'}
+WHY_SHORT = {'stop': '涨破止损回补', 'gap_stop': '跳空涨破止损回补', 'trim': '按 R 回补一部分', 'trail': '收盘站上跟踪线回补',
+             'stop_day0': '当天止损回补', 'time': '持有到期回补', 'no_follow': '没有延续回补',
+             'target': '到达目标线回补'}
 
 
 def years_until(curve, dates, until):
@@ -82,17 +85,19 @@ def run(system, market, mode=None, days=1, A=None):
         opened.add((t['code'], t['entry']))
         ex = t['executions']
         if t['entry'] in window:
-            buys.append(dict(code=t['code'], day=t['entry'], setup=t['kind'], price=t['fill'], stop=t['stop'],
-                             weight=ex[0]['shares'] * ex[0]['price'] / prev_eq(t['entry'])))
+            buys.append(dict(code=t['code'], day=t['entry'], setup=t['kind'], side=t['side'], price=t['fill'],
+                             stop=t['stop'], weight=ex[0]['shares'] * ex[0]['price'] / prev_eq(t['entry'])))
         for e in ex:
             if e['action'] in ('entry', 'end') or e['time'][:10] not in window:
                 continue
             if e['action'] == 'add':
-                buys.append(dict(code=t['code'], day=e['time'][:10], setup='加码', price=e['price'], stop=None,
+                buys.append(dict(code=t['code'], day=e['time'][:10], setup='加码', side=t['side'], price=e['price'],
+                                 stop=None,
                                  weight=e['shares'] * e['price'] / prev_eq(e['time'][:10])))
                 continue
-            sells.append(dict(code=t['code'], day=e['time'][:10], why=WHY.get(e['action'], e['action']),
-                              price=e['price'], ret=e['price'] / t['fill'] - 1,
+            why = (WHY if t['side'] > 0 else WHY_SHORT).get(e['action'], e['action'])
+            sells.append(dict(code=t['code'], day=e['time'][:10], why=why, side=t['side'],
+                              price=e['price'], ret=t['side'] * (e['price'] / t['fill'] - 1),
                               full=e is [x for x in ex if x['action'] != 'end'][-1] and t['why'] != 'end'))
     wanted = []
     for day in window:
@@ -100,20 +105,23 @@ def run(system, market, mode=None, days=1, A=None):
         for e in sorted(entries[d], key=lambda e: e[0]):
             c = codes[e[1]]
             if (c, day) not in opened:
-                wanted.append(dict(code=c, day=day, setup=e[5], price=float(e[3]), stop=float(e[4])))
+                wanted.append(dict(code=c, day=day, setup=e[5], side=int(e[2]), price=float(e[3]), stop=float(e[4])))
     holdings = []
     for t in (t for t in tr if t['why'] == 'end'):
         s, j = t['state'], col[t['code']]
         close = float(A['close'][T, j])
         line = ema.get(s['trail']) if s['trail'] else None
         R = abs(t['fill'] - t['stop'])
-        holdings.append(dict(code=t['code'], entry_day=t['entry'], setup=t['kind'], fill=t['fill'], close=close,
-                             ret=close / t['fill'] - 1, r_now=(close - t['fill']) / R if R else None,
+        sd = t['side']
+        holdings.append(dict(code=t['code'], entry_day=t['entry'], setup=t['kind'], side=sd, fill=t['fill'],
+                             close=close, ret=sd * (close / t['fill'] - 1),
+                             r_now=sd * (close - t['fill']) / R if R else None,
                              stop=s['stop'], trail=float(line[T, j]) if line is not None and s['armed'] else None,
                              trail_name=s['trail'], next_trim=s['next_trim'], trim_frac=s['trim_frac'],
-                             next_add=s['next_add'], day_trim_pending=s['day_trim_pending'],
+                             next_add=s['next_add'], day_trim_pending=s['day_trim_pending'] and sd > 0,
                              trim_day=s['trim_day'], trim_day_frac=s['trim_day_frac'],
-                             trim_day_profit=s['trim_day_profit'],
+                             trim_day_profit=s['trim_day_profit'], next_target=s.get('next_target'),
+                             target_name=s.get('target_name', ''),
                              weight=s['shares'] * close / equity, days=int(T - int(np.searchsorted(dates, t['entry'])))))
     gate = st.market_gate(A, cfg)
     closed = [t for t in tr if t['why'] != 'end']
@@ -125,7 +133,8 @@ def run(system, market, mode=None, days=1, A=None):
                gate_today=None if gate is None else bool(gate[T]),
                account=dict(since=SY.START, ret=equity - 1, maxdd=float(np.max(1 - curve / peak)),
                             trades=len(closed), win=len(wins) / len(closed) if closed else None,
-                            exposure=float(sum(h['weight'] for h in holdings))),
+                            exposure=float(sum(h['weight'] for h in holdings)),
+                            short_exposure=float(sum(h['weight'] for h in holdings if h['side'] < 0))),
                freeze=system.freeze, forward=forward(curve, cdates, tr, system.freeze))
     ref = reference(system, market)
     if ref is not None:

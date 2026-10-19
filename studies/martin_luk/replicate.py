@@ -1579,6 +1579,17 @@ def short_masks(A, pool):
     return z
 
 
+def short_setups(A, sc):
+    """The short side for studies.trader_replication.shorts (S rounds on the common data): his day-t short triggers
+    named in sc['setups'] (Z1 first rally back to the 50 EMA after the first break, weekly down; Z2 rally into the
+    declining 9 < 21 < 50 EMAs, rejected under the 9; Z6 a former leader rejected at the falling 9 EMA within 5 days
+    of its first close below the 21; Z8 a former leader opening up into the 21 and closing under the 9), each on the
+    long system's pool as of t-1 (or sc['pool'], a POOLS key), and that pool for the placebo."""
+    pool = pool_for(A, sc.get('pool'))
+    z = short_masks(A, pool)
+    return {n: z[n] for n in sc['setups']}, pool
+
+
 def entries_short_capped(A, m, size_mult=1.0):
     """Close short entries, stop at the day's high moved down to close x (1 + cap) when wider (R36)."""
     c, h = A['close'], A['high']

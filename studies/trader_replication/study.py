@@ -230,6 +230,7 @@ class Study:
         names = {rules.trail, rules.trail_after_trim, rules.trail_alt, rules.exit_signal, rules.trim_signal, rules.trim_signal2,
                  rules.risk_scale, rules.trail_alt_days}
         names |= {o.get('trail', '') for o in rules.management_by_kind.values()}
+        names |= set(rules.short_targets)
         names |= {getattr(rules, k, '') for k in ('add_signal', 'trim_day_signal')}
         for k in names:
             if k and (k not in A or self.pool_dependent(k)):
