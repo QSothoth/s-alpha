@@ -403,6 +403,349 @@
   }
  },
  {
+  "round": "S1",
+  "stage": "short: late-stage failed base into the 20 EMA (Gil Morales; RULES 8, zw96)",
+  "candidate": "CA",
+  "change": {
+   "setups": [
+    "fb20"
+   ],
+   "gate": "below20",
+   "max_new": 3,
+   "stop_w": "cap"
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: long_behaviour, short_placebo, total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.5902625135441222,
+   "short_placebo_median": -0.5864404233808554,
+   "both_total": 0.6598105329863242,
+   "long_total": 2.7028033560013003,
+   "both_by_year": {
+    "2024": -0.36228808734441476,
+    "2025": 1.005920797671962,
+    "2026": 0.29753835748803925
+   },
+   "long_by_year": {
+    "2024": -0.015696209953076634,
+    "2025": 1.2482409381000337,
+    "2026": 0.673241547180137
+   },
+   "down": {
+    "long": 0.08804927583088928,
+    "both": -0.20594495565923288,
+    "short": -0.3296681774409014
+   },
+   "win": 0.3225152129817444
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: late-stage failed base into the 20 EMA (Gil Morales; RULES 8, zw96)",
+  "candidate": "CB",
+  "change": {
+   "setups": [
+    "fb20c"
+   ],
+   "gate": "below20",
+   "max_new": 3
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: long_behaviour, short_placebo, total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.6036757266203133,
+   "short_placebo_median": -0.49894778089718594,
+   "both_total": 0.6466811948255837,
+   "long_total": 2.7028033560013003,
+   "both_by_year": {
+    "2024": -0.2386573133978397,
+    "2025": 0.8535187224794922,
+    "2026": 0.16689658366644888
+   },
+   "long_by_year": {
+    "2024": -0.015696209953076634,
+    "2025": 1.2482409381000337,
+    "2026": 0.673241547180137
+   },
+   "down": {
+    "long": 0.08804927583088928,
+    "both": -0.2735456071151421,
+    "short": -0.3554880823312
+   },
+   "win": 0.3177221926556679
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: late-stage failed base into the 20 EMA (Gil Morales; RULES 8, zw96)",
+  "candidate": "CC",
+  "change": {
+   "setups": [
+    "fb20"
+   ],
+   "gate": "",
+   "max_new": 3,
+   "stop_w": "cap"
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: long_behaviour, total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.7882957188989276,
+   "short_placebo_median": -0.867803628592635,
+   "both_total": 0.8755157214497293,
+   "long_total": 2.7028033560013003,
+   "both_by_year": {
+    "2024": -0.25833568007459695,
+    "2025": 0.9489099744043603,
+    "2026": 0.29754235807983953
+   },
+   "long_by_year": {
+    "2024": -0.015696209953076634,
+    "2025": 1.2482409381000337,
+    "2026": 0.673241547180137
+   },
+   "down": {
+    "long": 0.08804927583088928,
+    "both": -0.19434675999727613,
+    "short": -0.41708462978949123
+   },
+   "win": 0.3222607833415964
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: late-stage failed base into the 20 EMA (Gil Morales; RULES 8, zw96)",
+  "candidate": "CD",
+  "change": {
+   "setups": [
+    "fb20"
+   ],
+   "gate": "below50",
+   "max_new": 3,
+   "stop_w": "cap"
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.4951924250997305,
+   "short_placebo_median": -0.54113134761847,
+   "both_total": 1.172077697595773,
+   "long_total": 2.7028033560013003,
+   "both_by_year": {
+    "2024": -0.1924165157142954,
+    "2025": 0.8971183652113854,
+    "2026": 0.417729902124957
+   },
+   "long_by_year": {
+    "2024": -0.015696209953076634,
+    "2025": 1.2482409381000337,
+    "2026": 0.673241547180137
+   },
+   "down": {
+    "long": 0.08804927583088928,
+    "both": -0.23053084841018112,
+    "short": -0.3739708994738048
+   },
+   "win": 0.3287086446104589
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "short": null
+  }
+ },
+ {
   "round": "R2",
   "stage": "exits_capacity",
   "candidate": "K1",
