@@ -20,3 +20,5 @@
 | R4 | ep_shape | U1 | `{"setups": ["ep", "brk"], "kind_order": ["ep", "brk"]}` | r3.json:chosen | U4 | objective below U4；全区间 +34%（带入 +25%） | open |
 | R4 | ep_shape | U2 | `{"ep": {"quiet": 0.3}}` | r3.json:chosen | U4 | gates: placebo；全区间 -13%（带入 +25%） | open |
 | R4 | ep_shape | U3 | `{"stop_adr": {"ep": 5.0}}` | r3.json:chosen | U4 | objective below U4；全区间 +19%（带入 +25%） | open |
+| R5 | market | V1 | `{"filter": "light_q"}` | r4.json:chosen | R4 | gates: placebo；全区间 +3%（带入 +25%） | open |
+| R5 | market | V2 | `{"filter": "light_q", "rule_opts": {"risk": 0.005}}` | r4.json:chosen | R4 | gates: placebo；全区间 -9%（带入 +25%） | open |
