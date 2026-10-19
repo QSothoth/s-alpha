@@ -144,6 +144,9 @@ class Qullamaggie(CF.Flanders):
             out['pbrk'] = dict(armed=pool & para, level=lag(F.l), below=True)   # after the close (shorts.py)
         if 'popen' in names:         # S2: the morning after the first red day, sold at the open
             out['popen'] = dict(armed=pool & lag(para & red), at_open=True)
+        if 'ptop' in names:          # S3: the same, the stop just above the top (the higher of the last two highs)
+            out['ptop'] = dict(armed=pool & lag(para & red), at_open=True,
+                               stop_line=np.fmax(lag(F.h), lag(F.h, 2)) * 1.01)
         return out, pool
 
 

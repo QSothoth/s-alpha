@@ -103,14 +103,16 @@ def level_width(A, sc, d, j):
     return max(w, sc.get('stop_min', .01))
 
 
-def level_entries(A, name, armed, level, sc, out, at_open=False, below=False):
+def level_entries(A, name, armed, level, sc, out, at_open=False, below=False, stop_line=None):
     """A sell-short limit at `level`, decided before day t (armed and level use t-1 data): filled when the day opens
     below the level and trades up to it; the stop sits stop_w above the level and, when the day's high reaches it,
     the short is stopped that day (the price passes the level before it can reach the stop: exact on daily bars).
     at_open: sold at the open instead (armed may then also read the day's open, the first price of the day).
     below: a sell-stop under `level` instead (a breakdown): filled when the day trades down to it, at the open when it
     opens under it; when the day's high also reaches the stop the short counts as stopped that day -- exact after an
-    open under the level, a pessimistic bound otherwise (the high may have come before the fill)."""
+    open under the level, a pessimistic bound otherwise (the high may have come before the fill).
+    stop_line: the stop at this (days x codes) line known before the day instead of stop_w (at least stop_min
+    above the fill)."""
     o, h, l, to20 = A['open'], A['high'], A['low'], A['to20']
     for d, j in zip(*np.nonzero(armed)):
         if d == 0:
@@ -121,7 +123,11 @@ def level_entries(A, name, armed, level, sc, out, at_open=False, below=False):
         elif not (np.isfinite(lv) and np.isfinite(o[d, j]) and (at_open or (not below and o[d, j] < lv <= h[d, j]))):
             continue
         w = level_width(A, sc, d, j)
-        s = lv * (1 + w)
+        if stop_line is not None:
+            if not np.isfinite(stop_line[d, j]):
+                continue
+            w = max(stop_line[d, j] / lv - 1, sc.get('stop_min', .01))
+        s = max(stop_line[d, j], lv * (1 + sc.get('stop_min', .01))) if stop_line is not None else lv * (1 + w)
         pr = -to20[d - 1, j] if np.isfinite(to20[d - 1, j]) else 0.0
         mult = sc.get('risk_mult', 1.0)
         out[d].append((float(pr), int(j), -1, float(lv), float(s), f's_{name}', float(s) if h[d, j] >= s else None,
@@ -156,7 +162,7 @@ def short_entries(A, masks, sc):
             m = m['armed']
         elif isinstance(m, dict):
             level_entries(A, name, m['armed'], m.get('level'), sc, out, m.get('at_open', False),
-                          m.get('below', False))
+                          m.get('below', False), m.get('stop_line'))
             continue
         ref = stops.get(name, h)
         for d, j in zip(*np.nonzero(m)):

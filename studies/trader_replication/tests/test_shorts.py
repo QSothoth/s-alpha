@@ -104,6 +104,16 @@ class LevelEntryTests(unittest.TestCase):
         A['low'][1, 0] = 9.9                                           # never trades down to it: nothing
         self.assertEqual(SH.short_entries(A, m, {'stop_w': .03})[1], [])
 
+    def test_open_entry_with_a_stop_line_known_before_the_day(self):
+        A = arrays([(10, 10.2, 9.8, 10), (9.9, 10.3, 9.5, 9.6)])
+        armed = np.array([[False], [True]])
+        line = np.full((2, 1), 10.4)
+        (e,) = SH.short_entries(A, {'x': {'armed': armed, 'at_open': True, 'stop_line': line}}, {})[1]
+        self.assertEqual((e[3], e[4], e[6]), (9.9, 10.4, None))
+        line[:] = 9.92                                                 # under the floor: 1% above the fill
+        (e,) = SH.short_entries(A, {'x': {'armed': armed, 'at_open': True, 'stop_line': line}}, {})[1]
+        self.assertAlmostEqual(e[4], 9.999)
+
     def test_risk_mult_sizes_level_entries_too(self):
         (e,) = self.level([(10, 10.2, 9.8, 10), (10.0, 10.4, 9.7, 9.8)], risk_mult=.5)
         self.assertAlmostEqual(e[7], .04)
