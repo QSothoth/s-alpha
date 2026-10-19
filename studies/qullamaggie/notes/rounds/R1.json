@@ -1,0 +1,16 @@
+{
+ "stage": "end_to_end",
+ "base": ["r0.json", "chosen"],
+ "ref": "R0",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "Q1": {"setups": ["ep"]},
+  "Q2": {"stop_adr": {"brk": 1.0, "ep": 3.0}},
+  "Q3": {"setups": ["ep"], "stop_adr": {"ep": 3.0}},
+  "Q4": {"setups": ["ep"], "stop_adr": {"ep": 3.0},
+         "rule_opts": {"trail": "ema20", "trim_day_breakeven": true}},
+  "Q5": {"setups": ["ep"], "stop_adr": {"ep": 3.0}, "filter": "light",
+         "rule_opts": {"trail": "ema20", "trim_day_breakeven": true}}
+ }
+}
