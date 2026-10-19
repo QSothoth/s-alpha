@@ -1,0 +1,13 @@
+{
+ "stage": "sizing_capacity",
+ "base": ["r8.json", "chosen"],
+ "ref": "R8",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "Z1": {"rule_opts": {"risk": 0.004}},
+  "Z2": {"rule_opts": {"risk": 0.005, "max_open": 20}},
+  "Z3": {"rule_opts": {"risk": 0.005}, "max_new": 8},
+  "Z4": {"rule_opts": {"risk": 0.005, "max_open": 20}, "max_new": 8}
+ }
+}

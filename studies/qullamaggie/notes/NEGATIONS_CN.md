@@ -29,3 +29,8 @@
 | R7 | exits | X2 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.5}}` | r6.json:chosen | X1 | objective below X1；全区间 -0%（带入 +31%） | open |
 | R7 | exits | X3 | `{"rule_opts": {"trail": "sma10"}}` | r6.json:chosen | X1 | objective below X1；全区间 +4%（带入 +31%） | open |
 | R7 | exits | X4 | `{"rule_opts": {"trim_day_frac": 0.5, "trim_signal": "atr50x7", "trim_signal_frac": 0.5}}` | r6.json:chosen | X1 | objective below X1；全区间 +3%（带入 +31%） | open |
+| R8 | exits_by_kind | Y1 | `{"rule_opts": {"risk": 0.005}}` | r7.json:chosen | R7 | objective below R7；全区间 +67%（带入 +31%） | open |
+| R8 | exits_by_kind | Y2 | `{"rule_opts": {"management_by_kind": {"brk": {"trail": "sma10"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +24%（带入 +31%） | open |
+| R8 | exits_by_kind | Y3 | `{"rule_opts": {"management_by_kind": {"ep": {"trail": "sma50"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +29%（带入 +31%） | open |
+| R8 | exits_by_kind | Y4 | `{"rule_opts": {"management_by_kind": {"brk": {"trail": "sma10"}, "ep": {"trail": "sma50"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +17%（带入 +31%） | open |
+| R8 | exits_by_kind | Y5 | `{"rule_opts": {"risk": 0.005, "management_by_kind": {"brk": {"trail": "sma10"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +45%（带入 +31%） | open |
