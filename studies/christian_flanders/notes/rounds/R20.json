@@ -1,0 +1,17 @@
+{
+ "stage": "slots_by_kind",
+ "base": ["r19.json", "chosen"],
+ "ref": "R19",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "H1": {"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"], "rule_opts": {"max_open_by_kind": {"pb": 3}}},
+  "H2": {"setups": ["hi52", "ep", "pb", "vcp"], "kind_order": ["ep", "hi52", "vcp", "pb"],
+         "rule_opts": {"max_open_by_kind": {"pb": 2, "vcp": 2}}},
+  "H3": {"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"], "close_any": ["hi52"],
+         "rule_opts": {"max_open_by_kind": {"pb": 3}}},
+  "H4": {"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"], "rule_opts": {"max_open_by_kind": {"pp": 2}}},
+  "H5": {"setups": ["hi52", "ep", "pp", "pb"], "kind_order": ["ep", "hi52", "pp", "pb"], "close_any": ["hi52"],
+         "rule_opts": {"max_open_by_kind": {"pp": 2, "pb": 2}}}
+ }
+}

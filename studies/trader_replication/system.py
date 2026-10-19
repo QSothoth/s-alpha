@@ -32,6 +32,8 @@ class Rules:
     feedback: int = 0               # > 0: risk_low per trade while the last `feedback` closed trades sum to < 0 R
     feedback_opened: bool = False   # use latest opened positions, marked at the previous session close
     management_by_kind: dict = field(default_factory=dict)  # entry kind -> position management overrides
+    max_open_by_kind: dict = field(default_factory=dict)    # entry kind -> at most this many open positions of
+                                                            # that kind (inside max_open; absent kinds: no own cap)
     risk_low: float = .0025
     risk_high: float = 0.0          # > 0: risk per trade while the last `feedback` closed trades sum to > 0 R
     short_trims: tuple | None = None  # shorts' partial levels (None = same as longs)
@@ -175,6 +177,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         if j in pos or not np.isfinite(fill) or fill <= 0:
             return
         if rules.max_open and len(pos) >= rules.max_open:
+            return
+        if kind in rules.max_open_by_kind and \
+                sum(q.kind == kind for q in pos.values()) >= rules.max_open_by_kind[kind]:
             return
         risk = abs(fill - stop) / fill
         if not (0 < risk < 1) or (stop - fill) * side >= 0:
@@ -350,7 +355,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     continue
                 k = int(placebo.choice(cand))
                 pct = abs(fill - stop) / fill
-                kind_ = kind if kind in management else 'placebo'
+                kind_ = kind if kind in management or kind in rules.max_open_by_kind else 'placebo'
                 swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), kind_, None) + tuple(e[7:9]))
             todays = swapped
         for e in sorted(todays, key=lambda x: x[0]):
