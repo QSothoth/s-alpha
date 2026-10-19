@@ -135,7 +135,16 @@ class Qullamaggie(CF.Flanders):
             large = lag(F.to20) >= sc.get('large_turnover', 500e6)
             para = streak & (run >= np.where(large, sc.get('large', .5), sc.get('small', 3.0)))
             turn = {'red': (F.c < F.o) & (F.c < lag(F.c)), 'pdl': F.c < lag(F.l)}[sc.get('trigger', 'red')]
-        return {'para': pool & para & turn}, pool
+            red = (F.c < F.o) & (F.c < lag(F.c))
+        names = sc.get('setups', ['para'])
+        out = {}
+        if 'para' in names:
+            out['para'] = pool & para & turn
+        if 'pbrk' in names:          # S2: his opening-range-low break as a sell-stop under yesterday's low, decided
+            out['pbrk'] = dict(armed=pool & para, level=lag(F.l), below=True)   # after the close (shorts.py)
+        if 'popen' in names:         # S2: the morning after the first red day, sold at the open
+            out['popen'] = dict(armed=pool & lag(para & red), at_open=True)
+        return out, pool
 
 
 STUDY = Qullamaggie()

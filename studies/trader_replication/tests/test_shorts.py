@@ -88,6 +88,22 @@ class LevelEntryTests(unittest.TestCase):
         self.assertEqual(self.level([(10, 10.2, 9.8, 10), (10.0, 10.2, 9.7, 9.8)]), [])
         self.assertEqual(self.level([(10, 10.2, 9.8, 10), (10.5, 10.6, 9.7, 9.8)]), [])
 
+    def test_sell_stop_below_fills_on_the_way_down(self):
+        A = arrays([(10, 10.2, 9.8, 10), (10.0, 10.05, 9.5, 9.6)])
+        armed = np.array([[False], [True]])
+        m = {'x': {'armed': armed, 'level': np.full((2, 1), 9.8), 'below': True}}
+        (e,) = SH.short_entries(A, m, {'stop_w': .03})[1]
+        self.assertEqual((e[3], e[6]), (9.8, None))
+        self.assertAlmostEqual(e[4], 9.8 * 1.03)
+        A['open'][1, 0] = 9.7                                          # opens under the level: the open
+        (e,) = SH.short_entries(A, m, {'stop_w': .03})[1]
+        self.assertEqual(e[3], 9.7)
+        A['open'][1, 0], A['high'][1, 0] = 10.0, 10.2                   # the high also reaches the stop: stopped
+        (e,) = SH.short_entries(A, m, {'stop_w': .03})[1]
+        self.assertAlmostEqual(e[6], e[4])
+        A['low'][1, 0] = 9.9                                           # never trades down to it: nothing
+        self.assertEqual(SH.short_entries(A, m, {'stop_w': .03})[1], [])
+
     def test_risk_mult_sizes_level_entries_too(self):
         (e,) = self.level([(10, 10.2, 9.8, 10), (10.0, 10.4, 9.7, 9.8)], risk_mult=.5)
         self.assertAlmostEqual(e[7], .04)

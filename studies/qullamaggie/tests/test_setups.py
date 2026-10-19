@@ -68,6 +68,13 @@ class ParabolicShortTests(unittest.TestCase):
         pdl = R.STUDY.short_setups(A, {'trigger': 'pdl'})[0]['para'][:, 0]
         self.assertEqual(list(np.flatnonzero(pdl)), [])               # 41 is above the prior low 38.8
 
+    def test_exact_entries_are_decided_before_the_day(self):
+        A = panel(BASE + self.RUN + [(46, 48, 40, 41), (40, 42, 38, 39)])
+        z = R.STUDY.short_setups(A, {'setups': ['pbrk', 'popen']})[0]
+        self.assertEqual(list(np.flatnonzero(z['pbrk']['armed'][:, 0])), [35])   # the run intact through day 34
+        self.assertEqual(z['pbrk']['level'][35, 0], 38.8)                        # day 34's low
+        self.assertEqual(list(np.flatnonzero(z['popen']['armed'][:, 0])), [36])  # after the red day 35
+
     def test_large_names_need_less_of_a_run(self):
         run = [(10.5, 11.3, 10.4, 11), (11.2, 12.3, 11.1, 12), (12.2, 13.3, 12.1, 13), (13.2, 15.6, 13.1, 15.5)]
         A = panel(BASE + run + [(16, 16.5, 14, 14.5)])
