@@ -1,0 +1,14 @@
+{
+ "stage": "capacity_setups",
+ "base": ["r2.json", "chosen"],
+ "ref": "R2",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "T1": {"setups": ["ep", "brk"], "kind_order": ["ep", "brk"]},
+  "T2": {"max_new": 5, "rule_opts": {"max_open": 15}},
+  "T3": {"max_new": 5, "rule_opts": {"max_open": 15, "risk": 0.003}},
+  "T4": {"rule_opts": {"trim_day": 5}},
+  "T5": {"setups": ["ep", "brk"], "kind_order": ["ep", "brk"], "max_new": 5, "rule_opts": {"max_open": 15}}
+ }
+}
