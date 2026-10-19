@@ -40,3 +40,8 @@
 | R8 | order | C3 | `{"strength": "st90", "rule_opts": {"max_open": 14}}` | r7.json:chosen | R7 | objective below R7；全区间 +112%（带入 +116%） | open |
 | R8 | order | C4 | `{"strength": "st90", "max_new": 6}` | r7.json:chosen | R7 | objective below R7；全区间 +146%（带入 +116%） | open |
 | R8 | order | C5 | `{"strength": "st90", "priority": "rs"}` | r7.json:chosen | R7 | objective below R7；全区间 +51%（带入 +116%） | open |
+| R9 | exits | E1 | `{"rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5}}` | r8.json:chosen | R8 | objective below R8；全区间 +75%（带入 +116%） | open |
+| R9 | exits | E2 | `{"rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5, "trim_day": 11, "trim_day_frac": 0.3333}}` | r8.json:chosen | R8 | objective below R8；全区间 +50%（带入 +116%） | open |
+| R9 | exits | E3 | `{"strength": "st90", "rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5}}` | r8.json:chosen | R8 | objective below R8；全区间 +80%（带入 +116%） | open |
+| R9 | exits | E4 | `{"rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5, "max_open": 10}}` | r8.json:chosen | R8 | objective below R8；全区间 +76%（带入 +116%） | open |
+| R9 | exits | E5 | `{"strength": "st90", "rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5, "trim_day": 11, "trim_day_frac": 0.3333}}` | r8.json:chosen | R8 | objective below R8；全区间 +57%（带入 +116%） | open |
