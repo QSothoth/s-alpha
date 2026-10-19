@@ -1,0 +1,14 @@
+{
+ "stage": "order",
+ "base": ["r7.json", "chosen"],
+ "ref": "R7",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "C1": {"priority": "strength"},
+  "C2": {"priority": "rs"},
+  "C3": {"strength": "st90", "rule_opts": {"max_open": 14}},
+  "C4": {"strength": "st90", "max_new": 6},
+  "C5": {"strength": "st90", "priority": "rs"}
+ }
+}
