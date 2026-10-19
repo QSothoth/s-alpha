@@ -61,7 +61,7 @@ class Kell(CF.Flanders):
     def setups(self, A, cfg):
         F = A['F']
         out = super().setups(A, dict(cfg, setups=[s for s in cfg.get('setups', [])
-                                                  if s in ('ep', 'brk52', 'pp', 'vcp')]))
+                                                  if s in ('ep', 'brk52', 'pp', 'vcp', 'pb')]))
         names = cfg.get('setups', ['pop', 'cross'])
         st = S.OliverKell().run(F)['setups']
         if 'pop' in names:                               # bought at the close that reclaims the higher EMA
@@ -71,6 +71,18 @@ class Kell(CF.Flanders):
         if 'cross' in names:
             x = [s for s in st if s.name == 'EMA Crossback' and s.kind == 'triggered'][0]
             out['cross'] = (x.mask, x.price, F.l)
+        pool = lag(self.pool(A, cfg))
+        with np.errstate(invalid='ignore'):
+            if 'ib2' in names:                           # two inside days in a row, then a break of the mother bar
+                inside = (F.h <= lag(F.h)) & (F.l >= lag(F.l))
+                ready = inside & lag(inside)
+                mother = lag(F.h, 2)
+                m = pool & lag(ready) & (F.h > lag(mother)) & (F.c > F.ema(20))
+                out['ib2'] = (m, np.fmax(F.o, lag(mother)), F.l)
+            if 'ur' in names:                            # undercut and rally: yesterday closed below the 20 EMA
+                e20 = F.ema(20)                          # after an up cycle, today closes back above it
+                m = pool & lag(F.c < e20) & (F.c > e20) & lag(F.ema(10) > e20, 3) & (F.c > F.sma(50))
+                out['ur'] = (m, e20, F.l)
         return out
 
     def entries(self, A, cfg, masks):

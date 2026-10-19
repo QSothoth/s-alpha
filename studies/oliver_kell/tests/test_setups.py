@@ -46,6 +46,28 @@ class SetupTests(unittest.TestCase):
         self.assertEqual(s[40], 1.0)                                 # the day of the drop: yesterday was above
         self.assertEqual(s[41], .5)
 
+    def test_double_inside_breaks_the_mother_bar(self):
+        rows = [(10 + .03 * i, 10.2 + .03 * i, 9.9 + .03 * i, 10.1 + .03 * i) for i in range(60)]
+        c = rows[-1][3]
+        rows += [(c, c + .5, c - .5, c), (c, c + .3, c - .3, c), (c, c + .2, c - .2, c),   # mother, inside, inside
+                 (c, c + .7, c - .1, c + .6)]                                               # breaks the mother high
+        A = panel(rows)
+        cfg = dict(R.DRAFT, setups=['ib2'], pool=dict(turnover=1e6, adr=0.0))
+        m, level, _ = R.STUDY.setups(A, cfg)['ib2']
+        T = len(rows) - 1
+        self.assertTrue(m[T, 0])
+        self.assertFalse(m[T - 1, 0])
+        self.assertAlmostEqual(level[T, 0], c + .5)
+
+    def test_undercut_and_rally(self):
+        rows = [(10 + .05 * i, 10.2 + .05 * i, 9.9 + .05 * i, 10.1 + .05 * i) for i in range(80)]
+        c = rows[-1][3]
+        rows += [(c - .6, c - .5, c - 1.2, c - 1.1), (c - 1.0, c + .1, c - 1.1, c)]   # closes below, then back above
+        A = panel(rows)
+        m = R.STUDY.setups(A, dict(R.DRAFT, setups=['ur'], pool=dict(turnover=1e6, adr=0.0)))['ur'][0]
+        self.assertTrue(m[-1, 0])
+        self.assertFalse(m[-2, 0])
+
     def test_exit_signals(self):
         rows = [(10, 10.2, 9.8, 10)] * 15 + [(13.5, 13.6, 13.4, 13.5), (9, 9.1, 8.9, 9)]
         A = panel(rows)

@@ -1,0 +1,14 @@
+{
+ "stage": "setups",
+ "base": ["r1.json", "chosen"],
+ "ref": "R1",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "W1": {"setups": ["pop", "cross", "pb"]},
+  "W2": {"setups": ["pop", "cross", "vcp", "brk52"]},
+  "W3": {"setups": ["pop", "cross", "ib2"]},
+  "W4": {"setups": ["pop", "cross", "ur"]},
+  "W5": {"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover"}
+ }
+}
