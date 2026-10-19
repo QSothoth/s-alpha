@@ -1573,9 +1573,22 @@ def r35():
                   'r35_minyear.json', 'R35', ref='L5')
 
 
+def rejection_shorts(A, pool):
+    """S2 (from the per-trade check of his dated shorts on daily bars): the day's high tags the 9 EMA (as of t-1) and
+    the day closes back under it on a red candle, no weekly or EMA-order condition.  Z11 on a former leader (on the
+    K9 strength list within 40 days, as Z6), Z12 on any pool name, Z13 = Z11 with the 9 EMA falling."""
+    o, h, c = A['open'], A['high'], A['close']
+    e9p = prev(A['e9'])
+    with np.errstate(invalid='ignore'):
+        rej = pool & (h >= e9p) & (c < e9p) & (c < o)
+        leader = S._past_any(strength_lists(A, pool)['K9'], 40)
+        return {'Z11': rej & leader, 'Z12': rej, 'Z13': rej & leader & (e9p < prev(e9p))}
+
+
 def short_masks(A, pool):
     z = short_signals(A, pool)
     z.update(leader_shorts(A, pool))
+    z.update(rejection_shorts(A, pool))
     return z
 
 

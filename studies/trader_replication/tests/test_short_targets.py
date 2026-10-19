@@ -59,6 +59,17 @@ class ShortTargetTests(unittest.TestCase):
         (t,) = run(rows, {'m10': [10.2, 10.2]}, short_targets=('m10',))
         self.assertEqual(t['why'], 'end')
 
+    def test_day_partial_covers_at_the_close_of_day_n_when_in_profit(self):
+        rows = [(10, 10, 10, 10), (9.9, 10.0, 9.6, 9.7), (9.7, 9.8, 9.3, 9.4), (9.4, 9.5, 9.2, 9.3)]
+        (t,) = run(rows, {}, short_trim_day=2, short_trim_day_frac=.5)
+        ex = [(e['time'], e['price'], e['action']) for e in t['executions'][1:]]
+        self.assertEqual(ex[0], ('2025-01-03', 9.4, 'day_trim'))
+        self.assertAlmostEqual(t['executions'][1]['shares'], t['executions'][0]['shares'] / 2)
+        self.assertEqual((len(ex), t['why']), (2, 'end'))
+        rows = [(10, 10, 10, 10), (10.0, 10.3, 9.9, 10.2), (10.2, 10.4, 10.0, 10.1)]   # not in profit: nothing
+        (t,) = run(rows, {}, short_trim_day=2, short_trim_day_frac=.5)
+        self.assertEqual([e['action'] for e in t['executions']], ['entry', 'end'])
+
     def test_longs_ignore_targets(self):
         a = np.array([(10, 10, 10, 10), (10.1, 10.6, 9.6, 10.5)], float)
         p = {'open': a[:, :1], 'high': a[:, 1:2], 'low': a[:, 2:3], 'close': a[:, 3:4],

@@ -1,0 +1,421 @@
+[
+ {
+  "round": "S1",
+  "stage": "short: end-to-end from his words (setup choice)",
+  "candidate": "SA",
+  "change": {
+   "setups": [
+    "Z1"
+   ],
+   "gate": "below50",
+   "max_new": 1,
+   "trail": "e9",
+   "trims": [
+    3
+   ],
+   "trim_frac": 0.15,
+   "max_days": 3
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: total, years, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.2283521349133566,
+   "short_placebo_median": -0.22867712658102163,
+   "both_total": 20.282344889404136,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.6856320740022497,
+    "2025": 2.0885987959432772,
+    "2026": 0.8695883809274554
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.2848212192987376,
+    "short": -0.21086246478393145
+   },
+   "win": 0.1935483870967742
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: end-to-end from his words (setup choice)",
+  "candidate": "SB",
+  "change": {
+   "setups": [
+    "Z2"
+   ],
+   "gate": "below50",
+   "max_new": 1,
+   "trail": "e9",
+   "trims": [
+    3
+   ],
+   "trim_frac": 0.15,
+   "max_days": 3
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.18678281255652263,
+   "short_placebo_median": -0.18533634505295932,
+   "both_total": 20.09622957484382,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.5168504296396925,
+    "2025": 1.9709750428258204,
+    "2026": 1.0190726269596575
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.2771305424182531,
+    "short": -0.1411638665941075
+   },
+   "win": 0.20222222222222222
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: end-to-end from his words (setup choice)",
+  "candidate": "SC",
+  "change": {
+   "setups": [
+    "Z6"
+   ],
+   "gate": "below50",
+   "max_new": 1,
+   "trail": "e9",
+   "trims": [
+    3
+   ],
+   "trim_frac": 0.15,
+   "max_days": 3
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: total, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.1049717458443662,
+   "short_placebo_median": -0.13745565152634648,
+   "both_total": 23.135694822070985,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.606203113008871,
+    "2025": 2.3744865130740918,
+    "2026": 0.983361712492629
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.15477138235781984,
+    "short": -0.07919696311342372
+   },
+   "win": 0.20288248337028825
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: end-to-end from his words (setup choice)",
+  "candidate": "SD",
+  "change": {
+   "setups": [
+    "Z1",
+    "Z2",
+    "Z6"
+   ],
+   "gate": "below50",
+   "max_new": 1,
+   "trail": "e9",
+   "trims": [
+    3
+   ],
+   "trim_frac": 0.15,
+   "max_days": 3
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.17204732787447652,
+   "short_placebo_median": -0.13042193262492907,
+   "both_total": 22.934295412337285,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.567062041658323,
+    "2025": 2.547481100653748,
+    "2026": 0.8914283471574322
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.2283295747799774,
+    "short": -0.15812768926535847
+   },
+   "win": 0.19933184855233854
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: end-to-end from his words (setup choice)",
+  "candidate": "SE",
+  "change": {
+   "setups": [
+    "Z1",
+    "Z2",
+    "Z6"
+   ],
+   "gate": "",
+   "max_new": 1,
+   "trail": "e9",
+   "trims": [
+    3
+   ],
+   "trim_frac": 0.15,
+   "max_days": 3
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.07912230742851989,
+   "short_placebo_median": -0.486336936843772,
+   "both_total": 8.289570423103607,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 1.8348279950515964,
+    "2025": 0.6447887157834538,
+    "2026": 0.9923186512507558
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.36855428958579606,
+    "short": -0.11070966841212115
+   },
+   "win": 0.22416812609457093
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
+ }
+]

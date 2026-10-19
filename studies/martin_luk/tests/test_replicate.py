@@ -238,3 +238,28 @@ class ShortTriggerTests(unittest.TestCase):
         for k in full:
             self.assertTrue(np.array_equal(full[k][:cut + 1], part[k]), k)
         self.assertTrue(any(full[k].any() for k in full))
+
+    def test_rejection_at_the_prior_nine_ema_on_a_red_close(self):
+        n = 60
+        c = np.full((n, 1), 100.0)
+        o, h, l = c.copy(), c * 1.005, c * .995
+        k = n - 2
+        A0 = short_panel(c, h, l)
+        e9p = A0['e9'][k - 1, 0]
+        o[k, 0], h[k, 0], c[k, 0] = e9p * .999, e9p * 1.004, e9p * .99    # tags the 9, closes red under it
+        A = short_panel(c, h, l)
+        A['open'] = o
+        keep = R.strength_lists
+        R.strength_lists = lambda A, pool: {'K9': np.ones(A['close'].shape, bool)}
+        try:
+            z = R.rejection_shorts(A, np.ones(c.shape, bool))
+        finally:
+            R.strength_lists = keep
+        self.assertEqual(list(np.flatnonzero(z['Z12'][:, 0])), [k])
+        self.assertEqual(list(np.flatnonzero(z['Z11'][:, 0])), [k])
+        A['open'][k, 0] = c[k, 0] * .99                                     # a green close is not a rejection
+        R.strength_lists = lambda A, pool: {'K9': np.ones(A['close'].shape, bool)}
+        try:
+            self.assertFalse(R.rejection_shorts(A, np.ones(c.shape, bool))['Z12'][k, 0])
+        finally:
+            R.strength_lists = keep

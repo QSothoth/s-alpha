@@ -135,6 +135,7 @@ def short_rules(rules, sc, kinds):
                   short_trims=tuple(sc['trims']) if 'trims' in sc else rules.short_trims,
                   short_max_days=sc.get('max_days', rules.short_max_days),
                   short_targets=tuple(sc.get('targets', ())), short_target_frac=sc.get('target_frac', 0.0),
+                  short_trim_day=sc.get('trim_day', 0), short_trim_day_frac=sc.get('trim_day_frac', 0.0),
                   borrow_rate=sc.get('borrow', BORROW))
     return out
 

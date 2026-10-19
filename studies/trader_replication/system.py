@@ -42,6 +42,8 @@ class Rules:
     short_target_frac: float = 0.0    # the line's value at the previous close (at the open when it opens below):
                                       # short_target_frac of the original size at each but the last, which covers the
                                       # rest (0: the first covers all); a line not below the fill is not a target yet
+    short_trim_day: int = 0           # > 0: at the close this many sessions after entry a short covers
+    short_trim_day_frac: float = 0.0  # short_trim_day_frac of its original size, once, when that close is below the fill
     max_open: int = 0               # > 0: no new trade while this many are open
     max_new_long: int = 0           # > 0: count successful new long positions per trading session
     exit_signal: str = ''           # name of a boolean (days x codes) array in `ema`: longs exit at that close
@@ -386,6 +388,12 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                         continue
                     if rules.trim_day_breakeven:
                         q.stop = max(q.stop, q.fill)
+            if rules.short_trim_day and s < 0 and not q.day_trimmed                     and session[d] - session[q.d0] == rules.short_trim_day:
+                q.day_trimmed = True
+                if c[d, j] < q.fill:
+                    close_part(q, rules.short_trim_day_frac * q.size0, c[d, j], d, 'day_trim')
+                    if j not in pos:
+                        continue
             levels_add = policy.add_levels or ((policy.add_r,) if policy.add_r else ())
             if s > 0 and q.adds < len(levels_add) and c[d, j] >= q.fill + levels_add[q.adds] * R:
                 add_pos(q, c[d, j], d)
