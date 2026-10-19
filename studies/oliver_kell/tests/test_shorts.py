@@ -41,15 +41,28 @@ class KellShortTests(unittest.TestCase):
         self.assertTrue(F.h[rally, 0] >= F.ema(10)[rally, 0] and F.c[rally, 0] < F.ema(20)[rally, 0])
         self.assertEqual(got, [rally + 1])                     # 11.2 < the rally day's low 11.5, once
 
+    def test_limits_after_the_drop_use_yesterdays_line(self):
+        A = panel(path())
+        z = R.STUDY.short_setups(A, dict(SC, setups=['drop', 'lim20', 'lim10']))[0]
+        drop = int(np.flatnonzero(z['drop'][:, 0])[0])
+        armed = np.flatnonzero(z['lim20']['armed'][:, 0])
+        self.assertTrue(len(armed) and armed[0] > drop)                 # never before or on the drop day
+        t = armed[0]
+        self.assertAlmostEqual(z['lim20']['level'][t, 0], A['F'].ema(20)[t - 1, 0])
+
     def test_no_later_bars_are_read(self):
         rng = np.random.default_rng(7)
         c = 20 * np.exp(np.cumsum(rng.normal(0, .05, 300)))
         rows = [(x * (1 + rng.normal(0, .01)), x * 1.04, x * .96, x) for x in c]
-        full = R.STUDY.short_setups(panel(rows), SC)[0]
+        full = R.STUDY.short_setups(panel(rows), dict(SC, setups=['drop', 'dcross', 'lim20', 'lim10', 'lim50']))[0]
         cut = 230
-        part = R.STUDY.short_setups(panel(rows[:cut + 1]), SC)[0]
+        part = R.STUDY.short_setups(panel(rows[:cut + 1]), dict(SC, setups=['drop', 'dcross', 'lim20', 'lim10', 'lim50']))[0]
         for k in full:
-            self.assertTrue(np.array_equal(full[k][:cut + 1], part[k]), k)
+            if isinstance(full[k], dict):
+                np.testing.assert_array_equal(full[k]['armed'][:cut + 1], part[k]['armed'])
+                np.testing.assert_array_equal(full[k]['level'][:cut + 1], part[k]['level'])
+            else:
+                self.assertTrue(np.array_equal(full[k][:cut + 1], part[k]), k)
 
 
 if __name__ == '__main__':

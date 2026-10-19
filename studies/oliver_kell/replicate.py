@@ -121,8 +121,10 @@ class Kell(CF.Flanders):
             ready_day = (F.h >= e10) & (F.c < e20) & (e10 < lag(e10))
             above20 = F.c > e20
         ready = np.zeros_like(drop)
+        after = np.zeros_like(drop)                      # day t: a Wedge Drop 1-20 sessions back, not undone (t-1)
         since, used = np.full(drop.shape[1], -1), np.zeros(drop.shape[1], bool)
         for t in range(len(drop)):
+            after[t] = (since >= 0) & (t - since >= 1) & (t - since <= 20)
             live = (since >= 0) & (t - since >= 2) & (t - since <= 20)
             ready[t] = live & ~used & ready_day[t]
             used |= ready[t]
@@ -142,6 +144,14 @@ class Kell(CF.Flanders):
             out['drop'] = drop
         if 'dcross' in names:
             out['dcross'] = trig
+        # S2 (his CAVA short, K42: "short CAVA today on the rejection at 50SMA ... my stop is today's high"): the
+        # rally into a falling line after a Wedge Drop as a sell-short limit at the previous day's line, decided at
+        # that close (shorts.level_entries): under the line yesterday, the line falling
+        with np.errstate(invalid='ignore'):
+            for name, line in (('lim20', e20), ('lim10', e10), ('lim50', F.sma(50))):
+                if name in names:
+                    armed = pool & after & lag((F.c < line) & (line < lag(line)))
+                    out[name] = dict(armed=armed, level=lag(line))
         return out, pool
 
 

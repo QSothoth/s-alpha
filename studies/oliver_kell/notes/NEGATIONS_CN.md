@@ -9,6 +9,11 @@
 | R1 | end_to_end | V3 | `{"filter": "IDX20", "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5}}` | :base | D0c | gates: placebo；全区间 -0%（带入 -2%） | open |
 | R1 | end_to_end | V4 | `{"rule_opts": {"trim_signal": "ext10_30", "trim_signal_frac": 0.3333}}` | :base | D0c | gates: placebo；全区间 +14%（带入 -2%） | open |
 | R1 | end_to_end | V5 | `{"priority": "turnover", "filter": "IDX20", "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5, "trim_signal": "ext10_30", "trim_signal_frac": 0.3333}}` | :base | D0c | gates: placebo；全区间 +12%（带入 -2%） | open |
+| S1 | short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7) | KA | `{"setups": ["drop"], "gate": "below20", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, down | open |
+| S1 | short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7) | KB | `{"setups": ["dcross"], "gate": "below20", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, down | open |
+| S1 | short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7) | KC | `{"setups": ["drop", "dcross"], "gate": "below20", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
+| S1 | short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7) | KD | `{"setups": ["drop", "dcross"], "gate": "", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
+| S1 | short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7) | KE | `{"setups": ["drop", "dcross"], "gate": "below20", "max_new": 2, "trail": "ema10", "trims": [], "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, down | open |
 | R2 | setups | W1 | `{"setups": ["pop", "cross", "pb"]}` | r1.json:chosen | R1 | gates: placebo, width<=30；全区间 -63%（带入 -2%） | open |
 | R2 | setups | W2 | `{"setups": ["pop", "cross", "vcp", "brk52"]}` | r1.json:chosen | R1 | gates: placebo, width<=30；全区间 -28%（带入 -2%） | open |
 | R2 | setups | W3 | `{"setups": ["pop", "cross", "ib2"]}` | r1.json:chosen | R1 | gates: placebo；全区间 -8%（带入 -2%） | open |

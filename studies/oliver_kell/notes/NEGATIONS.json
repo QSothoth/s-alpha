@@ -411,6 +411,444 @@
   }
  },
  {
+  "round": "S1",
+  "stage": "short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7)",
+  "candidate": "KA",
+  "change": {
+   "setups": [
+    "drop"
+   ],
+   "gate": "below20",
+   "max_new": 2,
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, years, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.10937741798977785,
+   "short_placebo_median": -0.044985252436197276,
+   "both_total": 0.9477227378228905,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.10021558776784945,
+    "2025": 0.23943178584796665,
+    "2026": 0.4283239251323536
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": -0.022892869988126008,
+    "short": -0.08051423931446333
+   },
+   "win": 0.20647321428571427
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7)",
+  "candidate": "KB",
+  "change": {
+   "setups": [
+    "dcross"
+   ],
+   "gate": "below20",
+   "max_new": 2,
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, years, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.039012011891642606,
+   "short_placebo_median": -0.011292743942727446,
+   "both_total": 1.10058097155198,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.12861553450765761,
+    "2025": 0.29453452717821693,
+    "2026": 0.4377380452264634
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": 0.03408834529797167,
+    "short": -0.018123642456720157
+   },
+   "win": 0.2048054919908467
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7)",
+  "candidate": "KC",
+  "change": {
+   "setups": [
+    "drop",
+    "dcross"
+   ],
+   "gate": "below20",
+   "max_new": 2,
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.14222118586890775,
+   "short_placebo_median": -0.05201867214929323,
+   "both_total": 0.8761729386355239,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.09940099031578065,
+    "2025": 0.19484267134665556,
+    "2026": 0.4282558762966526
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": -0.04363584559813716,
+    "short": -0.09639452562138506
+   },
+   "win": 0.2039911308203991
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7)",
+  "candidate": "KD",
+  "change": {
+   "setups": [
+    "drop",
+    "dcross"
+   ],
+   "gate": "",
+   "max_new": 2,
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.1549325309884798,
+   "short_placebo_median": -0.13305628290692778,
+   "both_total": 0.6939351081101073,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.07371928280999507,
+    "2025": 0.19853700892200266,
+    "2026": 0.31629904943505927
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": -0.004584908788594633,
+    "short": -0.04479922309387263
+   },
+   "win": 0.20065075921908893
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7)",
+  "candidate": "KE",
+  "change": {
+   "setups": [
+    "drop",
+    "dcross"
+   ],
+   "gate": "below20",
+   "max_new": 2,
+   "trail": "ema10",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, years, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.12662730557986535,
+   "short_placebo_median": -0.04024077688955546,
+   "both_total": 0.9725175297145179,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.1095096806454765,
+    "2025": 0.2536468367544149,
+    "2026": 0.4181251736528808
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": -0.05551352471336779,
+    "short": -0.10287336792868917
+   },
+   "win": 0.20750551876379691
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
   "round": "R2",
   "stage": "setups",
   "candidate": "W1",
