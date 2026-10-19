@@ -274,6 +274,37 @@ class Flanders(study.Study):
         placebo_pool = lag(pool | (self.ep_pool(A, cfg) if 'ep' in masks else False))
         return entries, rules, mask, placebo_pool
 
+    def short_setups(self, A, sc):
+        """His short side (RULES ⑧; 6aOnCK1gv2w@01:24:20-01:26:00, 8vX0kp766aA@00:31:00-00:33:00): "in a bear market
+        ... rallies into a declining 200 day moving average, low-risk short points"; Micron shorted "on the gap down
+        ... on earnings ... when it gapped away from the 200 day" after the 200-day "rejected it four times".
+
+        r200     a sell-short limit at the 200-day line of the day before, armed when the name closed under a 200-day
+                 that is falling (below its value 20 sessions earlier); filled when the day opens under the line and
+                 trades up to it (shorts.level_entries)
+        gap200   sold at the open of a gap down of at least `gap` (10%: his EP gap turned over) under a falling 200-day
+                 that turned back at least `rejections` (1) rally in the last 60 sessions (a high at or above the line,
+                 a close under it); the open is the day's first price, so this is decided at the open
+        Pool: his long pool's floors (20-day turnover >= 20M USD, price >= 5, ADR >= 2%) as of t-1."""
+        F = A['F']
+        with np.errstate(invalid='ignore', divide='ignore'):
+            pool = lag(F.liquid(sc.get('turnover', 20e6)) & (F.adr >= sc.get('adr', 2.0)))
+            s200 = F.sma(200)
+            falling = s200 < lag(s200, 20)
+            under = lag((F.c < s200) & falling)
+            reject = (F.h >= s200) & (F.c < s200)
+            n = np.zeros(F.c.shape)
+            for k in range(1, 61):
+                n += lag(reject, k)
+            gap = (F.o / lag(F.c) - 1 <= -sc.get('gap', .10)) & under & (n >= sc.get('rejections', 1))
+        out = {}
+        names = sc.get('setups', ['r200', 'gap200'])
+        if 'r200' in names:
+            out['r200'] = dict(armed=pool & under, level=lag(s200))
+        if 'gap200' in names:
+            out['gap200'] = dict(armed=pool & gap, at_open=True)
+        return out, pool
+
     def his_entry(self, A, d, j, cfg):
         """His ticker on his day with our execution: the close, stop at the day's low (at least stop_min)."""
         c, l = A['close'][d, j], A['low'][d, j]

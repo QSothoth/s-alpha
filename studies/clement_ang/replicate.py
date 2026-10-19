@@ -86,6 +86,43 @@ class Clement(CF.Flanders):
             out = {k: (v[0] & ok if k in ('fine', 'pb') else v[0], v[1], v[2]) for k, v in out.items()}
         return out
 
+    def short_setups(self, A, sc):
+        """His short side, "100% Gil Morales" (RULES ⑧; zw96qkUn9_g@00:57:46): late-stage failed bases on former
+        leaders ("when the market turns negative, the former big stocks", @01:24) -- "watching a stock violate that
+        20-day exponential moving average ... a wedging type of price action on low volume into the moving average
+        and I'm timing that intraday as it reverses".  Armed for day t on t-1 data: a former leader (the board's
+        strength >= `leader` (0.9) on some day of the last 60), a close under the 20 EMA on some day of the last
+        `violate` (10) sessions while it is still under it, and the rally into it on low volume (the last 3 sessions'
+        average volume under the 50-day's).
+
+        fb20     a sell-short limit at the previous day's 20 EMA (the rally reaches the line; shorts.level_entries)
+        fb20c    close-confirmed: the day's high reaches the previous 20 EMA, the day closes red under it (his
+                 intraday reversal on daily bars), stop at the day's high
+        Pool: his long pool's floors (20-day turnover >= 50M USD, price >= 5, ADR >= 3%) as of t-1."""
+        F = A['F']
+        with np.errstate(invalid='ignore', divide='ignore'):
+            pool = lag(F.liquid(sc.get('turnover', 50e6)) & (F.adr >= sc.get('adr', 3.0)))
+            e20 = F.ema(20)
+            strong = S.strength(F) >= sc.get('leader', .9)
+            under = F.c < e20
+            leader = np.zeros(F.c.shape, bool)
+            broke = np.zeros(F.c.shape, bool)
+            for k in range(1, 61):
+                leader |= lag(strong, k)
+                if k <= sc.get('violate', 10):
+                    broke |= lag(under, k)
+            quiet = lag(F.vol(3) < F.vol(50))
+            armed = pool & leader & broke & lag(under) & quiet
+            level = lag(e20)
+            red = (F.h >= level) & (F.c < level) & (F.c < F.o)
+        out = {}
+        names = sc.get('setups', ['fb20'])
+        if 'fb20' in names:
+            out['fb20'] = dict(armed=armed, level=level)
+        if 'fb20c' in names:
+            out['fb20c'] = armed & red
+        return out, pool
+
     @staticmethod
     def rs_phase(F):
         """The relative-strength line (close / the pool's equal-weight index) above its own 21-day EMA, and that

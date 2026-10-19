@@ -103,16 +103,17 @@ def level_width(A, sc, d, j):
     return max(w, sc.get('stop_min', .01))
 
 
-def level_entries(A, name, armed, level, sc, out):
+def level_entries(A, name, armed, level, sc, out, at_open=False):
     """A sell-short limit at `level`, decided before day t (armed and level use t-1 data): filled when the day opens
     below the level and trades up to it; the stop sits stop_w above the level and, when the day's high reaches it,
-    the short is stopped that day (the price passes the level before it can reach the stop: exact on daily bars)."""
+    the short is stopped that day (the price passes the level before it can reach the stop: exact on daily bars).
+    at_open: sold at the open instead (armed may then also read the day's open, the first price of the day)."""
     o, h, to20 = A['open'], A['high'], A['to20']
     for d, j in zip(*np.nonzero(armed)):
         if d == 0:
             continue
-        lv = level[d, j]
-        if not (np.isfinite(lv) and np.isfinite(o[d, j]) and o[d, j] < lv <= h[d, j]):
+        lv = o[d, j] if at_open else level[d, j]
+        if not (np.isfinite(lv) and np.isfinite(o[d, j]) and (at_open or o[d, j] < lv <= h[d, j])):
             continue
         s = lv * (1 + level_width(A, sc, d, j))
         pr = -to20[d - 1, j] if np.isfinite(to20[d - 1, j]) else 0.0
@@ -125,20 +126,26 @@ def fired(A, m):
     level from below the open."""
     if not isinstance(m, dict):
         return m
+    if m.get('at_open') or m.get('stop') is not None:
+        return m['armed'] & np.isfinite(A['open'])
     with np.errstate(invalid='ignore'):
         return m['armed'] & (A['open'] < m['level']) & (m['level'] <= A['high'])
 
 
 def short_entries(A, masks, sc):
     """Engine entries (priority, column, -1, fill, stop, 's_<name>', day_exit, size_risk) of the day-t masks; a mask
-    given as {'armed', 'level'} is a level entry (level_entries), a plain mask a close entry."""
+    given as {'armed', 'level'} is a level entry (level_entries), {'armed', 'stop'} a close entry with the stop at
+    that line (still at least stop_min above the fill), a plain mask a close entry with the stop at the day's high."""
     c, h, to20 = A['close'], A['high'], A['to20']
     smin, cap, mult = sc.get('stop_min', .01), sc.get('stop_cap', 0.0), sc.get('risk_mult', 1.0)
     stops = sc.get('_stop_ref') or {}
     out = [[] for _ in range(len(c))]
     for name, m in masks.items():
-        if isinstance(m, dict):
-            level_entries(A, name, m['armed'], m['level'], sc, out)
+        if isinstance(m, dict) and m.get('stop') is not None:      # a close entry with his own stop line
+            stops = dict(stops, **{name: m['stop']})
+            m = m['armed']
+        elif isinstance(m, dict):
+            level_entries(A, name, m['armed'], m.get('level'), sc, out, m.get('at_open', False))
             continue
         ref = stops.get(name, h)
         for d, j in zip(*np.nonzero(m)):

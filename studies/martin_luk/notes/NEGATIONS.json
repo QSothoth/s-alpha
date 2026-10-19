@@ -1161,5 +1161,291 @@
    },
    "short": null
   }
+ },
+ {
+  "round": "S4",
+  "stage": "short: on top of S3 SM (his words: converging EMAs, several shorts a day, partials, premier names)",
+  "candidate": "SP",
+  "change": {
+   "setups": [
+    "Z15",
+    "Z14"
+   ],
+   "gate": "",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 2,
+   "trim_day_frac": 0.5,
+   "max_days": 0
+  },
+  "base": [
+   "s3.json",
+   "chosen"
+  ],
+  "chosen": "ST",
+  "reason": "gates: total",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.24136658258702437,
+   "short_placebo_median": -0.5840644109356165,
+   "both_total": 22.837425094407735,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 3.20330366029362,
+    "2025": 1.880470336261221,
+    "2026": 0.968816172953926
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.09460529720218513,
+    "short": -0.13530920048600792
+   },
+   "win": 0.21674876847290642
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "gate": "",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 2,
+    "trim_day_frac": 0.5,
+    "max_days": 0
+   }
+  }
+ },
+ {
+  "round": "S4",
+  "stage": "short: on top of S3 SM (his words: converging EMAs, several shorts a day, partials, premier names)",
+  "candidate": "SQ",
+  "change": {
+   "setups": [
+    "Z15"
+   ],
+   "gate": "",
+   "max_new": 2,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 2,
+   "trim_day_frac": 0.5,
+   "max_days": 0
+  },
+  "base": [
+   "s3.json",
+   "chosen"
+  ],
+  "chosen": "ST",
+  "reason": "gates: total, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.7539324290519944,
+   "short_placebo_median": -0.8227383779868807,
+   "both_total": 18.289430879174475,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.9753409773321833,
+    "2025": 1.2986539381185498,
+    "2026": 1.1109183523188482
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.2460438500632851,
+    "short": -0.28500082923903736
+   },
+   "win": 0.24591381872213966
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "gate": "",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 2,
+    "trim_day_frac": 0.5,
+    "max_days": 0
+   }
+  }
+ },
+ {
+  "round": "S4",
+  "stage": "short: on top of S3 SM (his words: converging EMAs, several shorts a day, partials, premier names)",
+  "candidate": "SR",
+  "change": {
+   "setups": [
+    "Z15"
+   ],
+   "gate": "",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 0,
+   "trim_day_frac": 0.0,
+   "max_days": 0
+  },
+  "base": [
+   "s3.json",
+   "chosen"
+  ],
+  "chosen": "ST",
+  "reason": "gates: total, years, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.4905542481348131,
+   "short_placebo_median": -0.7031350451357327,
+   "both_total": 14.200532094612452,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.3007561258154645,
+    "2025": 1.068456611233068,
+    "2026": 1.226378181900584
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.1458654933262452,
+    "short": -0.2895427779593197
+   },
+   "win": 0.20912547528517111
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "gate": "",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 2,
+    "trim_day_frac": 0.5,
+    "max_days": 0
+   }
+  }
  }
 ]
