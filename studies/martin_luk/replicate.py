@@ -172,7 +172,8 @@ def r19():
 
 
 POOLS = {'U0': (5, 20e6, 4), 'U1': (1, 100e6, 4), 'U2': (1, 100e6, 3), 'U3': (1, 50e6, 4), 'U4': (2, 50e6, 3),
-         'U5': (5, 100e6, 3), 'U6': (2, 50e6, 2)}
+         'U5': (5, 100e6, 3), 'U6': (2, 50e6, 2),
+         'U7': (5, 100e6, 4)}                       # short S4: his "premier" names (>= 100M USD a day), ADR >= 4
 
 
 def pool_mask(A, price, turnover, adr):
