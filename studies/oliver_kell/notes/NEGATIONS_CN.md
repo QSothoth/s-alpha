@@ -27,3 +27,7 @@
 | R5 | entry | Z2 | `{"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "max_new": 3}` | r4.json:chosen | Z5 | objective below Z5；全区间 +116%（带入 +173%） | open |
 | R5 | entry | Z3 | `{"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "strength": "rs80"}` | r4.json:chosen | Z5 | objective below Z5；全区间 +61%（带入 +173%） | open |
 | R5 | entry | Z4 | `{"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "rule_opts": {"trim_day": 11, "trim_day_frac": 0.3333}}` | r4.json:chosen | Z5 | objective below Z5；全区间 +103%（带入 +173%） | open |
+| R6 | capacity | A1 | `{"max_new": 4}` | r5.json:chosen | A5 | objective below A5；全区间 +83%（带入 +116%） | open |
+| R6 | capacity | A2 | `{"rule_opts": {"max_open": 10}}` | r5.json:chosen | A5 | objective below A5；全区间 +144%（带入 +116%） | open |
+| R6 | capacity | A3 | `{"max_new": 4, "rule_opts": {"max_open": 10}}` | r5.json:chosen | A5 | objective below A5；全区间 +134%（带入 +116%） | open |
+| R6 | capacity | A4 | `{"max_new": 4, "rule_opts": {"max_open": 10, "max_gross": 2.0}}` | r5.json:chosen | A5 | objective below A5；全区间 +132%（带入 +116%） | open |
