@@ -22,3 +22,7 @@
 | R4 | ep_shape | U3 | `{"stop_adr": {"ep": 5.0}}` | r3.json:chosen | U4 | objective below U4；全区间 +19%（带入 +25%） | open |
 | R5 | market | V1 | `{"filter": "light_q"}` | r4.json:chosen | R4 | gates: placebo；全区间 +3%（带入 +25%） | open |
 | R5 | market | V2 | `{"filter": "light_q", "rule_opts": {"risk": 0.005}}` | r4.json:chosen | R4 | gates: placebo；全区间 -9%（带入 +25%） | open |
+| R6 | ep_volume | W1 | `{"ep": {"heavy": 5.0}}` | r5.json:chosen | R5 | objective below R5；全区间 +15%（带入 +25%） | open |
+| R6 | ep_volume | W2 | `{"priority": "rvol"}` | r5.json:chosen | R5 | objective below R5；全区间 +18%（带入 +25%） | open |
+| R6 | ep_volume | W3 | `{"ep": {"heavy": 5.0}, "priority": "rvol"}` | r5.json:chosen | R5 | objective below R5；全区间 +10%（带入 +25%） | open |
+| R6 | ep_volume | W4 | `{"ep": {"heavy": 8.0}, "priority": "rvol"}` | r5.json:chosen | R5 | objective below R5；全区间 +24%（带入 +25%） | open |
