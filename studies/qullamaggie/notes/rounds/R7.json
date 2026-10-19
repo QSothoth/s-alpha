@@ -1,0 +1,13 @@
+{
+ "stage": "exits",
+ "base": ["r6.json", "chosen"],
+ "ref": "R6",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "X1": {"rule_opts": {"trim_day_frac": 0.5}},
+  "X2": {"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.5}},
+  "X3": {"rule_opts": {"trail": "sma10"}},
+  "X4": {"rule_opts": {"trim_day_frac": 0.5, "trim_signal": "atr50x7", "trim_signal_frac": 0.5}}
+ }
+}
