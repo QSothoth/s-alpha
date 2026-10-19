@@ -1,0 +1,14 @@
+{
+ "stage": "capacity",
+ "base": ["r5.json", "chosen"],
+ "ref": "R5",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "A1": {"max_new": 4},
+  "A2": {"rule_opts": {"max_open": 10}},
+  "A3": {"max_new": 4, "rule_opts": {"max_open": 10}},
+  "A4": {"max_new": 4, "rule_opts": {"max_open": 10, "max_gross": 2.0}},
+  "A5": {"max_new": 4, "rule_opts": {"max_open": 12, "max_position": 0.09}}
+ }
+}
