@@ -67,3 +67,6 @@
 | R14 | retest | T2 | `{"rule_opts": {"month_loss_cap": 0.05, "month_cap_ladder": [0.025], "month_cap_basis": "opened"}}` | r13.json:chosen | R13 | gates: bought；全区间 +51%（带入 +239%） | open |
 | R14 | retest | T3 | `{"rule_opts": {"feedback": 1, "risk_low": 0.0025}}` | r13.json:chosen | R13 | gates: bought；全区间 +94%（带入 +239%） | open |
 | R14 | retest | T4 | `{"rule_opts": {"trail_after_trim": "ema10", "feedback": 1, "risk_low": 0.0025}}` | r13.json:chosen | R13 | objective below R13；全区间 +54%（带入 +239%） | open |
+| R15 | retest | AA1 | `{"rs_phase": true}` | r14.json:chosen | AA3 | gates: bought；全区间 +59%（带入 +270%） | open |
+| R15 | retest | AA2 | `{"rs_phase": true, "pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}}` | r14.json:chosen | AA3 | gates: bought；全区间 +62%（带入 +270%） | open |
+| R15 | retest | AA4 | `{"rule_opts": {"feedback": 3, "risk_low": 0.003}}` | r14.json:chosen | AA3 | gates: bought；全区间 +171%（带入 +270%） | open |

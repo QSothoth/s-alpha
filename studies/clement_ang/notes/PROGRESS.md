@@ -11,5 +11,6 @@
 - R13 全部否定；R12 配置的 robust / final / three 已出。
 - R14 全部否定；判为“再难改进”，写 `reports/FINAL_CN.md`。
 - 下一步：等用户决定是否冻结（R12 配置）；不冻结则做盘中执行近似与 2024 年台账补录。
-- 轮次统计：已用 14 / 40。
+- R15（用户要求继续）带入 AA3 指数过滤：美股 +270%，买到 7，对数差 0.333；三市场见 `final_r15.json`。FINAL_CN 的数字仍是 R12 版本，需按 R15 更新。
+- 轮次统计：已用 15 / 40。
 - 运行：后台队列 `python -m studies.trader_replication.queue`（`TR_QUEUE_DIR` 指定队列目录），或 `$PY -m studies.clement_ang.replicate round R<n>`。

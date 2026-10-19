@@ -5804,5 +5804,289 @@
     "pb"
    ]
   }
+ },
+ {
+  "round": "R15",
+  "stage": "retest",
+  "candidate": "AA1",
+  "change": {
+   "rs_phase": true
+  },
+  "base": [
+   "r14.json",
+   "chosen"
+  ],
+  "chosen": "AA3",
+  "reason": "gates: bought",
+  "objective": "his_years",
+  "evidence": {
+   "total": 0.58927700374094,
+   "by_year": {
+    "2024": -0.03313933230289268,
+    "2025": 0.15670053180483823,
+    "2026": 0.42106770812155236
+   },
+   "win": 0.3380855397148676,
+   "per_year": 706.0313837375179,
+   "behaviour_gap": 0.778736186601947,
+   "year_gap": 0.6745767546533413,
+   "placebo_median": -0.12730286500116766,
+   "bought": {
+    "select": [
+     3,
+     12
+    ],
+    "validate": [
+     2,
+     9
+    ]
+   },
+   "fidelity": {
+    "select": [
+     5,
+     12
+    ],
+    "validate": [
+     5,
+     9
+    ]
+   },
+   "best_total": 2.7028033560013003
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ]
+  }
+ },
+ {
+  "round": "R15",
+  "stage": "retest",
+  "candidate": "AA2",
+  "change": {
+   "rs_phase": true,
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 3.0,
+    "above50": true
+   }
+  },
+  "base": [
+   "r14.json",
+   "chosen"
+  ],
+  "chosen": "AA3",
+  "reason": "gates: bought",
+  "objective": "his_years",
+  "evidence": {
+   "total": 0.6214794975699185,
+   "by_year": {
+    "2024": 0.10996744768609679,
+    "2025": 0.025428844673428985,
+    "2026": 0.42460901972014176
+   },
+   "win": 0.3374384236453202,
+   "per_year": 729.7574893009986,
+   "behaviour_gap": 0.7814827334311286,
+   "year_gap": 0.6657913063358318,
+   "placebo_median": -0.21776688563347857,
+   "bought": {
+    "select": [
+     3,
+     12
+    ],
+    "validate": [
+     2,
+     9
+    ]
+   },
+   "fidelity": {
+    "select": [
+     5,
+     12
+    ],
+    "validate": [
+     5,
+     9
+    ]
+   },
+   "best_total": 2.7028033560013003
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ]
+  }
+ },
+ {
+  "round": "R15",
+  "stage": "retest",
+  "candidate": "AA4",
+  "change": {
+   "rule_opts": {
+    "feedback": 3,
+    "risk_low": 0.003
+   }
+  },
+  "base": [
+   "r14.json",
+   "chosen"
+  ],
+  "chosen": "AA3",
+  "reason": "gates: bought",
+  "objective": "his_years",
+  "evidence": {
+   "total": 1.7101484792664334,
+   "by_year": {
+    "2024": 0.14452813445539348,
+    "2025": 0.7901093795050018,
+    "2026": 0.3227782459235904
+   },
+   "win": 0.33903133903133903,
+   "per_year": 883.2582025677603,
+   "behaviour_gap": 0.7187256625516856,
+   "year_gap": 0.3718775225108619,
+   "placebo_median": -0.03111771605290925,
+   "bought": {
+    "select": [
+     3,
+     12
+    ],
+    "validate": [
+     3,
+     9
+    ]
+   },
+   "fidelity": {
+    "select": [
+     6,
+     12
+    ],
+    "validate": [
+     6,
+     9
+    ]
+   },
+   "best_total": 2.7028033560013003
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ]
+  }
  }
 ]
