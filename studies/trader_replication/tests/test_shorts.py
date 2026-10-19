@@ -71,6 +71,37 @@ class StopRuleTests(unittest.TestCase):
         self.assertAlmostEqual(e[7], .04 / .5)
 
 
+class LevelEntryTests(unittest.TestCase):
+    def level(self, rows, lv=10.3, **sc):
+        A = arrays(rows)
+        armed = np.zeros((len(rows), 1), bool)
+        armed[1, 0] = True
+        return SH.short_entries(A, {'x': {'armed': armed, 'level': np.full((len(rows), 1), lv)}},
+                                dict(stop_w=.02, **sc))[1]
+
+    def test_fills_at_the_level_when_the_day_trades_up_to_it(self):
+        (e,) = self.level([(10, 10.2, 9.8, 10), (10.0, 10.4, 9.7, 9.8)])
+        self.assertEqual((e[2], e[3], e[5], e[6]), (-1, 10.3, 's_x', None))
+        self.assertAlmostEqual(e[4], 10.3 * 1.02)
+
+    def test_no_fill_when_the_day_stays_under_or_opens_above(self):
+        self.assertEqual(self.level([(10, 10.2, 9.8, 10), (10.0, 10.2, 9.7, 9.8)]), [])
+        self.assertEqual(self.level([(10, 10.2, 9.8, 10), (10.5, 10.6, 9.7, 9.8)]), [])
+
+    def test_stopped_the_same_day_when_the_high_reaches_the_stop(self):
+        (e,) = self.level([(10, 10.2, 9.8, 10), (10.0, 10.6, 9.7, 10.4)])
+        self.assertAlmostEqual(e[6], e[4])
+
+    def test_cap_width_is_half_the_prior_adr_at_most_five_percent(self):
+        A = arrays([(10, 10.2, 9.8, 10)] * 3)
+        A['adr'][1, 0] = 4.0
+        self.assertAlmostEqual(SH.level_width(A, {}, 2, 0), .02)
+        A['adr'][1, 0] = 1.0
+        self.assertAlmostEqual(SH.level_width(A, {}, 2, 0), .01)          # the 1% floor
+        A['adr'][1, 0] = 30.0
+        self.assertAlmostEqual(SH.level_width(A, {}, 2, 0), .05)
+
+
 class OrderAndGateTests(unittest.TestCase):
     def test_longs_come_before_shorts_whatever_their_priority(self):
         longs = [[(9.0, 0, 1, 10, 9, 'l')]]

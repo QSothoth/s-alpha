@@ -29,8 +29,16 @@ def entries(mode):
             if not (h[d, j] >= e9p[d, j] >= l[d, j]):
                 continue
             fill, stop = e9p[d, j], max(h[d, j], e9p[d, j] * 1.01)
-        elif mode == 'open':                                 # the open, stop the day's high
-            fill, stop = o[d, j], max(h[d, j], o[d, j] * 1.01)
+        elif mode == 'open':                                 # the open, stop the day's high (LOOK-AHEAD: the high
+            fill, stop = o[d, j], max(h[d, j], o[d, j] * 1.01)  # is known only after the fill; diagnostic only)
+        elif mode == 'limit9':                               # sell-short limit at the prior 9 EMA (shorts.py level
+            lv = e9p[d, j]                                   # entry): exact on daily bars
+            if not (o[d, j] < lv <= h[d, j]):
+                continue
+            w = SH.level_width(A, {}, d, j)
+            out[d].append((0.0, j, -1, float(lv), float(lv * (1 + w)), 'his', float(lv * (1 + w))
+                           if h[d, j] >= lv * (1 + w) else None))
+            continue
         out[d].append((0.0, j, -1, float(fill), float(stop), 'his'))
     return out
 
@@ -42,9 +50,12 @@ base = replace(rules, max_open=0, max_new_long=0, max_gross=1e9, max_position=1e
 variants = {'close / trail e9': base,
             'close / day2 half + trail e9': replace(base, short_trim_day=2, short_trim_day_frac=.5),
             'close / 3 days': replace(base, short_max_days=3),
-            'e9 level / trail e9': base, 'open / trail e9': base}
+            'e9 level / trail e9': base, 'open / trail e9': base, 'limit9 / trail e9': base,
+            'limit9 / day2 half + trail e9': replace(base, short_trim_day=2, short_trim_day_frac=.5)}
 for name, rules_ in variants.items():
     mode = name.split(' /')[0].replace(' level', '')
+    if mode in ('e9', 'open'):
+        name += ' (look-ahead)'
     e = entries(mode)
     _, _, tr = Y.simulate(st.px(A), st.ema_inputs(A, pool, rules_), rules_, e, *panels.WINDOW)
     r = np.array([t['r'] for t in tr])

@@ -239,6 +239,24 @@ class ShortTriggerTests(unittest.TestCase):
             self.assertTrue(np.array_equal(full[k][:cut + 1], part[k]), k)
         self.assertTrue(any(full[k].any() for k in full))
 
+    def test_level_shorts_are_decided_on_the_previous_day(self):
+        rng = np.random.default_rng(5)
+        c = 50 * np.exp(np.cumsum(rng.normal(0, .03, (120, 10)), axis=0))
+        A = short_panel(c)
+        keep = R.strength_lists
+        R.strength_lists = lambda A, pool: {'K9': np.ones(A['close'].shape, bool)}
+        try:
+            z = R.level_shorts(A, np.ones(c.shape, bool))
+            c2 = c.copy()
+            c2[80] *= 3                                                # change day 80 only
+            z2 = R.level_shorts(short_panel(c2), np.ones(c.shape, bool))
+        finally:
+            R.strength_lists = keep
+        for k in z:
+            self.assertTrue(np.array_equal(z[k]['armed'][:81], z2[k]['armed'][:81]), k)
+            np.testing.assert_array_equal(z[k]['level'][:81], z2[k]['level'][:81])
+        self.assertAlmostEqual(z['Z14']['level'][50, 0], A['e9'][49, 0])
+
     def test_rejection_at_the_prior_nine_ema_on_a_red_close(self):
         n = 60
         c = np.full((n, 1), 100.0)

@@ -93,13 +93,53 @@ def gate_days(A, spec):
     raise ValueError(spec)
 
 
+def level_width(A, sc, d, j):
+    """Stop distance above a level entry: 'cap' = his long stop rule turned over, min(5%, half the ADR as of t-1)
+    and at least stop_min; a number = that fraction."""
+    w = sc.get('stop_w', 'cap')
+    if w == 'cap':
+        adr = A['adr'][d - 1, j]
+        w = min(.05, .5 * adr / 100) if np.isfinite(adr) else .05
+    return max(w, sc.get('stop_min', .01))
+
+
+def level_entries(A, name, armed, level, sc, out):
+    """A sell-short limit at `level`, decided before day t (armed and level use t-1 data): filled when the day opens
+    below the level and trades up to it; the stop sits stop_w above the level and, when the day's high reaches it,
+    the short is stopped that day (the price passes the level before it can reach the stop: exact on daily bars)."""
+    o, h, to20 = A['open'], A['high'], A['to20']
+    for d, j in zip(*np.nonzero(armed)):
+        if d == 0:
+            continue
+        lv = level[d, j]
+        if not (np.isfinite(lv) and np.isfinite(o[d, j]) and o[d, j] < lv <= h[d, j]):
+            continue
+        s = lv * (1 + level_width(A, sc, d, j))
+        pr = -to20[d - 1, j] if np.isfinite(to20[d - 1, j]) else 0.0
+        out[d].append((float(pr), int(j), -1, float(lv), float(s), f's_{name}', float(s) if h[d, j] >= s else None,
+                       None))
+
+
+def fired(A, m):
+    """Days a short setup would have filled: a close mask itself; a level entry where the day traded up to the
+    level from below the open."""
+    if not isinstance(m, dict):
+        return m
+    with np.errstate(invalid='ignore'):
+        return m['armed'] & (A['open'] < m['level']) & (m['level'] <= A['high'])
+
+
 def short_entries(A, masks, sc):
-    """Engine entries (priority, column, -1, close, stop, 's_<name>', None, size_risk) of the day-t masks."""
+    """Engine entries (priority, column, -1, fill, stop, 's_<name>', day_exit, size_risk) of the day-t masks; a mask
+    given as {'armed', 'level'} is a level entry (level_entries), a plain mask a close entry."""
     c, h, to20 = A['close'], A['high'], A['to20']
     smin, cap, mult = sc.get('stop_min', .01), sc.get('stop_cap', 0.0), sc.get('risk_mult', 1.0)
     stops = sc.get('_stop_ref') or {}
     out = [[] for _ in range(len(c))]
     for name, m in masks.items():
+        if isinstance(m, dict):
+            level_entries(A, name, m['armed'], m['level'], sc, out)
+            continue
         ref = stops.get(name, h)
         for d, j in zip(*np.nonzero(m)):
             if d == 0:
@@ -160,12 +200,13 @@ class LongShort:
             return entries, rules, mask, pool
         masks, spool = self.base.short_setups(A, sc)
         ok = gate_days(A, sc.get('gate', ''))
-        masks = {k: m & ok[:, None] for k, m in masks.items()}
+        masks = {k: dict(m, armed=m['armed'] & ok[:, None]) if isinstance(m, dict) else m & ok[:, None]
+                 for k, m in masks.items()}
         se = short_entries(A, masks, sc)
         if sc.get('max_new'):
             se = [sorted(lst, key=lambda e: e[0])[:sc['max_new']] for lst in se]
         if trace is not None:
-            trace['short_mask'] = np.any(np.stack(list(masks.values())), axis=0) if masks else np.zeros_like(mask)
+            trace['short_mask'] = np.any(np.stack([fired(A, m) for m in masks.values()]), axis=0) if masks                 else np.zeros_like(mask)
             trace['short_entries'] = se
             trace['short_pool'] = spool
         kinds = [f's_{k}' for k in masks]
