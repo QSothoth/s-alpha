@@ -1,0 +1,14 @@
+{
+ "stage": "exits_by_kind",
+ "base": ["r7.json", "chosen"],
+ "ref": "R7",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "Y1": {"rule_opts": {"risk": 0.005}},
+  "Y2": {"rule_opts": {"management_by_kind": {"brk": {"trail": "sma10"}}}},
+  "Y3": {"rule_opts": {"management_by_kind": {"ep": {"trail": "sma50"}}}},
+  "Y4": {"rule_opts": {"management_by_kind": {"brk": {"trail": "sma10"}, "ep": {"trail": "sma50"}}}},
+  "Y5": {"rule_opts": {"risk": 0.005, "management_by_kind": {"brk": {"trail": "sma10"}}}}
+ }
+}
