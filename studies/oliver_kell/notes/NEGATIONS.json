@@ -1265,6 +1265,450 @@
   }
  },
  {
+  "round": "S2",
+  "stage": "short: the rally into the falling line after a Wedge Drop as a limit (his CAVA short)",
+  "candidate": "KF",
+  "change": {
+   "setups": [
+    "lim20"
+   ],
+   "gate": "below20",
+   "max_new": 2,
+   "stop_w": "cap",
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: total, years",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.08013758773424295,
+   "short_placebo_median": -0.11086469441213387,
+   "both_total": 0.8982276298159448,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.12697375367372032,
+    "2025": 0.25001835144278406,
+    "2026": 0.3474668817190911
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": 0.1485857121840859,
+    "short": 0.10120043387124467
+   },
+   "win": 0.2
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S2",
+  "stage": "short: the rally into the falling line after a Wedge Drop as a limit (his CAVA short)",
+  "candidate": "KG",
+  "change": {
+   "setups": [
+    "lim10"
+   ],
+   "gate": "below20",
+   "max_new": 2,
+   "stop_w": "cap",
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.11653781623728543,
+   "short_placebo_median": -0.10488111348334839,
+   "both_total": 0.5471214864509619,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.10778885223467816,
+    "2025": 0.08991459853241635,
+    "2026": 0.2813711968139003
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": -0.020167855807673662,
+    "short": -0.05488478042545242
+   },
+   "win": 0.192102454642476
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S2",
+  "stage": "short: the rally into the falling line after a Wedge Drop as a limit (his CAVA short)",
+  "candidate": "KH",
+  "change": {
+   "setups": [
+    "lim50"
+   ],
+   "gate": "below20",
+   "max_new": 2,
+   "stop_w": "cap",
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: short_placebo, total, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.010156805591791218,
+   "short_placebo_median": -0.0042938912697166876,
+   "both_total": 1.1315959260978659,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.1458211887791534,
+    "2025": 0.2700022732991938,
+    "2026": 0.4648175484281609
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": 0.042333072722196,
+    "short": -0.008007876111103207
+   },
+   "win": 0.20504009163802978
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S2",
+  "stage": "short: the rally into the falling line after a Wedge Drop as a limit (his CAVA short)",
+  "candidate": "KI",
+  "change": {
+   "setups": [
+    "lim20",
+    "lim10",
+    "lim50"
+   ],
+   "gate": "",
+   "max_new": 2,
+   "stop_w": "cap",
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: total, years",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.15157183797744578,
+   "short_placebo_median": -0.3013614908680714,
+   "both_total": 0.8593876828398597,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.10950424422179883,
+    "2025": 0.2707313081442073,
+    "2026": 0.3188252445530917
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": 0.09726256234040842,
+    "short": 0.07383035914796032
+   },
+   "win": 0.19958202716823406
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
+  "round": "S2",
+  "stage": "short: the rally into the falling line after a Wedge Drop as a limit (his CAVA short)",
+  "candidate": "KJ",
+  "change": {
+   "setups": [
+    "lim20",
+    "lim10",
+    "lim50"
+   ],
+   "gate": "below20",
+   "max_new": 2,
+   "stop_w": "cap",
+   "trail": "ema10",
+   "trims": [],
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: total, years",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.010521775940316003,
+   "short_placebo_median": -0.11416648303977533,
+   "both_total": 0.920790019556188,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.11687566454920906,
+    "2025": 0.21270647517025676,
+    "2026": 0.41814084523213846
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": 0.1209174380152378,
+    "short": 0.0920722165254193
+   },
+   "win": 0.19773429454170957
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": null
+  }
+ },
+ {
   "round": "R3",
   "stage": "end_to_end_pairs",
   "candidate": "X1",
