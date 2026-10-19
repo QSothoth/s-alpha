@@ -1,5 +1,7 @@
 # 各交易员的规则与账户（按原话初版 + 已复刻）
 
+> 2026-10-19 起看板不再运行这里的初版账户：每位交易员用 `studies/trader_replication/systems.py` 登记的研究系统（与横向比对表相同）。下面的买点和账户规则保留为“按原话”的规则卡，研究模块在此基础上逐轮逼近；其中“初版账户从最近 126 个交易日前回放”“明日越过触发价”等描述只适用于已退役的初版账户。
+
 代码在 `studies/trader_screens/screens.py`（初版）和 `frozen.py`（已复刻）。出处编号对应 `studies/trader_registry/dossiers/` 里各人档案和来源账本；“研究者取值”是档案没给、为了能跑先定的整数或常见值，没有调过参，也没有检验过。所有规则在第 t 天只用 t 及以前的日 K（单测 `test_every_draft_on_day_t_ignores_later_bars`）。
 
 共用口径：

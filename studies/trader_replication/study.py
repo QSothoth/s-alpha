@@ -146,13 +146,19 @@ class Study:
     base = {}                        # the configuration a round with base ["", "base"] starts from
 
     # ----- trader-specific -----
-    def arrays(self, market):
+    def arrays(self, market, upto=None, mode=None):
+        """The market's A dict from studies.trader_data (panels); `upto` cuts it after that ISO day; `mode` frozen /
+        live (default: TRADER_DATA_MODE)."""
         raise NotImplementedError
 
     def build(self, A, cfg, trace=None):
         """(entries, rules, mask, pool); trace (a dict) receives the entries after the stop rule ('raw'), the
         market filter ('filtered') and the daily cap ('capped'), plus any named stage masks for diagnose."""
         raise NotImplementedError
+
+    def market_gate(self, A, cfg):
+        """Per day: whether the market filter lets new longs in that day (None: no filter)."""
+        return None
 
     def named(self, A, pool, name):
         """Day arrays the engine reads by name (exit / trim signals, risk scales) that A does not hold."""

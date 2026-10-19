@@ -10,6 +10,11 @@
 | `study.py` | 通用复刻流程（`Study` 基类）：新交易员只写自己的 `arrays` / `build`（环节掩码）和 `notes/rounds/R*.json`；`round`（候选 + 门槛 + 目标，从不带入更差的配置，自动写否定登记表和记分板）、`diagnose`（他的每笔卡在哪一步）、`robust`、`final`（三市场）、`three`（三层对照）。命令：`python -m studies.<id>.replicate round R3` 等 |
 | `negations.py` | 否定登记表 `notes/NEGATIONS.json` / `NEGATIONS_CN.md`：没带入的候选连同当时的基础配置；`stale` 列出基础配置已变、需要重测的行 |
 | `martin.py` | 用 Martin Luk 的 `replicate.py` 走通用流程的适配和自测：只读 `studies/martin_luk`，输出写 `data/trader-replication-selftest/`；`check` 与已提交的 R74 报告逐项比较 |
+| `panels.py` | 研究用的日 K 数组，经统一数据接口 [`studies/trader_data`](../trader_data/README.md) 取得（默认冻结 Release `trader-data-v1`）；公共评测区间 `WINDOW`；`upto` 截面板供不看未来检查；`DATA_PIN.json` 固定各版本的数据摘要（`python -m studies.trader_replication.panels pin`）。规范见 [TRADER_PROTOCOL_CN](../../docs/TRADER_PROTOCOL_CN.md) |
+| `systems.py` | 登记的交易员系统：每人一份（研究模块 + 带入配置 + 版本 + 状态 + 冻结日），比对、看板、实际运行都只读这里 |
+| `runner.py` | 一个系统在一个市场上回放到最新一天：账户、当天买卖、没做的买点、持仓与引擎给出的离场线；回放截到冻结日与比对表核对。`python -m studies.trader_replication.runner us live` |
+| `gate.py` | 工程门禁：数据版本与区间、不看未来（截面板前后决定一致）、成交价在当日区间内、胜率 ≤ 35%；单测 `tests/test_gate.py` |
+| `compare.py` | 各交易员当前配置在统一数据层上的三市场横向比对与门禁，写 `reports/compare.json`、`reports/COMPARISON_CN.md`：`python -m studies.trader_replication.compare run [us,hk,cn] [交易员 ...]` |
 | `system.py` | 多空日 K 组合：收盘确认入场、固定风险定仓、分批（按 R / 按信号）、EMA 跟踪（分批后或回撤 / 指定市场日换另一条）、保本、信号全卖、加码（一档或多档，止损提到成本价）、次日无延续离场、新仓反馈调风险、按日风险倍数、同时持仓上限、当天盘中止损；安慰剂（同一天同一名单随机换股、同样止损宽度）。新规则都在 `Rules` 里、默认关闭 |
 
 `simulate` 可接收真实分钟 OHLC：`px['session']` 是交易日编号，`px['daily_close']` 标记每日最后一根，止损和分批逐根运行，日线跟踪/加码/持有期限在日末执行，融资费用每日一次。省略这些字段仍按原日线模式，R74 数值已精确复现。`px['mark']` 只用于以前一已知收盘估值，不能用作可成交 OHLC。调用者必须提供因果入场和当时可知的指标，不会自动消除输入中的未来信息。

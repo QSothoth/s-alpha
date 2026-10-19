@@ -293,6 +293,16 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 - `data/martin-luk-benchmarks-v1`：2026-10-18前台重取已占用额度的QQQ/IWM前复权日线，各1202根，2022-01-03→2026-10-16；用于核查用股票池等权指数代替本人指数观察的输入差距。前后历史额度218/82不变；metadata.json登记文件SHA256。未发布，不进Git。
 - `data/martin-luk-cache/r77/verify`：五只已占用股票的异常日期日线/5分钟/1分钟原始响应，用于R77数据核验，前后额度218/82不变；不作为新增独立验证段。
 
+### 交易员统一数据层 trader-data-v1
+
+所有交易员复刻研究、横向比对和看板冻结回放共用的日 K，规范见 [TRADER_PROTOCOL_CN](TRADER_PROTOCOL_CN.md)。2026-10-19 发布为 [trader-data-v1](https://github.com/QSothoth/s-alpha/releases/tag/trader-data-v1)：ZIP SHA256 `109799cbaa64e73efe1634e953dd381159d19c5b5b4197df2b9bbecdf4f068ce`，`CHECKSUMS.sha256` 的 SHA256 `812054a6f67600b4df2dde3d093c1a8062ae9632d1c9f34e7f8189aaf301d9ca`，已从 GitHub 回下载核对；解压到 `data/` 即可。面板摘要固定在 `studies/trader_replication/DATA_PIN.json`。目录 `data/trader-data-v1/{us,hk,cn}`，格式同 `trend_breakout.fetch`（不复权日 K、源前复权日 K、公司行动、名单、进度），面板由统一数据接口 `studies/trader_data` 构建；本地 live 增量在 `data/trader-live/trader-data-v1/`（未发布）。
+
+- 美股：即上文 `martin-luk-universe-us/us`（3433 只，取到 3424；2023-01-03 → 2026-10-16），原样放入，不重拉。
+- 港股、A 股：名单沿用 `data/trend-scan/2026-10-15` 的 505 只（20 日均成交额 ≥ 2000 万港元）/ 1697 只（市值 ≥ 100 亿元、不含北交所），2026-10-19 前台一次性补取 2023-01-01 → 2026-10-16（OpenD `get_cur_kline` / 新浪），不扣历史 K 线额度，均无失败。
+- 公共评测区间 2024-01-02 → 2026-10-16，2023 年只作指标暖机。名单是 2026-10 快照，期间退市的不在内。
+
+- `data/trader-data-v2`（本机，未发布，2026-10-19）：名单放宽的对照版本。美股 4462 只（不限价格、20 日均成交额 ≥ 50 万美元，2026-10-19 快照；含 v1 全部 3433 只，取到 4451），港股 758 只（≥ 500 万港元，含 v1 全部 505 只）；v1 已有股票的日 K 直接复制，其余同窗口补取，不扣额度。比对结果见 `studies/trader_replication/reports/VERSIONS_CN.md`。
+
 ## 附录：日 K 突破趋势跟随研究数据（已发布 Release）
 
 [studies/trend_breakout/](../studies/trend_breakout/README.md) TF1–TF14 用到的数据，2026-10-12～13 一次性前台取数（不是后台或定时采集），2026-10-13 发布到 `QSothoth/s-alpha`。研究已结束，结论为负，见该切片 README。

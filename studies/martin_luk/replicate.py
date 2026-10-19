@@ -44,10 +44,12 @@ def us_arrays():
     return market_arrays('us')
 
 
-def market_arrays(market):
-    """US: broad point-in-time panel; HK / CN: data/trend-scan lists chosen by 2026-10 liquidity (survivorship)."""
-    b = S.broad() if market == 'us' else luk.load(market)
-    A = dict(days=b['days'] if market == 'us' else b['dates'], codes=b['codes'], market=market)
+def market_arrays(market, b=None):
+    """US: broad point-in-time panel; HK / CN: data/trend-scan lists chosen by 2026-10 liquidity (survivorship).
+    `b` replaces them with another panel of the same fields (studies.trader_replication.panels.load)."""
+    if b is None:
+        b = S.broad() if market == 'us' else luk.load(market)
+    A = dict(days=b['days'] if 'days' in b else b['dates'], codes=b['codes'], market=market)
     for k in ('open', 'high', 'low', 'close', 'turnover'):
         A[k] = b[k].astype(float)
     A['raw'] = b['raw_close'].astype(float)

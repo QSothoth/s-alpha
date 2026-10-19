@@ -40,8 +40,22 @@ class Martin(study.Study):
     def out(self):
         return ROOT / 'data' / 'trader-replication-selftest'
 
-    def arrays(self, market):
+    unified = False                 # True: the common data layer (panels) instead of the R74 research panels
+
+    def arrays(self, market, upto=None, mode=None):
+        if self.unified or upto is not None or mode is not None:
+            from . import panels
+            b = panels.load(market, upto, mode)
+            A = self.R.market_arrays(market, b)
+            A['digest'] = b['digest']
+            return A
         return self.R.market_arrays(market)
+
+    def market_gate(self, A, cfg):
+        if cfg.get('filter') in (None, '', 'NONE'):
+            return None
+        pool, w, _ = self.R.system_signals(A, cfg)
+        return self.R.market_ok(A, pool, w, cfg['filter'])
 
     def build(self, A, cfg, trace=None):
         return self.R.build_system(A, cfg, trace)

@@ -1,0 +1,154 @@
+"""One trader system on one market, as of the newest day of the data: the single implementation behind both the
+comparison (frozen data) and live running (the trader-screens board on live data).
+
+run(system, market, mode) replays the registered configuration (systems.py) with the research engine from START to
+the newest day and returns the account, the last `days` sessions' buys, sells and offered-but-not-taken entries,
+and the open positions with their exit levels read straight from the engine (stop, armed trail and its line, next
+partial, next add).  `check` compares the replay cut at the freeze day with the comparison report (frozen release,
+same code): on live data the part up to the freeze day must not move.
+
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    $PY -m studies.trader_replication.runner us [live|frozen] [system ...]
+"""
+from __future__ import annotations
+
+import gc
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+
+from . import system as Y, systems as SY
+
+OUT = Path(__file__).resolve().parent / 'reports'
+WHY = {'stop': '跌破止损', 'gap_stop': '跳空跌破止损', 'trim': '按 R 分批', 'trail': '收盘跌破跟踪线',
+       'signal': '信号离场', 'signal_trim': '信号分批', 'signal_trim2': '信号分批', 'day_trim': '到期分批',
+       'stop_day0': '当天止损', 'time': '持有到期', 'no_follow': '没有延续'}
+
+
+def years_until(curve, dates, until):
+    """Calendar-year returns counting only days up to `until` (years the data covers up to then)."""
+    out, prev = {}, 1.0
+    for y in sorted({str(d)[:4] for d in dates if str(d) <= until}):
+        idx = [i for i, d in enumerate(dates) if str(d)[:4] == y and str(d) <= until]
+        out[y] = float(curve[idx[-1]] / prev - 1)
+        prev = curve[idx[-1]]
+    return out
+
+
+def forward(curve, dates, trades, freeze):
+    """After the freeze day: equity change from the freeze-day close, drawdown, trades opened after it."""
+    k = int(np.searchsorted(dates, freeze, side='right')) - 1
+    new = [t for t in trades if t['entry'] > freeze]
+    if k < 0 or k >= len(dates) - 1:
+        return dict(since=freeze, days=0, ret=0.0, maxdd=0.0, trades=len(new))
+    seg = np.asarray(curve[k:])
+    return dict(since=str(dates[k]), days=len(dates) - 1 - k, ret=float(seg[-1] / seg[0] - 1),
+                maxdd=float(np.max(1 - seg / np.maximum.accumulate(seg))), trades=len(new))
+
+
+def reference(system, market):
+    """The comparison report's numbers for this system, when they were made with the same configuration."""
+    path = OUT / 'compare.json'
+    if not path.exists():
+        return None
+    from .compare import config_digest
+    r = json.loads(path.read_text(encoding='utf-8')).get(system.id, {}).get('markets', {}).get(market)
+    if not r or r['run']['config_digest'] != config_digest(system.config):
+        return None
+    return r
+
+
+def run(system, market, mode=None, days=1, A=None):
+    st, cfg = system.study, system.config
+    A = A if A is not None else st.arrays(market, mode=mode)
+    entries, rules, mask, pool = st.build(A, cfg)
+    ema = st.ema_inputs(A, pool, rules)
+    dates, codes = A['days'], [str(c) for c in A['codes']]
+    T = len(dates) - 1
+    curve, cdates, tr = Y.simulate(st.px(A), ema, rules, entries, SY.START, str(dates[T]), audit=True)
+    equity = float(curve[-1])
+    di = {str(d): i for i, d in enumerate(cdates)}
+    window = [str(d) for d in dates[max(T - days + 1, 0):T + 1]]
+    col = {c: j for j, c in enumerate(codes)}
+
+    def prev_eq(day):
+        k = di[day]
+        return float(curve[k - 1]) if k > 0 else 1.0
+
+    buys, sells, opened = [], [], set()
+    for t in tr:
+        opened.add((t['code'], t['entry']))
+        ex = t['executions']
+        if t['entry'] in window:
+            buys.append(dict(code=t['code'], day=t['entry'], setup=t['kind'], price=t['fill'], stop=t['stop'],
+                             weight=ex[0]['shares'] * ex[0]['price'] / prev_eq(t['entry'])))
+        for e in ex:
+            if e['action'] in ('entry', 'end') or e['time'][:10] not in window:
+                continue
+            if e['action'] == 'add':
+                buys.append(dict(code=t['code'], day=e['time'][:10], setup='加码', price=e['price'], stop=None,
+                                 weight=e['shares'] * e['price'] / prev_eq(e['time'][:10])))
+                continue
+            sells.append(dict(code=t['code'], day=e['time'][:10], why=WHY.get(e['action'], e['action']),
+                              price=e['price'], ret=e['price'] / t['fill'] - 1,
+                              full=e is [x for x in ex if x['action'] != 'end'][-1] and t['why'] != 'end'))
+    wanted = []
+    for day in window:
+        d = int(np.searchsorted(dates, day))
+        for e in sorted(entries[d], key=lambda e: e[0]):
+            c = codes[e[1]]
+            if (c, day) not in opened:
+                wanted.append(dict(code=c, day=day, setup=e[5], price=float(e[3]), stop=float(e[4])))
+    holdings = []
+    for t in (t for t in tr if t['why'] == 'end'):
+        s, j = t['state'], col[t['code']]
+        close = float(A['close'][T, j])
+        line = ema.get(s['trail']) if s['trail'] else None
+        R = abs(t['fill'] - t['stop'])
+        holdings.append(dict(code=t['code'], entry_day=t['entry'], setup=t['kind'], fill=t['fill'], close=close,
+                             ret=close / t['fill'] - 1, r_now=(close - t['fill']) / R if R else None,
+                             stop=s['stop'], trail=float(line[T, j]) if line is not None and s['armed'] else None,
+                             trail_name=s['trail'], next_trim=s['next_trim'], trim_frac=s['trim_frac'],
+                             next_add=s['next_add'], day_trim_pending=s['day_trim_pending'],
+                             trim_day=s['trim_day'], trim_day_frac=s['trim_day_frac'],
+                             trim_day_profit=s['trim_day_profit'],
+                             weight=s['shares'] * close / equity, days=int(T - int(np.searchsorted(dates, t['entry'])))))
+    gate = st.market_gate(A, cfg)
+    closed = [t for t in tr if t['why'] != 'end']
+    wins = [t for t in closed if t['ret'] > 0]
+    peak = np.maximum.accumulate(np.concatenate([[1.0], curve]))[1:]
+    out = dict(id=system.id, name=system.name, version=system.version, status=system.status, label=system.label,
+               market=market, data=A.get('digest'), last_day=str(dates[T]), days=days,
+               strategy=system.strategy, buys=buys, sells=sells, wanted=wanted, holdings=holdings,
+               gate_today=None if gate is None else bool(gate[T]),
+               account=dict(since=SY.START, ret=equity - 1, maxdd=float(np.max(1 - curve / peak)),
+                            trades=len(closed), win=len(wins) / len(closed) if closed else None,
+                            exposure=float(sum(h['weight'] for h in holdings))),
+               freeze=system.freeze, forward=forward(curve, cdates, tr, system.freeze))
+    ref = reference(system, market)
+    if ref is not None:
+        mine = years_until(curve, cdates, system.freeze)
+        out['check'] = dict(ok=all(abs(mine.get(y, np.nan) - v) < 1e-9 for y, v in ref['by_year'].items()),
+                            replay=mine, research=ref['by_year'])
+    del entries, mask, pool
+    gc.collect()
+    return out
+
+
+def main(argv):
+    market = argv[1]
+    mode = argv[2] if len(argv) > 2 else None
+    names = argv[3:]
+    for x in SY.all_():
+        if names and x.id not in names:
+            continue
+        r = run(x, market, mode)
+        print(r['name'], r['label'], r['last_day'], f"account {r['account']['ret']:+.3f}",
+              'buys', [b['code'] for b in r['buys']], 'sells', [s['code'] for s in r['sells']],
+              'holdings', len(r['holdings']), 'check', r.get('check', {}).get('ok'), flush=True)
+
+
+if __name__ == '__main__':
+    main(sys.argv)

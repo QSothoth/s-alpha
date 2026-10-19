@@ -10,7 +10,7 @@ Everything on day t uses bars up to t only.  A screen returns its watchlist and 
   triggered  a buy today: the bar broke yesterday's ready level (or a one-day event such as an episodic pivot);
              `price` is the fill (the level, or the open when it gapped above), `stop` the rule's stop, `skip` the
              days the rule says not to buy
-Each screen also carries `book`, the account rules (book.py) that turn its buys into the few trades he would make.
+Each screen also carries `book`, the account rules his words give (a record; accounts run on the research engine).
 """
 from __future__ import annotations
 
@@ -18,8 +18,24 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from .book import BookRules
 
+
+
+@dataclass(frozen=True)
+class BookRules:
+    """The account rules his public words give for the draft (a record of the dossier; accounts are run by the
+    research engine on the registered system, studies/trader_replication/systems.py)."""
+    risk: float = .005              # equity fraction lost at the initial stop
+    max_position: float = .30       # per name, of equity
+    gross: float = 1.0              # total long value / equity
+    max_new: int = 2                # new positions per day
+    max_open: int = 8
+    trail: str = ''                 # close trail line ('sma10', 'ema20', ...); '' = none
+    partial_day: int = 0            # > 0: on this day after entry, at the close, sell partial_frac if in profit
+    partial_frac: float = 0.0
+    gate: str = ''                  # 'ema20' / 'ema50': no new positions while the pool index closes below it
+    gate_mode: str = 'block'        # 'block' or 'half' (half risk while below)
+    stop_min: float = .01           # the stop is at least this far below the fill
 
 def lag(x, n=1):
     out = np.full_like(x, np.nan, dtype=float) if x.dtype != bool else np.zeros_like(x)

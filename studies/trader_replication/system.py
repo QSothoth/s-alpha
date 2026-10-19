@@ -96,6 +96,7 @@ class Pos:
     invested: float = 0.0
     executions: list = field(default_factory=list)
     management: Rules | None = None
+    state: dict | None = None       # audit: an open position's state at the last close ('end')
 
 
 def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False):
@@ -154,6 +155,19 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         size = min(size, q.size)
         if size <= 0:
             return
+        if audit and why == 'end':                  # a position still open: its state for the next session
+            R = abs(q.fill - q.stop0)
+            pol = q.management
+            levels = pol.trims if q.side > 0 or rules.short_trims is None else rules.short_trims
+            adds = pol.add_levels or ((pol.add_r,) if pol.add_r else ())
+            q.state = dict(stop=float(q.stop), shares=float(q.size), shares0=float(q.size0), trims=q.trims,
+                           armed=bool(q.armed), trail=pol.trail,
+                           next_trim=float(q.fill + q.side * levels[q.trims] * R) if q.trims < len(levels) else None,
+                           trim_frac=pol.trim_frac,
+                           next_add=float(q.fill + adds[q.adds] * R) if q.side > 0 and q.adds < len(adds) else None,
+                           day_trim_pending=bool(rules.trim_day and not q.day_trimmed), trim_day=rules.trim_day,
+                           trim_day_frac=rules.trim_day_frac, trim_day_profit=rules.trim_day_profit,
+                           sig2_done=q.sig2_trimmed)
         if q.side > 0:
             flow = size * price * (1 - rules.sell_cost)
         else:
@@ -175,6 +189,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                                ret_invested=q.cash / q.invested, why=why, add_tries=q.adds))
             if audit:
                 trades[-1]['executions'] = q.executions
+                if why == 'end':
+                    trades[-1]['state'] = q.state
 
     def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None):
         nonlocal cash

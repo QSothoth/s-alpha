@@ -21,12 +21,32 @@ CACHE = SCANS / 'cache'
 US_FILTER = ('US', 1.0, 2e6)          # futu market, min price, min 20-day average turnover
 DATA_START_DAYS = 3 * 366 + 60        # history fetched: the replicated system replays from 2024-01-02
 NAMES = {'us': '美股', 'hk': '港股', 'cn': 'A 股'}
+PANEL_VERSION = 2                     # = studies.trader_data.panel.VERSION
+
+
+UNIVERSE = {                          # each market's list rule (universe.json 'filter'), research and board alike
+    'us': {'min_price': 1.0, 'min_avg_turnover_20d': 2000000.0},
+    'hk': {'min_price': None, 'min_avg_turnover_20d': 20000000.0},
+    'cn': {'min_mktcap_cny': 10000000000.0, 'exclude': 'Beijing exchange'},
+}
+DATASET = ROOT / 'data' / 'trader-data-v1'  # the published common data layer (docs/TRADER_PROTOCOL_CN.md)
+
+
+def folder_ok(folder, market):
+    """The folder holds <market>/universe.json built with the market's list rule."""
+    path = Path(folder) / market / 'universe.json'
+    return path.exists() and json.loads(path.read_text(encoding='utf-8')).get('filter') == UNIVERSE[market]
 
 
 def latest_folder(market):
-    """Newest dataset root holding <market>/universe.json: data/trader-screens/<date> or data/trend-scan/<date>."""
-    roots = [p for base in (SCANS, TREND) for p in base.glob('????-??-??') if (p / market / 'universe.json').exists()]
-    return max(roots, key=lambda p: (p.name, p.parent == SCANS)) if roots else None
+    """Newest dataset with the market's list rule: data/trader-screens/<date>, data/trend-scan/<date> or the common
+    data layer (dated by the end of its window); a folder built with another list rule is never used."""
+    roots = [(p.name, p.parent == SCANS, p) for base in (SCANS, TREND) for p in base.glob('????-??-??')]
+    if (DATASET / market / 'universe.json').exists():
+        end = json.loads((DATASET / market / 'universe.json').read_text(encoding='utf-8'))['window'][1]
+        roots.append((end, False, DATASET))
+    roots = [r for r in roots if folder_ok(r[2], market)]
+    return max(roots, key=lambda r: r[:2])[2] if roots else None
 
 
 def refresh(market, now=None):
@@ -49,53 +69,20 @@ def refresh(market, now=None):
 
 
 def cache_path(folder, market):
-    key = re.sub(r'[^A-Za-z0-9._-]+', '_', str(Path(folder).resolve().relative_to(ROOT.resolve())))
-    return CACHE / f'{key}_{market}.npz'
+    from studies.trader_data import FolderDataset, panel as TP
+    return TP.cache_path(FolderDataset(folder, market))
+
+
+def source_digest(folder, market):
+    """SHA-256 of what a panel is built from (raw bars, actions, list) and the builder's version."""
+    from studies.trader_data import FolderDataset
+    return FolderDataset(folder, market).digest()
 
 
 def panel(folder, market):
-    """Dense (days x codes) forward-adjusted panel of one fetched market folder (bars_raw + actions): open, high,
-    low, close, volume (adjusted to the same basis), turnover, raw_close; built once into data/trader-screens/cache."""
-    from studies.trend_breakout import panel as P
-    sub = Path(folder) / market
-    path = cache_path(folder, market)
-    src = sub / 'bars_raw.csv.gz'
-    if not path.exists() or path.stat().st_mtime < src.stat().st_mtime:
-        actions = P.read_actions(sub / 'actions.csv.gz')
-        listed = {s['code'] for s in json.loads((sub / 'universe.json').read_text(encoding='utf-8'))['stocks']}
-        days = np.array(sorted({day for _, day, _ in P.read_bars(src)}))
-        di = {d: i for i, d in enumerate(days)}
-        codes = sorted(listed)
-        ci = {c: i for i, c in enumerate(codes)}
-        out = {k: np.full((len(days), len(codes)), np.nan, np.float32)
-               for k in ('open', 'high', 'low', 'close', 'volume', 'turnover', 'raw_close')}
-
-        def flush(code, dd, rows):
-            if code not in ci or not rows:
-                return
-            r = np.array(rows, float)
-            f = P.factors(r[:, 3], np.array(dd), actions.get(code, []))
-            idx = [di[d] for d in dd]
-            j = ci[code]
-            for k, n in (('open', 0), ('high', 1), ('low', 2), ('close', 3)):
-                out[k][idx, j] = r[:, n] * f
-            with np.errstate(invalid='ignore', divide='ignore'):
-                out['volume'][idx, j] = r[:, 4] / f          # shares on the adjusted price basis
-            out['turnover'][idx, j] = r[:, 5]
-            out['raw_close'][idx, j] = r[:, 3]
-
-        cur, dd, rows = None, [], []
-        for code, day, values in P.read_bars(src):
-            if code != cur:
-                flush(cur, dd, rows)
-                cur, dd, rows = code, [], []
-            dd.append(day)
-            rows.append(values)
-        flush(cur, dd, rows)
-        CACHE.mkdir(parents=True, exist_ok=True)
-        np.savez_compressed(path, days=days, codes=np.array(codes), **out)
-    z = np.load(path)
-    return {k: z[k] for k in z.files}
+    """The panel of one fetch-layout folder, built by the one panel builder (studies.trader_data.panel)."""
+    from studies.trader_data import FolderDataset
+    return FolderDataset(folder, market).panel()
 
 
 def names(folder, market):

@@ -1,15 +1,23 @@
-"""Markdown board of one or more markets' runs (scan.run results): per trader today's buys, sells, holdings and
-tomorrow's watch, plus where the traders overlap."""
+"""Markdown board of one or more markets' runs (scan.run results), kept short: per market one overview row per
+trader (today's trades inline), the overlaps that exist, and holdings with their exit levels only for traders that
+hold or traded; each system's rules once at the end."""
 from __future__ import annotations
 
 NAMES = {'us': '美股', 'hk': '港股', 'cn': 'A 股'}
-LEVEL = {'replicated': '已复刻冻结', 'draft': '按原话初版'}
+STATUS = {'frozen': '已冻结', 'research': '研究中', 'baseline': 'B 级基线'}
+KIND = {'n1': '收盘买入', 'hi52': '52 周新高', 'brk52': '52 周突破', 'ep': 'EP', 'fine': '精选突破', 'pb': '均线回踩',
+        'pop': 'Wedge Pop', 'cross': 'EMA Crossback', 'vcp': 'VCP', 'vcp_mm': 'VCP', 'ib2': '内包突破',
+        'ur': '收回 20 EMA', 'brk': '收紧突破', 'pp': 'Power Play', '加码': '加码'}
+LINE = {'e9': 'EMA9', 'e21': 'EMA21', 'e50': 'EMA50', 'w9': '周 EMA9'}
+WHY = {'跌破止损': '止损', '跳空跌破止损': '跳空止损', '收盘跌破跟踪线': '破跟踪线', '按 R 分批': '分批',
+       '到期分批': '到期分批', '信号分批': '分批', '当天止损': '当天止损'}
 
 
 def pct(x, sign=True):
     if x is None:
         return '—'
-    return f'{x:+.1%}' if sign else f'{x:.0%}'
+    out = f'{x:+.0%}' if sign else f'{x:.0%}'
+    return '0%' if out in ('+0%', '-0%') else out
 
 
 def px(x):
@@ -18,114 +26,120 @@ def px(x):
     return f'{x:.2f}' if abs(x) < 1000 else f'{x:,.0f}'
 
 
-def cell(x):
-    return str(x).replace('|', '/').replace('\n', ' ')
-
-
 def ticker(code):
     return code.split('.', 1)[1] if '.' in code else code
 
 
 def stock(x):
-    name = (x.get('name') or '').strip()[:14]
+    name = (x.get('name') or '').strip()[:10]
     return f"{ticker(x['code'])} {name}".strip()
 
 
-def table(head, rows):
+def line_name(key):
+    if key in LINE:
+        return LINE[key]
+    return f"{key[3:]} 日线" if key.startswith('sma') else f"{key[3:]} EMA" if key.startswith('ema') else key
+
+
+def exit_text(h):
+    """Next session's exit plan, short: stop · trail · next partial · day partial · add."""
+    parts = [f"止损 {px(h['stop'])}"]
+    if h.get('trail_name') and h.get('trail') is not None:
+        parts.append(f"破 {line_name(h['trail_name'])} {px(h['trail'])}")
+    if h.get('next_trim') is not None:
+        parts.append(f"{px(h['next_trim'])} 卖{h['trim_frac']:.0%}")
+    if h.get('day_trim_pending'):
+        left = h['trim_day'] - h['days']
+        parts.append(f"第{h['trim_day']}天{'盈利' if h.get('trim_day_profit') else ''}卖{h['trim_day_frac']:.0%}"
+                     f"（{'明天' if left == 1 else f'{left}天后' if left > 1 else '已到'}）")
+    if h.get('next_add') is not None:
+        parts.append(f"{px(h['next_add'])} 加码")
+    return ' · '.join(parts)
+
+
+def gate_text(t):
+    return '无过滤' if t['gate_today'] is None else ('可开新仓' if t['gate_today'] else '不开新仓')
+
+
+def today_text(t):
+    out = [f"买 {'、'.join(ticker(b['code']) for b in t['buys'])}"] if t['buys'] else []
+    if t['sells']:
+        out.append(f"卖 {'、'.join(ticker(s['code']) for s in t['sells'])}")
+    return '；'.join(out) or '—'
+
+
+def table(head, rows, right=()):
     if not rows:
         return []
-    out = ['| ' + ' | '.join(head) + ' |', '|' + '|'.join('---:' if h in NUM else '---' for h in head) + '|']
-    return out + ['| ' + ' | '.join(cell(v) for v in r) + ' |' for r in rows]
-
-
-NUM = {'买价', '止损', '仓位', '价格', '相对买价', '成本 → 现价', '盈亏'}
+    out = ['| ' + ' | '.join(head) + ' |', '|' + '|'.join('---:' if h in right else '---' for h in head) + '|']
+    return out + ['| ' + ' | '.join(str(v).replace('|', '/') for v in r) + ' |' for r in rows]
 
 
 def trader(t, days):
-    span = '今天' if days == 1 else f'近 {days} 个交易日'
-    a, s = t['account'], t['stance']
-    acct = f"账户自 {a['since']} 起 {pct(a['ret'])}"
-    if a.get('trades'):
-        acct += f"，回撤 {a['maxdd']:.0%}，{a['trades']} 笔平仓，胜率 {a['win']:.0%}"
-    lines = [f"#### {t['name']}（{LEVEL[t['level']]}）", '',
-             f"{t['summary']}。仓位 {s['exposure']:.0%}" + (f"；{s['gate']}" if s.get('gate') else '') + f"；{acct}。", '']
-    lines.append(f'**{span}买入**' + ('：无' if not t['buys'] else ''))
-    if t['buys']:
-        lines += [''] + table(['股票', '买点', '买价', '止损', '仓位', '行业'] + (['日期'] if days > 1 else []), [
-            [stock(b), b['setup'], px(b['price']), f"{px(b['stop'])}（{(b['price'] - b['stop']) / b['price']:.1%}）",
-             pct(b.get('weight'), False), b.get('industry') or ''] + ([b['day']] if days > 1 else []) for b in t['buys']])
+    lines = [f"**{t['name']}**" + ('' if days == 1 else f'（近 {days} 个交易日）')]
+    for b in t['buys']:
+        stop = f"，止损 {px(b['stop'])}" if b['stop'] else ''
+        lines.append(f"- 买 {stock(b)}：{KIND.get(b['setup'], b['setup'])}，{px(b['price'])}{stop}，仓位 {pct(b['weight'], False)}"
+                     + (f"（{b['day']}）" if days > 1 else ''))
+    for s in t['sells']:
+        lines.append(f"- 卖 {stock(s)}：{WHY.get(s['why'], s['why'])}{'' if s['full'] else '一部分'}，{px(s['price'])}，"
+                     f"{pct(s['ret'])}" + (f"（{s['day']}）" if days > 1 else ''))
     if t['wanted_n']:
-        more = '、'.join(ticker(x['code']) for x in t['wanted']) + ('等' if t['wanted_n'] > len(t['wanted']) else '')
-        lines += ['', f"另有 {t['wanted_n']} 个买点没做（每天笔数、持仓数或仓位已满）：{more}"]
-    lines += ['', f'**{span}卖出**' + ('：无' if not t['sells'] else '')]
-    if t['sells']:
-        lines += [''] + table(['股票', '原因', '价格', '相对买价'] + (['日期'] if days > 1 else []), [
-            [stock(x), x['why'] + ('' if x['full'] else '（部分）'), px(x['price']), pct(x['ret'])]
-            + ([x['day']] if days > 1 else []) for x in t['sells']])
-    lines += ['', f"**持仓 {len(t['holdings'])} 只**" + ('：空仓' if not t['holdings'] else '')]
+        lines.append(f"- 另有 {t['wanted_n']} 个买点没做：" + '、'.join(ticker(x['code']) for x in t['wanted'][:5])
+                     + ('等' if t['wanted_n'] > 5 else ''))
     if t['holdings']:
-        rows = []
-        for h in t['holdings']:
-            exit_ = f"止损 {px(h['stop'])}"
-            if h.get('trail'):
-                exit_ += f"，跟踪线 {px(h['trail'])}"
-            if h.get('next_trim'):
-                exit_ += f"，到 {px(h['next_trim'])} 卖 30%"
-            rows.append([stock(h), h['entry_day'], f"{px(h['fill'])} → {px(h['close'])}", pct(h['ret']),
-                         pct(h['weight'], False), exit_, h.get('industry') or ''])
-        lines += [''] + table(['股票', '买入日', '成本 → 现价', '盈亏', '仓位', '离场线', '行业'], rows)
-    if t['watch']:
-        lines += ['', f"**明天关注**（{t['watch_n']} 个待触发，按强度前 {len(t['watch'])}）：" + '；'.join(
-            f"{ticker(x['code'])} {x['setup']} 越过 {px(x['price'])}" for x in t['watch'])]
-    if t.get('book'):
-        b = t['book']
-        chk = '；'.join(f"{y} 回放 {v['replay']:+.1%}（研究 {v['research']:+.1%}）" for y, v in b['check'].items())
-        f = b['forward']
-        fwd = (f"冻结日 {b['freeze']} 之后 {f['days']} 个交易日 {pct(f['ret'])}，回撤 {f['maxdd']:.0%}"
-               if f['days'] else f"冻结日 {b['freeze']} 之后还没有数据")
-        lines += ['', f'回放核对：{chk}。{fwd}。']
-    lines += ['', f"<sub>账户规则：{t.get('rules', '')}</sub>", '']
-    return lines
+        lines += [''] + table(['持仓', '买入日', '盈亏', '仓位', '明天的离场线'], [
+            [stock(h), h['entry_day'][5:], pct(h['ret']), pct(h['weight'], False), exit_text(h)]
+            for h in sorted(t['holdings'], key=lambda h: -h['weight'])], right=('盈亏', '仓位'))
+    return lines + ['']
 
 
 def market(r):
     days = r['days']
-    span = '今天' if days == 1 else f'近 {days} 个交易日'
     st = r['state']
     state = '、'.join(f"{'站上' if st[f'above_ema{n}'] else '跌破'} {n} EMA" for n in (20, 50))
-    lines = [f"## {NAMES[r['market']]} · {r['last_day']}" + (f'（近 {days} 个交易日）' if days > 1 else ''), '',
-             f'股票池等权指数{state}。', '']
-    lines += table(['交易员', '等级', '仓位', f'{span}买', f'{span}卖', '持仓', '市况'], [
-        [t['name'], LEVEL[t['level']], pct(t['stance']['exposure'], False), len(t['buys']), len(t['sells']),
-         len(t['holdings']), t['stance'].get('gate') or ''] for t in r['traders']])
+    lines = [f"## {NAMES[r['market']]} · {r['last_day']}", '', f'股票池等权指数{state}。', '']
+    lines += table(['交易员', '版本', '仓位', '市况', '账户', '冻结后', '今天' if days == 1 else f'近 {days} 天'], [
+        [t['name'], f"{t['version']}（{STATUS[t['status']]}）", pct(t['account']['exposure'], False), gate_text(t),
+         f"{pct(t['account']['ret'])} / 回撤 {pct(t['account']['maxdd'], False)}",
+         pct(t['forward']['ret']) if t['forward']['days'] else '—', today_text(t)] for t in r['traders']],
+        right=('仓位',))
     c = r['common']
-    lines += ['', '### 交集', '']
-    for key, title in (('bought', f'{span}被多人买入'), ('held', '被多人同时持有'), ('watch', '多人明天都在关注')):
-        rows = c[key]
-        if not rows:
-            lines.append(f'- {title}：无')
-            continue
-        lines.append(f'- {title}：')
-        lines += [f"  - {ticker(x['code'])}{('（' + x['industry'] + '）') if x.get('industry') else ''}："
-                  f"{'、'.join(x['traders'])}" for x in rows[:12]]
-    lines.append('- 持仓行业：' + ('、'.join(f'{k} {v}' for k, v in c['industries_held'][:8]) or '无持仓'))
-    if c['in_cash']:
-        lines.append('- 空仓：' + '、'.join(c['in_cash']))
-    lines += ['', '### 各交易员', '']
-    for t in r['traders']:
-        lines += trader(t, days)
+    both = [(title, c[key]) for key, title in (('bought', '多人买入'), ('held', '多人持有')) if c[key]]
+    if both:
+        lines.append('')
+        lines += [f"{title}：" + '；'.join(f"{ticker(x['code'])}（{'、'.join(x['traders'])}）" for x in rows[:8])
+                  for title, rows in both]
+    active = [t for t in r['traders'] if t['buys'] or t['sells'] or t['holdings']]
+    if active:
+        lines.append('')
+        for t in active:
+            lines += trader(t, days)
+    bad = [t['name'] for t in r['traders'] if 'check' in t and not t['check']['ok']]
+    if bad:
+        lines.append(f"**回放到冻结日与比对表不一致：{'、'.join(bad)}**")
+        lines.append('')
     return lines
 
 
 def render(results):
     results = results if isinstance(results, list) else [results]
-    dates = '、'.join(f"{NAMES[r['market']]} {r['last_day']}" for r in results)
     lines = ['# 交易员看板', '',
-             f'数据：{dates}。假设这几位交易员此刻在这个市场里交易：每人按自己的规则和仓位限制，今天买了什么、卖了什么、'
-             '手里拿着什么。', '',
-             '> 这是规则此刻会怎么做，不是投资建议或订单。Martin Luk 是按他真实交易逼近、冻结的系统，研究数字全是样本内；'
-             '其余几位是按档案里本人公开的规则写的初版，账户规则里有研究者取值，没有对照过他们的真实交易，也没有检验过收益。'
-             '按日 K 近似：他们多在盘中按开盘区间入场，这里用越过触发价或收盘代替。', '']
+             '> 各交易员按研究里登记的系统（与横向比对表同一版本）从 2024-01-02 回放到最新收盘。买卖按收盘价，'
+             '“今天”的买卖是收盘那一刻的操作；离场线是下一交易日的计划：盘中破止损即卖，收盘破跟踪线即卖。'
+             '冻结日 2026-10-16 之前全是样本内。不是投资建议或订单。', '']
     for r in results:
         lines += market(r)
+    checked = [t for r in results for t in r['traders'] if 'check' in t]
+    if checked and all(t['check']['ok'] for t in checked):
+        lines += ['回放核对：到冻结日的分年收益与比对表全部一致。', '']
+    seen, rules = set(), []
+    for r in results:
+        for t in r['traders']:
+            if t['id'] in seen:
+                continue
+            seen.add(t['id'])
+            s = t['strategy']
+            rules.append(f"- **{t['name']} {t['version']}**：{s['选股与形态']}｜{s['入场与止损']}｜{s['离场']}｜{s['仓位与市况']}")
+    lines += ['---', '', '<details><summary>各系统规则</summary>', ''] + rules + ['', '</details>']
     return '\n'.join(lines).rstrip() + '\n'

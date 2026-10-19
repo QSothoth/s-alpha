@@ -7,6 +7,8 @@ description: 把一位公开过做法和交易记录的交易员按他自己的�
 
 工程为 `/opt/opend-us-options`，沿用根及 `studies/AGENTS.md` 的研究规范（预登记、每轮 ≤ 5 个候选、选择段与验证段分开、失败照记、不为单个 case 拟合）。方法、口径与常见坑见 [METHOD_CN](references/METHOD_CN.md)；做过的例子各有一份参考：[Martin Luk](references/MARTIN_LUK_CN.md)（第一个例子，含运行命令）。
 
+数据层、门禁与横向比对统一按 [TRADER_PROTOCOL_CN](../../docs/TRADER_PROTOCOL_CN.md)：所有交易员用同一份数据集 `trader-data-v1`、同一评测区间和同一引擎，结果先过工程门禁（数据版本、不看未来、成交价在当日区间内、胜率 ≤ 35%），好坏由人对照比对表判断。
+
 立场按根 [AGENTS.md](../../AGENTS.md)“挖掘与复刻策略的立场”：他公开做到的结果先当作能做到，一次失败只否定我们的那个版本；前期为什么会一再误判“他不行”，见 METHOD_CN 第 0 节。
 
 继续既有系统或更换主目标前，必读 [R75–R108 方向错误复盘](../../studies/martin_luk/reports/POSTMORTEM_R75_R108_CN.md)及 METHOD_CN 第 9 节的方向审查要求。不能用缩短持有期抵消未获授权的年度收益退步，也不能在上游可达上限低于目标时持续优化下游；“按预登记通过”不自动等于可以替换用户的基线。

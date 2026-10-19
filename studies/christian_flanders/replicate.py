@@ -58,8 +58,8 @@ class Flanders(study.Study):
                         per_year=489)}
     base = DRAFT
 
-    def arrays(self, market):
-        return panels.arrays(market)
+    def arrays(self, market, upto=None, mode=None):
+        return panels.arrays(market, upto, mode)
 
     # ----- named day arrays the engine reads -----
     def pool_dependent(self, name):
@@ -244,6 +244,9 @@ class Flanders(study.Study):
         from studies.trader_screens.scan import index_above
         return lag(index_above(A['F'], int(f[3:])))
 
+    def market_gate(self, A, cfg):
+        return self.market_ok(A, cfg)
+
     def build(self, A, cfg, trace=None):
         pool = self.pool(A, cfg)
         ok = self.strength_ok(A, cfg)
@@ -266,7 +269,9 @@ class Flanders(study.Study):
         ro = {k: tuple(v) if isinstance(v, list) else v for k, v in cfg.get('rule_opts', {}).items()}
         kw = {'buy_cost': costs[0], 'sell_cost': costs[1], **ro}    # rule_opts may override the costs (robust)
         rules = replace(Y.Rules(), max_new_long=cfg.get('max_new', 0), **kw)
-        placebo_pool = pool | (masks['ep'][0] if 'ep' in masks else False)
+        # placebo names: his pool (plus, with EPs, the names an EP may come from) as of the day before, the same
+        # information time as Martin Luk's pool (docs/TRADER_PROTOCOL_CN.md); never the day's own signals
+        placebo_pool = lag(pool | (self.ep_pool(A, cfg) if 'ep' in masks else False))
         return entries, rules, mask, placebo_pool
 
     def his_entry(self, A, d, j, cfg):
