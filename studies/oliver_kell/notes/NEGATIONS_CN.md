@@ -14,3 +14,8 @@
 | R2 | setups | W3 | `{"setups": ["pop", "cross", "ib2"]}` | r1.json:chosen | R1 | gates: placebo；全区间 -8%（带入 -2%） | open |
 | R2 | setups | W4 | `{"setups": ["pop", "cross", "ur"]}` | r1.json:chosen | R1 | gates: placebo；全区间 -38%（带入 -2%） | open |
 | R2 | setups | W5 | `{"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover"}` | r1.json:chosen | R1 | gates: placebo, width<=30；全区间 +9%（带入 -2%） | open |
+| R3 | end_to_end_pairs | X1 | `{"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover", "rule_opts": {"trim_signal": "below_ema10", "trim_signal_frac": 0.5}}` | r2.json:chosen | R2 | gates: width<=30；全区间 +47%（带入 -2%） | open |
+| R3 | end_to_end_pairs | X2 | `{"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover", "rule_opts": {"trim_day": 11, "trim_day_frac": 0.3333}}` | r2.json:chosen | R2 | gates: width<=30；全区间 +31%（带入 -2%） | open |
+| R3 | end_to_end_pairs | X3 | `{"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover", "filter": "IDX20", "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5}}` | r2.json:chosen | R2 | gates: width<=30；全区间 +25%（带入 -2%） | open |
+| R3 | end_to_end_pairs | X4 | `{"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover", "strength": "rs80"}` | r2.json:chosen | R2 | gates: placebo, width<=30；全区间 +13%（带入 -2%） | open |
+| R3 | end_to_end_pairs | X5 | `{"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover", "strength": "rs80", "filter": "IDX20", "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5}}` | r2.json:chosen | R2 | gates: width<=30；全区间 +36%（带入 -2%） | open |
