@@ -46,6 +46,8 @@ class Rules:
     trim_signal: str = ''           # boolean (days x codes) array in `ema`: longs sell trim_frac of the original size
                                     # at that close (at most once a day)
     trim_signal_frac: float = 0.0   # fraction for signal trims (0 = trim_frac)
+    trim_signal2: str = ''          # a second boolean array in `ema`: a long sells trim_signal2_frac of its original
+    trim_signal2_frac: float = 0.0  # size at the first close it is true, once per position (Kell: half off at the 10 EMA)
     add_r: float = 0.0              # > 0: once a long closes at least this R above its fill, buy add_frac of the original
     add_frac: float = 1.0           # size at that close (once) and move the whole stop to the original fill
     add_levels: tuple = ()          # several R levels instead of add_r, one add at each; an add the position or gross
@@ -87,6 +89,7 @@ class Pos:
     adds: int = 0
     sig_adds: int = 0
     day_trimmed: bool = False
+    sig2_trimmed: bool = False
     armed: bool = False
     cash: float = 0.0               # signed cash flow of the trade so far
     exits: list = field(default_factory=list)
@@ -114,6 +117,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     sig_exit = ema[rules.exit_signal] if rules.exit_signal else None
     trail2 = ema.get(rules.trail_after_trim) if rules.trail_after_trim else None
     sig_trim = ema[rules.trim_signal] if rules.trim_signal else None
+    sig_trim2 = ema[rules.trim_signal2] if rules.trim_signal2 else None
     scale = ema[rules.risk_scale] if rules.risk_scale else None
     trail3 = ema[rules.trail_alt] if rules.trail_alt else None
     alt_days = ema[rules.trail_alt_days] if rules.trail_alt_days else None
@@ -319,6 +323,11 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     q.stop = max(q.stop, level) if s > 0 else min(q.stop, level)
             if sig_trim is not None and s > 0 and sig_trim[d, j]:
                 close_part(q, (rules.trim_signal_frac or rules.trim_frac) * q.size0, c[d, j], d, 'signal_trim')
+                if j not in pos:
+                    continue
+            if sig_trim2 is not None and s > 0 and not q.sig2_trimmed and sig_trim2[d, j]:
+                q.sig2_trimmed = True
+                close_part(q, rules.trim_signal2_frac * q.size0, c[d, j], d, 'signal_trim2')
                 if j not in pos:
                     continue
             if rules.trim_day and s > 0 and not q.day_trimmed and session[d] - session[q.d0] == rules.trim_day:

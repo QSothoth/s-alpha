@@ -1,0 +1,15 @@
+{
+ "stage": "exits",
+ "base": ["r8.json", "chosen"],
+ "ref": "R8",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "E1": {"rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5}},
+  "E2": {"rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5, "trim_day": 11, "trim_day_frac": 0.3333}},
+  "E3": {"strength": "st90", "rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5}},
+  "E4": {"rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5, "max_open": 10}},
+  "E5": {"strength": "st90", "rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5, "trim_day": 11,
+                                          "trim_day_frac": 0.3333}}
+ }
+}
