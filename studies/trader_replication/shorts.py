@@ -115,10 +115,12 @@ def level_entries(A, name, armed, level, sc, out, at_open=False):
         lv = o[d, j] if at_open else level[d, j]
         if not (np.isfinite(lv) and np.isfinite(o[d, j]) and (at_open or o[d, j] < lv <= h[d, j])):
             continue
-        s = lv * (1 + level_width(A, sc, d, j))
+        w = level_width(A, sc, d, j)
+        s = lv * (1 + w)
         pr = -to20[d - 1, j] if np.isfinite(to20[d - 1, j]) else 0.0
+        mult = sc.get('risk_mult', 1.0)
         out[d].append((float(pr), int(j), -1, float(lv), float(s), f's_{name}', float(s) if h[d, j] >= s else None,
-                       None))
+                       w / mult if mult != 1.0 else None))
 
 
 def fired(A, m):
@@ -565,6 +567,17 @@ def render(trader):
         L += ['', f"小盘空单（价格 < 10 美元或 20 日成交额 < 2000 万）：{sm['small']['trades']} 笔、盈亏 "
                   f"{sm['small']['pnl']:+.3f}（起始资金 1）；其余 {sm['other']['trades']} 笔、{sm['other']['pnl']:+.3f}。"
                   '小盘、热门股的空单在现实里常借不到或费率很高，这部分盈亏偏乐观。']
+        rob = last.get('robust')
+        if rob:
+            L += ['', '### 稳健性（只报告，不用来选）', '', '| 变体 | 多空合计 | 只做多 | 只做空 | 回撤 合计 / 只做多 | 下跌时段 合计 / 只做多 |',
+                  '|---|---|---|---|---|---|']
+            for k, v in rob.items():
+                L.append(f"| {k} | {pct(v['both'])} | {pct(v['long'])} | {pct(v['short'])} | "
+                         f"{pct(v['maxdd'][0], '{:.0%}')} / {pct(v['maxdd'][1], '{:.0%}')} | "
+                         f"{pct(v['down']['both'], '{:+.1%}')} / {pct(v['down']['long'], '{:+.1%}')} |")
+    note = st.root / 'notes' / 'SHORTS_CONCLUSION_CN.md'
+    if note.exists():
+        L += ['', note.read_text(encoding='utf-8').strip()]
     (st.reports / 'SHORTS_CN.md').write_text('\n'.join(L) + '\n', encoding='utf-8')
 
 

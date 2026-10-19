@@ -88,6 +88,10 @@ class LevelEntryTests(unittest.TestCase):
         self.assertEqual(self.level([(10, 10.2, 9.8, 10), (10.0, 10.2, 9.7, 9.8)]), [])
         self.assertEqual(self.level([(10, 10.2, 9.8, 10), (10.5, 10.6, 9.7, 9.8)]), [])
 
+    def test_risk_mult_sizes_level_entries_too(self):
+        (e,) = self.level([(10, 10.2, 9.8, 10), (10.0, 10.4, 9.7, 9.8)], risk_mult=.5)
+        self.assertAlmostEqual(e[7], .04)
+
     def test_stopped_the_same_day_when_the_high_reaches_the_stop(self):
         (e,) = self.level([(10, 10.2, 9.8, 10), (10.0, 10.6, 9.7, 10.4)])
         self.assertAlmostEqual(e[6], e[4])

@@ -1,0 +1,12 @@
+{
+ "stage": "short: rallies into the declining 200-day and earnings gaps away from it (RULES 8, transcripts)",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "FA": {"setups": ["r200"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3},
+  "FB": {"setups": ["r200"], "gate": "below200", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3},
+  "FC": {"setups": ["gap200"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3},
+  "FD": {"setups": ["r200", "gap200"], "gate": "", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3},
+  "FE": {"setups": ["r200", "gap200"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "sma10", "trims": [], "trim_day": 3, "trim_day_frac": 0.5, "max_days": 0}
+ }
+}
