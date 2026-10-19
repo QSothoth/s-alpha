@@ -1,0 +1,17 @@
+{
+ "stage": "end_to_end",
+ "base": ["", "base"],
+ "base_change": {"entry": "close"},
+ "ref": "D0c",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "V1": {"priority": "turnover"},
+  "V2": {"rule_opts": {"trim_signal": "below_ema10", "trim_signal_frac": 0.5}},
+  "V3": {"filter": "IDX20", "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5}},
+  "V4": {"rule_opts": {"trim_signal": "ext10_30", "trim_signal_frac": 0.3333}},
+  "V5": {"priority": "turnover", "filter": "IDX20",
+         "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5,
+                       "trim_signal": "ext10_30", "trim_signal_frac": 0.3333}}
+ }
+}
