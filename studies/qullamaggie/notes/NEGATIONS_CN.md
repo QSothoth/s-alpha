@@ -13,3 +13,7 @@
 | R2 | ep_market | S3 | `{"ep": {"liquid": 5000000.0}}` | r1.json:chosen | R1 | gates: placebo；全区间 +3%（带入 +33%） | open |
 | R2 | ep_market | S4 | `{"filter": "", "rule_opts": {"risk_scale": "lighthalf"}, "ep": {"min_gap": 0.08}}` | r1.json:chosen | R1 | gates: placebo；全区间 -39%（带入 +33%） | open |
 | R2 | ep_market | S5 | `{"filter": "", "rule_opts": {"risk_scale": "lighthalf"}, "ep": {"min_gap": 0.08, "liquid": 5000000.0}}` | r1.json:chosen | R1 | objective below R1；全区间 +26%（带入 +33%） | open |
+| R3 | capacity_setups | T1 | `{"setups": ["ep", "brk"], "kind_order": ["ep", "brk"]}` | r2.json:chosen | T3 | objective below T3；全区间 +42%（带入 +20%） | open |
+| R3 | capacity_setups | T2 | `{"max_new": 5, "rule_opts": {"max_open": 15}}` | r2.json:chosen | T3 | objective below T3；全区间 +46%（带入 +20%） | open |
+| R3 | capacity_setups | T4 | `{"rule_opts": {"trim_day": 5}}` | r2.json:chosen | T3 | objective below T3；全区间 +18%（带入 +20%） | open |
+| R3 | capacity_setups | T5 | `{"setups": ["ep", "brk"], "kind_order": ["ep", "brk"], "max_new": 5, "rule_opts": {"max_open": 15}}` | r2.json:chosen | T3 | objective below T3；全区间 +69%（带入 +20%） | open |
