@@ -1,0 +1,308 @@
+{
+ "report": "r0b.json",
+ "config": {
+  "setups": [
+   "vcp_mm"
+  ],
+  "entry": "close",
+  "stop_min": 0.01,
+  "stop_cap": 0.0,
+  "priority": "strength",
+  "max_new": 2,
+  "strength": "",
+  "filter": "",
+  "stop": "day",
+  "pool": {
+   "turnover": 20000000.0,
+   "adr": 0.0,
+   "above50": false
+  },
+  "rule_opts": {
+   "risk": 0.005,
+   "max_position": 0.3,
+   "max_gross": 1.0,
+   "max_open": 8,
+   "trail": "sma50",
+   "arm_trail_on_entry": true,
+   "trims": []
+  }
+ },
+ "layer1": {
+  "n": 18,
+  "wins": 4,
+  "losses": 0,
+  "r_known": [],
+  "published": {}
+ },
+ "layer2": {
+  "n": 18,
+  "mean_r": 0.951111111111111,
+  "median_r": -1.04,
+  "win": 0.2222222222222222,
+  "mean_ret": 0.02155555555555555,
+  "behaviour": {
+   "trades": 18,
+   "per_year": 6.470756062767475,
+   "per_day": 0.025677603423680456,
+   "win": 0.2777777777777778,
+   "avg_win": 0.16519781342133869,
+   "avg_loss": -0.033617468618091284,
+   "days_win": 61.6,
+   "days_loss": 10.692307692307692,
+   "median_days_win": 49.0,
+   "median_days_loss": 7.0,
+   "top10_share": 0.5534372706180883,
+   "entry_weight_mean": 0.2122805299346628,
+   "entry_weight_max": 0.5000000000000038,
+   "open_mean": 0.637660485021398,
+   "open_max": 2
+  },
+  "sum_r": 17.119999999999997
+ },
+ "layer3": {
+  "n": 299,
+  "mean_r": 1.0698228776146461,
+  "total": 1.71060880532211,
+  "by_year": {
+   "2024": 0.6947388752525963,
+   "2025": 0.27434432401922315,
+   "2026": 0.25509692081243074
+  },
+  "behaviour": {
+   "trades": 299,
+   "per_year": 107.4864479315264,
+   "per_day": 0.42653352353780316,
+   "win": 0.1505016722408027,
+   "avg_win": 0.43650458384509677,
+   "avg_loss": -0.03288508662799739,
+   "days_win": 65.75555555555556,
+   "days_loss": 5.618110236220472,
+   "median_days_win": 53.0,
+   "median_days_loss": 3.0,
+   "top10_share": 0.9590020863232783,
+   "entry_weight_mean": 0.12513019877617518,
+   "entry_weight_max": 0.3014956679301961,
+   "open_mean": 6.256776034236805,
+   "open_max": 8
+  },
+  "bought": 0
+ },
+ "per_trade": [
+  {
+   "id": "M09",
+   "ticker": "NVDA",
+   "date": "2024-01-08",
+   "setup": "signature VCP breakout",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": 8.61,
+   "our_ret": 0.457,
+   "our_days": 71,
+   "our_why": "trail"
+  },
+  {
+   "id": "M10",
+   "ticker": "GDDY",
+   "date": "2024-02-05",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": 15.66,
+   "our_ret": 0.29,
+   "our_days": 123,
+   "our_why": "trail"
+  },
+  {
+   "id": "M18",
+   "ticker": "MU",
+   "date": "2024-04-26",
+   "setup": "growth cyclical, AI EPS up-cycle, buy out of correction",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": -1.37,
+   "our_ret": -0.039,
+   "our_days": 3,
+   "our_why": "gap_stop"
+  },
+  {
+   "id": "M23",
+   "ticker": "NFLX",
+   "date": "2024-06-14",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.04,
+   "our_ret": -0.026,
+   "our_days": 17,
+   "our_why": "stop"
+  },
+  {
+   "id": "M28",
+   "ticker": "GE",
+   "date": "2024-07-23",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.02,
+   "our_ret": -0.044,
+   "our_days": 1,
+   "our_why": "stop"
+  },
+  {
+   "id": "M32",
+   "ticker": "SG",
+   "date": "2024-10-03",
+   "setup": "VCP",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 5.87,
+   "our_ret": 0.059,
+   "our_days": 29,
+   "our_why": "trail"
+  },
+  {
+   "id": "M33",
+   "ticker": "GLW",
+   "date": "2024-10-09",
+   "setup": "cup with handle / VCP breakout",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": 0.01,
+   "our_ret": 0.0,
+   "our_days": 49,
+   "our_why": "trail"
+  },
+  {
+   "id": "M37",
+   "ticker": "ONON",
+   "date": "2024-11-19",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": 0.34,
+   "our_ret": 0.02,
+   "our_days": 36,
+   "our_why": "trail"
+  },
+  {
+   "id": "M49",
+   "ticker": "BRK.B",
+   "date": "2025-03-13",
+   "setup": "",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": -1.05,
+   "our_ret": -0.02,
+   "our_days": 16,
+   "our_why": "stop"
+  },
+  {
+   "id": "M50",
+   "ticker": "ALHC",
+   "date": "2025-03-14",
+   "setup": "",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": -1.05,
+   "our_ret": -0.023,
+   "our_days": 1,
+   "our_why": "stop"
+  },
+  {
+   "id": "M55",
+   "ticker": "TATT",
+   "date": "2025-04-17",
+   "setup": "breakout",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.01,
+   "our_ret": -0.134,
+   "our_days": 1,
+   "our_why": "stop"
+  },
+  {
+   "id": "M56",
+   "ticker": "TGTX",
+   "date": "2025-04-21",
+   "setup": "breakout attempt",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.06,
+   "our_ret": -0.017,
+   "our_days": 10,
+   "our_why": "stop"
+  },
+  {
+   "id": "M66",
+   "ticker": "CCL",
+   "date": "2025-08-22",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -0.5,
+   "our_ret": -0.031,
+   "our_days": 22,
+   "our_why": "trail"
+  },
+  {
+   "id": "M67",
+   "ticker": "UBER",
+   "date": "2025-08-22",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.04,
+   "our_ret": -0.027,
+   "our_days": 4,
+   "our_why": "stop"
+  },
+  {
+   "id": "M81",
+   "ticker": "BUD",
+   "date": "2026-06-24",
+   "setup": "defensive rotation",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.05,
+   "our_ret": -0.02,
+   "our_days": 4,
+   "our_why": "stop"
+  },
+  {
+   "id": "M82",
+   "ticker": "LLY",
+   "date": "2026-06-25",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.08,
+   "our_ret": -0.013,
+   "our_days": 26,
+   "our_why": "stop"
+  },
+  {
+   "id": "M84",
+   "ticker": "DE",
+   "date": "2026-08-31",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.05,
+   "our_ret": -0.022,
+   "our_days": 27,
+   "our_why": "stop"
+  },
+  {
+   "id": "M85",
+   "ticker": "FTI",
+   "date": "2026-08-31",
+   "setup": "",
+   "his_outcome": "",
+   "his_r": null,
+   "our_r": -1.05,
+   "our_ret": -0.022,
+   "our_days": 7,
+   "our_why": "stop"
+  }
+ ]
+}
