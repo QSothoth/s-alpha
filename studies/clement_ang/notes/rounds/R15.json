@@ -1,0 +1,13 @@
+{
+ "stage": "retest",
+ "base": ["r14.json", "chosen"],
+ "ref": "R14",
+ "objective": "his_years",
+ "gates": ["placebo", "bought", "width<=30"],
+ "candidates": {
+  "AA1": {"rs_phase": true},
+  "AA2": {"rs_phase": true, "pool": {"turnover": 20000000.0, "adr": 3.0, "above50": true}},
+  "AA3": {"filter": "IDX20"},
+  "AA4": {"rule_opts": {"feedback": 3, "risk_low": 0.003}}
+ }
+}
