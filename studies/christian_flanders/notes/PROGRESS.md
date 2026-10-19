@@ -9,5 +9,6 @@
 - R18 全部否定；R15 配置的 robust / final / three 已出（检查点）。
 - R19 全部否定。判为“再难改进”，写 `reports/FINAL_CN.md`；等权持有基准的未来函数已查明（池子用当天收盘），final 里新增 `ew_hold_lagged`。
 - 下一步：等用户决定是否冻结；不冻结则从上游（28 笔没信号）换形态再试。
-- 轮次统计：已用 19 / 40。
+- R20（按形态分开计持仓上限）全部否定：命中 33、买到 8。
+- 轮次统计：已用 20 / 40。
 - 运行：后台队列 `python -m studies.trader_replication.queue`（`TR_QUEUE_DIR` 指定队列目录），或单独 `$PY -m studies.christian_flanders.replicate round R<n>`；诊断 `diagnose r<n>.json`、三层对照 `three r<n>.json`。

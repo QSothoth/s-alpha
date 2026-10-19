@@ -88,3 +88,8 @@
 | R19 | pairs | G3 | `{"close_any": ["hi52"], "max_new": 3, "rule_opts": {"max_open": 10}}` | r18.json:chosen | R18 | objective below R18；全区间 +132%（带入 +48%） | open |
 | R19 | pairs | G4 | `{"close_any": ["hi52"], "kind_order": ["ep", "hi52"]}` | r18.json:chosen | R18 | gates: bought；全区间 +120%（带入 +48%） | open |
 | R19 | pairs | G5 | `{"close_any": ["hi52"], "rule_opts": {"max_open": 10, "max_gross": 1.5}}` | r18.json:chosen | R18 | gates: bought；全区间 +146%（带入 +48%） | open |
+| R20 | slots_by_kind | H1 | `{"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"], "rule_opts": {"max_open_by_kind": {"pb": 3}}}` | r19.json:chosen | R19 | gates: bought, width<=30；全区间 +115%（带入 +48%） | open |
+| R20 | slots_by_kind | H2 | `{"setups": ["hi52", "ep", "pb", "vcp"], "kind_order": ["ep", "hi52", "vcp", "pb"], "rule_opts": {"max_open_by_kind": {"pb": 2, "vcp": 2}}}` | r19.json:chosen | R19 | gates: bought, width<=30；全区间 +135%（带入 +48%） | open |
+| R20 | slots_by_kind | H3 | `{"setups": ["hi52", "ep", "pb"], "kind_order": ["ep", "hi52", "pb"], "close_any": ["hi52"], "rule_opts": {"max_open_by_kind": {"pb": 3}}}` | r19.json:chosen | R19 | gates: bought, width<=30；全区间 +128%（带入 +48%） | open |
+| R20 | slots_by_kind | H4 | `{"setups": ["hi52", "ep", "pp"], "kind_order": ["ep", "hi52", "pp"], "rule_opts": {"max_open_by_kind": {"pp": 2}}}` | r19.json:chosen | R19 | gates: bought；全区间 +123%（带入 +48%） | open |
+| R20 | slots_by_kind | H5 | `{"setups": ["hi52", "ep", "pp", "pb"], "kind_order": ["ep", "hi52", "pp", "pb"], "close_any": ["hi52"], "rule_opts": {"max_open_by_kind": {"pp": 2, "pb": 2}}}` | r19.json:chosen | R19 | gates: bought, width<=30；全区间 +128%（带入 +48%） | open |
