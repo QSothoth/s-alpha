@@ -8,3 +8,8 @@
 | R1 | end_to_end | Q2 | `{"stop_adr": {"brk": 1.0, "ep": 3.0}}` | r0.json:chosen | Q5 | gates: placebo；全区间 -32%（带入 +33%） | open |
 | R1 | end_to_end | Q3 | `{"setups": ["ep"], "stop_adr": {"ep": 3.0}}` | r0.json:chosen | Q5 | gates: placebo；全区间 -34%（带入 +33%） | open |
 | R1 | end_to_end | Q4 | `{"setups": ["ep"], "stop_adr": {"ep": 3.0}, "rule_opts": {"trail": "ema20", "trim_day_breakeven": true}}` | r0.json:chosen | Q5 | gates: placebo；全区间 -28%（带入 +33%） | open |
+| R2 | ep_market | S1 | `{"filter": "", "rule_opts": {"risk_scale": "lighthalf"}}` | r1.json:chosen | R1 | gates: placebo；全区间 -19%（带入 +33%） | open |
+| R2 | ep_market | S2 | `{"ep": {"min_gap": 0.08}}` | r1.json:chosen | R1 | objective below R1；全区间 +18%（带入 +33%） | open |
+| R2 | ep_market | S3 | `{"ep": {"liquid": 5000000.0}}` | r1.json:chosen | R1 | gates: placebo；全区间 +3%（带入 +33%） | open |
+| R2 | ep_market | S4 | `{"filter": "", "rule_opts": {"risk_scale": "lighthalf"}, "ep": {"min_gap": 0.08}}` | r1.json:chosen | R1 | gates: placebo；全区间 -39%（带入 +33%） | open |
+| R2 | ep_market | S5 | `{"filter": "", "rule_opts": {"risk_scale": "lighthalf"}, "ep": {"min_gap": 0.08, "liquid": 5000000.0}}` | r1.json:chosen | R1 | objective below R1；全区间 +26%（带入 +33%） | open |
