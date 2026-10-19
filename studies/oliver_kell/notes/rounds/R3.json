@@ -1,0 +1,18 @@
+{
+ "stage": "end_to_end_pairs",
+ "base": ["r2.json", "chosen"],
+ "ref": "R2",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "X1": {"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover",
+         "rule_opts": {"trim_signal": "below_ema10", "trim_signal_frac": 0.5}},
+  "X2": {"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover",
+         "rule_opts": {"trim_day": 11, "trim_day_frac": 0.3333}},
+  "X3": {"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover", "filter": "IDX20",
+         "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5}},
+  "X4": {"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover", "strength": "rs80"},
+  "X5": {"setups": ["pop", "cross", "pb", "vcp", "brk52", "ib2", "ur"], "priority": "turnover", "strength": "rs80",
+         "filter": "IDX20", "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5}}
+ }
+}
