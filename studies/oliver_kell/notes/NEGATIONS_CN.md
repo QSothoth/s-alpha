@@ -31,3 +31,7 @@
 | R6 | capacity | A2 | `{"rule_opts": {"max_open": 10}}` | r5.json:chosen | A5 | objective below A5；全区间 +144%（带入 +116%） | open |
 | R6 | capacity | A3 | `{"max_new": 4, "rule_opts": {"max_open": 10}}` | r5.json:chosen | A5 | objective below A5；全区间 +134%（带入 +116%） | open |
 | R6 | capacity | A4 | `{"max_new": 4, "rule_opts": {"max_open": 10, "max_gross": 2.0}}` | r5.json:chosen | A5 | objective below A5；全区间 +132%（带入 +116%） | open |
+| R7 | upstream | B1 | `{"strength": "st90"}` | r6.json:chosen | R6 | objective below R6；全区间 +118%（带入 +116%） | open |
+| R7 | upstream | B2 | `{"pool": {"turnover": 100000000.0, "adr": 2.0, "above50": false}}` | r6.json:chosen | R6 | objective below R6；全区间 +127%（带入 +116%） | open |
+| R7 | upstream | B3 | `{"strength": "st90", "pool": {"turnover": 100000000.0, "adr": 2.0, "above50": false}}` | r6.json:chosen | R6 | gates: width<=30；全区间 +127%（带入 +116%） | open |
+| R7 | upstream | B4 | `{"strength": "st90", "pool": {"turnover": 50000000.0, "adr": 2.0, "above50": false}}` | r6.json:chosen | R6 | gates: width<=30；全区间 +130%（带入 +116%） | open |
