@@ -46,6 +46,16 @@ class SetupTests(unittest.TestCase):
         self.assertEqual(s[40], 1.0)                                 # the day of the drop: yesterday was above
         self.assertEqual(s[41], .5)
 
+    def test_exit_signals(self):
+        rows = [(10, 10.2, 9.8, 10)] * 15 + [(13.5, 13.6, 13.4, 13.5), (9, 9.1, 8.9, 9)]
+        A = panel(rows)
+        ext = R.STUDY.named(A, None, 'ext10_30')
+        below = R.STUDY.named(A, None, 'below_ema10')
+        self.assertTrue(ext[15, 0])                                  # 13.5 vs a 10-day line near 10.35
+        self.assertFalse(ext[14, 0])
+        self.assertTrue(below[16, 0])
+        self.assertFalse(below[14, 0])
+
 
 if __name__ == '__main__':
     unittest.main()

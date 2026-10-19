@@ -38,7 +38,7 @@ class Kell(CF.Flanders):
     id, name = 'oliver_kell', 'Oliver Kell'
     root = ROOT / 'studies' / 'oliver_kell'
     ledger = root / 'notes' / 'trades.csv'
-    cutoff = '2024-05-01'           # PREREG_R0: selection = trades whose window starts before this day
+    cutoff = '2024-07-01'           # PREREG_R1 (ledger v2): selection = trades whose window starts before this day
     full = ('2023-04-03', '2026-10-16')
     home = ('us',)
     his = {}                        # his championship year (2020) is outside the data
@@ -49,6 +49,13 @@ class Kell(CF.Flanders):
         if name.startswith('idxhalf'):                   # risk x0.5 while the pool index closed below its EMA n
             from studies.trader_screens.scan import index_above
             return np.where(lag(index_above(A['F'], int(name[7:]))), 1.0, .5)
+        F = A['F']
+        if name.startswith('below_ema'):                 # close below the EMA n (his half-off-at-the-10 stop)
+            with np.errstate(invalid='ignore'):
+                return F.c < F.ema(int(name[9:]))
+        if name.startswith('ext10_'):                    # close k% above the 10-day line ("30% above the 10-day")
+            with np.errstate(invalid='ignore'):
+                return F.c >= (1 + int(name[6:]) / 100) * F.sma(10)
         return super().named(A, pool, name)
 
     def setups(self, A, cfg):
