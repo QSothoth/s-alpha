@@ -128,7 +128,7 @@ def show(r):
             print(f"  另有 {t['wanted_n']} 个买点没做：" + '、'.join(x['code'] for x in t['wanted']))
         print(f"  {span}卖出：" + ('无' if not t['sells'] else ''))
         for x in t['sells']:
-            print(f"    {x['code']} {x['name'][:10]} {x['why']}{'' if x['full'] else '（部分）'} {px(x['price'])}，"
+            print(f"    {x['code']} {x['name'][:10]} {board.WHY.get(x['why'], x['why'])}{'' if x['full'] else '（部分）'} {px(x['price'])}，"
                   f"{'空单盈亏' if x.get('side', 1) < 0 else '相对买价'} {pct(x['ret'])}")
         print(f"  持仓 {len(t['holdings'])} 只：" + ('空仓' if not t['holdings'] else ''))
         for h in t['holdings']:
