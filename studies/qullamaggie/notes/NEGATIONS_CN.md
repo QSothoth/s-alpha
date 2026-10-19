@@ -34,3 +34,7 @@
 | R8 | exits_by_kind | Y3 | `{"rule_opts": {"management_by_kind": {"ep": {"trail": "sma50"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +29%（带入 +31%） | open |
 | R8 | exits_by_kind | Y4 | `{"rule_opts": {"management_by_kind": {"brk": {"trail": "sma10"}, "ep": {"trail": "sma50"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +17%（带入 +31%） | open |
 | R8 | exits_by_kind | Y5 | `{"rule_opts": {"risk": 0.005, "management_by_kind": {"brk": {"trail": "sma10"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +45%（带入 +31%） | open |
+| R9 | sizing_capacity | Z1 | `{"rule_opts": {"risk": 0.004}}` | r8.json:chosen | R8 | objective below R8；全区间 +54%（带入 +31%） | open |
+| R9 | sizing_capacity | Z2 | `{"rule_opts": {"risk": 0.005, "max_open": 20}}` | r8.json:chosen | R8 | objective below R8；全区间 +49%（带入 +31%） | open |
+| R9 | sizing_capacity | Z3 | `{"rule_opts": {"risk": 0.005}, "max_new": 8}` | r8.json:chosen | R8 | objective below R8；全区间 +56%（带入 +31%） | open |
+| R9 | sizing_capacity | Z4 | `{"rule_opts": {"risk": 0.005, "max_open": 20}, "max_new": 8}` | r8.json:chosen | R8 | objective below R8；全区间 +50%（带入 +31%） | open |
