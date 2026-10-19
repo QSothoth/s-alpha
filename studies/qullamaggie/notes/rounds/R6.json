@@ -1,0 +1,13 @@
+{
+ "stage": "ep_volume",
+ "base": ["r5.json", "chosen"],
+ "ref": "R5",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "W1": {"ep": {"heavy": 5.0}},
+  "W2": {"priority": "rvol"},
+  "W3": {"ep": {"heavy": 5.0}, "priority": "rvol"},
+  "W4": {"ep": {"heavy": 8.0}, "priority": "rvol"}
+ }
+}
