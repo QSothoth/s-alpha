@@ -1,0 +1,11 @@
+{
+ "stage": "market",
+ "base": ["r4.json", "chosen"],
+ "ref": "R4",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "V1": {"filter": "light_q"},
+  "V2": {"filter": "light_q", "rule_opts": {"risk": 0.005}}
+ }
+}

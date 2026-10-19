@@ -17,3 +17,6 @@
 | R3 | capacity_setups | T2 | `{"max_new": 5, "rule_opts": {"max_open": 15}}` | r2.json:chosen | T3 | objective below T3；全区间 +46%（带入 +20%） | open |
 | R3 | capacity_setups | T4 | `{"rule_opts": {"trim_day": 5}}` | r2.json:chosen | T3 | objective below T3；全区间 +18%（带入 +20%） | open |
 | R3 | capacity_setups | T5 | `{"setups": ["ep", "brk"], "kind_order": ["ep", "brk"], "max_new": 5, "rule_opts": {"max_open": 15}}` | r2.json:chosen | T3 | objective below T3；全区间 +69%（带入 +20%） | open |
+| R4 | ep_shape | U1 | `{"setups": ["ep", "brk"], "kind_order": ["ep", "brk"]}` | r3.json:chosen | U4 | objective below U4；全区间 +34%（带入 +25%） | open |
+| R4 | ep_shape | U2 | `{"ep": {"quiet": 0.3}}` | r3.json:chosen | U4 | gates: placebo；全区间 -13%（带入 +25%） | open |
+| R4 | ep_shape | U3 | `{"stop_adr": {"ep": 5.0}}` | r3.json:chosen | U4 | objective below U4；全区间 +19%（带入 +25%） | open |

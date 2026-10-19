@@ -50,6 +50,9 @@ class SetupTests(unittest.TestCase):
         self.assertFalse(ok[20])                                   # the 20-day line is not there yet
         self.assertTrue(ok[40])                                    # yesterday: rising lines, 10 above 20
         self.assertFalse(ok[42])                                   # the 10-day line turned down
+        q = R.STUDY.market_ok(A, dict(R.DRAFT, filter='light_q'))     # name 0 carries the turnover-weighted
+        self.assertTrue(q[40])                                       # index too (equal turnover here)
+        self.assertFalse(q[42])
         s = R.STUDY.named(A, None, 'lighthalf')
         self.assertEqual((s[40], s[42]), (1.0, .5))
 

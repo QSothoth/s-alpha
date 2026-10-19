@@ -73,19 +73,27 @@ class Qullamaggie(CF.Flanders):
     def market_ok(self, A, cfg):
         """'light': his green light on the pool's equal-weight index (QQQ in his words): the 10-day line above the
         20-day and both rising, as of the day before (1AJIzXSkfyM@00:35:30, VdQSDGZBLQE@00:55:30)."""
-        if cfg.get('filter') != 'light':
+        if cfg.get('filter') not in ('light', 'light_q'):
             return super().market_ok(A, cfg)
         F = A['F']
+        weighted = cfg.get('filter') == 'light_q'       # 'light_q': the pool weighted by t-1 turnover, a QQQ-like
 
-        def f():
+        def f():                                        # large-cap index (he reads the QQQ; no ETF in the panel)
             prev = lag(F.c)
             with np.errstate(invalid='ignore', divide='ignore'):
-                r = np.where(F.rank_pool & np.isfinite(prev), F.c / prev - 1, np.nan)
-                idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))
+                ok = F.rank_pool & np.isfinite(prev)
+                r = np.where(ok, F.c / prev - 1, np.nan)
+                if weighted:
+                    w = np.where(ok & np.isfinite(r), lag(F.to20), 0.0)
+                    w = np.nan_to_num(w)
+                    mean = (np.nan_to_num(r) * w).sum(axis=1) / np.maximum(w.sum(axis=1), 1e-9)
+                else:
+                    mean = np.nan_to_num(np.nanmean(r, axis=1))
+                idx = np.cumprod(1 + mean)
             s10, s20 = S.rolling(idx[:, None], 10, 'mean')[:, 0], S.rolling(idx[:, None], 20, 'mean')[:, 0]
             with np.errstate(invalid='ignore'):
                 return (s10 > s20) & (s10 > lag(s10)) & (s20 > lag(s20))
-        return lag(F.get('qull_light', f))
+        return lag(F.get(('qull_light', weighted), f))
 
     def named(self, A, pool, name):
         """'lighthalf': risk x1 on a green light (as of the day before), x0.5 otherwise ("fewer trades or smaller
