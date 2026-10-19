@@ -15,6 +15,8 @@
 | `runner.py` | 一个系统在一个市场上回放到最新一天：账户、当天买卖、没做的买点、持仓与引擎给出的离场线；回放截到冻结日与比对表核对。`python -m studies.trader_replication.runner us live` |
 | `gate.py` | 工程门禁：数据版本与区间、不看未来（截面板前后决定一致）、成交价在当日区间内、胜率 ≤ 35%；单测 `tests/test_gate.py` |
 | `compare.py` | 各交易员当前配置在统一数据层上的三市场横向比对与门禁，写 `reports/compare.json`、`reports/COMPARISON_CN.md`：`python -m studies.trader_replication.compare run [us,hk,cn] [交易员 ...]` |
+| `shorts.py` | 空头（多空一体，[TRADER_PROTOCOL_CN 第 5 节](../../docs/TRADER_PROTOCOL_CN.md)）：`LongShort` 包住各人的研究模块，配置没有 `short` 时原样调用其 build（`systems.py` 一律包上）；各人的 `short_setups` 给出收盘卖空掩码，或前一日决定的限价（反抽到线）/ 开盘 / 卖空止损单（跌破），止损在上方；同一天先开多再开空；`round <交易员> S1` 跑预登记轮次（只做多 / 多空合计 / 只做空 + 同池随机做空、下跌时段按月、小盘空单单列、门禁），`gate` 跑不看未来，`render` 写 `studies/<id>/reports/SHORTS_CN.md` |
+| `shorts_robust.py` | 带入的多空版本的稳健性（借券 6%、空单风险减半、只在指数 < EMA50 做空、成本加倍），只报告 |
 | `system.py` | 多空日 K 组合：收盘确认入场、固定风险定仓、分批（按 R / 按信号）、EMA 跟踪（分批后或回撤 / 指定市场日换另一条）、保本、信号全卖、加码（一档或多档，止损提到成本价）、次日无延续离场、新仓反馈调风险、按日风险倍数、同时持仓上限、当天盘中止损；安慰剂（同一天同一名单随机换股、同样止损宽度）。新规则都在 `Rules` 里、默认关闭 |
 
 `simulate` 可接收真实分钟 OHLC：`px['session']` 是交易日编号，`px['daily_close']` 标记每日最后一根，止损和分批逐根运行，日线跟踪/加码/持有期限在日末执行，融资费用每日一次。省略这些字段仍按原日线模式，R74 数值已精确复现。`px['mark']` 只用于以前一已知收盘估值，不能用作可成交 OHLC。调用者必须提供因果入场和当时可知的指标，不会自动消除输入中的未来信息。
@@ -28,6 +30,8 @@
 可选`feedback_opened`将风险反馈改为最近成功开仓（含已平仓）的前日已实现/未实现R值，每交易日开头冻结；默认仍用旧的平仓序列。只保留固定长度队列，不加载额外行情。
 
 可选`management_by_kind`按入场kind固定单仓的仓位上限、分批、均线和加仓政策；账户现金、反馈、总杠杆仍共享。随机入场保留原执行政策后换股票，是给定政策的选股对照。
+
+空头新增的默认关闭字段（单测 `tests/test_borrow.py`、`tests/test_short_targets.py`、`tests/test_shorts.py`）：`borrow_rate`（年化借券费，按前一收盘的空单市值每个交易日计提一次，计入该笔盈亏）、`short_targets` / `short_target_frac`（空单跌到前一日的某条线回补，开盘就在下方按开盘价；止损日先止损，除非开盘已在目标下方）、`short_trim_day` / `short_trim_day_frac`（入场后第 N 天收盘有盈利回补一部分）。默认关闭时所有已登记系统的结果逐位不变（2026-10-19 `compare run us,hk` 前后核对）。
 
 ```bash
 /opt/futu-opend/venv/bin/python -m unittest discover -s studies/trader_replication/tests -t .
