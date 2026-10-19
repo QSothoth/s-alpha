@@ -1,0 +1,14 @@
+{
+ "stage": "entry",
+ "base": ["r4.json", "chosen"],
+ "ref": "R4",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "Z1": {"close_any": ["pb", "ib2", "cross", "vcp", "brk52"]},
+  "Z2": {"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "max_new": 3},
+  "Z3": {"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "strength": "rs80"},
+  "Z4": {"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "rule_opts": {"trim_day": 11, "trim_day_frac": 0.3333}},
+  "Z5": {"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "rule_opts": {"trim_signal": "ext10_30", "trim_signal_frac": 0.3333}}
+ }
+}
