@@ -829,5 +829,337 @@
    },
    "short": null
   }
+ },
+ {
+  "round": "S3",
+  "stage": "short: entry as a sell-short limit into the falling EMA (layer-two check)",
+  "candidate": "SK",
+  "change": {
+   "setups": [
+    "Z14"
+   ],
+   "gate": "",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 2,
+   "trim_day_frac": 0.5,
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "SM",
+  "reason": "gates: total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.4338530411322419,
+   "short_placebo_median": -0.5517159060040103,
+   "both_total": 21.746664860711828,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.6708269067251607,
+    "2025": 2.252641321390681,
+    "2026": 0.9050994324112069
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.24546094596738888,
+    "short": -0.2189771341101987
+   },
+   "win": 0.21772639691714837
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
+ },
+ {
+  "round": "S3",
+  "stage": "short: entry as a sell-short limit into the falling EMA (layer-two check)",
+  "candidate": "SL",
+  "change": {
+   "setups": [
+    "Z14"
+   ],
+   "gate": "below21",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 2,
+   "trim_day_frac": 0.5,
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "SM",
+  "reason": "gates: total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.22691366583282435,
+   "short_placebo_median": -0.29196581745648187,
+   "both_total": 22.331953741913956,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.677387645952515,
+    "2025": 2.276791442811365,
+    "2026": 0.9362565199158157
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.19880236714243738,
+    "short": -0.16467318664485586
+   },
+   "win": 0.20376522702104097
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
+ },
+ {
+  "round": "S3",
+  "stage": "short: entry as a sell-short limit into the falling EMA (layer-two check)",
+  "candidate": "SN",
+  "change": {
+   "setups": [
+    "Z16"
+   ],
+   "gate": "",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 2,
+   "trim_day_frac": 0.5,
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "SM",
+  "reason": "gates: maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.36507461676045583,
+   "short_placebo_median": -0.5899232998718447,
+   "both_total": 26.389970849148916,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.617678791098133,
+    "2025": 2.5179155411433385,
+    "2026": 1.1521679401382898
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.15622678339089313,
+    "short": -0.16510174257122867
+   },
+   "win": 0.22749273959341723
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
+ },
+ {
+  "round": "S3",
+  "stage": "short: entry as a sell-short limit into the falling EMA (layer-two check)",
+  "candidate": "SO",
+  "change": {
+   "setups": [
+    "Z14"
+   ],
+   "gate": "",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 0,
+   "trim_day_frac": 0.0,
+   "max_days": 0
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "SM",
+  "reason": "gates: total, years, maxdd, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.6320657044017575,
+   "short_placebo_median": -0.6956582615244015,
+   "both_total": 15.74403318485772,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.723897705355512,
+    "2025": 1.4472065071646987,
+    "2026": 0.8373492430638785
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.19067453163324677,
+    "short": -0.3237852699323128
+   },
+   "win": 0.1917808219178082
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": null
+  }
  }
 ]
