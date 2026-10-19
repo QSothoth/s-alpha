@@ -1,0 +1,13 @@
+{
+ "stage": "ep_shape",
+ "base": ["r3.json", "chosen"],
+ "ref": "R3",
+ "objective": "bought",
+ "gates": ["placebo", "width<=30"],
+ "candidates": {
+  "U1": {"setups": ["ep", "brk"], "kind_order": ["ep", "brk"]},
+  "U2": {"ep": {"quiet": 0.3}},
+  "U3": {"stop_adr": {"ep": 5.0}},
+  "U4": {"setups": ["ep", "brk"], "kind_order": ["ep", "brk"], "stop_adr": {"brk": 1.0, "ep": 5.0}}
+ }
+}
