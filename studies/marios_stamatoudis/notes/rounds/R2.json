@@ -1,0 +1,14 @@
+{
+ "stage": "exits_sizing",
+ "base": ["r1.json", "chosen"],
+ "ref": "L4",
+ "objective": "total",
+ "gates": ["placebo", "win<=0.35", "behaviour+0.02"],
+ "candidates": {
+  "T1": {"rule_opts": {"trail": "sma20"}},
+  "T2": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "fill"}},
+  "T3": {"stop_adr": {"brk": 2.0, "ep": 3.0}},
+  "T4": {"rule_opts": {"trims": [3, 8], "trim_frac": 0.25}},
+  "T5": {"rule_opts": {"risk": 0.004}}
+ }
+}
