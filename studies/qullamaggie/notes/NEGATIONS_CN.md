@@ -46,6 +46,10 @@
 | R6 | ep_volume | W2 | `{"priority": "rvol"}` | r5.json:chosen | R5 | objective below R5；全区间 +18%（带入 +25%） | open |
 | R6 | ep_volume | W3 | `{"ep": {"heavy": 5.0}, "priority": "rvol"}` | r5.json:chosen | R5 | objective below R5；全区间 +10%（带入 +25%） | open |
 | R6 | ep_volume | W4 | `{"ep": {"heavy": 8.0}, "priority": "rvol"}` | r5.json:chosen | R5 | objective below R5；全区间 +24%（带入 +25%） | open |
+| S6 | short, gate v2: Q5C with his stop-width rule (no wider than 1 / 1.5 ADR) | Q6A | `{"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.0, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}` | :chosen | none | gates: gate, alpha | open |
+| S6 | short, gate v2: Q5C with his stop-width rule (no wider than 1 / 1.5 ADR) | Q6B | `{"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}` | :chosen | none | gates: gate | open |
+| S6 | short, gate v2: Q5C with his stop-width rule (no wider than 1 / 1.5 ADR) | Q6C | `{"setups": ["ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}` | :chosen | none | gates: gate | open |
+| S6 | short, gate v2: Q5C with his stop-width rule (no wider than 1 / 1.5 ADR) | Q6D | `{"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5, "targets": ["sma10"], "target_frac": 0.0, "trail": "", "trims": [], "max_days": 10}` | :chosen | none | gates: gate | open |
 | R7 | exits | X2 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.5}}` | r6.json:chosen | X1 | objective below X1；全区间 -0%（带入 +31%） | open |
 | R7 | exits | X3 | `{"rule_opts": {"trail": "sma10"}}` | r6.json:chosen | X1 | objective below X1；全区间 +4%（带入 +31%） | open |
 | R7 | exits | X4 | `{"rule_opts": {"trim_day_frac": 0.5, "trim_signal": "atr50x7", "trim_signal_frac": 0.5}}` | r6.json:chosen | X1 | objective below X1；全区间 +3%（带入 +31%） | open |
