@@ -15,6 +15,11 @@ registered system) shorts.LongShort calls the study's own build unchanged.  The 
     add        a held long whose close is above its fill buys `frac` of its original size at the close of a day his
                signal mask fires again (not the entry day), at most `max` times, the stop then at the fill ('fill')
                or kept ('keep'): engine add_signal with add_signal_profit
+    floor      (turnover, price): every long pool floor of his higher than these lowered to them (his own
+               config keys through Study.own_floor, the board's built-in floors through Feat.floor for this build
+               only; the short side keeps its floors)
+    small      (turnover, cap): a long on a name under that 20-day turnover (as of the day before) holds at most
+               cap of equity (the engine's per-entry max_position)
     ep_slots   his EPs (kind 'ep', or the study's ep_mask) opened up to this many a day on their own count, not
                taking the daily cap of his other setups (engine max_new_by_kind; a build-capped study keeps the
                day's first max_new non-EP entries plus its first ep_slots EPs)
@@ -114,7 +119,23 @@ def build_long(base, A, cfg, trace=None):
     precap = getattr(base, 'daily_cap', 'engine') == 'build' and cfg.get('max_new')
     if cm.get('stop'):                             # the stop rule replaces his own skip / cap of wide stops
         cfg = base.own_stop_off(cfg, cm['stop'].get('mode', 'cap'))
-    entries, rules, mask, pool = base.build(A, dict(cfg, max_new=0) if precap else cfg, trace)
+    fl = cm.get('floor')                           # (turnover, price) pool floors, lowered where higher
+    F = A.get('F')
+    if fl:
+        cfg = base.own_floor(cfg, *fl)
+        if F is not None:
+            F.floor = tuple(fl)
+    try:
+        entries, rules, mask, pool = base.build(A, dict(cfg, max_new=0) if precap else cfg, trace)
+    finally:
+        if F is not None:
+            F.floor = None
+    if cm.get('small'):                            # (turnover, cap): a name under this 20-day turnover (t-1)
+        lim, capp = cm['small']                    # holds at most cap of equity
+        to20 = lag(A['to20'])
+        entries = [[e[:6] + (e[6] if len(e) > 6 else None, e[7] if len(e) > 7 else None,
+                             min(capp, e[8]) if len(e) > 8 and e[8] is not None else capp)
+                    if e[2] > 0 and to20[d, e[1]] < lim else e for e in lst] for d, lst in enumerate(entries)]
     epm = base.ep_mask(A, cfg) if hasattr(base, 'ep_mask') else None
     ep = (lambda d, e: e[5] == 'ep') if epm is None else (lambda d, e: bool(epm[d, e[1]]))
     if cm.get('stop'):

@@ -66,6 +66,17 @@ class Martin(study.Study):
         """His pre-market gapper EP as build_system makes it (on the liquidity pool, not the leader list)."""
         return self.R.ep_signal(A, self.R.pool_for(A, cfg.get('pool')), **cfg.get('ep_opts', {}))
 
+    def own_floor(self, cfg, turnover, price):
+        """His pool is a POOLS entry (price, turnover, ADR): the same ADR with the lower floors."""
+        R = self.R
+        p, t, a = R.POOLS[cfg.get('pool') or R.chosen('r20_pool.json', 'U0')]
+        spec = (min(p, price), min(t, turnover), a)
+        name = next((k for k, v in R.POOLS.items() if v == spec), None)
+        if name is None:
+            name = f'C{spec[0]:g}_{spec[1]:g}_{spec[2]:g}'
+            R.POOLS[name] = spec
+        return dict(cfg, pool=name)
+
     def own_stop_off(self, cfg, mode):
         """His min(5%, 0.5 ADR) is built into his entries: the common rule's mode picks 'cap' (move up) or 'skip';
         a tighter common limit then applies on top."""

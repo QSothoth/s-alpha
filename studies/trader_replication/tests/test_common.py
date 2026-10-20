@@ -149,6 +149,45 @@ class EpSlotTests(unittest.TestCase):
         self.assertEqual([t['code'] for t in tr], ['US.S0'])               # without: the EP waits behind the cap
 
 
+class FloorTests(unittest.TestCase):
+    def feat(self):
+        from studies.trader_screens import screens as S
+        n = 25
+        p = {k: np.ones((n, 2)) * 10 for k in ('open', 'high', 'low', 'close', 'volume')}
+        p.update(turnover=np.tile([30e6, 3e6], (n, 1)), raw_close=np.tile([10.0, 2.0], (n, 1)),
+                 days=np.arange(n), codes=np.array(['US.A', 'US.B']))
+        return S.Feat(p, 'us')
+
+    def test_feat_floor_lowers_the_board_floor_for_one_build_only(self):
+        F = self.feat()
+        self.assertEqual(F.liquid(20e6)[-1].tolist(), [True, False])
+        A = dict(arrays(25, 2), F=F)
+
+        class Board(Fake):
+            def build(self, A, cfg, trace=None):
+                self.seen = A['F'].liquid(20e6)[-1].tolist()
+                return super().build(A, cfg, trace)
+        b = Board()
+        b.own_floor = lambda cfg, t, p: cfg
+        C.build_long(b, A, {'common': {'floor': [2e6, 1.0]}})
+        self.assertEqual(b.seen, [True, True])
+        self.assertIsNone(F.floor)                                   # reset after the build
+        self.assertEqual(F.liquid(20e6)[-1].tolist(), [True, False])
+
+    def test_own_floor_lowers_only_higher_floors(self):
+        cfg = ST.Study().own_floor({'pool': {'turnover': 50e6, 'adr': 3.0}, 'ep_pool': {'turnover': 1e6, 'price': 2.0}},
+                                   2e6, 1.0)
+        self.assertEqual(cfg['pool'], {'turnover': 2e6, 'price': 1.0, 'adr': 3.0})
+        self.assertEqual(cfg['ep_pool'], {'turnover': 1e6, 'price': 1.0})
+
+    def test_small_names_get_the_position_cap_from_the_prior_day_turnover(self):
+        A = arrays()
+        A['to20'][1] = [5e6, 50e6, 5e6]
+        A['to20'][2] = [50e6, 5e6, 50e6]                  # the day's own average is not used
+        e = C.build_long(Fake(), A, {'common': {'small': [20e6, .1]}})[0]
+        self.assertEqual([x[8] if len(x) > 8 else None for x in sorted(e[2], key=lambda x: x[1])], [.1, None, .1])
+
+
 class PassThroughTests(unittest.TestCase):
     def test_without_common_the_wrapper_calls_the_study_build(self):
         A = arrays()

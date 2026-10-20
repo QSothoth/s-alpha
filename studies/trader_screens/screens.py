@@ -155,10 +155,16 @@ class Feat:
             return out
         return self.get(('rank', key), f)
 
+    floor = None                     # (turnover, price): set by trader_replication.common's floor switch for one
+                                     # build; every US liquid() floor is then min(usd, turnover) and the price floor
+
     def liquid(self, usd):
         """US: 20-day average turnover of at least `usd` and a price of at least 5 USD (researcher: no penny
         stocks); HK / A-shares: list membership (the trend-scan lists are filtered by turnover or market cap
         already), so these floors do not apply there."""
+        if self.floor and self.market == 'us':
+            usd, price = min(usd, self.floor[0]), self.floor[1]
+            return self.get(('liquid', usd, price), lambda: (self.to20 >= usd) & (self.raw >= price))
         return self.get(('liquid', usd), lambda: ((self.to20 >= usd) & (self.raw >= 5)) if self.market == 'us'
                         else np.isfinite(self.to20))
 

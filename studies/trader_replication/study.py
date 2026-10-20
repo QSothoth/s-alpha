@@ -167,6 +167,18 @@ class Study:
         """Days x codes: his EP signal, for studies whose entries do not carry the kind 'ep' (None: by kind)."""
         return None
 
+    def own_floor(self, cfg, turnover, price):
+        """cfg with the pool floors it sets itself lowered to (turnover, price) where they are higher (the floors
+        built into the board's setups follow Feat.floor, set by common.py)."""
+        out = dict(cfg)
+        for k in ('pool', 'ep_pool'):
+            if k in cfg or k == 'pool':
+                p = dict(cfg.get(k) or {})
+                p['turnover'] = min(p.get('turnover', 20e6), turnover)
+                p['price'] = min(p.get('price', 5.0), price)
+                out[k] = p
+        return out
+
     def own_stop_off(self, cfg, mode):
         """cfg with his own handling of wide stops (skip wider than k ADR, cap at a percentage) taken out, for the
         common stop rule (common.py) that replaces it; `mode` is that rule's 'cap' or 'skip'."""
