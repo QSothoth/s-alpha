@@ -29,3 +29,4 @@
 | R7 | adds_tolerance | B2 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.25, "add_signal_max": 2, "add_signal_stop": "low"}}` | r6.json:chosen | B1 | objective below B1；全区间 +156%（带入 +195%） | open |
 | R7 | adds_tolerance | B3 | `{"max_new": 5, "rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low"}}` | r6.json:chosen | B1 | gates: behaviour+0.02；全区间 +253%（带入 +195%） | open |
 | R7 | adds_tolerance | B4 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low", "trims": [2, 4], "trim_frac": 0.33}}` | r6.json:chosen | B1 | gates: behaviour+0.02；全区间 +159%（带入 +195%） | open |
+| R8 | stop_width | W1 | `{"stop_max": 0.05}` | r7.json:chosen | W2 | objective below W2；全区间 +63%（带入 +207%） | open |

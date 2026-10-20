@@ -291,6 +291,46 @@ class Ryan(CF.Flanders):
         entries, rules, mask, placebo_pool = super().build(A, cfg, trace)
         return entries, rules, mask, lag(self.pool(A, cfg))
 
+    def short_setups(self, A, sc):
+        """His two short points (RULES ⑨; @01:23:30-01:24:50: "the breakout reversal, that's a fake-out, this is
+        where you could short ... and a breakdown is another short"), close-confirmed, bars up to t:
+
+        fake   a second-wave breakout (the long trigger) on one of the last `fake_days` (3) sessions before t, and
+               today closes back under that breakout's pivot with a red candle; the stop is the highest high since
+               the breakout (at least stop_min above the fill)
+        brk    the long setup turned over ("sharp moves down and weak recoveries anticipate another sharp move down",
+               IYR @00:55:10): within the last `look` sessions a high-to-low drop of at least `drop` (1/3, the
+               first wave's +50% mirrored), yesterday's close at most halfway back up, the last `base` sessions
+               ranging at most half the drop, and today closes under the base's low; the stop is the day's high
+        Pool: 20-day turnover >= `turnover` (20M) and price >= 5, as of t-1."""
+        F = A['F']
+        w = dict(WAVE, **sc.get('wave', {}))
+        n, b = w['look'], w['base']
+        names = sc.get('setups', ['fake', 'brk'])
+        with np.errstate(invalid='ignore', divide='ignore'):
+            pool = lag(F.liquid(sc.get('turnover', 20e6)))
+            out = {}
+            if 'fake' in names:
+                ready, pivot = self.wave(A, dict(wave=w))
+                brk_day = ready & (F.h > pivot)
+                k = sc.get('fake_days', 3)
+                m = np.zeros(F.c.shape, bool)
+                line = np.full(F.c.shape, np.nan)
+                for i in range(1, k + 1):
+                    hit = lag(brk_day, i) & (F.c < lag(pivot, i)) & (F.c < F.o)
+                    line = np.where(hit & ~m, F.hi(i + 1), line)
+                    m |= hit
+                out['fake'] = dict(armed=pool & m, stop=line)
+            if 'brk' in names:
+                lo, lo_age = since_extreme(F.l, n, 'min')
+                hi, hi_age = since_extreme(F.h, n + 20, 'max')
+                drop = (1 - lo / hi >= sc.get('drop', 1 / 3)) & (hi_age > lo_age)
+                weak = F.c <= lo + .5 * (hi - lo)
+                tight = F.range(b) <= .5 * (hi / lo - 1) * 100
+                ready = lag(drop & weak & tight & (lo_age >= w['rest'] - 1))
+                out['brk'] = pool & ready & (F.c < lag(F.lo(b)))
+        return out, pool
+
     def his_entry(self, A, d, j, cfg):
         """His ticker on his day with our execution: the close, stop at yesterday's low within the stop bounds."""
         c = A['close'][d, j]

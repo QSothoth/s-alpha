@@ -1,0 +1,448 @@
+{
+ "name": "R8",
+ "stage": "stop_width",
+ "base": [
+  "r7.json",
+  "chosen"
+ ],
+ "configs": {
+  "W1": {
+   "setups": [
+    "wave2",
+    "shake"
+   ],
+   "entry": "close",
+   "stop_min": 0.03,
+   "stop_max": 0.05,
+   "priority": "wave",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 2000000.0,
+    "price": 1.0
+   },
+   "wave": {
+    "look": 40,
+    "gain": 0.5,
+    "surge": 3.0,
+    "hold": 0.5,
+    "base": 10,
+    "tight": 0.5,
+    "rest": 5
+   },
+   "rule_opts": {
+    "risk": 0.01,
+    "max_position": 0.5,
+    "max_gross": 1.0,
+    "max_open": 0,
+    "trail": "plo5",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "breakeven_r": 1.0,
+    "exit_signal": "rev",
+    "margin_rate": 0.0,
+    "trim_frac": 0.67,
+    "add_signal": "sig_all",
+    "add_signal_frac": 0.33,
+    "add_signal_max": 1,
+    "add_signal_stop": "low"
+   },
+   "stop_from": "day"
+  },
+  "W2": {
+   "setups": [
+    "wave2",
+    "shake"
+   ],
+   "entry": "close",
+   "stop_min": 0.03,
+   "stop_max": 0.06,
+   "priority": "wave",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 2000000.0,
+    "price": 1.0
+   },
+   "wave": {
+    "look": 40,
+    "gain": 0.5,
+    "surge": 3.0,
+    "hold": 0.5,
+    "base": 10,
+    "tight": 0.5,
+    "rest": 5
+   },
+   "rule_opts": {
+    "risk": 0.01,
+    "max_position": 0.5,
+    "max_gross": 1.0,
+    "max_open": 0,
+    "trail": "plo5",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "breakeven_r": 1.0,
+    "exit_signal": "rev",
+    "margin_rate": 0.0,
+    "trim_frac": 0.67,
+    "add_signal": "sig_all",
+    "add_signal_frac": 0.33,
+    "add_signal_max": 1,
+    "add_signal_stop": "low"
+   },
+   "stop_from": "day"
+  },
+  "B1": {
+   "setups": [
+    "wave2",
+    "shake"
+   ],
+   "entry": "close",
+   "stop_min": 0.03,
+   "stop_max": 0.08,
+   "priority": "wave",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 2000000.0,
+    "price": 1.0
+   },
+   "wave": {
+    "look": 40,
+    "gain": 0.5,
+    "surge": 3.0,
+    "hold": 0.5,
+    "base": 10,
+    "tight": 0.5,
+    "rest": 5
+   },
+   "rule_opts": {
+    "risk": 0.01,
+    "max_position": 0.5,
+    "max_gross": 1.0,
+    "max_open": 0,
+    "trail": "plo5",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "breakeven_r": 1.0,
+    "exit_signal": "rev",
+    "margin_rate": 0.0,
+    "trim_frac": 0.67,
+    "add_signal": "sig_all",
+    "add_signal_frac": 0.33,
+    "add_signal_max": 1,
+    "add_signal_stop": "low"
+   },
+   "stop_from": "day"
+  }
+ },
+ "full": {
+  "W1": {
+   "total": 0.6285386729360316,
+   "cagr": 0.2773824545669836,
+   "maxdd": 0.4193593888360647,
+   "trades": 798,
+   "per_year": 400.58964143426294,
+   "win": 0.2957393483709273,
+   "avg_win": 0.1148437698802207,
+   "avg_loss": -0.040282176269169946,
+   "exp_r": 0.11837727413129834,
+   "days_win": 10.165254237288135,
+   "days_loss": 2.03914590747331,
+   "by_year": {
+    "2024": -0.13095176915354423,
+    "2025": 0.8739335920974487
+   },
+   "ci_r": [
+    -0.05357877132256089,
+    0.31190505957112696
+   ],
+   "placebo": {
+    "real": 0.6285386729360316,
+    "median": 0.14384672426347966,
+    "p90": 0.6597383554193464,
+    "rank": 0.88
+   },
+   "behaviour": {
+    "trades": 798,
+    "per_year": 400.58964143426294,
+    "per_day": 1.5896414342629481,
+    "win": 0.2957393483709273,
+    "avg_win": 0.1148437698802207,
+    "avg_loss": -0.040282176269169946,
+    "days_win": 10.165254237288135,
+    "days_loss": 2.03914590747331,
+    "median_days_win": 7.0,
+    "median_days_loss": 2.0,
+    "top10_share": 0.7012690441595629,
+    "entry_weight_mean": 0.16485667520387656,
+    "entry_weight_max": 0.34783121303195763,
+    "open_mean": 7.061752988047809,
+    "open_max": 12
+   },
+   "fidelity": {
+    "select": [
+     1,
+     2
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     2
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 24.0,
+    "mean": 29.139442231075698
+   },
+   "min_year": -0.13095176915354423,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": 0.31866769273523304,
+   "behaviour_parts": {
+    "per_year": 0.3649047012385967,
+    "avg_win": 0.7005214141193289,
+    "avg_loss": 0.08229212530702557,
+    "win": 0.12695253027598086
+   },
+   "year_gap": 0.24500261621287434
+  },
+  "W2": {
+   "total": 2.071952461861342,
+   "cagr": 0.7566214863355425,
+   "maxdd": 0.35061259536092415,
+   "trades": 804,
+   "per_year": 403.601593625498,
+   "win": 0.3009950248756219,
+   "avg_win": 0.12703134999836982,
+   "avg_loss": -0.04237594419472781,
+   "exp_r": 0.15263425980159948,
+   "days_win": 11.099173553719009,
+   "days_loss": 2.1725978647686834,
+   "by_year": {
+    "2024": 0.2663755479449146,
+    "2025": 1.4257831469081457
+   },
+   "ci_r": [
+    -0.003035665592356394,
+    0.34406608638392955
+   ],
+   "placebo": {
+    "real": 2.071952461861342,
+    "median": 0.13830275512478518,
+    "p90": 0.5471304058408948,
+    "rank": 1.0
+   },
+   "behaviour": {
+    "trades": 804,
+    "per_year": 403.601593625498,
+    "per_day": 1.6015936254980079,
+    "win": 0.3009950248756219,
+    "avg_win": 0.12703134999836982,
+    "avg_loss": -0.04237594419472781,
+    "days_win": 11.099173553719009,
+    "days_loss": 2.1725978647686834,
+    "median_days_win": 7.0,
+    "median_days_loss": 2.0,
+    "top10_share": 0.677644421752859,
+    "entry_weight_mean": 0.146237376897106,
+    "entry_weight_max": 0.35025338545022205,
+    "open_mean": 7.782868525896414,
+    "open_max": 13
+   },
+   "fidelity": {
+    "select": [
+     1,
+     2
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     2
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 24.0,
+    "mean": 29.139442231075698
+   },
+   "min_year": 0.2663755479449146,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": 0.3609547492948324,
+   "behaviour_parts": {
+    "per_year": 0.3574140295094391,
+    "avg_win": 0.8013826385423635,
+    "avg_loss": 0.13296387772046955,
+    "win": 0.15205845140705743
+   },
+   "year_gap": 0.1783238441825281,
+   "placebo_screen": {
+    "real": 2.071952461861342,
+    "median": 0.12428803322384185,
+    "p90": 0.5465997032578295,
+    "rank": 1.0
+   }
+  },
+  "B1": {
+   "total": 1.9457701802023157,
+   "cagr": 0.7200223487186979,
+   "maxdd": 0.3057605440017863,
+   "trades": 804,
+   "per_year": 403.601593625498,
+   "win": 0.2935323383084577,
+   "avg_win": 0.1435237897553159,
+   "avg_loss": -0.04827637088291126,
+   "exp_r": 0.12240864723019532,
+   "days_win": 12.529661016949152,
+   "days_loss": 2.721830985915493,
+   "by_year": {
+    "2024": 0.4455973550122514,
+    "2025": 1.0377528846387176
+   },
+   "ci_r": [
+    -0.016120644715222367,
+    0.2866287378113383
+   ],
+   "placebo": {
+    "real": 1.9457701802023157,
+    "median": 0.211230668893715,
+    "p90": 0.6097338772022468,
+    "rank": 1.0
+   },
+   "behaviour": {
+    "trades": 804,
+    "per_year": 403.601593625498,
+    "per_day": 1.6015936254980079,
+    "win": 0.2935323383084577,
+    "avg_win": 0.1435237897553159,
+    "avg_loss": -0.04827637088291126,
+    "days_win": 12.529661016949152,
+    "days_loss": 2.721830985915493,
+    "median_days_win": 9.0,
+    "median_days_loss": 2.0,
+    "top10_share": 0.6610190600508465,
+    "entry_weight_mean": 0.12548184654216452,
+    "entry_weight_max": 0.3462721701576496,
+    "open_mean": 8.97011952191235,
+    "open_max": 17
+   },
+   "fidelity": {
+    "select": [
+     1,
+     2
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     2
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 24.0,
+    "mean": 29.139442231075698
+   },
+   "min_year": 0.4455973550122514,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": 0.4151304456287813,
+   "behaviour_parts": {
+    "per_year": 0.3574140295094391,
+    "avg_win": 0.9234495358917739,
+    "avg_loss": 0.26332525566539144,
+    "win": 0.11633296144852068
+   },
+   "year_gap": 0.0513409893723838
+  }
+ },
+ "objective": "total",
+ "gates": [
+  "placebo",
+  "win<=0.35",
+  "behaviour+0.02"
+ ],
+ "market": "us",
+ "chosen": "W2",
+ "chosen_config": {
+  "setups": [
+   "wave2",
+   "shake"
+  ],
+  "entry": "close",
+  "stop_min": 0.03,
+  "stop_max": 0.06,
+  "priority": "wave",
+  "max_new": 3,
+  "strength": "",
+  "filter": "",
+  "pool": {
+   "turnover": 2000000.0,
+   "price": 1.0
+  },
+  "wave": {
+   "look": 40,
+   "gain": 0.5,
+   "surge": 3.0,
+   "hold": 0.5,
+   "base": 10,
+   "tight": 0.5,
+   "rest": 5
+  },
+  "rule_opts": {
+   "risk": 0.01,
+   "max_position": 0.5,
+   "max_gross": 1.0,
+   "max_open": 0,
+   "trail": "plo5",
+   "arm_trail_on_entry": true,
+   "trims": [
+    2
+   ],
+   "breakeven_r": 1.0,
+   "exit_signal": "rev",
+   "margin_rate": 0.0,
+   "trim_frac": 0.67,
+   "add_signal": "sig_all",
+   "add_signal_frac": 0.33,
+   "add_signal_max": 1,
+   "add_signal_stop": "low"
+  },
+  "stop_from": "day"
+ },
+ "failed_gates": {
+  "W1": [],
+  "W2": []
+ }
+}
