@@ -484,6 +484,34 @@ def round_(sid, name):
     return out
 
 
+def final(sid, report, key):
+    """The carried H version in every market over the whole window (reported only; chosen on US 2024-2025):
+    totals by year, drawdown, the hard limits as measured, same-pool placebo (100); studies/<sid>/reports/
+    human_final.json, keyed by report and key."""
+    from . import panels, systems as SY
+    x = SY.get(sid)
+    st, reg = x.load()
+    cfg = json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
+    path = st.out / 'human_final.json'
+    res = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+    out = {}
+    for m in ('us', 'hk', 'cn'):
+        A = st.arrays(m)
+        out[m] = {}
+        for k, c in (('registered', reg), ('H0', h0_cfg(reg)), (key, cfg)):
+            w = run(st, A, c, panels.WINDOW, placebo=100)
+            w.pop('_tr')
+            out[m][k] = {q: w[q] for q in ('total', 'by_year', 'maxdd', 'trades', 'win', 'avg_win', 'avg_loss',
+                                          'days_win', 'pnl_top10', 'human', 'tiers', 'placebo', 'top')}
+            print(sid, m, k, f"total {w['total']:+.3f}", {y: round(v, 3) for y, v in w['by_year'].items()},
+                  f"dd {w['maxdd']:.3f} rank {w['placebo']['rank']:.2f} ok {w['human']['ok']}", flush=True)
+        del A
+        gc.collect()
+    res[f'{report}:{key}'] = out
+    path.write_text(json.dumps(res, indent=1, default=float, ensure_ascii=False), encoding='utf-8')
+    return out
+
+
 def his_bound(sid, report, key):
     """Layer two under the hard limits: his dated longs of the selection segment (his ticker, his day; the close
     with our stop, studies' his_entry), each sized to the 50% cap, through the configuration's own exits and the
@@ -691,6 +719,8 @@ if __name__ == '__main__':
         capdate(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else None)
     elif sys.argv[1] == 'bound':                 # bound <system> <report | H0> [key]
         his_bound(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else None)
+    elif sys.argv[1] == 'final':                 # final <system> <report> <key>
+        final(sys.argv[2], sys.argv[3], sys.argv[4])
     elif sys.argv[1] == 'decompose':
         decompose(sys.argv[2:])
     elif sys.argv[1] == 'round':
