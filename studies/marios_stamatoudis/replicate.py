@@ -95,12 +95,18 @@ class Marios(Q.Qullamaggie):
             return None
         return (0.0, j, 1, c, min(l, c * (1 - cfg.get('stop_min', .01))), 'his')
 
-    def validate(self, report, key='chosen'):
-        """The chosen configuration on the validation segment and the whole window, reported only."""
+    def validate(self, report, key='chosen', short_report=''):
+        """The chosen configuration (with the short side carried by `short_report`, an S round) on the validation
+        segment and the whole window, reported only."""
+        from studies.trader_replication import shorts
         cfg = self.config(report, key)
+        if short_report:
+            sc = json.loads((self.reports / short_report).read_text(encoding='utf-8'))['chosen_short']
+            if sc:
+                cfg = dict(cfg, short=sc)
         A = self.arrays('us')
-        entries, rules, mask, pool = self.build(A, cfg)
-        out = {'report': report, 'config': cfg}
+        entries, rules, mask, pool = shorts.wrap(self).build(A, cfg)
+        out = {'report': report, 'short_report': short_report, 'config': cfg}
         for name, seg in (('validate', VALIDATE), ('window', WINDOW)):
             st, tr = self.run(A, entries, seg, pool, rules, audit=True)
             st.pop('_curve', None)
@@ -119,7 +125,8 @@ STUDY = Marios()
 
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'validate':
-        STUDY.validate(sys.argv[2] if len(sys.argv) > 2 else '', sys.argv[3] if len(sys.argv) > 3 else 'chosen')
+        STUDY.validate(sys.argv[2] if len(sys.argv) > 2 else '', sys.argv[3] if len(sys.argv) > 3 else 'chosen',
+                       sys.argv[4] if len(sys.argv) > 4 else '')
     elif len(sys.argv) > 1 and sys.argv[1] in ('diagnose', 'three'):
         STUDY.full = ('2023-02-01', SELECT[1])          # his dated trades are 2023 (data from 2023-01-03)
         study.main(STUDY, sys.argv)
