@@ -257,6 +257,440 @@
   }
  },
  {
+  "round": "S1",
+  "stage": "shorts_v2",
+  "candidate": "F1",
+  "change": {
+   "setups": [
+    "fake"
+   ],
+   "max_days": 10,
+   "max_new": 2
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: count",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.15446470453772876,
+   "short_placebo_median": -0.3493464375949483,
+   "both_total": 2.073255988045006,
+   "long_total": 2.071952461861342,
+   "both_by_year": {
+    "2024": 0.19172140323209463,
+    "2025": 1.578837620697219
+   },
+   "long_by_year": {
+    "2024": 0.2663755479449146,
+    "2025": 1.4257831469081457
+   },
+   "down": {
+    "long": 0.17644394078803538,
+    "both": 0.21402082018371482,
+    "short": 0.08461069506768859
+   },
+   "win": 0.3054892601431981
+  },
+  "base_config": {
+   "setups": [
+    "wave2",
+    "shake"
+   ],
+   "entry": "close",
+   "stop_min": 0.03,
+   "stop_max": 0.06,
+   "priority": "wave",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 2000000.0,
+    "price": 1.0
+   },
+   "wave": {
+    "look": 40,
+    "gain": 0.5,
+    "surge": 3.0,
+    "hold": 0.5,
+    "base": 10,
+    "tight": 0.5,
+    "rest": 5
+   },
+   "rule_opts": {
+    "risk": 0.01,
+    "max_position": 0.5,
+    "max_gross": 1.0,
+    "max_open": 0,
+    "trail": "plo5",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "breakeven_r": 1.0,
+    "exit_signal": "rev",
+    "margin_rate": 0.0,
+    "trim_frac": 0.67,
+    "add_signal": "sig_all",
+    "add_signal_frac": 0.33,
+    "add_signal_max": 1,
+    "add_signal_stop": "low"
+   },
+   "stop_from": "day",
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "shorts_v2",
+  "candidate": "F2",
+  "change": {
+   "setups": [
+    "fake"
+   ],
+   "max_days": 10,
+   "max_new": 2,
+   "gate": "below50"
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: alpha",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.1925589570253976,
+   "short_placebo_median": -0.19619432574485957,
+   "both_total": 2.260133200169044,
+   "long_total": 2.071952461861342,
+   "both_by_year": {
+    "2024": 0.23283524599820504,
+    "2025": 1.6444192042298171
+   },
+   "long_by_year": {
+    "2024": 0.2663755479449146,
+    "2025": 1.4257831469081457
+   },
+   "down": {
+    "long": 0.17644394078803538,
+    "both": 0.22414534679969522,
+    "short": -0.02665087119288234
+   },
+   "win": 0.30514705882352944
+  },
+  "base_config": {
+   "setups": [
+    "wave2",
+    "shake"
+   ],
+   "entry": "close",
+   "stop_min": 0.03,
+   "stop_max": 0.06,
+   "priority": "wave",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 2000000.0,
+    "price": 1.0
+   },
+   "wave": {
+    "look": 40,
+    "gain": 0.5,
+    "surge": 3.0,
+    "hold": 0.5,
+    "base": 10,
+    "tight": 0.5,
+    "rest": 5
+   },
+   "rule_opts": {
+    "risk": 0.01,
+    "max_position": 0.5,
+    "max_gross": 1.0,
+    "max_open": 0,
+    "trail": "plo5",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "breakeven_r": 1.0,
+    "exit_signal": "rev",
+    "margin_rate": 0.0,
+    "trim_frac": 0.67,
+    "add_signal": "sig_all",
+    "add_signal_frac": 0.33,
+    "add_signal_max": 1,
+    "add_signal_stop": "low"
+   },
+   "stop_from": "day",
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "shorts_v2",
+  "candidate": "FK",
+  "change": {
+   "setups": [
+    "fake",
+    "brk"
+   ],
+   "max_days": 10,
+   "max_new": 2,
+   "gate": "below50"
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: alpha, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.2688380177882954,
+   "short_placebo_median": -0.2586200174204225,
+   "both_total": 2.135775785659501,
+   "long_total": 2.071952461861342,
+   "both_by_year": {
+    "2024": 0.2605273521251199,
+    "2025": 1.4876697680323274
+   },
+   "long_by_year": {
+    "2024": 0.2663755479449146,
+    "2025": 1.4257831469081457
+   },
+   "down": {
+    "long": 0.17644394078803538,
+    "both": 0.17470224473288964,
+    "short": -0.15739845281844989
+   },
+   "win": 0.2950423216444982
+  },
+  "base_config": {
+   "setups": [
+    "wave2",
+    "shake"
+   ],
+   "entry": "close",
+   "stop_min": 0.03,
+   "stop_max": 0.06,
+   "priority": "wave",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 2000000.0,
+    "price": 1.0
+   },
+   "wave": {
+    "look": 40,
+    "gain": 0.5,
+    "surge": 3.0,
+    "hold": 0.5,
+    "base": 10,
+    "tight": 0.5,
+    "rest": 5
+   },
+   "rule_opts": {
+    "risk": 0.01,
+    "max_position": 0.5,
+    "max_gross": 1.0,
+    "max_open": 0,
+    "trail": "plo5",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "breakeven_r": 1.0,
+    "exit_signal": "rev",
+    "margin_rate": 0.0,
+    "trim_frac": 0.67,
+    "add_signal": "sig_all",
+    "add_signal_frac": 0.33,
+    "add_signal_max": 1,
+    "add_signal_stop": "low"
+   },
+   "stop_from": "day",
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "shorts_v2",
+  "candidate": "K1",
+  "change": {
+   "setups": [
+    "brk"
+   ],
+   "max_days": 10,
+   "max_new": 2
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: alpha, count, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.348850882166298,
+   "short_placebo_median": -0.3539790535899649,
+   "both_total": 2.03710186113052,
+   "long_total": 2.071952461861342,
+   "both_by_year": {
+    "2024": 0.2639386955112897,
+    "2025": 1.4028870007037395
+   },
+   "long_by_year": {
+    "2024": 0.2663755479449146,
+    "2025": 1.4257831469081457
+   },
+   "down": {
+    "long": 0.17644394078803538,
+    "both": 0.09655392006337649,
+    "short": -0.12101248258018071
+   },
+   "win": 0.28941176470588237
+  },
+  "base_config": {
+   "setups": [
+    "wave2",
+    "shake"
+   ],
+   "entry": "close",
+   "stop_min": 0.03,
+   "stop_max": 0.06,
+   "priority": "wave",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 2000000.0,
+    "price": 1.0
+   },
+   "wave": {
+    "look": 40,
+    "gain": 0.5,
+    "surge": 3.0,
+    "hold": 0.5,
+    "base": 10,
+    "tight": 0.5,
+    "rest": 5
+   },
+   "rule_opts": {
+    "risk": 0.01,
+    "max_position": 0.5,
+    "max_gross": 1.0,
+    "max_open": 0,
+    "trail": "plo5",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "breakeven_r": 1.0,
+    "exit_signal": "rev",
+    "margin_rate": 0.0,
+    "trim_frac": 0.67,
+    "add_signal": "sig_all",
+    "add_signal_frac": 0.33,
+    "add_signal_max": 1,
+    "add_signal_stop": "low"
+   },
+   "stop_from": "day",
+   "short": null
+  }
+ },
+ {
+  "round": "S1",
+  "stage": "shorts_v2",
+  "candidate": "K2",
+  "change": {
+   "setups": [
+    "brk"
+   ],
+   "max_days": 10,
+   "max_new": 2,
+   "gate": "below50"
+  },
+  "base": [
+   "",
+   "chosen"
+  ],
+  "chosen": "none",
+  "reason": "gates: alpha, down",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.25004020946214256,
+   "short_placebo_median": -0.19684298252385618,
+   "both_total": 1.9386565015601858,
+   "long_total": 2.071952461861342,
+   "both_by_year": {
+    "2024": 0.2568759982514741,
+    "2025": 1.3380639821655844
+   },
+   "long_by_year": {
+    "2024": 0.2663755479449146,
+    "2025": 1.4257831469081457
+   },
+   "down": {
+    "long": 0.17644394078803538,
+    "both": 0.11127195893716735,
+    "short": -0.205074391798995
+   },
+   "win": 0.2930622009569378
+  },
+  "base_config": {
+   "setups": [
+    "wave2",
+    "shake"
+   ],
+   "entry": "close",
+   "stop_min": 0.03,
+   "stop_max": 0.06,
+   "priority": "wave",
+   "max_new": 3,
+   "strength": "",
+   "filter": "",
+   "pool": {
+    "turnover": 2000000.0,
+    "price": 1.0
+   },
+   "wave": {
+    "look": 40,
+    "gain": 0.5,
+    "surge": 3.0,
+    "hold": 0.5,
+    "base": 10,
+    "tight": 0.5,
+    "rest": 5
+   },
+   "rule_opts": {
+    "risk": 0.01,
+    "max_position": 0.5,
+    "max_gross": 1.0,
+    "max_open": 0,
+    "trail": "plo5",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "breakeven_r": 1.0,
+    "exit_signal": "rev",
+    "margin_rate": 0.0,
+    "trim_frac": 0.67,
+    "add_signal": "sig_all",
+    "add_signal_frac": 0.33,
+    "add_signal_max": 1,
+    "add_signal_stop": "low"
+   },
+   "stop_from": "day",
+   "short": null
+  }
+ },
+ {
   "round": "R2",
   "stage": "exit_behaviour",
   "candidate": "X1",

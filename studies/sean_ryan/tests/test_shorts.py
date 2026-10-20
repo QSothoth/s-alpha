@@ -25,6 +25,16 @@ class ShortTests(unittest.TestCase):
         np.testing.assert_array_equal(R.STUDY.short_setups(later, dict(SC, setups=['fake']))[0]['fake']['armed'][:T + 1],
                                       m['fake']['armed'])
 
+    def test_fake_out_on_volume(self):
+        rows = wave_rows() + [(15.8, 16.2, 15.2, 15.3)]
+        A = wave_panel(rows)
+        quiet = R.STUDY.short_setups(A, dict(SC, setups=['fake'], fake_vol=1.5))[0]['fake']['armed']
+        self.assertFalse(quiet[-1, 0])                          # flat turnover: not loud enough
+        A = wave_panel(rows)
+        A['F'].turnover[-1, 0] = 2e8
+        loud = R.STUDY.short_setups(A, dict(SC, setups=['fake'], fake_vol=1.5))[0]['fake']['armed']
+        self.assertTrue(loud[-1, 0])
+
     def test_no_fake_out_when_it_holds(self):
         rows = wave_rows() + [(15.9, 16.4, 15.7, 16.3)]
         m, _ = R.STUDY.short_setups(wave_panel(rows), dict(SC, setups=['fake']))

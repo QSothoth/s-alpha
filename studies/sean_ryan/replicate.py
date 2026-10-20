@@ -297,7 +297,8 @@ class Ryan(CF.Flanders):
 
         fake   a second-wave breakout (the long trigger) on one of the last `fake_days` (3) sessions before t, and
                today closes back under that breakout's pivot with a red candle; the stop is the highest high since
-               the breakout (at least stop_min above the fill)
+               the breakout (at least stop_min above the fill); fake_vol > 0: only on a day whose turnover is at
+               least fake_vol x its 20-day mean as of t-1 ("big volume", PLTR / IYR reversals)
         brk    the long setup turned over ("sharp moves down and weak recoveries anticipate another sharp move down",
                IYR @00:55:10): within the last `look` sessions a high-to-low drop of at least `drop` (1/3, the
                first wave's +50% mirrored), yesterday's close at most halfway back up, the last `base` sessions
@@ -316,8 +317,10 @@ class Ryan(CF.Flanders):
                 k = sc.get('fake_days', 3)
                 m = np.zeros(F.c.shape, bool)
                 line = np.full(F.c.shape, np.nan)
+                vol = sc.get('fake_vol', 0.0)            # the reversal on volume: turnover >= k x its 20-day mean
+                loud = F.turnover >= vol * lag(F.to20) if vol else np.ones(F.c.shape, bool)
                 for i in range(1, k + 1):
-                    hit = lag(brk_day, i) & (F.c < lag(pivot, i)) & (F.c < F.o)
+                    hit = lag(brk_day, i) & (F.c < lag(pivot, i)) & (F.c < F.o) & loud
                     line = np.where(hit & ~m, F.hi(i + 1), line)
                     m |= hit
                 out['fake'] = dict(armed=pool & m, stop=line)
