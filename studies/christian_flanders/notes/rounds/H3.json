@@ -1,0 +1,11 @@
+{
+ "stage": "human sizing: on H2B, the daily share of the yearly limit, a tight-breakout tier, pyramid adds",
+ "base": ["h2.json", "H2B"],
+ "draws": 50,
+ "candidates": {
+  "H3A": {"max_new": 1},
+  "H3B": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["kind=hi52", "tight<=10"], "risk": 2, "cap": 0.5}]}},
+  "H3C": {"common": {"add": {"frac": 0.5, "max": 1, "stop": "low", "profit": true}}},
+  "H3D": {"common": {"add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}}
+ }
+}
