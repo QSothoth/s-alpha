@@ -45,6 +45,10 @@ BORROW = .03                       # yearly, on short market value
 SMALL = (10.0, 20e6)               # a short on a name under 10 USD or under 20M USD 20-day turnover is "small"
 LONG_TOL = dict(trades=.03, win=.01, hold=.10)     # the longs' behaviour may move this much (relative / absolute)
 MAX_DD_WORSE = .02
+GATE = 'v2'                        # 2026-10-19, the user's short gate (docs/TRADER_PROTOCOL_CN.md section 5)
+MIN_RANK = .90                     # alpha: the short-only account against same-pool random shorts
+MAX_HOLD = 10                      # every closed short within this many sessions
+MAX_SHARE = .25                    # closed shorts at most this share of the long-only system's closed longs
 
 
 def lag(x, n=1):
@@ -290,6 +294,7 @@ def side_stats(tr, side):
                 hold=float(np.mean([x['days'] for x in t])) if t else None,
                 hold_win=float(np.mean([x['days'] for x in t if x['ret'] > 0])) if win.any() else None,
                 hold_loss=float(np.mean([x['days'] for x in t if x['ret'] <= 0])) if (~win).any() else None,
+                hold_max=int(max(x['days'] for x in t)) if t else None,
                 pnl=float(sum(x['pnl'] for x in tr if x['side'] == side)),
                 why={w: sum(1 for x in t if x['why'] == w) for w in sorted({x['why'] for x in t})})
 
@@ -382,34 +387,35 @@ def evaluate(st, A, cfg, draws=50):
 
 
 def passes(r):
-    """The S-round gates (docs/TRADER_PROTOCOL_CN.md section 5); [] = pass."""
+    """The S-round gates, version v2 (docs/TRADER_PROTOCOL_CN.md section 5); [] = pass.  The shorts must pick
+    better than chance (alpha), be short-lived and few, and not hurt the account; how much they add is the
+    objective, not a gate."""
     fails = []
     if not r['gate']['ok']:
         fails.append('gate')
-    L, C = r['long_side'], r['both_long']
+    L, C, S = r['long_side'], r['both_long'], r['short_side']
     if L['trades'] and (abs(C['trades'] - L['trades']) > LONG_TOL['trades'] * L['trades']
                         or abs((C['win'] or 0) - (L['win'] or 0)) > LONG_TOL['win']
                         or abs((C['hold'] or 0) - (L['hold'] or 0)) > LONG_TOL['hold'] * (L['hold'] or 1)):
         fails.append('long_behaviour')
     p = r['short'].get('placebo')
-    if not p or not r['short']['total'] > p['median']:
-        fails.append('short_placebo')
+    if not p or not (r['short']['total'] > p['median'] and p['rank'] >= MIN_RANK):
+        fails.append('alpha')
+    if S.get('hold_max') is None or S['hold_max'] > MAX_HOLD:
+        fails.append('hold')
+    if not S['trades'] <= MAX_SHARE * L['trades']:
+        fails.append('count')
     b, l = r['both'], r['long']
-    if not b['total'] > l['total']:
-        fails.append('total')
-    better = sum(b['by_year'][y] > l['by_year'][y] for y in l['by_year'])
-    if better < 2:
-        fails.append('years')
     if b['maxdd'] > l['maxdd'] + MAX_DD_WORSE:
         fails.append('maxdd')
-    if not r['down']['total']['both'] > r['down']['total']['long']:
+    if r['down']['total']['both'] < r['down']['total']['long']:
         fails.append('down')
     return fails
 
 
 def objective(r):
-    """What the down-market part of the account gained from the shorts (then the whole period)."""
-    return (r['down']['total']['both'] - r['down']['total']['long'], r['both']['total'])
+    """The long-short account over the whole window (then what the down-market part gained from the shorts)."""
+    return (r['both']['total'], r['down']['total']['both'] - r['down']['total']['long'])
 
 
 # ----- rounds -----
@@ -433,7 +439,7 @@ def round_(trader, name):
     A = st.arrays('us')
     out = dict(name=name, stage=spec.get('stage', ''), trader=trader, system=sysx.version, base=spec.get('base', ''),
                base_key=spec.get('base_key', 'chosen'), long_config=long_cfg, base_short=base_short, configs={},
-               results={})
+               results={}, gate_version=GATE)
     draws = spec.get('draws', 50)
     keys = list(spec['candidates'])
     for k in keys:
@@ -445,7 +451,7 @@ def round_(trader, name):
         r['fails'] = passes(r)
         out['results'][k] = r
         line(name, k, r)
-    ref_obj = (0.0, None)                          # the carried version's objective (no shorts: no gain)
+    ref_obj = (None, None)                         # the carried version's objective (none carried yet)
     if base_short is not None:
         ref_obj = tuple(rb['provisional_objective'] if spec.get('base_key') == 'provisional'
                         else rb['chosen_objective'])
@@ -453,13 +459,14 @@ def round_(trader, name):
     for k in keys:
         out['results'][k]['objective'] = list(objective(out['results'][k]))
     best = max(ok, key=lambda k: objective(out['results'][k])) if ok else None
-    if best is not None and base_short is not None and objective(out['results'][best])[0] <= ref_obj[0]:
+    if best is not None and base_short is not None and ref_obj[0] is not None \
+            and objective(out['results'][best])[0] <= ref_obj[0]:
         best = None
     # the registered longs alone already over the win-rate gate: the gate is not changed and nothing is carried, but
     # the best candidate that passes everything else is kept as 'provisional' for the user (and as a labelled base)
     waived = [k for k in keys if out['results'][k]['fails'] == ['gate']
               and not out['results'][k]['long_win_gate']['ok'] and out['results'][k]['gate']['fills']['ok']
-              and objective(out['results'][k])[0] > ref_obj[0]]
+              and (ref_obj[0] is None or objective(out['results'][k])[0] > ref_obj[0])]
     out['provisional'] = max(waived, key=lambda k: objective(out['results'][k])) if waived and not ok else None
     out['provisional_short'] = out['configs'][out['provisional']] if out['provisional'] else None
     out['provisional_objective'] = out['results'][out['provisional']]['objective'] if out['provisional'] else None
