@@ -208,11 +208,17 @@ def run(st, A, cfg, seg, placebo=0, seed=1):
         key = 'base' if t.get('tier') is None else f"x{t['tier']:g}"
         n, w, p = tiers_.get(key, (0, 0, 0.0))
         tiers_[key] = (n + 1, w + (t['ret'] > 0), p + t['pnl'])
+    kinds = {}
+    for t in tr:
+        key = f"{t['kind']} {t['entry'][:4]}"
+        n, w, p = kinds.get(key, (0, 0, 0.0))
+        kinds[key] = (n + 1, w + (t['ret'] > 0), p + t['pnl'])
     out = dict(total=s['total'], by_year=s['by_year'], maxdd=s['maxdd'], trades=len(cl), open_at_end=len(tr) - len(cl),
                win=b['win'], avg_win=b['avg_win'], avg_loss=b['avg_loss'], days_win=b['days_win'],
                median_days_win=b['median_days_win'], per_year=b['per_year'],
                pnl_top10=float(pnl[:k][pnl[:k] > 0].sum() / gross) if gross > 0 else None,
                human=humanized(tr, track, dates), tiers={k: dict(n=v[0], wins=v[1], pnl=v[2]) for k, v in tiers_.items()},
+               kinds={k: dict(n=v[0], wins=v[1], pnl=v[2]) for k, v in sorted(kinds.items())},
                top=top)
     if placebo:
         out['placebo'] = Y.placebo_rank(px, ema, rules, entries, *seg, pool, draws=placebo, seed=seed)
