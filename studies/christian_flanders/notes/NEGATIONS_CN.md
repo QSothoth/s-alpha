@@ -28,6 +28,9 @@
 | S2 | short: his gap-short stop above the 150-day; keeping part of the 200-day short | FG | `{"setups": ["gap200"], "gap_stop": "sma150", "gate": "below50", "max_new": 2, "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
 | S2 | short: his gap-short stop above the 150-day; keeping part of the 200-day short | FH | `{"setups": ["r200", "gap200"], "gap_stop": "sma150", "gate": "below200", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3}` | :chosen | none | gates: years | open |
 | S2 | short: his gap-short stop above the 150-day; keeping part of the 200-day short | FI | `{"setups": ["gap200"], "gap_stop": "sma150", "gate": "below50", "max_new": 2, "trail": "sma10", "trims": [], "trim_day": 1, "trim_day_frac": 0.5, "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
+| H3 | human sizing | H3A | `{"max_new": 1}` | h2.json:H2B | H3D | objective not above the base / H3D；全区间 +103%（带入 +0%） | open |
+| H3 | human sizing | H3B | `{"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["kind=hi52", "tight<=10"], "risk": 2, "cap": 0.5}]}}` | h2.json:H2B | H3D | objective not above the base / H3D；全区间 +117%（带入 +0%） | open |
+| H3 | human sizing | H3C | `{"common": {"add": {"frac": 0.5, "max": 1, "stop": "low", "profit": true}}}` | h2.json:H2B | H3D | objective not above the base / H3D；全区间 +117%（带入 +0%） | open |
 | R3 | entry_stop | E1 | `{"entry": "level_pess"}` | r2.json:chosen | E2 | objective below E2；全区间 +419%（带入 +261%） | open |
 | R3 | entry_stop | E3 | `{"entry_by_kind": {"ep": "open_pct"}, "open_pct": 0.06}` | r2.json:chosen | E2 | gates: placebo；全区间 -40%（带入 +261%） | open |
 | R3 | entry_stop | E4 | `{"entry": "close"}` | r2.json:chosen | E2 | gates: placebo；全区间 -18%（带入 +261%） | open |

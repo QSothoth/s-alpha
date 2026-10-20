@@ -484,6 +484,42 @@ def round_(sid, name):
     return out
 
 
+def capdate(sid, report, key):
+    """The yearly limit as a layer: for a configuration (studies/<sid>/reports/<report>, key; 'H0' for H0), the day
+    each year's last allowed position was opened, the entries offered after it (all, and on his dated longs'
+    names and days), and the account's months: opens and profit by entry month."""
+    from . import systems as SY
+    x = SY.get(sid)
+    st, reg = x.load()
+    cfg = h0_cfg(reg) if report == 'H0' else json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
+    A = st.arrays('us')
+    entries, rules, mask, pool = st.build(A, cfg)
+    px, ema = st.px(A), st.ema_inputs(A, pool, rules)
+    curve, dates, tr = Y.simulate(px, ema, rules, entries, *SELECT, audit=False)
+    days = [str(d) for d in A['days']]
+    his = {(str(A['codes'][j]), days[d]) for t, j, a, b in located_select(st, A) for d in range(a, b + 1)}
+    out = {}
+    for y in ('2024', '2025'):
+        opens = sorted(t['entry'] for t in tr if t['entry'][:4] == y)
+        last = opens[LIMITS['max_year'] - 1] if len(opens) >= LIMITS['max_year'] else None
+        after = [(days[d], e) for d in range(len(days)) if days[d][:4] == y and last and days[d] > last
+                 for e in entries[d]]
+        months = {}
+        for t in tr:
+            if t['entry'][:4] == y:
+                m = t['entry'][:7]
+                n, p_ = months.get(m, (0, 0.0))
+                months[m] = (n + 1, p_ + t['pnl'])
+        out[y] = dict(last=last, opens=len(opens), offered_after=len(after),
+                      his_after=sorted({(str(A['codes'][e[1]]), d) for d, e in after
+                                        if (str(A['codes'][e[1]]), d) in his}),
+                      months={m: [n, round(p_, 4)] for m, (n, p_) in sorted(months.items())})
+        print(sid, y, 'last open', last, 'opens', len(opens), 'offered after', len(after), 'his after',
+              out[y]['his_after'], flush=True)
+        print('   months', out[y]['months'], flush=True)
+    return out
+
+
 ORDER = ('christian_flanders', 'clement_ang', 'martin_luk', 'oliver_kell', 'qullamaggie', 'marios_stamatoudis',
          'mark_minervini')
 NOTES = Path(__file__).resolve().parent / 'notes'
@@ -615,6 +651,8 @@ if __name__ == '__main__':
         sys.exit()
     if sys.argv[1] == 'h0':
         h0(sys.argv[2:])
+    elif sys.argv[1] == 'capdate':               # capdate <system> <report | H0> [key]
+        capdate(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else None)
     elif sys.argv[1] == 'decompose':
         decompose(sys.argv[2:])
     elif sys.argv[1] == 'round':
