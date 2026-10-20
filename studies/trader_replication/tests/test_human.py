@@ -224,6 +224,15 @@ class Transform(unittest.TestCase):
         with self.assertRaises(ValueError):
             SH.wrap(Fake()).build(A, {'human': h})
 
+    def test_near_the_high_uses_the_highs_before_the_day_without_features(self):
+        h = np.arange(600, dtype=float).reshape(300, 2)
+        h[260, 0] = 1e6                                      # a spike on day 260
+        f = H.condition(object(), {'high': h}, {}, 'near52<=0')
+        self.assertFalse(f(260, (0, 0, 1, 500.0, 1, 'x')))   # under the prior high (518); the spike is not known yet
+        self.assertTrue(f(261, (0, 0, 1, 1e6, 1, 'x')))
+        self.assertFalse(f(261, (0, 0, 1, 1e6 - 1, 1, 'x')))
+        self.assertFalse(f(100, (0, 0, 1, 1e9, 1, 'x')))     # less than a year of highs: unknown
+
     def test_engine_cap_builds_uncapped_and_counts_successful_opens(self):
         A = arrays()
         capped = SH.wrap(Fake('build')).build(A, {'max_new': 1, 'human': {}})

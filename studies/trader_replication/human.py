@@ -82,7 +82,15 @@ def condition(st, A, cfg, name):
     F = A.get('F')
     if name.startswith('near52<='):               # the fill within this fraction of the 52-week high before the day
         k = float(name[8:])
-        hi = lag(F.hi(252))
+        if F is not None:
+            hi = lag(F.hi(252))
+        else:                                     # studies without the board's features (Martin): from the highs
+            from numpy.lib.stride_tricks import sliding_window_view
+            h = A['high']
+            hi = np.full(h.shape, np.nan)
+            if len(h) >= 252:
+                hi[251:] = np.fmax.reduce(sliding_window_view(h, 252, axis=0), axis=-1)
+            hi = lag(hi)
         return lambda d, e: bool(e[3] >= (1 - k) * hi[d, e[1]])
     if name.startswith('tight<='):                # the 10 sessions before the day ranged at most this many percent
         k = float(name[7:])

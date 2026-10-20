@@ -4,6 +4,10 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| H1 | human sizing | H1B | `{"max_position": 0.3}` | H:0 | H1A | H gates: his years not closer: 2025；全区间 +119%（带入 +0%） | open |
+| H1 | human sizing | H1C | `{"human": {"rule_opts": {"max_open": 4}}}` | H:0 | H1A | H gates: his years not closer: 2024,2025, behaviour gap 0.118 > 0.074 + 0.02；全区间 +127%（带入 +0%） | open |
+| H1 | human sizing | H1D | `{"human": {"engine_cap": true, "rule_opts": {"max_open": 4}}}` | H:0 | H1A | H gates: his years not closer: 2025, behaviour gap 0.103 > 0.074 + 0.02；全区间 +141%（带入 +0%） | open |
+| H1 | human sizing | H1E | `{"human": {"tiers": [{"when": ["ep", "gap>=0.1", "near52<=0.05"], "risk": 2, "cap": 0.5}]}}` | H:0 | H1A | H gates: his years not closer: 2024,2025；全区间 +139%（带入 +0%） | open |
 | S1 | short: end-to-end from his words (setup choice) | SA | `{"setups": ["Z1"], "gate": "below50", "max_new": 1, "trail": "e9", "trims": [3], "trim_frac": 0.15, "max_days": 3}` | :chosen | none | gates: total, years, down | open |
 | S1 | short: end-to-end from his words (setup choice) | SB | `{"setups": ["Z2"], "gate": "below50", "max_new": 1, "trail": "e9", "trims": [3], "trim_frac": 0.15, "max_days": 3}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
 | S1 | short: end-to-end from his words (setup choice) | SC | `{"setups": ["Z6"], "gate": "below50", "max_new": 1, "trail": "e9", "trims": [3], "trim_frac": 0.15, "max_days": 3}` | :chosen | none | gates: total, maxdd, down | open |
