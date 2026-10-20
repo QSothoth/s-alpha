@@ -1597,6 +1597,263 @@
   }
  },
  {
+  "round": "H3",
+  "stage": "human sizing",
+  "candidate": "H3A",
+  "change": {
+   "small_cap": true
+  },
+  "base": [
+   "h1.json",
+   "H1A"
+  ],
+  "chosen": null,
+  "reason": "objective not above the base / None",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.485196823068902,
+   "by_year": {
+    "2024": 0.6016077063366192,
+    "2025": 0.5516888519182575
+   },
+   "placebo_median": -0.13706808831423,
+   "win": 0.23123123123123124,
+   "bought": [
+    1,
+    31
+   ],
+   "year_gap": {
+    "2024": 0.8718568619765732,
+    "2025": 1.9307128884586682
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   },
+   "human": {
+    "engine_cap": true
+   }
+  }
+ },
+ {
+  "round": "H3",
+  "stage": "human sizing",
+  "candidate": "H3B",
+  "change": {
+   "priority": "adr5_to20",
+   "small_cap": true
+  },
+  "base": [
+   "h1.json",
+   "H1A"
+  ],
+  "chosen": null,
+  "reason": "H gates: his years not closer: 2025, behaviour gap 0.327 > 0.074 + 0.02",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.272476386584692,
+   "by_year": {
+    "2024": 1.054545901605119,
+    "2025": 0.10607233686495587
+   },
+   "placebo_median": -0.14967118824719822,
+   "win": 0.17555555555555555,
+   "bought": [
+    2,
+    31
+   ],
+   "year_gap": {
+    "2024": 0.6228099521172968,
+    "2025": 2.2692415031106354
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   },
+   "human": {
+    "engine_cap": true
+   }
+  }
+ },
+ {
+  "round": "H3",
+  "stage": "human sizing",
+  "candidate": "H3C",
+  "change": {
+   "priority": "adr5_to20",
+   "max_position": 0.3
+  },
+  "base": [
+   "h1.json",
+   "H1A"
+  ],
+  "chosen": null,
+  "reason": "H gates: his years not closer: 2025, behaviour gap 0.285 > 0.074 + 0.02",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.6414224413306853,
+   "by_year": {
+    "2024": 0.6800839136935617,
+    "2025": -0.023011631768964147
+   },
+   "placebo_median": -0.09000951357528225,
+   "win": 0.1843687374749499,
+   "bought": [
+    2,
+    31
+   ],
+   "year_gap": {
+    "2024": 0.8240210623976582,
+    "2025": 2.393337340716996
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   },
+   "human": {
+    "engine_cap": true
+   }
+  }
+ },
+ {
   "round": "S3",
   "stage": "short: entry as a sell-short limit into the falling EMA (layer-two check)",
   "candidate": "SK",
