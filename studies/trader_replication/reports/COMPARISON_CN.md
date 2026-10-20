@@ -92,17 +92,17 @@
 
 ## 门禁明细与版本
 
-- Martin Luk us：通过（配置 7c8b94d6，数据 920f88c4，代码 163e6451，numpy 2.4.6）
-- Martin Luk hk：通过（配置 7c8b94d6，数据 13b801ca，代码 163e6451，numpy 2.4.6）
-- Christian Flanders us：通过（配置 17cb832d，数据 920f88c4，代码 163e6451，numpy 2.4.6）
-- Christian Flanders hk：胜率 35.5% > 35%（498 笔已平仓）（配置 17cb832d，数据 13b801ca，代码 163e6451，numpy 2.4.6）
-- Clement Ang us：通过（配置 49d07e10，数据 920f88c4，代码 163e6451，numpy 2.4.6）
-- Clement Ang hk：通过（配置 49d07e10，数据 13b801ca，代码 163e6451，numpy 2.4.6）
-- Qullamaggie us：通过（配置 065ac68e，数据 920f88c4，代码 163e6451，numpy 2.4.6）
-- Qullamaggie hk：通过（配置 065ac68e，数据 13b801ca，代码 163e6451，numpy 2.4.6）
-- Oliver Kell us：通过（配置 ec729481，数据 920f88c4，代码 163e6451，numpy 2.4.6）
-- Oliver Kell hk：通过（配置 ec729481，数据 13b801ca，代码 163e6451，numpy 2.4.6）
-- Mark Minervini us：通过（配置 826f0114，数据 920f88c4，代码 163e6451，numpy 2.4.6）
-- Mark Minervini hk：通过（配置 826f0114，数据 13b801ca，代码 163e6451，numpy 2.4.6）
-- Marios Stamatoudis us：通过（配置 906ad20b，数据 920f88c4，代码 163e6451，numpy 2.4.6）
-- Marios Stamatoudis hk：通过（配置 906ad20b，数据 13b801ca，代码 163e6451，numpy 2.4.6）
+- Martin Luk us：通过（配置 7c8b94d6，数据 920f88c4，代码 c4d404d7，numpy 2.4.6）
+- Martin Luk hk：通过（配置 7c8b94d6，数据 13b801ca，代码 c4d404d7，numpy 2.4.6）
+- Christian Flanders us：通过（配置 17cb832d，数据 920f88c4，代码 c4d404d7，numpy 2.4.6）
+- Christian Flanders hk：胜率 35.5% > 35%（498 笔已平仓）（配置 17cb832d，数据 13b801ca，代码 c4d404d7，numpy 2.4.6）
+- Clement Ang us：通过（配置 49d07e10，数据 920f88c4，代码 c4d404d7，numpy 2.4.6）
+- Clement Ang hk：通过（配置 49d07e10，数据 13b801ca，代码 c4d404d7，numpy 2.4.6）
+- Qullamaggie us：通过（配置 065ac68e，数据 920f88c4，代码 c4d404d7，numpy 2.4.6）
+- Qullamaggie hk：通过（配置 065ac68e，数据 13b801ca，代码 c4d404d7，numpy 2.4.6）
+- Oliver Kell us：通过（配置 ec729481，数据 920f88c4，代码 c4d404d7，numpy 2.4.6）
+- Oliver Kell hk：通过（配置 ec729481，数据 13b801ca，代码 c4d404d7，numpy 2.4.6）
+- Mark Minervini us：通过（配置 826f0114，数据 920f88c4，代码 c4d404d7，numpy 2.4.6）
+- Mark Minervini hk：通过（配置 826f0114，数据 13b801ca，代码 c4d404d7，numpy 2.4.6）
+- Marios Stamatoudis us：通过（配置 906ad20b，数据 920f88c4，代码 c4d404d7，numpy 2.4.6）
+- Marios Stamatoudis hk：通过（配置 906ad20b，数据 13b801ca，代码 c4d404d7，numpy 2.4.6）
