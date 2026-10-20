@@ -446,15 +446,20 @@ def study_of(trader):
 def round_(trader, name):
     """notes/rounds/<name>.json: {"stage", "base": "" | "<report>", "candidates": {key: short change}, "draws"};
     a candidate's short config = the base's short config (none for "") with the change merged one level deep;
-    "replace": true in a candidate starts from {} instead."""
+    "replace": true in a candidate starts from {} instead; "long": [report, key] takes the longs from that research
+    report instead of the registered system (a long version not yet registered)."""
     sysx, st, long_cfg = study_of(trader)
     spec = json.loads((st.root / 'notes' / 'rounds' / f'{name}.json').read_text(encoding='utf-8'))
+    if spec.get('long'):
+        long_cfg = st.config(*spec['long'])
     base_short = None
     if spec.get('base'):
         rb = json.loads((st.reports / spec['base']).read_text(encoding='utf-8'))
         base_short = rb['provisional_short'] if spec.get('base_key') == 'provisional' else rb['chosen_short']
     A = st.arrays('us')
-    out = dict(name=name, stage=spec.get('stage', ''), trader=trader, system=sysx.version, base=spec.get('base', ''),
+    out = dict(name=name, stage=spec.get('stage', ''), trader=trader,
+               system=sysx.version if not spec.get('long') else 'longs from ' + ':'.join(spec['long']),
+               base=spec.get('base', ''),
                base_key=spec.get('base_key', 'chosen'), long_config=long_cfg, base_short=base_short, configs={},
                results={}, gate_version=GATE)
     draws = spec.get('draws', 50)
@@ -534,6 +539,7 @@ def lookahead(trader, report):
     sysx, st, long_cfg = study_of(trader)
     res = json.loads((st.reports / report).read_text(encoding='utf-8'))
     sc = res['chosen_short'] or res.get('provisional_short')     # a provisional choice is checked too
+    long_cfg = res.get('long_config', long_cfg)                  # the longs the round ran with
     cfg = dict(long_cfg, short=sc) if sc else long_cfg
     g = G.check_lookahead(st, cfg, 'us')
     res['lookahead'] = g

@@ -18,6 +18,7 @@ VARIANTS = {'base': {}, 'borrow 6%': {'borrow': .06}, 'short risk x0.5': {'risk_
 def main(trader, report):
     sysx, st, long_cfg = SH.study_of(trader)
     res = json.loads((st.reports / report).read_text(encoding='utf-8'))
+    long_cfg = res.get('long_config', long_cfg)                 # the longs the round ran with
     key = res['chosen'] if res['chosen'] in res['configs'] else res.get('provisional')
     sc0 = res['configs'][key] if key in res['configs'] else res['chosen_short']
     A = st.arrays('us')
