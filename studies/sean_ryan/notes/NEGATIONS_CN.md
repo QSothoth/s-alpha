@@ -18,3 +18,6 @@
 | R4 | market_selection | M2 | `{"priority": "wave"}` | r3.json:chosen | P4 | gates: behaviour；全区间 +125%（带入 +75%） | open |
 | R4 | market_selection | M3 | `{"wave": {"gain": 1.0}}` | r3.json:chosen | P4 | gates: behaviour；全区间 +67%（带入 +75%） | open |
 | R4 | market_selection | M4 | `{"max_new": 5}` | r3.json:chosen | P4 | gates: behaviour；全区间 +83%（带入 +75%） | open |
+| R5 | selection_paired | Q1 | `{"priority": "wave", "max_new": 5}` | r4.json:chosen | Q2 | gates: behaviour；全区间 +116%（带入 +77%） | open |
+| R5 | selection_paired | Q3 | `{"priority": "wave", "max_new": 5, "rule_opts": {"trims": [2, 4], "trim_frac": 0.33}}` | r4.json:chosen | Q2 | gates: behaviour；全区间 +112%（带入 +77%） | open |
+| R5 | selection_paired | Q4 | `{"priority": "wave", "max_new": 5, "rule_opts": {"trims": [2], "trim_frac": 0.67}}` | r4.json:chosen | Q2 | objective below Q2；全区间 +64%（带入 +77%） | open |

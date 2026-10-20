@@ -82,6 +82,40 @@ def rsi(x, n=14):
     return out
 
 
+def rsi2(c, n=14):
+    """Wilder RSI of each column of a (days x codes) close array (NaN until n valid changes)."""
+    out = np.full(c.shape, np.nan)
+    au = np.full(c.shape[1], np.nan)
+    ad = np.full(c.shape[1], np.nan)
+    cnt = np.zeros(c.shape[1])
+    su = np.zeros(c.shape[1])
+    sd = np.zeros(c.shape[1])
+    for t in range(1, len(c)):
+        d = c[t] - c[t - 1]
+        ok = np.isfinite(d)
+        up, dn = np.where(ok, np.clip(d, 0, None), 0.0), np.where(ok, np.clip(-d, 0, None), 0.0)
+        warm = np.isnan(au)
+        cnt += ok & warm
+        su += np.where(warm, up, 0.0)
+        sd += np.where(warm, dn, 0.0)
+        start = warm & (cnt >= n)
+        au = np.where(start, su / n, np.where(~warm & ok, (au * (n - 1) + up) / n, au))
+        ad = np.where(start, sd / n, np.where(~warm & ok, (ad * (n - 1) + dn) / n, ad))
+        with np.errstate(invalid='ignore', divide='ignore'):
+            out[t] = np.where(np.isfinite(au), np.where(ad == 0, 100.0, 100 - 100 / (1 + au / ad)), np.nan)
+    return out
+
+
+def stock_divergence(c, look=20, gap=5.0):
+    """Day t: a new `look`-day closing high with RSI14 at least `gap` points under its highest of the previous
+    `look` sessions (bars up to t)."""
+    r = rsi2(c)
+    prev_hi = lag(S.rolling(c, look, 'max'))
+    prev_r = lag(S.rolling(r, look, 'max'))
+    with np.errstate(invalid='ignore'):
+        return (c > prev_hi) & (r < prev_r - gap)
+
+
 def bear_state(idx, r, look=60, gap=5.0):
     """Per day (at its close): True from a bearish divergence (a new `look`-day closing high with RSI at least
     `gap` points under its highest of the previous `look` days) until a bullish one (a new closing low with RSI
@@ -129,6 +163,8 @@ class Ryan(CF.Flanders):
             return lag(F.lo(int(name[3:])))
         if name == 'rev':                                # reversal day: a new 20-day high, a close in the day's
             return self.reversal(F)                      # bottom quarter, the biggest volume in 50 sessions
+        if name == 'rsidiv':                             # "the price moved higher and the RSI was weaker"
+            return F.get('ryan_rsidiv', lambda: stock_divergence(F.c))
         return super().named(A, pool, name)
 
     @staticmethod

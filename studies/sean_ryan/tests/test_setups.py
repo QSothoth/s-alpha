@@ -114,6 +114,16 @@ class WaveTests(unittest.TestCase):
         later = np.concatenate([idx, [200.0] * 3])
         np.testing.assert_array_equal(R.bear_state(later, R.rsi(later))[:len(idx)], st)   # no future bars
 
+    def test_stock_rsi_matches_and_diverges(self):
+        steps = [2.0, -.5] * 20 + [1.0, -.9] * 10
+        c = (100 + np.cumsum(steps))[:, None] * np.ones((1, 2))
+        np.testing.assert_allclose(R.rsi2(c)[20:, 0], R.rsi(c[:, 0])[20:], atol=1e-9)
+        div = R.stock_divergence(c)
+        self.assertFalse(div[:40, 0].any())                    # the strong leg: RSI confirms
+        self.assertTrue(div[40:, 0].any())                     # creeping highs: bearish divergence
+        later = np.vstack([c, np.full((3, 2), 300.0)])
+        np.testing.assert_array_equal(R.stock_divergence(later)[:len(c)], div)
+
     def test_stop_bounds(self):
         rows = self.rows[:-2] + [(15.3, 15.6, 13.0, 15.3), (15.4, 16.0, 15.3, 15.9)]   # yesterday's low far
         A = wave_panel(rows)

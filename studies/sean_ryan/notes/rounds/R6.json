@@ -1,0 +1,15 @@
+{
+ "stage": "adds_divergence",
+ "base": ["r5.json", "chosen"],
+ "ref": "Q2",
+ "objective": "total",
+ "gates": ["placebo", "win<=0.35", "behaviour"],
+ "candidates": {
+  "A1": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low"}},
+  "A2": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.25, "add_signal_max": 2, "add_signal_stop": "low"}},
+  "A3": {"rule_opts": {"trim_signal": "rsidiv", "trim_signal_frac": 0.5}},
+  "A4": {"rule_opts": {"trims": [2, 4], "trim_frac": 0.33}},
+  "A5": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low",
+                       "trim_signal": "rsidiv", "trim_signal_frac": 0.5}}
+ }
+}

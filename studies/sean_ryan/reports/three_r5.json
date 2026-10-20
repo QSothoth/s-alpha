@@ -1,0 +1,138 @@
+{
+ "report": "r5.json",
+ "config": {
+  "setups": [
+   "wave2",
+   "shake"
+  ],
+  "entry": "close",
+  "stop_min": 0.03,
+  "stop_max": 0.08,
+  "priority": "wave",
+  "max_new": 3,
+  "strength": "",
+  "filter": "",
+  "pool": {
+   "turnover": 2000000.0,
+   "price": 1.0
+  },
+  "wave": {
+   "look": 40,
+   "gain": 0.5,
+   "surge": 3.0,
+   "hold": 0.5,
+   "base": 10,
+   "tight": 0.5,
+   "rest": 5
+  },
+  "rule_opts": {
+   "risk": 0.01,
+   "max_position": 0.5,
+   "max_gross": 1.0,
+   "max_open": 0,
+   "trail": "plo5",
+   "arm_trail_on_entry": true,
+   "trims": [
+    2
+   ],
+   "breakeven_r": 1.0,
+   "exit_signal": "rev",
+   "margin_rate": 0.0,
+   "trim_frac": 0.67
+  },
+  "stop_from": "day"
+ },
+ "layer1": {
+  "n": 2,
+  "wins": 1,
+  "losses": 1,
+  "r_known": [],
+  "published": {
+   "2024": {
+    "ret": 0.408
+   },
+   "2025": {
+    "ret": 0.888
+   }
+  }
+ },
+ "layer2": {
+  "n": 2,
+  "mean_r": 1.195,
+  "median_r": 1.195,
+  "win": 0.5,
+  "mean_ret": 0.0955,
+  "behaviour": {
+   "trades": 2,
+   "per_year": 0.7068723702664796,
+   "per_day": 0.002805049088359046,
+   "win": 0.5,
+   "avg_win": 0.2542479258942024,
+   "avg_loss": -0.0628738621189825,
+   "days_win": 14.0,
+   "days_loss": 9.0,
+   "median_days_win": 14.0,
+   "median_days_loss": 9.0,
+   "top10_share": 1.0,
+   "entry_weight_mean": 0.12505351465234443,
+   "entry_weight_max": 0.1251070293046889,
+   "open_mean": 0.03225806451612903,
+   "open_max": 2
+  },
+  "sum_r": 2.39
+ },
+ "layer3": {
+  "n": 1162,
+  "mean_r": 0.08028755551011457,
+  "total": 0.9887553611557927,
+  "by_year": {
+   "2023": 0.22719048626408966,
+   "2024": 0.12724544884855016,
+   "2025": 0.4376424670354859
+  },
+  "behaviour": {
+   "trades": 1162,
+   "per_year": 410.69284712482465,
+   "per_day": 1.629733520336606,
+   "win": 0.28141135972461273,
+   "avg_win": 0.1444226887323377,
+   "avg_loss": -0.046586567260104045,
+   "days_win": 14.284403669724771,
+   "days_loss": 3.135329341317365,
+   "median_days_win": 11.0,
+   "median_days_loss": 2.0,
+   "top10_share": 0.6131069329161976,
+   "entry_weight_mean": 0.1301489116059042,
+   "entry_weight_max": 0.3435657286558042,
+   "open_mean": 10.223001402524543,
+   "open_max": 18
+  },
+  "bought": 0
+ },
+ "per_trade": [
+  {
+   "id": "S01",
+   "ticker": "PLTR",
+   "date": "2023-05-17",
+   "setup": "post-earnings gap (2023-05-09) first wave, holds 9-10, second wave",
+   "his_outcome": "win",
+   "his_r": null,
+   "our_r": 3.18,
+   "our_ret": 0.254,
+   "our_days": 14,
+   "our_why": "signal"
+  },
+  {
+   "id": "S02",
+   "ticker": "LZ",
+   "date": "2023-06-06",
+   "setup": "downtrend, sideways, undercut (2023-05-03 low 6.89), big volume move up (05-10 gap), little base",
+   "his_outcome": "loss",
+   "his_r": null,
+   "our_r": -0.79,
+   "our_ret": -0.063,
+   "our_days": 9,
+   "our_why": "trail"
+  }
+ ]
+}
