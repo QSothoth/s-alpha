@@ -65,6 +65,51 @@ def since_extreme(x, n, how):
     return best, age
 
 
+def rsi(x, n=14):
+    """Wilder RSI of a 1-D series."""
+    d = np.diff(x, prepend=x[0])
+    up, dn = np.clip(d, 0, None), np.clip(-d, 0, None)
+    out = np.full(len(x), np.nan)
+    au = ad = None
+    for t in range(1, len(x)):
+        if t < n:
+            continue
+        if au is None:
+            au, ad = up[1:n + 1].mean(), dn[1:n + 1].mean()
+        else:
+            au, ad = (au * (n - 1) + up[t]) / n, (ad * (n - 1) + dn[t]) / n
+        out[t] = 100.0 if ad == 0 else 100 - 100 / (1 + au / ad)
+    return out
+
+
+def bear_state(idx, r, look=60, gap=5.0):
+    """Per day (at its close): True from a bearish divergence (a new `look`-day closing high with RSI at least
+    `gap` points under its highest of the previous `look` days) until a bullish one (a new closing low with RSI
+    `gap` above its lowest) or a new high that RSI confirms (RSI at its own `look`-day high)."""
+    out = np.zeros(len(idx), bool)
+    on = False
+    for t in range(look, len(idx)):
+        win, rw = idx[t - look:t], r[t - look:t]
+        if not np.isfinite(r[t]) or not np.isfinite(rw).all():
+            out[t] = on
+            continue
+        if idx[t] > win.max():
+            on = r[t] < rw.max() - gap
+        elif idx[t] < win.min() and r[t] > rw.min() + gap:
+            on = False
+        out[t] = on
+    return out
+
+
+def rsi_bear(A):
+    """His market read on the comparison's equal-weight index (shorts.market_index): bearish RSI divergence."""
+    from studies.trader_replication.shorts import market_index
+    if '_ryan_bear' not in A:
+        idx = market_index(A)
+        A['_ryan_bear'] = bear_state(idx, rsi(idx))
+    return A['_ryan_bear']
+
+
 class Ryan(CF.Flanders):
     id, name = 'sean_ryan', 'Sean Ryan'
     root = ROOT / 'studies' / 'sean_ryan'
@@ -188,6 +233,23 @@ class Ryan(CF.Flanders):
                 pr = prio[d, j]
                 out[d].append((pr if np.isfinite(pr) else 0.0, int(j), 1, float(fill), float(s), kind, exit0))
         return out
+
+    def priority(self, A, cfg):
+        """'wave': the biggest first wave first ("up 20% -> the next move probably only 20%"), as of t-1."""
+        if cfg.get('priority') != 'wave':
+            return super().priority(A, cfg)
+        F = A['F']
+        w = dict(WAVE, **cfg.get('wave', {}))
+        hi, _ = since_extreme(F.h, w['look'], 'max')
+        lo, _ = since_extreme(F.l, w['look'] + 20, 'min')
+        with np.errstate(invalid='ignore', divide='ignore'):
+            return -lag(hi / lo)
+
+    def market_ok(self, A, cfg):
+        """'RSIDIV': no new longs while the market is in a bearish RSI divergence (decided at t-1)."""
+        if cfg.get('filter') != 'RSIDIV':
+            return super().market_ok(A, cfg)
+        return lag(~rsi_bear(A))
 
     def build(self, A, cfg, trace=None):
         entries, rules, mask, placebo_pool = super().build(A, cfg, trace)

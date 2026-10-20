@@ -1,0 +1,13 @@
+{
+ "stage": "market_selection",
+ "base": ["r3.json", "chosen"],
+ "ref": "P4",
+ "objective": "total",
+ "gates": ["placebo", "win<=0.35", "behaviour"],
+ "candidates": {
+  "M1": {"filter": "RSIDIV"},
+  "M2": {"priority": "wave"},
+  "M3": {"wave": {"gain": 1.0}},
+  "M4": {"max_new": 5}
+ }
+}

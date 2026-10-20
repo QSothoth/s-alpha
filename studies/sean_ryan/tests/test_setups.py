@@ -105,6 +105,15 @@ class WaveTests(unittest.TestCase):
         self.assertAlmostEqual(e[3], 15.3)
         self.assertAlmostEqual(e[4], 14.4)                     # the undercut's low, not the day's low
 
+    def test_bear_divergence_state(self):
+        steps = [2.0, -.5] * 40 + [1.0, -.9] * 15 + [-1.5] * 20   # strong rise, creeping new highs, a drop
+        idx = 100 + np.cumsum(steps)
+        st = R.bear_state(idx, R.rsi(idx))
+        self.assertFalse(st[79])
+        self.assertTrue(st[100:110].any())
+        later = np.concatenate([idx, [200.0] * 3])
+        np.testing.assert_array_equal(R.bear_state(later, R.rsi(later))[:len(idx)], st)   # no future bars
+
     def test_stop_bounds(self):
         rows = self.rows[:-2] + [(15.3, 15.6, 13.0, 15.3), (15.4, 16.0, 15.3, 15.9)]   # yesterday's low far
         A = wave_panel(rows)

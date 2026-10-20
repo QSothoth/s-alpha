@@ -11,3 +11,6 @@
 | R2 | exit_behaviour | X2 | `{"rule_opts": {"nft_days": 5}}` | r1.json:chosen | X5 | objective below X5；全区间 +32%（带入 +31%） | open |
 | R2 | exit_behaviour | X3 | `{"rule_opts": {"breakeven_r": 0.5}}` | r1.json:chosen | X5 | gates: placebo；全区间 +23%（带入 +31%） | open |
 | R2 | exit_behaviour | X4 | `{"rule_opts": {"trims": [2], "trim_frac": 0.5}}` | r1.json:chosen | X5 | gates: placebo；全区间 +22%（带入 +31%） | open |
+| R3 | return_exit_entry | P1 | `{"rule_opts": {"trims": [2], "trim_frac": 0.5}}` | r2.json:chosen | P4 | objective below P4；全区间 +50%（带入 +75%） | open |
+| R3 | return_exit_entry | P2 | `{"rule_opts": {"trims": [3], "trim_frac": 0.5}}` | r2.json:chosen | P4 | objective below P4；全区间 +40%（带入 +75%） | open |
+| R3 | return_exit_entry | P3 | `{"setups": ["wave2", "shake"]}` | r2.json:chosen | P4 | gates: behaviour；全区间 +54%（带入 +75%） | open |
