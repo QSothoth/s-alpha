@@ -1,0 +1,14 @@
+{
+ "stage": "exit_behaviour",
+ "base": ["r1.json", "chosen"],
+ "ref": "E4",
+ "objective": "behaviour",
+ "gates": ["placebo", "win<=0.35"],
+ "candidates": {
+  "X1": {"rule_opts": {"nft_days": 3}},
+  "X2": {"rule_opts": {"nft_days": 5}},
+  "X3": {"rule_opts": {"breakeven_r": 0.5}},
+  "X4": {"rule_opts": {"trims": [2], "trim_frac": 0.5}},
+  "X5": {"rule_opts": {"trail": "plo5"}}
+ }
+}
