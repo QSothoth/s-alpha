@@ -62,3 +62,8 @@
 | R9 | sizing_capacity | Z2 | `{"rule_opts": {"risk": 0.005, "max_open": 20}}` | r8.json:chosen | R8 | objective below R8；全区间 +49%（带入 +31%） | open |
 | R9 | sizing_capacity | Z3 | `{"rule_opts": {"risk": 0.005}, "max_new": 8}` | r8.json:chosen | R8 | objective below R8；全区间 +56%（带入 +31%） | open |
 | R9 | sizing_capacity | Z4 | `{"rule_opts": {"risk": 0.005, "max_open": 20}, "max_new": 8}` | r8.json:chosen | R8 | objective below R8；全区间 +50%（带入 +31%） | open |
+| R10 | exit: his 'trim 1/3-1/2 after 3-5 days, stop to cost, trail the 10 / 20-day' inside his own range, win rate within the gate | L1 | `{"rule_opts": {"trim_day": 5}}` | r7.json:chosen | R7 | gates: win<=0.35；全区间 +28%（带入 +42%） | open |
+| R10 | exit: his 'trim 1/3-1/2 after 3-5 days, stop to cost, trail the 10 / 20-day' inside his own range, win rate within the gate | L2 | `{"rule_opts": {"trim_day_frac": 0.3333}}` | r7.json:chosen | R7 | gates: win<=0.35；全区间 +38%（带入 +42%） | open |
+| R10 | exit: his 'trim 1/3-1/2 after 3-5 days, stop to cost, trail the 10 / 20-day' inside his own range, win rate within the gate | L3 | `{"rule_opts": {"trim_day": 5, "trim_day_frac": 0.3333}}` | r7.json:chosen | R7 | gates: win<=0.35；全区间 +27%（带入 +42%） | open |
+| R10 | exit: his 'trim 1/3-1/2 after 3-5 days, stop to cost, trail the 10 / 20-day' inside his own range, win rate within the gate | L4 | `{"rule_opts": {"trail": "sma10"}}` | r7.json:chosen | R7 | gates: win<=0.35；全区间 +15%（带入 +42%） | open |
+| R10 | exit: his 'trim 1/3-1/2 after 3-5 days, stop to cost, trail the 10 / 20-day' inside his own range, win rate within the gate | L5 | `{"rule_opts": {"trim_day": 5, "trail": "sma10"}}` | r7.json:chosen | R7 | gates: win<=0.35；全区间 +1%（带入 +42%） | open |
