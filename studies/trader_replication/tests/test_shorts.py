@@ -139,6 +139,11 @@ class OrderAndGateTests(unittest.TestCase):
         day = sorted(SH.combine(longs, shorts)[0], key=lambda e: e[0])
         self.assertEqual([e[2] for e in day], [1, -1])
 
+    def test_gate_can_require_several_closes_under(self):
+        A = arrays([(10, 10, 10, 10)] * 6, n=1)
+        A['_short_index'] = np.array([1.0, .5, .5, .5, .5, .5])
+        self.assertEqual(list(SH.gate_days(A, 'below3x3')), [False, False, False, False, True, True])
+
     def test_gate_uses_the_previous_close(self):
         A = arrays([(10, 10, 10, 10)] * 3, n=1)
         A['close'] = np.array([[10.0], [8.0], [8.0]])

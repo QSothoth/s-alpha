@@ -1,0 +1,11 @@
+{
+ "stage": "short, gate v2: C4C / C4A only once the market has turned (index under EMA50 for several closes)",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "C5A": {"setups": ["fb20"], "turnover": 500000000.0, "run": 1.0, "gate": "below50x5", "max_new": 1, "stop_w": "cap", "max_days": 5, "trail": "ema10"},
+  "C5B": {"setups": ["fb20"], "turnover": 500000000.0, "run": 1.0, "gate": "below50x10", "max_new": 1, "stop_w": "cap", "max_days": 5, "trail": "ema10"},
+  "C5C": {"setups": ["fb20"], "turnover": 500000000.0, "run": 1.0, "gate": "below50x5", "max_new": 1, "stop_w": "cap", "max_days": 10, "trail": "ema10", "risk_mult": 0.5},
+  "C5D": {"setups": ["fb20"], "turnover": 500000000.0, "run": 1.0, "gate": "below50x10", "max_new": 1, "stop_w": "cap", "max_days": 10, "trail": "ema10", "risk_mult": 0.5}
+ }
+}

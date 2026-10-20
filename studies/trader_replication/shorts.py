@@ -90,6 +90,13 @@ def gate_days(A, spec):
     """Days on which new shorts are allowed, decided at the previous close."""
     if not spec:
         return np.ones(len(A['days']), bool)
+    if spec.startswith('below') and 'x' in spec:     # 'below50x5': under the EMA on each of the last 5 closes
+        n, k = (int(v) for v in spec[5:].split('x'))
+        under = index_below(A, n)
+        ok = np.ones(len(under), bool)
+        for i in range(1, k + 1):
+            ok &= lag(under, i)
+        return ok
     if spec.startswith('below'):
         return lag(index_below(A, int(spec[5:])))
     if spec.startswith('above'):
