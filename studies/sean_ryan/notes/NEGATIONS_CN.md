@@ -7,3 +7,7 @@
 | R1 | execution | E1 | `{"entry": "close", "stop_from": "prev"}` | r0.json:chosen | E4 | gates: placebo；全区间 +5%（带入 +53%） | open |
 | R1 | execution | E2 | `{"entry": "close", "stop_from": "day"}` | r0.json:chosen | E4 | objective below E4；全区间 +29%（带入 +53%） | open |
 | R1 | execution | E3 | `{"entry": "pivot_close"}` | r0.json:chosen | E4 | gates: placebo；全区间 +2%（带入 +53%） | open |
+| R2 | exit_behaviour | X1 | `{"rule_opts": {"nft_days": 3}}` | r1.json:chosen | X5 | gates: placebo；全区间 +0%（带入 +31%） | open |
+| R2 | exit_behaviour | X2 | `{"rule_opts": {"nft_days": 5}}` | r1.json:chosen | X5 | objective below X5；全区间 +32%（带入 +31%） | open |
+| R2 | exit_behaviour | X3 | `{"rule_opts": {"breakeven_r": 0.5}}` | r1.json:chosen | X5 | gates: placebo；全区间 +23%（带入 +31%） | open |
+| R2 | exit_behaviour | X4 | `{"rule_opts": {"trims": [2], "trim_frac": 0.5}}` | r1.json:chosen | X5 | gates: placebo；全区间 +22%（带入 +31%） | open |

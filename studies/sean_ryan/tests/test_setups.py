@@ -91,6 +91,20 @@ class WaveTests(unittest.TestCase):
                 if x[1] == 0]
         self.assertAlmostEqual(e[4], 15.3)                     # the day's low
 
+    def test_shakeout(self):
+        rows = self.rows[:-1] + [(15.1, 15.2, 14.6, 14.7), (14.7, 14.8, 14.4, 14.5),   # under the base low 15.0
+                                 (14.6, 15.4, 14.5, 15.3)]                            # closes back above it
+        A = wave_panel(rows)
+        cfg = dict(self.cfg, setups=['shake'], entry='close', stop_from='day')
+        m, neck, under = R.STUDY.setups(A, cfg)['shake']
+        T = len(rows) - 1
+        self.assertTrue(m[T, 0])
+        self.assertFalse(m[T - 1, 0])
+        self.assertAlmostEqual(neck[T, 0], 15.0)
+        (e,) = [x for x in R.STUDY.entries(A, cfg, {'shake': (m, neck, under)})[T] if x[1] == 0]
+        self.assertAlmostEqual(e[3], 15.3)
+        self.assertAlmostEqual(e[4], 14.4)                     # the undercut's low, not the day's low
+
     def test_stop_bounds(self):
         rows = self.rows[:-2] + [(15.3, 15.6, 13.0, 15.3), (15.4, 16.0, 15.3, 15.9)]   # yesterday's low far
         A = wave_panel(rows)

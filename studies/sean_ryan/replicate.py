@@ -135,6 +135,17 @@ class Ryan(CF.Flanders):
             with np.errstate(invalid='ignore'):
                 m = pool & ready & (F.h > pivot)
             out['wave2'] = (m, pivot, lag(F.l))
+        if 'shake' in names:
+            # his second safe buy point, "a breakdown and reversal, that's a shakeout, you buy at the neck": a base
+            # that was ready three sessions ago (bars to t-3), traded under its low in the last two sessions and
+            # closes back above that low today (with a higher close); the stop is the undercut's low
+            ready, _ = self.wave(A, cfg)
+            b = dict(WAVE, **cfg.get('wave', {}))['base']
+            neck = lag(F.lo(b), 3)
+            under = lag(F.lo(2))
+            with np.errstate(invalid='ignore'):
+                m = pool & lag(ready, 2) & (under < neck) & (F.c > neck) & (F.c > lag(F.c))
+            out['shake'] = (m, neck, under)
         return out
 
     def entries(self, A, cfg, masks):
@@ -162,7 +173,7 @@ class Ryan(CF.Flanders):
                     if not c[d, j] > level[d, j]:
                         continue
                     fill = c[d, j]
-                    s = l[d, j] if cfg.get('stop_from', 'prev') == 'day' else stop[d, j]
+                    s = l[d, j] if cfg.get('stop_from', 'prev') == 'day' and kind != 'shake' else stop[d, j]
                 else:
                     fill = max(o[d, j], level[d, j])
                     s = stop[d, j]
