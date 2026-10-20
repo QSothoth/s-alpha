@@ -5,7 +5,7 @@ description: 把一位公开过做法和交易记录的交易员按他自己的�
 
 # 逼近一个交易员（trader-replication）
 
-工程为 `/opt/opend-us-options`，沿用根及 `studies/AGENTS.md` 的研究规范（预登记、每轮 ≤ 5 个候选、选择段与验证段分开、失败照记、不为单个 case 拟合）。方法、口径与常见坑见 [METHOD_CN](references/METHOD_CN.md)；做过的例子各有一份参考：[Martin Luk](references/MARTIN_LUK_CN.md)（第一个例子，含运行命令）。
+工程为 `/opt/opend-us-options`，沿用根及 `studies/AGENTS.md` 的研究规范（预登记、每轮 ≤ 5 个候选、选择段与验证段分开、失败照记、不为单个 case 拟合）。方法、口径与常见坑见 [METHOD_CN](references/METHOD_CN.md)；做过的例子各有一份参考：[Martin Luk](references/MARTIN_LUK_CN.md)（第一个例子，含运行命令）、[Sean Ryan](references/SEAN_RYAN_CN.md)（第二波，逐轮按时间切分、验证段未通过）。
 
 数据层、门禁与横向比对统一按 [TRADER_PROTOCOL_CN](../../docs/TRADER_PROTOCOL_CN.md)：所有交易员用同一份数据集 `trader-data-v1`、同一评测区间和同一引擎，结果先过工程门禁（数据版本、不看未来、成交价在当日区间内、胜率 ≤ 35%），好坏由人对照比对表判断。
 

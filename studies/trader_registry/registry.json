@@ -369,10 +369,18 @@
         "补全借券、杠杆与容量记录"
       ],
       "implementation": {
-        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
-        "code_paths": [],
-        "report_paths": [],
-        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行独立日线第二波、保本及RSI退出代理和退出锁定审计；不是本人全规则。限定名单、因子单位账本及非独立样本外限制保留。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/sean_ryan/daily_engine.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/sean_ryan/reports/FINAL_CN.md"
+        "status": "EXECUTED_DAILY_LIMITED_HYPOTHESES",
+        "code_paths": [
+          "studies/sean_ryan/replicate.py",
+          "studies/sean_ryan/shorts_round.py",
+          "studies/trader_replication/system.py",
+          "studies/trader_replication/shorts.py"
+        ],
+        "report_paths": [
+          "studies/sean_ryan/reports/FINAL_CN.md",
+          "studies/sean_ryan/reports/SHORTS_CN.md"
+        ],
+        "note": "2026-10-20 main：按本人 TraderLion 2024-01 访谈原话在 trader-data-v1 上逐环节复刻（第二波 / 洗盘、收盘买、当日低点止损 ≤ 6%、1R 保本、2R 卖三分之二、新买点加三分之一、前 5 日低点或反转日离场），B 级（台账 6 行、全在 2023），R0–R8 在选择段 2024–2025 逐轮选出 W2（+207%），2026 验证段只评一次 −43.6%、排位 0.00，未通过；空头 S1–S2 未带入（他的主要空头是反向 ETF，数据缺口）；未在 systems.py 登记。历史分支 9bc6a6b 的日线第二波研究只作线索，不迁入。"
       }
     },
     {
