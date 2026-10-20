@@ -760,6 +760,431 @@
   }
  },
  {
+  "round": "H2",
+  "stage": "human sizing",
+  "candidate": "H2A",
+  "change": {
+   "priority": "theme"
+  },
+  "base": [
+   "h1.json",
+   "H1A"
+  ],
+  "chosen": null,
+  "reason": "H gates: his years not closer: 2024,2025, behaviour gap 0.202 > 0.074 + 0.02",
+  "objective": "human.objective",
+  "evidence": {
+   "total": -0.03718775276343034,
+   "by_year": {
+    "2024": -0.3451169612340923,
+    "2025": 0.4702048919314481
+   },
+   "placebo_median": -0.1263554656321152,
+   "win": 0.2087227414330218,
+   "bought": [
+    2,
+    31
+   ],
+   "year_gap": {
+    "2024": 1.76616342925399,
+    "2025": 1.9846550347649279
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   },
+   "human": {
+    "engine_cap": true
+   }
+  }
+ },
+ {
+  "round": "H2",
+  "stage": "human sizing",
+  "candidate": "H2B",
+  "change": {
+   "priority": "gain"
+  },
+  "base": [
+   "h1.json",
+   "H1A"
+  ],
+  "chosen": null,
+  "reason": "H gates: placebo, his years not closer: 2024,2025, bought 0 < 1, behaviour gap 0.473 > 0.074 + 0.02, days_win 19.205 vs H0 15.662",
+  "objective": "human.objective",
+  "evidence": {
+   "total": -0.2653029715898402,
+   "by_year": {
+    "2024": -0.04123866695265466,
+    "2025": -0.2337018577136557
+   },
+   "placebo_median": -0.05017560482666328,
+   "win": 0.1462925851703407,
+   "bought": [
+    0,
+    31
+   ],
+   "year_gap": {
+    "2024": 1.3849779089139675,
+    "2025": 2.6362407733819744
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   },
+   "human": {
+    "engine_cap": true
+   }
+  }
+ },
+ {
+  "round": "H2",
+  "stage": "human sizing",
+  "candidate": "H2C",
+  "change": {
+   "priority": "pr21"
+  },
+  "base": [
+   "h1.json",
+   "H1A"
+  ],
+  "chosen": null,
+  "reason": "H gates: placebo, his years not closer: 2024,2025, bought 0 < 1, behaviour gap 0.477 > 0.074 + 0.02",
+  "objective": "human.objective",
+  "evidence": {
+   "total": -0.576562749890453,
+   "by_year": {
+    "2024": -0.07251913469712701,
+    "2025": -0.543454462565897
+   },
+   "placebo_median": -0.054608357857953094,
+   "win": 0.152,
+   "bought": [
+    0,
+    31
+   ],
+   "year_gap": {
+    "2024": 1.4181479183071262,
+    "2025": 3.154123638615873
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   },
+   "human": {
+    "engine_cap": true
+   }
+  }
+ },
+ {
+  "round": "H2",
+  "stage": "human sizing",
+  "candidate": "H2D",
+  "change": {
+   "priority": "rvol"
+  },
+  "base": [
+   "h1.json",
+   "H1A"
+  ],
+  "chosen": null,
+  "reason": "H gates: placebo, his years not closer: 2024,2025, behaviour gap 0.434 > 0.074 + 0.02, days_win 19.212 vs H0 15.662",
+  "objective": "human.objective",
+  "evidence": {
+   "total": -0.1787198119907556,
+   "by_year": {
+    "2024": -0.03460277527573752,
+    "2025": -0.14928263001396225
+   },
+   "placebo_median": -0.032368850349877354,
+   "win": 0.14254859611231102,
+   "bought": [
+    3,
+    31
+   ],
+   "year_gap": {
+    "2024": 1.3780804336942352,
+    "2025": 2.5317321288553236
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   },
+   "human": {
+    "engine_cap": true
+   }
+  }
+ },
+ {
+  "round": "H2",
+  "stage": "human sizing",
+  "candidate": "H2E",
+  "change": {
+   "priority": "adr5_to20"
+  },
+  "base": [
+   "h1.json",
+   "H1A"
+  ],
+  "chosen": null,
+  "reason": "H gates: his years not closer: 2025, behaviour gap 0.327 > 0.074 + 0.02",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.272476386584692,
+   "by_year": {
+    "2024": 1.054545901605119,
+    "2025": 0.10607233686495587
+   },
+   "placebo_median": -0.14967118824719822,
+   "win": 0.17555555555555555,
+   "bought": [
+    2,
+    31
+   ],
+   "year_gap": {
+    "2024": 0.6228099521172968,
+    "2025": 2.2692415031106354
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   },
+   "human": {
+    "engine_cap": true
+   }
+  }
+ },
+ {
   "round": "S2",
   "stage": "short: trigger and exits from the per-trade check (S1 diagnosis)",
   "candidate": "SF",
