@@ -1,0 +1,11 @@
+{
+ "stage": "stop_width",
+ "base": ["r7.json", "chosen"],
+ "ref": "B1",
+ "objective": "total",
+ "gates": ["placebo", "win<=0.35", "behaviour+0.02"],
+ "candidates": {
+  "W1": {"stop_max": 0.05},
+  "W2": {"stop_max": 0.06}
+ }
+}
