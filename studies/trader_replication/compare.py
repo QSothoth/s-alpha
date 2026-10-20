@@ -42,7 +42,8 @@ def ew_bench(A, seg):
 
 SOURCES = ('studies/trader_replication/*.py', 'studies/trader_data/*.py', 'studies/christian_flanders/replicate.py',
            'studies/clement_ang/replicate.py', 'studies/qullamaggie/replicate.py', 'studies/oliver_kell/replicate.py',
-           'studies/mark_minervini/replicate.py', 'studies/martin_luk/replicate.py', 'studies/martin_luk/luk.py',
+           'studies/mark_minervini/replicate.py', 'studies/marios_stamatoudis/replicate.py',
+           'studies/martin_luk/replicate.py', 'studies/martin_luk/luk.py',
            'studies/martin_luk/selection.py', 'studies/trader_screens/screens.py', 'studies/trader_screens/data.py',
            'studies/trend_breakout/panel.py')
 

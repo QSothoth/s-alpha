@@ -1,6 +1,6 @@
 ---
 name: trader-screens
-description: 交易员看板：假设研究过的交易员此刻在美股 / 港股 / A 股里交易，每人用研究里登记的同一套系统（与横向比对表相同），今天买了什么（只有他按自己的节奏真会下单的几笔）、卖了什么、手里拿着什么、持仓的离场线在哪，以及几个人之间的交集（同一天都买、同时持有、持仓集中的行业）。目前有 Martin Luk（R74，已冻结）和 Christian Flanders、Clement Ang、Qullamaggie、Oliver Kell（研究带入配置，未冻结）、Mark Minervini（B 级基线）。用于“看看这些交易员今天在做什么”“更新看板”“这周他们买了什么”“几个人都在拿哪些票”；研究、逼近和冻结新交易员用 trader-replication；不做单股技术判断、不下单、不接 custody。
+description: 交易员看板：假设研究过的交易员此刻在美股 / 港股 / A 股里交易，每人用研究里登记的同一套系统（与横向比对表相同），今天买了什么（只有他按自己的节奏真会下单的几笔）、卖了什么、手里拿着什么、持仓的离场线在哪，以及几个人之间的交集（同一天都买、同时持有、持仓集中的行业）。目前有 Martin Luk、Christian Flanders、Clement Ang、Qullamaggie、Oliver Kell（多空一体，已冻结）、Mark Minervini（B 级基线）和 Marios Stamatoudis（研究版）。用于“看看这些交易员今天在做什么”“更新看板”“这周他们买了什么”“几个人都在拿哪些票”；研究、逼近和冻结新交易员用 trader-replication；不做单股技术判断、不下单、不接 custody。
 ---
 
 # 交易员看板（trader-screens）
@@ -21,6 +21,7 @@ description: 交易员看板：假设研究过的交易员此刻在美股 / 港�
 |---|---|---|
 | 已冻结（多空一体，2026-10-20 用户认可） | Martin Luk（R74 + S7）、Christian Flanders（R15 C4 + S4）、Clement Ang（R15 AA3 + S5）、Qullamaggie（R11 N3 + S7）、Oliver Kell（R6 A5 + S5） | 到冻结日 2026-10-16 为止全是样本内，之后是唯一的样本外；空头只在美股（港股、A 股不适用，只跑多头），按 [TRADER_PROTOCOL_CN 第 5 节](../../docs/TRADER_PROTOCOL_CN.md) 的门禁 v2 选出；Qullamaggie 的多头同时换成了 R11 N3（+2R 才保本，偏离原话）；Flanders 的合计改善偏弱。各人结论在 `studies/<id>/notes/SHORTS_CONCLUSION_CN.md` |
 | B 级基线 | Mark Minervini（R0b，只做多） | 台账不够，按原话的基线系统；空头基线没通过 |
+| 研究版（2026-10-20 用户同意放进看板，未冻结） | Marios Stamatoudis（R1 L4 + S1 P4） | B 级台账（有日期 19 笔）；只在选择段 2024–2025 逐轮选择，2026 验证段只评一次 −4.3%、未跑赢同池随机入场（排位 0.33）；选择段利润约九成来自 ABVX、INBX 两笔；结论在 `studies/marios_stamatoudis/reports/FINAL_CN.md` |
 
 空单在看板上写成“卖空 X 价格，涨破 Y 回补”，持仓表的方向列标“空”，离场线写成“涨破 X 回补 · 收盘站上某线回补”。live 数据遇到除权会把冻结日以前的价格重新复权，回放核对可能出现 1e-9 量级的浮点差，被标成“不一致”，这不是行为变化（冻结数据上回放完全一致）。
 

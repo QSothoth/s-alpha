@@ -25,8 +25,8 @@ class System:
 
     @property
     def label(self):
-        return {'frozen': f'{self.version}（已冻结）', 'baseline': f'{self.version}（B 级，基线）'}.get(self.status,
-                                                                                                  self.version)
+        return {'frozen': f'{self.version}（已冻结）', 'baseline': f'{self.version}（B 级，基线）',
+                'research': f'{self.version}（研究版）'}.get(self.status, self.version)
 
     def load(self):
         """(study, configuration); the study is wrapped by shorts.LongShort, which adds the short side when the
@@ -92,7 +92,11 @@ def all_():
             System('clement_ang', 'R15 AA3 + S5', 'frozen', _study('clement_ang', 'r15.json', ('s5.json', 'C5A'))),
             System('qullamaggie', 'R11 N3 + S7', 'frozen', _study('qullamaggie', 'r11.json', ('s7.json', 'Q7C'))),
             System('oliver_kell', 'R6 A5 + S5', 'frozen', _study('oliver_kell', 'r6.json', ('s5.json', 'K5B'))),
-            System('mark_minervini', 'R0b', 'baseline', _study('mark_minervini', 'r0b.json'))]
+            System('mark_minervini', 'R0b', 'baseline', _study('mark_minervini', 'r0b.json')),
+            # 2026-10-20: put on the board by the user as a research version (B ledger; the 2026 validation segment
+            # did not beat same-pool random entry), studies/marios_stamatoudis/reports/FINAL_CN.md
+            System('marios_stamatoudis', 'R1 L4 + S1 P4', 'research',
+                   _study('marios_stamatoudis', 'r1.json', ('s1.json', 'P4')))]
 
 
 def get(id_):
@@ -135,4 +139,10 @@ STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, �
                        '收盘买，当日低点止损（≥ 1%）',
                        '收盘跌破 50 日线',
                        '每笔风险 0.5%，单只 ≤ 30%，总敞口 ≤ 100%，最多 8 只，每天 ≤ 2 笔；无市况过滤'),
+    'marios_stamatoudis': ('R1 L4 + S1 P4（研究版，B 级，2026 验证段未跑赢随机）',
+                           '10 天收紧底部的突破（1 / 3 / 6 月强度前 2%）；EP（高开 ≥ 5%、3 倍量）。池：20 日成交额 ≥ 200 万、价格 ≥ 1 美元、突破另要 ADR ≥ 4%',
+                           '收盘买，当日低点止损（≥ 1%）；突破单止损宽于 1 ADR、EP 宽于 3 ADR 就不做',
+                           '+3R 卖 1/4 并把止损移到成本，余下收盘跌破 10 日线',
+                           '每笔风险 0.3%，单只 ≤ 25%，总敞口 ≤ 100%，最多 15 只，每天 ≤ 3 笔；无市况过滤。'
+                           '空头 S1：抛物线（连涨 ≥ 3 天，20 日涨 ≥ 300%，大票 ≥ 50%）收阴且收在昨收下方，收盘卖空，止损当日高点；指数 < 50 EMA 才开、每天 1 笔，最多 5 天'),
 }
