@@ -18,6 +18,18 @@
 | Mark Minervini | R0b（B 级，基线） | 通过 | +157% | +40% | 25% | +68% | +27% | +20% | +43% | +16% / 0.98 | 294（7） | 105 | 13% | +49% / -3% | 14.6 | 55 | 98% | 2.7% | 13% | 6.3 | 5 |
 | Marios Stamatoudis | R1 L4 + C4B + S1 P4（研究版） | 通过 | +456% | +85% | 28% | +77% | +210% | +1% | +43% | +12% / 1.00 | 1511（9） | 542 | 32% | +19% / -7% | 2.5 | 10 | 85% | 6.1% | 7% | 12.1 | 8 |
 
+人性化（美股）：硬约束为总敞口 ≤ 100%（不产生融资利息）、同时持仓 ≤ 10 只、每天新开 ≤ 3 笔、每年开仓 ≤ 250 笔、单只 ≤ 50%、卖出当天不买回（`human.py`，reports/HUMAN_SIZING_CN.md）。
+
+| 交易员 | 配置 | 最大同时持仓 | 平均同时持仓 | 最大总敞口 | 每天最多新开 | 每年开仓（最多的一年） | 融资利息 | 当天买回 | 满足硬约束 |
+|---|---|---|---|---|---|---|---|---|---|
+| Martin Luk | R74 + S7（已冻结） | 14 | 6.9 | 324% | 4 | 348 | 2.535 | 148 | 否 |
+| Christian Flanders | R15 C4 + C1C + S4（已冻结） | 8 | 6.8 | 101% | 3 | 393 | 0.000 | 18 | 否 |
+| Clement Ang | R15 AA3 + C4A + S5（已冻结） | 30 | 15.0 | 203% | 12 | 564 | 0.306 | 51 | 否 |
+| Qullamaggie | R11 N3 + S7（已冻结） | 15 | 8.9 | 100% | 6 | 234 | 0.000 | 3 | 否 |
+| Oliver Kell | R6 A5 + S5（已冻结） | 12 | 9.2 | 121% | 5 | 355 | 0.012 | 63 | 否 |
+| Mark Minervini | R0b（B 级，基线） | 8 | 6.3 | 100% | 2 | 120 | 0.000 | 1 | 否 |
+| Marios Stamatoudis | R1 L4 + C4B + S1 P4（研究版） | 15 | 12.1 | 100% | 5 | 543 | 0.000 | 4 | 否 |
+
 ## 港股
 
 | 交易员 | 配置 | 门禁 | 全段 | 年化 | 最大回撤 | 2024 | 2025 | 2026 | 等权持有 | 安慰剂中位 / 排位 | 已平仓笔数（期末未平） | 笔数 / 年 | 胜率 | 平均赚 / 亏 | 盈亏比 | 赢家持有（中位天） | 利润集中度 | 止损宽度中位 | 单笔仓位 | 同时持仓 | 候选 / 天 |
@@ -29,6 +41,18 @@
 | Oliver Kell | R6 A5 + S5（已冻结） | 通过 | +108% | +30% | 27% | +25% | +10% | +51% | +52% | +44% / 0.90 | 777（2） | 279 | 19% | +23% / -4% | 6.3 | 22 | 91% | 3.1% | 8% | 8.1 | 8 |
 | Mark Minervini | R0b（B 级，基线） | 通过 | +113% | +31% | 24% | +43% | +43% | +4% | +52% | +48% / 0.76 | 170（5） | 61 | 24% | +34% / -4% | 8.0 | 53 | 78% | 3.6% | 14% | 5.5 | 0 |
 | Marios Stamatoudis | R1 L4 + C4B + S1 P4（研究版） | 通过 | +6% | +2% | 19% | +13% | +7% | -12% | +52% | +6% / 0.49 | 465（2） | 167 | 31% | +15% / -5% | 2.8 | 11 | 76% | 4.4% | 10% | 3.6 | 0 |
+
+人性化（港股）：硬约束为总敞口 ≤ 100%（不产生融资利息）、同时持仓 ≤ 10 只、每天新开 ≤ 3 笔、每年开仓 ≤ 250 笔、单只 ≤ 50%、卖出当天不买回（`human.py`，reports/HUMAN_SIZING_CN.md）。
+
+| 交易员 | 配置 | 最大同时持仓 | 平均同时持仓 | 最大总敞口 | 每天最多新开 | 每年开仓（最多的一年） | 融资利息 | 当天买回 | 满足硬约束 |
+|---|---|---|---|---|---|---|---|---|---|
+| Martin Luk | R74 + S7（已冻结） | 12 | 4.4 | 322% | 4 | 265 | 0.121 | 123 | 否 |
+| Christian Flanders | R15 C4 + C1C + S4（已冻结） | 8 | 4.6 | 100% | 2 | 215 | 0.000 | 7 | 否 |
+| Clement Ang | R15 AA3 + C4A + S5（已冻结） | 27 | 12.4 | 201% | 11 | 557 | 0.130 | 54 | 否 |
+| Qullamaggie | R11 N3 + S7（已冻结） | 11 | 2.0 | 100% | 5 | 64 | 0.000 | 1 | 否 |
+| Oliver Kell | R6 A5 + S5（已冻结） | 12 | 8.1 | 124% | 4 | 348 | 0.007 | 35 | 否 |
+| Mark Minervini | R0b（B 级，基线） | 8 | 5.5 | 100% | 2 | 72 | 0.000 | 1 | 否 |
+| Marios Stamatoudis | R1 L4 + C4B + S1 P4（研究版） | 15 | 3.6 | 90% | 3 | 170 | 0.000 | 6 | 否 |
 
 ## 多空：多空合计与只做空
 
@@ -92,17 +116,17 @@
 
 ## 门禁明细与版本
 
-- Martin Luk us：通过（配置 7c8b94d6，数据 920f88c4，代码 80f998a8，numpy 2.4.6）
-- Martin Luk hk：通过（配置 7c8b94d6，数据 13b801ca，代码 80f998a8，numpy 2.4.6）
-- Christian Flanders us：通过（配置 d92c8490，数据 920f88c4，代码 80f998a8，numpy 2.4.6）
-- Christian Flanders hk：通过（配置 d92c8490，数据 13b801ca，代码 80f998a8，numpy 2.4.6）
-- Clement Ang us：通过（配置 775becf9，数据 920f88c4，代码 80f998a8，numpy 2.4.6）
-- Clement Ang hk：通过（配置 775becf9，数据 13b801ca，代码 80f998a8，numpy 2.4.6）
-- Qullamaggie us：通过（配置 065ac68e，数据 920f88c4，代码 80f998a8，numpy 2.4.6）
-- Qullamaggie hk：通过（配置 065ac68e，数据 13b801ca，代码 80f998a8，numpy 2.4.6）
-- Oliver Kell us：通过（配置 ec729481，数据 920f88c4，代码 80f998a8，numpy 2.4.6）
-- Oliver Kell hk：通过（配置 ec729481，数据 13b801ca，代码 80f998a8，numpy 2.4.6）
-- Mark Minervini us：通过（配置 826f0114，数据 920f88c4，代码 80f998a8，numpy 2.4.6）
-- Mark Minervini hk：通过（配置 826f0114，数据 13b801ca，代码 80f998a8，numpy 2.4.6）
-- Marios Stamatoudis us：通过（配置 f3aa5477，数据 920f88c4，代码 80f998a8，numpy 2.4.6）
-- Marios Stamatoudis hk：通过（配置 f3aa5477，数据 13b801ca，代码 80f998a8，numpy 2.4.6）
+- Martin Luk hk：通过（配置 7c8b94d6，数据 13b801ca，代码 5ffed9be，numpy 2.4.6）
+- Martin Luk us：通过（配置 7c8b94d6，数据 920f88c4，代码 5ffed9be，numpy 2.4.6）
+- Christian Flanders hk：通过（配置 d92c8490，数据 13b801ca，代码 5ffed9be，numpy 2.4.6）
+- Christian Flanders us：通过（配置 d92c8490，数据 920f88c4，代码 5ffed9be，numpy 2.4.6）
+- Clement Ang hk：通过（配置 775becf9，数据 13b801ca，代码 5ffed9be，numpy 2.4.6）
+- Clement Ang us：通过（配置 775becf9，数据 920f88c4，代码 5ffed9be，numpy 2.4.6）
+- Qullamaggie hk：通过（配置 065ac68e，数据 13b801ca，代码 5ffed9be，numpy 2.4.6）
+- Qullamaggie us：通过（配置 065ac68e，数据 920f88c4，代码 5ffed9be，numpy 2.4.6）
+- Oliver Kell hk：通过（配置 ec729481，数据 13b801ca，代码 5ffed9be，numpy 2.4.6）
+- Oliver Kell us：通过（配置 ec729481，数据 920f88c4，代码 5ffed9be，numpy 2.4.6）
+- Mark Minervini hk：通过（配置 826f0114，数据 13b801ca，代码 5ffed9be，numpy 2.4.6）
+- Mark Minervini us：通过（配置 826f0114，数据 920f88c4，代码 5ffed9be，numpy 2.4.6）
+- Marios Stamatoudis hk：通过（配置 f3aa5477，数据 13b801ca，代码 5ffed9be，numpy 2.4.6）
+- Marios Stamatoudis us：通过（配置 f3aa5477，数据 920f88c4，代码 5ffed9be，numpy 2.4.6）

@@ -1,11 +1,12 @@
 """Daily-bar portfolio of a replicated trader: close-confirmed entries, fixed-risk sizing, partials, EMA trail,
 both sides, and a placebo that swaps every entry for a random name from the same list on the same day.
 
-Entries are tuples (priority, column, side, fill, stop, kind[, day_exit[, size_risk[, max_position]]]) placed on
+Entries are tuples (priority, column, side, fill, stop, kind[, day_exit[, size_risk[, max_position[, risk_mult]]]]) placed on
 day d and filled at `fill` on day d (normally that day's close); management starts on day d + 1.  side is +1 (long)
 or -1 (short).  An intraday entry that was already stopped later the same day carries its exit price as day_exit;
 size_risk (a fraction of the fill) sizes the trade when it is wider than the stop distance (gap risk), and
-max_position caps that trade below rules.max_position (small caps).  The placebo keeps both overrides.
+max_position caps that trade below rules.max_position (small caps); risk_mult multiplies its risk (a sizing tier).
+The placebo keeps all three.
 Same-day ordering is conservative: when a day reaches both the stop and a partial level, the stop comes first
 unless the open is already beyond the partial level.
 """
@@ -83,6 +84,12 @@ class Rules:
     margin_rate: float = .07        # yearly, on long value above equity
     borrow_rate: float = 0.0        # > 0: yearly stock-borrow fee on short market value, charged at each session's
                                     # start on the shorts held at the previous close (an overnight short pays one day)
+    max_new_all: int = 0            # > 0: successful new positions a session, longs and shorts of every kind together
+                                    # (max_new_long and max_new_by_kind still apply inside it)
+    max_new_year: int = 0           # > 0: successful new positions a calendar year, both sides
+    no_rebuy_day: bool = False      # a name sold or stopped (any exit, partial or whole) is not opened again that session
+    gross_cost: bool = False        # the gross room of an entry or add includes its buying cost (no margin is drawn)
+    cap_adds_entry: bool = False    # adds stay inside the entry's own max_position (the tuple's), not only the policy's
 
 
 @dataclass
@@ -109,9 +116,11 @@ class Pos:
     executions: list = field(default_factory=list)
     management: Rules | None = None
     state: dict | None = None       # audit: an open position's state at the last close ('end')
+    cap: float = 0.0                # its own max_position (the policy's, or the entry's when lower)
+    tier: float | None = None       # the entry's risk multiplier (sizing tier), when it carried one
 
 
-def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False):
+def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False, track=None):
     """Run between ISO dates; return (equity array, dates, trades).
 
     px: dict of (days x codes) 'open', 'high', 'low', 'close' and 'dates', 'codes';  ema: dict name -> array;
@@ -120,6 +129,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     Optional px['session'] numbers trading days and px['daily_close'] marks their final bars. Stops/trims
     run every bar; daily management and financing retain their daily clocks. px['mark'] may contain
     forward-filled, already observed closes for valuation only; never use it as tradable OHLC.
+    track: a dict that receives per-session lists 'gross' (long + short value / equity at the close), 'open'
+    (positions held at the close), 'new' (positions opened) and the total 'margin' interest paid.
     """
     o, h, l, c, dates = px['open'], px['high'], px['low'], px['close'], px['dates']
     session = px.get('session', np.arange(len(dates)))
@@ -141,6 +152,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     peak = 1.0
     cash, pos, trades, curve = 1.0, {}, [], []
     month_trades = []
+    sold_today = set()
+    new_all, year_new, year_ = 0, 0, ''
+    margin_paid = 0.0
     recent_positions = deque(maxlen=rules.feedback or 1)
     opened_feedback = None
     allowed_management = {'max_position', 'trims', 'trim_frac', 'trail', 'add_r', 'add_levels'}
@@ -192,6 +206,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         q.cash += flow
         q.size -= size
         q.exits.append((d, price, size, why))
+        if why != 'end':
+            sold_today.add(q.j)
         if audit:
             q.executions.append(dict(time=str(dates[d]), action=why, price=float(price), shares=float(size)))
         if q.size <= 1e-12 * q.size0:
@@ -203,14 +219,18 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                                risk_pct=abs(q.fill - q.stop0) / q.fill, pnl=q.cash,
                                r=q.cash / risk if risk > 0 else 0.0, ret=q.cash / gross0,
                                ret_invested=q.cash / q.invested, why=why, add_tries=q.adds))
+            if q.tier is not None:
+                trades[-1]['tier'] = q.tier
             if audit:
                 trades[-1]['executions'] = q.executions
                 if why == 'end':
                     trades[-1]['state'] = q.state
 
-    def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None):
+    def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None, mult=None):
         nonlocal cash
         if j in pos or not np.isfinite(fill) or fill <= 0:
+            return
+        if rules.no_rebuy_day and j in sold_today:
             return
         if rules.max_open and len(pos) >= rules.max_open:
             return
@@ -231,16 +251,22 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 frac = rules.risk_high
         if scale is not None and np.isfinite(scale[d]):
             frac *= scale[d]
+        if mult is not None:
+            frac *= mult
         policy = management.get(kind, rules)
         cap = policy.max_position if max_pos is None else min(policy.max_position, max_pos)
         width = risk if size_risk is None else max(risk, size_risk)
-        val = min(frac * equity / width, cap * equity, rules.max_gross * equity - gross(d))
+        room = rules.max_gross * equity - gross(d)
+        if rules.gross_cost:
+            room /= 1 + rules.buy_cost
+        val = min(frac * equity / width, cap * equity, room)
         if val <= .001 * equity:
             return
         size = val / fill
         flow = -val * (1 + rules.buy_cost) if side > 0 else val * (1 - rules.sell_cost)
         cash += flow
-        pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow, invested=val, management=policy)
+        pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow, invested=val, management=policy,
+                     cap=cap, tier=mult)
         month_trades.append(pos[j])
         if rules.feedback_opened:
             recent_positions.append(pos[j])
@@ -254,8 +280,11 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     def add_pos(q, price, d, frac=None, signal=False):
         nonlocal cash
         eq = cash + value(d)
-        val = min((rules.add_frac if frac is None else frac) * q.size0 * price,
-                  q.management.max_position * eq - q.size * price, rules.max_gross * eq - gross(d))
+        room = rules.max_gross * eq - gross(d)
+        if rules.gross_cost:
+            room /= 1 + rules.buy_cost
+        cap = min(q.management.max_position, q.cap) if rules.cap_adds_entry else q.management.max_position
+        val = min((rules.add_frac if frac is None else frac) * q.size0 * price, cap * eq - q.size * price, room)
         if signal:
             q.sig_adds += 1
         else:
@@ -316,6 +345,10 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         if d == d0 or session[d] != session[d - 1]:
             new_longs = 0
             new_by_kind = {}
+            new_all = 0
+            sold_today.clear()
+            if str(dates[d])[:4] != year_:
+                year_, year_new = str(dates[d])[:4], 0
             if rules.feedback_opened and rules.feedback and len(recent_positions) >= rules.feedback:
                 opened_feedback = sum(
                     (q.cash + (q.side * q.size * last(q.j, d - 1) if q.size > 0 else 0))
@@ -324,6 +357,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     opened_feedback = 0.0
             longs = sum(q.size * last(q.j, d - 1) for q in pos.values() if q.side > 0)
             cash -= rules.margin_rate / 252 * max(0.0, longs - equity)
+            margin_paid += rules.margin_rate / 252 * max(0.0, longs - equity)
             if rules.borrow_rate:                       # each short carries its fee in its own result too
                 for q in pos.values():
                     if q.side < 0:
@@ -427,7 +461,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 pct = abs(fill - stop) / fill
                 kind_ = kind if kind in management or kind in rules.max_open_by_kind \
                     or kind in rules.max_new_by_kind else 'placebo'
-                swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), kind_, None) + tuple(e[7:9]))
+                swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), kind_, None) + tuple(e[7:10]))
             todays = swapped
         for e in sorted(todays, key=lambda x: x[0]):
             pr, j, side, fill, stop, kind = e[:6]
@@ -438,9 +472,16 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 continue
             if side > 0 and not own and rules.max_new_long and new_longs >= rules.max_new_long:
                 continue
+            if rules.max_new_all and new_all >= rules.max_new_all:
+                continue
+            if rules.max_new_year and year_new >= rules.max_new_year:
+                continue
             had = j in pos
             opened = open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,
-                              e[8] if len(e) > 8 else None)
+                              e[8] if len(e) > 8 else None, e[9] if len(e) > 9 else None)
+            if opened:
+                new_all += 1
+                year_new += 1
             if opened and own:
                 new_by_kind[kind] = new_by_kind.get(kind, 0) + 1
             elif opened and side > 0:
@@ -448,6 +489,13 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             if len(e) > 6 and e[6] is not None and j in pos and not had:     # intraday entry stopped the same day
                 close_part(pos[j], pos[j].size, e[6], d, 'stop_day0')
         curve.append(cash + value(d))
+        if track is not None:
+            track.setdefault('gross', []).append(gross(d) / curve[-1] if curve[-1] > 0 else float('inf'))
+            track.setdefault('open', []).append(len(pos))
+            track.setdefault('new', []).append(new_all if (d + 1 >= d1 or session[d + 1] != session[d]) else None)
+    if track is not None:
+        track['new'] = [x for x in track.get('new', []) if x is not None]
+        track['margin'] = margin_paid
     for q in list(pos.values()):                                    # mark open trades at the last close
         close_part(q, q.size, last(q.j, d1 - 1), d1 - 1, 'end')
     return np.array(curve), dates[d0:d1], trades

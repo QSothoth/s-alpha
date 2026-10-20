@@ -239,6 +239,17 @@ class LongShort:
         return getattr(self.base, k)
 
     def build(self, A, cfg, trace=None):
+        h = cfg.get('human')
+        if h is not None:                          # human-sized trading (human.py), off unless the config has it
+            from . import human
+            cfg = {k: v for k, v in cfg.items() if k != 'human'}
+            n = cfg.get('max_new', 0)
+            engine_cap = h.get('engine_cap') and getattr(self.base, 'daily_cap', 'engine') == 'build' and n
+            entries, rules, mask, pool = self.build(A, dict(cfg, max_new=0) if engine_cap else cfg, trace)
+            if engine_cap:                         # the engine counts his max_new successful new longs
+                rules = replace(rules, max_new_long=n)
+            entries, rules = human.apply(self, A, cfg, h, entries, rules)
+            return entries, rules, mask, pool
         long_cfg, sc = split_cfg(cfg)
         if long_cfg.get('common'):                 # shared mechanisms (common.py), off unless the config has them
             from . import common
