@@ -12,7 +12,7 @@
 | [martin_luk/](martin_luk/README.md) | 复刻 Martin Luk 动量波段的研究（2026-10-16）及 `trader-replication` 的第一个例子（R19–R74）；区间内同段择优结论、无样本外，不接 custody、不当生产能力 |
 | [trader_data/](trader_data/README.md) | `trader-replication` 与 `trader-screens` 共用的日 K 数据接口：冻结 Release 与 live 增量（frozen / live 开关）、唯一的面板构建 |
 | [trader_replication/](trader_replication/README.md) | `trader-replication` 的通用代码：交易台账、命中率、同日同波动组超额、多空日 K 组合与安慰剂 |
-| [trader_screens/](trader_screens/README.md) | `trader-screens`（交易员看板）的实现：各交易员按原话初版的买点与账户、已复刻冻结系统的适配、看板与交集；初版未逼近、未评测 |
+| [trader_screens/](trader_screens/README.md) | `trader-screens`（交易员看板）的实现：运行 `trader_replication/systems.py` 登记的各交易员系统（与横向比对同一实现），看板模板与交集；按原话的买点定义（研究模块引用） |
 | [auction_strength/](auction_strength/README.md) | 既有竞价例程接口；仅 3 天样本、门槛未校准，不新增独立 skill 或宣传为已验证能力 |
 
 ## 交易员资料索引
