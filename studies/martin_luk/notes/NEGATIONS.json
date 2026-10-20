@@ -2126,5 +2126,297 @@
    },
    "short": null
   }
+ },
+ {
+  "round": "S7",
+  "stage": "short, gate v2: on S6B (his two-three days, an earlier market switch, a next-day partial, smaller size)",
+  "candidate": "S7A",
+  "change": {
+   "setups": [
+    "Z15"
+   ],
+   "pool": "U7",
+   "gate": "below50",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 2,
+   "trim_day_frac": 0.5,
+   "max_days": 3
+  },
+  "base": [
+   "s6.json",
+   "chosen"
+  ],
+  "chosen": "S7C",
+  "reason": "gates: alpha, maxdd",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.021042739459815718,
+   "short_placebo_median": -0.16199235997402883,
+   "both_total": 26.79782375242852,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.762026765058848,
+    "2025": 2.3068606375622256,
+    "2026": 1.234462257506769
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.08447546541449891,
+    "short": -0.006642755231150876
+   },
+   "win": 0.2059800664451827
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 2,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   }
+  }
+ },
+ {
+  "round": "S7",
+  "stage": "short, gate v2: on S6B (his two-three days, an earlier market switch, a next-day partial, smaller size)",
+  "candidate": "S7B",
+  "change": {
+   "setups": [
+    "Z15"
+   ],
+   "pool": "U7",
+   "gate": "below21",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 2,
+   "trim_day_frac": 0.5,
+   "max_days": 5
+  },
+  "base": [
+   "s6.json",
+   "chosen"
+  ],
+  "chosen": "S7C",
+  "reason": "gates: count",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": 0.022597883055861967,
+   "short_placebo_median": -0.20356979148911758,
+   "both_total": 30.356162117677123,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 3.6093432265432037,
+    "2025": 1.8285772258833264,
+    "2026": 1.405004052558255
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.037805004612743276,
+    "short": 0.08114293159777786
+   },
+   "win": 0.2083780880773362
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 2,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   }
+  }
+ },
+ {
+  "round": "S7",
+  "stage": "short, gate v2: on S6B (his two-three days, an earlier market switch, a next-day partial, smaller size)",
+  "candidate": "S7D",
+  "change": {
+   "setups": [
+    "Z15"
+   ],
+   "pool": "U7",
+   "gate": "below50",
+   "max_new": 1,
+   "stop_w": "cap",
+   "trail": "e9",
+   "trims": [],
+   "trim_day": 2,
+   "trim_day_frac": 0.5,
+   "max_days": 3,
+   "risk_mult": 0.5
+  },
+  "base": [
+   "s6.json",
+   "chosen"
+  ],
+  "chosen": "S7C",
+  "reason": "gates: alpha",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": -0.007268952118611338,
+   "short_placebo_median": -0.08273223306009797,
+   "both_total": 26.137543099021034,
+   "long_total": 23.28482588182323,
+   "both_by_year": {
+    "2024": 2.8546769649977617,
+    "2025": 2.3700606057374376,
+    "2026": 1.0890307201505074
+   },
+   "long_by_year": {
+    "2024": 2.8823949438068848,
+    "2025": 2.2119054687070494,
+    "2026": 0.9474778482248651
+   },
+   "down": {
+    "long": -0.1302957939905256,
+    "both": -0.10799910021430126,
+    "short": -0.0003307571343847959
+   },
+   "win": 0.20507166482910694
+  },
+  "base_config": {
+   "signals": "C2",
+   "stop": "cap",
+   "exits": "X9",
+   "small_cap": false,
+   "gap_size": false,
+   "gross": 2.8,
+   "risk": 0.005,
+   "filter": "IDX50",
+   "rank": null,
+   "rank_n": 0,
+   "risk_high": 0.008,
+   "max_new": 4,
+   "bpath": 0.2,
+   "max_position": 0.5,
+   "strength": "K6",
+   "stop_min": 0.01,
+   "ep_opts": {
+    "hold_open": false
+   },
+   "rule_opts": {
+    "feedback": 5,
+    "risk_scale": "idx_pb16",
+    "exit_signal": "",
+    "add_r": 10.0,
+    "add_levels": [
+     10,
+     20
+    ]
+   },
+   "setup": "E11+E10+E2+EW1",
+   "bopts": {
+    "lookback": 120
+   },
+   "short": {
+    "setups": [
+     "Z15"
+    ],
+    "pool": "U7",
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "e9",
+    "trims": [],
+    "trim_day": 2,
+    "trim_day_frac": 0.5,
+    "max_days": 5
+   }
+  }
  }
 ]
