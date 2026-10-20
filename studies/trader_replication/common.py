@@ -9,6 +9,12 @@ registered system) shorts.LongShort calls the study's own build unchanged.  The 
                'ep_own' his EPs first, each group in his own order.  A study whose build keeps the day's first
                max_new entries itself (daily_cap 'build', Martin R74) is built uncapped, reordered, then cut to
                max_new the same way
+    stop       a long's stop wider than min(pct, adr x the ADR as of the day before; adr_ep for his EPs) moved up
+               to it ('cap') or the entry dropped ('skip'); his own skip / cap of wide stops is taken out
+               (Study.own_stop_off)
+    add        a held long whose close is above its fill buys `frac` of its original size at the close of a day his
+               signal mask fires again (not the entry day), at most `max` times, the stop then at the fill ('fill')
+               or kept ('keep'): engine add_signal with add_signal_profit
 
 Commands:
 
@@ -117,6 +123,12 @@ def build_long(base, A, cfg, trace=None):
         entries = rerank(A, entries, cm['rank'], ep)
         if trace is not None:
             trace['filtered'] = entries
+    if cm.get('add'):                              # a held winner buys more at the close of a new buy point
+        a = cm['add']
+        A['common_sig'] = mask
+        rules = replace(rules, add_signal='common_sig', add_signal_frac=a.get('frac', .5),
+                        add_signal_max=a.get('max', 1), add_signal_stop=a.get('stop', 'fill'),
+                        add_signal_profit=a.get('profit', True))
     if precap:
         entries = [sorted(lst, key=lambda e: e[0])[:cfg['max_new']] for lst in entries]
     if trace is not None and (precap or cm.get('rank')):

@@ -1,0 +1,13 @@
+{
+ "stage": "add: a held winner buys more at the close of a new buy point",
+ "draws": 50,
+ "candidates": {
+  "C3A": {"all": {"add": {"frac": 0.5, "max": 1, "stop": "fill"}},
+          "oliver_kell": {"add": {"frac": 1.0, "max": 1, "stop": "fill"}}},
+  "C3B": {"all": {"add": {"frac": 0.5, "max": 1, "stop": "keep"}},
+          "oliver_kell": {"add": {"frac": 1.0, "max": 1, "stop": "keep"}}},
+  "C3C": {"all": {"add": {"frac": 0.5, "max": 2, "stop": "fill"}},
+          "oliver_kell": {"add": {"frac": 1.0, "max": 2, "stop": "fill"}},
+          "clement_ang": {"add": {"frac": 0.5, "max": 1, "stop": "fill"}}}
+ }
+}

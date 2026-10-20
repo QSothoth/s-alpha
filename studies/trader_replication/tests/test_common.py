@@ -119,6 +119,17 @@ class StopWidthTests(unittest.TestCase):
         self.assertEqual(C.stop_width(A, e, {'pct': .02}, lambda d, x: False), e)
 
 
+class AddTests(unittest.TestCase):
+    def test_add_switch_sets_the_engine_rule_on_his_signal_mask(self):
+        A = arrays()
+        e, rules, mask, pool = C.build_long(Fake(), A, {'common': {'add': {'frac': 1.0, 'max': 2, 'stop': 'keep'}}})
+        self.assertEqual((rules.add_signal, rules.add_signal_frac, rules.add_signal_max, rules.add_signal_stop,
+                          rules.add_signal_profit), ('common_sig', 1.0, 2, 'keep', True))
+        self.assertIs(A['common_sig'], mask)
+        rules = C.build_long(Fake(), arrays(), {'common': {'rank': 'rvol'}})[1]
+        self.assertEqual(rules.add_signal, '')
+
+
 class PassThroughTests(unittest.TestCase):
     def test_without_common_the_wrapper_calls_the_study_build(self):
         A = arrays()
