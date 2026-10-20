@@ -1,0 +1,9 @@
+{
+ "stage": "human sizing: the heavy tiers with the 50% cap the pre-registration meant (cap_above)",
+ "base": ["h5.json", "H5A"],
+ "draws": 50,
+ "candidates": {
+  "H7A": {"human": {"cap_above": true}},
+  "H7B": {"human": {"cap_above": true, "tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}]}}
+ }
+}

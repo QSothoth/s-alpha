@@ -79,6 +79,10 @@ def condition(st, A, cfg, name):
         return lambda d, e: abs(e[3] - e[4]) / e[3] <= k + 1e-12
     if name == 'long':
         return lambda d, e: e[2] > 0
+    if name.startswith('adr<='):                  # the ADR (percent) as of the day before at most this
+        k = float(name[5:])
+        adr = lag(A['adr'])
+        return lambda d, e: bool(adr[d, e[1]] <= k)
     F = A.get('F')
     if name.startswith('near52<='):               # the fill within this fraction of the 52-week high before the day
         k = float(name[8:])
@@ -160,7 +164,15 @@ def apply(st, A, cfg, h, entries, rules):
         ro = {k: tuple(v) if isinstance(v, list) else v for k, v in h['rule_opts'].items()}
         rules = limit_rules(replace(rules, **ro))
     if h.get('tiers') or h.get('base'):
-        entries = tiers(st, A, cfg, entries, h.get('tiers', []), h.get('base', {}))
+        base = dict(h.get('base', {}))
+        spec = h.get('tiers', [])
+        if h.get('cap_above'):                   # a tier's cap may be above the study's own per-name cap (<= 50%):
+            own = rules.max_position             # the account cap rises to the highest tier, the base keeps its own,
+            top = min(max([t.get('cap') or own for t in spec] + [own]), LIMITS['max_position'])
+            rules = replace(rules, max_position=top)     # and only longs take a tier
+            base.setdefault('cap', own)
+            spec = [dict(t, when=list(t.get('when', [])) + ['long']) for t in spec]
+        entries = tiers(st, A, cfg, entries, spec, base)
     return entries, rules
 
 

@@ -224,6 +224,28 @@ class Transform(unittest.TestCase):
         with self.assertRaises(ValueError):
             SH.wrap(Fake()).build(A, {'human': h})
 
+    def test_a_tier_cap_stays_under_the_study_cap_unless_cap_above(self):
+        A = arrays()
+        h = {'tiers': [{'when': ['ep'], 'risk': 3, 'cap': .5}]}
+        e, r, _, _ = SH.wrap(Fake()).build(A, {'human': h})
+        self.assertEqual(r.max_position, .5)                   # the study's .6, cut to the 50% limit
+        e, r, _, _ = SH.wrap(Fake()).build(A, {'human': dict(h, cap_above=True)})
+        self.assertEqual(r.max_position, .5)
+        self.assertEqual([(x[1], x[8], x[9]) for x in e[0]], [(0, .5, None), (1, .5, 3.0)])
+
+        class Low(Fake):
+            def build(self, A, cfg, trace=None):
+                e, rules, m, p = super().build(A, cfg, trace)
+                return e, replace(rules, max_position=.3), m, p
+        e, r, _, _ = SH.wrap(Low()).build(A, {'human': h})
+        self.assertEqual(r.max_position, .3)                   # without cap_above the tier's 50% cannot apply
+        e, r, _, _ = SH.wrap(Low()).build(A, {'human': dict(h, cap_above=True)})
+        self.assertEqual(r.max_position, .5)
+        self.assertEqual([(x[1], x[8], x[9]) for x in e[0]], [(0, .3, None), (1, .5, 3.0)])
+        short = [(0.0, 0, -1, 10.0, 10.5, 'ep')]               # a short never takes a tier with cap_above
+        out = H.apply(SH.wrap(Low()), A, {}, dict(h, cap_above=True), [short], replace(r, max_position=.3))[0]
+        self.assertEqual(out[0][0][8:], (.3, None))
+
     def test_near_the_high_uses_the_highs_before_the_day_without_features(self):
         h = np.arange(600, dtype=float).reshape(300, 2)
         h[260, 0] = 1e6                                      # a spike on day 260
