@@ -516,7 +516,8 @@ def lookahead(trader, report):
     """The look-ahead gate on a round's chosen long-short configuration."""
     sysx, st, long_cfg = study_of(trader)
     res = json.loads((st.reports / report).read_text(encoding='utf-8'))
-    cfg = dict(long_cfg, short=res['chosen_short']) if res['chosen_short'] else long_cfg
+    sc = res['chosen_short'] or res.get('provisional_short')     # a provisional choice is checked too
+    cfg = dict(long_cfg, short=sc) if sc else long_cfg
     g = G.check_lookahead(st, cfg, 'us')
     res['lookahead'] = g
     (st.reports / report).write_text(json.dumps(res, indent=1, default=float), encoding='utf-8')
