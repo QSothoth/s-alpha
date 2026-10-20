@@ -45,16 +45,20 @@ def index_above(F, n):
 
 
 def overlaps(traders, inds):
-    def multi(key):
+    """Names several traders bought (held) the same day, longs and shorts apart."""
+    def multi(key, side=1):
         who = defaultdict(list)
         for t in traders:
             for x in t[key]:
+                if (x.get('side', 1) > 0) != (side > 0):
+                    continue
                 if t['name'] not in who[x['code']]:
                     who[x['code']].append(t['name'])
         rows = [dict(code=c, traders=v, industry=inds.get(c, '')) for c, v in who.items() if len(v) >= 2]
         return sorted(rows, key=lambda x: (-len(x['traders']), x['code']))
     held = Counter(inds.get(h['code'], '') or '未知' for t in traders for h in t['holdings'])
-    return dict(bought=multi('buys'), held=multi('holdings'), industries_held=held.most_common(10),
+    return dict(bought=multi('buys'), held=multi('holdings'), shorted=multi('buys', -1),
+                held_short=multi('holdings', -1), industries_held=held.most_common(10),
                 in_cash=[t['name'] for t in traders if not t['holdings']])
 
 
@@ -115,23 +119,27 @@ def show(r):
             print(f"  冻结日之后 {f['days']} 个交易日：{pct(f['ret'])}，回撤 {f['maxdd']:.0%}，新开 {f['trades']} 笔")
         print(f"  {span}买入：" + ('无' if not t['buys'] else ''))
         for b in t['buys']:
-            stop = f" 止损 {px(b['stop'])}（{(b['price'] - b['stop']) / b['price']:.1%}）" if b['stop'] else ''
-            print(f"    {b['code']} {b['name'][:10]} {b['setup']} 买 {px(b['price'])}{stop} 仓位 {b['weight']:.0%} "
-                  f"{b['industry']}")
+            short = b.get('side', 1) < 0
+            stop = (f" 涨破 {px(b['stop'])} 回补（{(b['stop'] - b['price']) / b['price']:.1%}）" if short else
+                    f" 止损 {px(b['stop'])}（{(b['price'] - b['stop']) / b['price']:.1%}）") if b['stop'] else ''
+            print(f"    {b['code']} {b['name'][:10]} {b['setup']} {'卖空' if short else '买'} {px(b['price'])}{stop} "
+                  f"仓位 {b['weight']:.0%} {b['industry']}")
         if t['wanted_n']:
             print(f"  另有 {t['wanted_n']} 个买点没做：" + '、'.join(x['code'] for x in t['wanted']))
         print(f"  {span}卖出：" + ('无' if not t['sells'] else ''))
         for x in t['sells']:
-            print(f"    {x['code']} {x['name'][:10]} {x['why']}{'' if x['full'] else '（部分）'} {px(x['price'])}，"
-                  f"相对买价 {pct(x['ret'])}")
+            print(f"    {x['code']} {x['name'][:10]} {board.WHY.get(x['why'], x['why'])}{'' if x['full'] else '（部分）'} {px(x['price'])}，"
+                  f"{'空单盈亏' if x.get('side', 1) < 0 else '相对买价'} {pct(x['ret'])}")
         print(f"  持仓 {len(t['holdings'])} 只：" + ('空仓' if not t['holdings'] else ''))
         for h in t['holdings']:
-            print(f"    {h['code']} {h['name'][:10]} {h['entry_day']} 买 {px(h['fill'])} → {px(h['close'])}"
+            print(f"    {h['code']} {h['name'][:10]} {h['entry_day']} {'卖空' if h.get('side', 1) < 0 else '买'} "
+                  f"{px(h['fill'])} → {px(h['close'])}"
                   f"（{pct(h['ret'])}）仓位 {h['weight']:.0%}，" + board.exit_text(h) + f" {h['industry']}")
     c = r['common']
     print('\n== 交集')
-    for key, title in (('bought', f'{span}被多人买入'), ('held', '被多人同时持有')):
-        rows = c[key]
+    for key, title in (('bought', f'{span}被多人买入'), ('held', '被多人同时持有'), ('shorted', f'{span}被多人卖空'),
+                       ('held_short', '被多人同时做空')):
+        rows = c.get(key, [])
         print(f"{title}：" + ('无' if not rows else ''))
         for x in rows[:15]:
             print(f"  {x['code']} {x['industry']}：{'、'.join(x['traders'])}")

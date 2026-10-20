@@ -1,0 +1,15 @@
+{
+ "stage": "short, gate v2: Q5C with his stop-width rule (no wider than 1 / 1.5 ADR)",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "Q6A": {"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.0,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10},
+  "Q6B": {"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10},
+  "Q6C": {"setups": ["ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10},
+  "Q6D": {"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5,
+          "targets": ["sma10"], "target_frac": 0.0, "trail": "", "trims": [], "max_days": 10}
+ }
+}

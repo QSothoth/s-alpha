@@ -134,6 +134,28 @@ def metrics(curve, days, tr, entries, d0, d1):
                 candidates_day=float(np.median([len(entries[d]) for d in range(d0, d1)])))
 
 
+def short_columns(st, A, cfg, tr, days, d0, d1, draws, seed):
+    """Long-short columns: the run's long and short sides, and (with a short side, US only) the short-only account
+    of the same system with its same-pool random-short placebo.  Without a short side: no_short; outside the US:
+    not_applicable (docs/TRADER_PROTOCOL_CN.md section 5)."""
+    from . import shorts as SH
+    out = dict(long=SH.side_stats(tr, 1), short=SH.side_stats(tr, -1))
+    if not cfg.get('short'):
+        out['status'] = 'no_short'
+        return out
+    if A['market'] != 'us':
+        out['status'] = 'not_applicable'
+        return out
+    out['status'] = 'long_short'
+    se, rules, spool = SH.wrap(st).short_only(A, cfg)
+    curve, _, trs = SH.run(SH.wrap(st), A, se, rules, spool)
+    m = metrics(curve, days, trs, se, d0, d1)
+    px, ema = st.px(A), st.ema_inputs(A, spool, rules)
+    m['placebo'] = Y.placebo_rank(px, ema, rules, se, *panels.WINDOW, spool, draws=draws, seed=seed)
+    out['short_only'] = m
+    return out
+
+
 def one(name, st, cfg, market, src, draws=DRAWS, seed=1):
     from studies import trader_data as TD
     if TD.resolve_mode() != 'frozen':
@@ -154,6 +176,7 @@ def one(name, st, cfg, market, src, draws=DRAWS, seed=1):
                ew_by_year={y: ew_bench(A, (f'{y}-01-01', f'{y}-12-31')) for y in years})
     if market == st.home[0] and st.ledger is not None and st.ledger.exists():
         out['exact'] = exact_ledger(st, A, tr)
+    out['sides'] = short_columns(st, A, cfg, tr, days, d0, d1, draws, seed)
     by_code = {}
     for t in tr:
         n, p = by_code.get(t['code'], (0, 0.0))
@@ -272,7 +295,34 @@ def render(res=None):
                      num(r['candidates_day'], '{:.0f}')]
             L.append('| ' + ' | '.join(cells) + ' |')
         L.append('')
-    L += ['## 本人公开成绩（供对照，口径与区间可能和上表不同）', '',
+    L += ['## 多空：多空合计与只做空', '',
+          '多空合计就是上表的账户（登记版本带空头时）；只做空是同一系统去掉多头、只留空单的账户，安慰剂为同池随机做空（同一天、'
+          '同样止损宽度）。空头只在美股研究，港股、A 股“不适用”（港股只有指定证券能沽空、A 股融券受限）；口径见 '
+          'docs/TRADER_PROTOCOL_CN.md 第 5 节。', '',
+          '| 交易员 | 市场 | 配置 | 多空合计 | 合计回撤 | 多头已平仓 / 胜率 | 空头已平仓 / 胜率 | 空单盈亏 | 只做空 全段 / 回撤 | '
+          '只做空 安慰剂中位 / 排位 |', '|---|---|---|---|---|---|---|---|---|---|']
+    for m in MARKETS:
+        for k in names:
+            r = res[k]['markets'].get(m)
+            if not r or 'sides' not in r:
+                continue
+            sd = r['sides']
+            lo, sh = sd['long'], sd['short']
+            status = sd.get('status')
+            if status == 'long_short':
+                so = sd['short_only']
+                tail = [f"{pct(sh['win'], '{:.0%}')}", f"{sh['pnl']:+.2f}",
+                        f"{pct(so['total'])} / {pct(so['maxdd'], '{:.0%}')}",
+                        f"{pct(so['placebo']['median'])} / {so['placebo']['rank']:.2f}"]
+                both = pct(r['total'])
+                shorts = f"{sh['trades']} / {pct(sh['win'], '{:.0%}')}"
+            else:
+                word = '不做空' if status == 'no_short' else '不适用'
+                both, shorts, tail = word, '—', ['—'] * 4
+            L.append('| ' + ' | '.join([res[k]['name'], dict(us='美股', hk='港股', cn='A 股')[m], r['run']['source'],
+                                         both, pct(r['maxdd'], '{:.0%}'),
+                                         f"{lo['trades']} / {pct(lo['win'], '{:.0%}')}", shorts] + tail[1:]) + ' |')
+    L += ['', '## 本人公开成绩（供对照，口径与区间可能和上表不同）', '',
           '| 交易员 | 年份 | 收益 | 胜率 | 平均赚 / 亏 | 赢家 / 输家持有天数 |', '|---|---|---|---|---|---|']
     for k in names:
         rows = his_rows(res[k]['his'], res[k]['his_behaviour']) or [('数据期内无',) + (None,) * 6]

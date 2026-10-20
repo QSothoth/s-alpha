@@ -1,0 +1,13 @@
+{
+ "stage": "exit: the breakeven step (per-trade diagnosis), win rate within the gate",
+ "base": ["r7.json", "chosen"],
+ "ref": "R7",
+ "objective": "total",
+ "gates": ["placebo", "win<=0.35"],
+ "candidates": {
+  "N1": {"rule_opts": {"trim_day_breakeven": false}},
+  "N2": {"rule_opts": {"trim_day_breakeven": false, "trim_day_frac": 0.3333}},
+  "N3": {"rule_opts": {"trim_day_breakeven": false, "breakeven_r": 2.0}},
+  "N4": {"rule_opts": {"trim_day_breakeven": false, "breakeven_r": 1.0}}
+ }
+}

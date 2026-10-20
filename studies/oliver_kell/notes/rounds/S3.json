@@ -1,0 +1,11 @@
+{
+ "stage": "short: on S2 KJ, when and how much (market switch, room left to the longs, his next-day cover)",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "KK": {"setups": ["lim20", "lim10", "lim50"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 0},
+  "KM": {"setups": ["lim20", "lim10", "lim50"], "gate": "below20", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 0, "max_open": 1},
+  "KO": {"setups": ["lim20", "lim10", "lim50"], "gate": "below20", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 0, "trim_day": 1, "trim_day_frac": 0.5},
+  "KP": {"setups": ["lim20", "lim10", "lim50"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 0, "max_open": 1}
+ }
+}

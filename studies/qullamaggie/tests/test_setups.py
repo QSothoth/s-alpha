@@ -57,5 +57,40 @@ class SetupTests(unittest.TestCase):
         self.assertEqual((s[40], s[42]), (1.0, .5))
 
 
+class ParabolicShortTests(unittest.TestCase):
+    RUN = [(14, 15.5, 13.8, 15), (16, 22.5, 15.8, 22), (23, 30.5, 22.8, 30), (31, 38.5, 30.8, 38),
+           (39, 45.5, 38.8, 45)]
+
+    def test_fires_on_the_first_red_day_after_the_run(self):
+        A = panel(BASE + self.RUN + [(46, 48, 40, 41), (40, 42, 38, 39)])
+        m = R.STUDY.short_setups(A, {})[0]['para'][:, 0]
+        self.assertEqual(list(np.flatnonzero(m)), [35])               # not the run days, not the day after
+        pdl = R.STUDY.short_setups(A, {'trigger': 'pdl'})[0]['para'][:, 0]
+        self.assertEqual(list(np.flatnonzero(pdl)), [])               # 41 is above the prior low 38.8
+
+    def test_exact_entries_are_decided_before_the_day(self):
+        A = panel(BASE + self.RUN + [(46, 48, 40, 41), (40, 42, 38, 39)])
+        z = R.STUDY.short_setups(A, {'setups': ['pbrk', 'popen']})[0]
+        self.assertEqual(list(np.flatnonzero(z['pbrk']['armed'][:, 0])), [35])   # the run intact through day 34
+        self.assertEqual(z['pbrk']['level'][35, 0], 38.8)                        # day 34's low
+        self.assertEqual(list(np.flatnonzero(z['popen']['armed'][:, 0])), [36])  # after the red day 35
+
+    def test_vwap_bounce_limit_after_the_first_red_day(self):
+        A = panel(BASE + self.RUN + [(46, 48, 40, 41), (40, 42, 38, 39)])
+        z = R.STUDY.short_setups(A, {'setups': ['pvwap']})[0]['pvwap']
+        self.assertEqual(list(np.flatnonzero(z['armed'][:, 0])), [36])
+        self.assertAlmostEqual(z['level'][36, 0], (48 + 40 + 41) / 3)          # the red day's typical price
+        self.assertAlmostEqual(z['stop_line'][36, 0], 48 * 1.01)               # above the top
+
+    def test_large_names_need_less_of_a_run(self):
+        run = [(10.5, 11.3, 10.4, 11), (11.2, 12.3, 11.1, 12), (12.2, 13.3, 12.1, 13), (13.2, 15.6, 13.1, 15.5)]
+        A = panel(BASE + run + [(16, 16.5, 14, 14.5)])
+        self.assertFalse(R.STUDY.short_setups(A, {})[0]['para'][-1, 0])  # +58% is not 300%
+        A['F'].turnover[:] = 6e8                                       # a large name (20-day turnover >= 500M)
+        A['F']._c.clear()
+        self.assertTrue(R.STUDY.short_setups(A, {})[0]['para'][-1, 0])
+        self.assertFalse(R.STUDY.short_setups(A, {'streak': 5})[0]['para'][-1, 0])
+
+
 if __name__ == '__main__':
     unittest.main()

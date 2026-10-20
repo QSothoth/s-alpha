@@ -195,3 +195,89 @@ class MaskTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+def short_panel(close, high=None, low=None):
+    """Weekday panel for the short masks: closes (days x names), EMAs and the tight flag as market_arrays does."""
+    import datetime as dt
+    c = np.asarray(close, float)
+    h = c * 1.01 if high is None else np.asarray(high, float)
+    l = c * .99 if low is None else np.asarray(low, float)
+    d, days = dt.date(2024, 1, 1), []
+    while len(days) < len(c):
+        if d.weekday() < 5:
+            days.append(d.isoformat())
+        d += dt.timedelta(days=1)
+    A = dict(close=c, high=h, low=l, days=np.array(days))
+    A['e9'], A['e21'], A['e50'] = R.luk.ema(c, 9), R.luk.ema(c, 21), R.luk.ema(c, 50)
+    A['tight'] = ((h <= R.luk.lag(h)) & (l >= R.luk.lag(l)))
+    return A
+
+
+class ShortTriggerTests(unittest.TestCase):
+    def test_z2_fires_on_the_rejected_rally_day_only(self):
+        n = 160
+        c = np.linspace(100, 50, n)[:, None]
+        h, l = c * 1.005, c * .995
+        k = n - 3
+        A0 = short_panel(c, h, l)
+        e21p, e9p = A0['e21'][k - 1, 0], A0['e9'][k - 1, 0]
+        h[k, 0], c[k, 0] = e21p * 1.001, e9p * .995             # spikes into the 21 EMA, closes under the 9
+        A = short_panel(c, h, l)
+        z = R.short_signals(A, np.ones(c.shape, bool))['Z2'][:, 0]
+        self.assertTrue(z[k])
+        self.assertFalse(z[k - 1] or z[k + 1])
+
+    def test_short_masks_do_not_read_later_bars(self):
+        rng = np.random.default_rng(3)
+        c = 50 * np.exp(np.cumsum(rng.normal(0, .03, (260, 20)), axis=0))
+        h, l = c * (1 + rng.uniform(0, .04, c.shape)), c * (1 - rng.uniform(0, .04, c.shape))
+        full = R.short_signals(short_panel(c, h, l), np.ones(c.shape, bool))
+        cut = 200
+        part = R.short_signals(short_panel(c[:cut + 1], h[:cut + 1], l[:cut + 1]), np.ones((cut + 1, 20), bool))
+        for k in full:
+            self.assertTrue(np.array_equal(full[k][:cut + 1], part[k]), k)
+        self.assertTrue(any(full[k].any() for k in full))
+
+    def test_level_shorts_are_decided_on_the_previous_day(self):
+        rng = np.random.default_rng(5)
+        c = 50 * np.exp(np.cumsum(rng.normal(0, .03, (120, 10)), axis=0))
+        A = short_panel(c)
+        keep = R.strength_lists
+        R.strength_lists = lambda A, pool: {'K9': np.ones(A['close'].shape, bool)}
+        try:
+            z = R.level_shorts(A, np.ones(c.shape, bool))
+            c2 = c.copy()
+            c2[80] *= 3                                                # change day 80 only
+            z2 = R.level_shorts(short_panel(c2), np.ones(c.shape, bool))
+        finally:
+            R.strength_lists = keep
+        for k in z:
+            self.assertTrue(np.array_equal(z[k]['armed'][:81], z2[k]['armed'][:81]), k)
+            np.testing.assert_array_equal(z[k]['level'][:81], z2[k]['level'][:81])
+        self.assertAlmostEqual(z['Z14']['level'][50, 0], A['e9'][49, 0])
+
+    def test_rejection_at_the_prior_nine_ema_on_a_red_close(self):
+        n = 60
+        c = np.full((n, 1), 100.0)
+        o, h, l = c.copy(), c * 1.005, c * .995
+        k = n - 2
+        A0 = short_panel(c, h, l)
+        e9p = A0['e9'][k - 1, 0]
+        o[k, 0], h[k, 0], c[k, 0] = e9p * .999, e9p * 1.004, e9p * .99    # tags the 9, closes red under it
+        A = short_panel(c, h, l)
+        A['open'] = o
+        keep = R.strength_lists
+        R.strength_lists = lambda A, pool: {'K9': np.ones(A['close'].shape, bool)}
+        try:
+            z = R.rejection_shorts(A, np.ones(c.shape, bool))
+        finally:
+            R.strength_lists = keep
+        self.assertEqual(list(np.flatnonzero(z['Z12'][:, 0])), [k])
+        self.assertEqual(list(np.flatnonzero(z['Z11'][:, 0])), [k])
+        A['open'][k, 0] = c[k, 0] * .99                                     # a green close is not a rejection
+        R.strength_lists = lambda A, pool: {'K9': np.ones(A['close'].shape, bool)}
+        try:
+            self.assertFalse(R.rejection_shorts(A, np.ones(c.shape, bool))['Z12'][k, 0])
+        finally:
+            R.strength_lists = keep

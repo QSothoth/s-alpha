@@ -1,0 +1,12 @@
+{
+ "stage": "short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7)",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "KA": {"setups": ["drop"], "gate": "below20", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0},
+  "KB": {"setups": ["dcross"], "gate": "below20", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0},
+  "KC": {"setups": ["drop", "dcross"], "gate": "below20", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0},
+  "KD": {"setups": ["drop", "dcross"], "gate": "", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0},
+  "KE": {"setups": ["drop", "dcross"], "gate": "below20", "max_new": 2, "trail": "ema10", "trims": [], "max_days": 0}
+ }
+}

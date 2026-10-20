@@ -96,6 +96,65 @@ class Kell(CF.Flanders):
         return out
 
 
+    def short_setups(self, A, sc):
+        """His short side (RULES ⑨; OK6, OK7), the board's Wedge Pop / EMA Crossback turned over, close-confirmed:
+
+        drop     Wedge Drop: within the last `ext_days` (10) sessions before t the close was at least `ext` (30%,
+                 his own measure of "extended": the long side sells a third 30% above the 10-day line) above the
+                 10-day line, yesterday closed at or above the lower of the 10 / 20 EMA and today closes below it
+        dcross   Downside EMA Crossback: 2-20 sessions after a Wedge Drop, still under the 20 EMA (a close above it
+                 ends the drop), the first rally whose high reaches the falling 10 EMA and closes back under the
+                 20 EMA ('ready'); the short is the close of a later day (within 5) that closes below that rally
+                 day's low (the board's trigger over the ready day's high, mirrored)
+        Pool: 20-day turnover >= `turnover` (100M, his long pool R6 A5) and price >= 5, ADR >= 3, as of t-1."""
+        F = A['F']
+        with np.errstate(invalid='ignore', divide='ignore'):
+            pool = lag(F.liquid(sc.get('turnover', 100e6)) & (F.adr >= sc.get('adr', 3.0)))
+            e10, e20 = F.ema(10), F.ema(20)
+            bottom = np.fmin(e10, e20)
+            ext = F.c >= (1 + sc.get('ext', .30)) * F.sma(10)
+            n = sc.get('ext_days', 10)
+            was_ext = np.zeros(ext.shape, bool)
+            for k in range(1, n + 1):
+                was_ext |= lag(ext, k)
+            drop = pool & was_ext & (lag(F.c) >= lag(bottom)) & (F.c < bottom)
+            ready_day = (F.h >= e10) & (F.c < e20) & (e10 < lag(e10))
+            above20 = F.c > e20
+        ready = np.zeros_like(drop)
+        after = np.zeros_like(drop)                      # day t: a Wedge Drop 1-20 sessions back, not undone (t-1)
+        since, used = np.full(drop.shape[1], -1), np.zeros(drop.shape[1], bool)
+        for t in range(len(drop)):
+            after[t] = (since >= 0) & (t - since >= 1) & (t - since <= 20)
+            live = (since >= 0) & (t - since >= 2) & (t - since <= 20)
+            ready[t] = live & ~used & ready_day[t]
+            used |= ready[t]
+            dead = above20[t] & (since >= 0) & (t > since)
+            since = np.where(drop[t], t, np.where(dead, -1, since))
+            used = np.where(drop[t] | dead, False, used)
+        trig = np.zeros_like(drop)
+        level, at = np.full(drop.shape[1], np.nan), np.full(drop.shape[1], -99)
+        for t in range(len(drop)):                        # a later close under the ready day's low (within 5 days)
+            with np.errstate(invalid='ignore'):
+                trig[t] = (t - at >= 1) & (t - at <= 5) & (F.c[t] < level) & pool[t]
+            at = np.where(trig[t], -99, at)               # once
+            at, level = np.where(ready[t], t, at), np.where(ready[t], F.l[t], level)
+        out = {}
+        names = sc.get('setups', ['drop', 'dcross'])
+        if 'drop' in names:
+            out['drop'] = drop
+        if 'dcross' in names:
+            out['dcross'] = trig
+        # S2 (his CAVA short, K42: "short CAVA today on the rejection at 50SMA ... my stop is today's high"): the
+        # rally into a falling line after a Wedge Drop as a sell-short limit at the previous day's line, decided at
+        # that close (shorts.level_entries): under the line yesterday, the line falling
+        with np.errstate(invalid='ignore'):
+            for name, line in (('lim20', e20), ('lim10', e10), ('lim50', F.sma(50))):
+                if name in names:
+                    armed = pool & after & lag((F.c < line) & (line < lag(line)))
+                    out[name] = dict(armed=armed, level=lag(line))
+        return out, pool
+
+
 STUDY = Kell()
 
 if __name__ == '__main__':

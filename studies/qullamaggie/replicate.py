@@ -117,6 +117,43 @@ class Qullamaggie(CF.Flanders):
         return keep
 
 
+    def short_setups(self, A, sc):
+        """The parabolic short (RULES 4.3, S01): as of the day before, a name up at least `large` (50%) from its
+        20-day low when large (20-day turnover >= large_turnover, 500M USD: no market caps in the data, a stated
+        proxy) or `small` (300%) otherwise, after at least `streak` (3) up closes in a row; on day t it turns: 'red'
+        (close below the open and below the prior close; his first red 5-minute bar / opening-range-low break on
+        daily bars) or 'pdl' (close below the prior day's low).  Pool: 20-day turnover >= 20M USD and price >= 5 as
+        of t-1 (his liquidity floor), which is also the placebo pool."""
+        F = A['F']
+        pool = lag(F.liquid(sc.get('turnover', 20e6)))
+        with np.errstate(invalid='ignore', divide='ignore'):
+            up = F.c > lag(F.c)
+            streak = np.ones(up.shape, bool)
+            for k in range(1, sc.get('streak', 3) + 1):
+                streak &= lag(up, k)
+            run = lag(F.c / F.lo(20) - 1)
+            large = lag(F.to20) >= sc.get('large_turnover', 500e6)
+            para = streak & (run >= np.where(large, sc.get('large', .5), sc.get('small', 3.0)))
+            turn = {'red': (F.c < F.o) & (F.c < lag(F.c)), 'pdl': F.c < lag(F.l)}[sc.get('trigger', 'red')]
+            red = (F.c < F.o) & (F.c < lag(F.c))
+        names = sc.get('setups', ['para'])
+        out = {}
+        if 'para' in names:
+            out['para'] = pool & para & turn
+        if 'pbrk' in names:          # S2: his opening-range-low break as a sell-stop under yesterday's low, decided
+            out['pbrk'] = dict(armed=pool & para, level=lag(F.l), below=True)   # after the close (shorts.py)
+        if 'popen' in names:         # S2: the morning after the first red day, sold at the open
+            out['popen'] = dict(armed=pool & lag(para & red), at_open=True)
+        if 'pvwap' in names:         # S4: "first a drop, then the bounce to VWAP fails": the day after the first red
+            out['pvwap'] = dict(armed=pool & lag(para & red),            # day, a limit at that day's typical price
+                                level=lag((F.h + F.l + F.c) / 3),        # (VWAP proxy), stop above the top
+                                stop_line=np.fmax(lag(F.h), lag(F.h, 2)) * 1.01)
+        if 'ptop' in names:          # S3: the same, the stop just above the top (the higher of the last two highs)
+            out['ptop'] = dict(armed=pool & lag(para & red), at_open=True,
+                               stop_line=np.fmax(lag(F.h), lag(F.h, 2)) * 1.01)
+        return out, pool
+
+
 STUDY = Qullamaggie()
 
 if __name__ == '__main__':

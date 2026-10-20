@@ -1,0 +1,11 @@
+{
+ "stage": "short: his gap-short stop above the 150-day; keeping part of the 200-day short",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "FF": {"setups": ["r200"], "gate": "below200", "max_new": 2, "stop_w": "cap", "trail": "sma10", "trims": [], "trim_day": 1, "trim_day_frac": 0.5, "max_days": 0},
+  "FG": {"setups": ["gap200"], "gap_stop": "sma150", "gate": "below50", "max_new": 2, "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3},
+  "FH": {"setups": ["r200", "gap200"], "gap_stop": "sma150", "gate": "below200", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3},
+  "FI": {"setups": ["gap200"], "gap_stop": "sma150", "gate": "below50", "max_new": 2, "trail": "sma10", "trims": [], "trim_day": 1, "trim_day_frac": 0.5, "max_days": 0}
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "stage": "short, gate v2: the S6 shorts on the R11 N3 longs (breakeven only after +2R)",
+ "base": "",
+ "long": ["r11.json", "chosen"],
+ "draws": 50,
+ "candidates": {
+  "Q7A": {"setups": ["ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10},
+  "Q7B": {"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10},
+  "Q7C": {"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5,
+          "targets": ["sma10"], "target_frac": 0.0, "trail": "", "trims": [], "max_days": 10}
+ }
+}

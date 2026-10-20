@@ -74,6 +74,22 @@ class Minervini(CF.Flanders):
         return res
 
 
+    def short_setups(self, A, sc):
+        """B-grade baseline of his short side (RULES: index shorts SPY / DIA / QQQ / IWM as hedges -- no ETF data --
+        and individual shorts like SCHW with the stop "a few percent above the recent high"): his trend template
+        turned over (close < 50-day < 150-day < 200-day, the 200-day falling for a month) and a close under the prior
+        10-day low (the breakdown, close-confirmed); stop 2% above the 10-day high as of t-1, at most `cap` (8%, his
+        long loss limit turned over) above the fill.  Pool: 20-day turnover >= 20M USD, price >= 5, as of t-1."""
+        F = A['F']
+        with np.errstate(invalid='ignore', divide='ignore'):
+            pool = lag(F.liquid(sc.get('turnover', 20e6)))
+            s50, s150, s200 = F.sma(50), F.sma(150), F.sma(200)
+            stage4 = (F.c < s50) & (s50 < s150) & (s150 < s200) & (s200 < lag(s200, 21))
+            brk = lag(stage4) & (F.c < lag(F.lo(10)))
+            stop = np.fmin(lag(F.hi(10)) * 1.02, F.c * (1 + sc.get('cap', .08)))
+        return {'s4': dict(armed=pool & brk, stop=stop)}, pool
+
+
 STUDY = Minervini()
 
 if __name__ == '__main__':

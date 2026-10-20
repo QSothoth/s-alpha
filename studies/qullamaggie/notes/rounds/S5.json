@@ -1,0 +1,15 @@
+{
+ "stage": "short, gate v2: only his small-cap parabolics (300-1000%), no large-cap 50% leg",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "Q5A": {"setups": ["pvwap"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10},
+  "Q5B": {"setups": ["ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10},
+  "Q5C": {"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10},
+  "Q5D": {"setups": ["pvwap"], "streak": 3, "large": 99.0, "small": 5.0, "max_new": 2,
+          "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}
+ }
+}

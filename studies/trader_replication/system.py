@@ -38,6 +38,12 @@ class Rules:
     risk_high: float = 0.0          # > 0: risk per trade while the last `feedback` closed trades sum to > 0 R
     short_trims: tuple | None = None  # shorts' partial levels (None = same as longs)
     short_max_days: int = 0           # shorts' holding limit (0 = same as longs)
+    short_targets: tuple = ()         # names of lines in `ema` a short covers at, in order, once the day's low reaches
+    short_target_frac: float = 0.0    # the line's value at the previous close (at the open when it opens below):
+                                      # short_target_frac of the original size at each but the last, which covers the
+                                      # rest (0: the first covers all); a line not below the fill is not a target yet
+    short_trim_day: int = 0           # > 0: at the close this many sessions after entry a short covers
+    short_trim_day_frac: float = 0.0  # short_trim_day_frac of its original size, once, when that close is below the fill
     max_open: int = 0               # > 0: no new trade while this many are open
     max_new_long: int = 0           # > 0: count successful new long positions per trading session
     exit_signal: str = ''           # name of a boolean (days x codes) array in `ema`: longs exit at that close
@@ -72,6 +78,8 @@ class Rules:
     buy_cost: float = .0005
     sell_cost: float = .0005
     margin_rate: float = .07        # yearly, on long value above equity
+    borrow_rate: float = 0.0        # > 0: yearly stock-borrow fee on short market value, charged at each session's
+                                    # start on the shorts held at the previous close (an overnight short pays one day)
 
 
 @dataclass
@@ -90,6 +98,7 @@ class Pos:
     sig_adds: int = 0
     day_trimmed: bool = False
     sig2_trimmed: bool = False
+    targets: int = 0
     armed: bool = False
     cash: float = 0.0               # signed cash flow of the trade so far
     exits: list = field(default_factory=list)
@@ -123,6 +132,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     trail3 = ema[rules.trail_alt] if rules.trail_alt else None
     alt_days = ema[rules.trail_alt_days] if rules.trail_alt_days else None
     sig_add = ema[rules.add_signal] if rules.add_signal else None
+    targets = [ema[k] for k in rules.short_targets]
     if rules.add_signal_stop not in ('keep', 'fill', 'low'):
         raise ValueError('add_signal_stop')
     peak = 1.0
@@ -167,7 +177,10 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                            next_add=float(q.fill + adds[q.adds] * R) if q.side > 0 and q.adds < len(adds) else None,
                            day_trim_pending=bool(rules.trim_day and not q.day_trimmed), trim_day=rules.trim_day,
                            trim_day_frac=rules.trim_day_frac, trim_day_profit=rules.trim_day_profit,
-                           sig2_done=q.sig2_trimmed)
+                           sig2_done=q.sig2_trimmed,
+                           next_target=float(targets[q.targets][d, q.j]) if q.side < 0 and q.targets < len(targets)
+                           else None, target_name=rules.short_targets[q.targets]
+                           if q.side < 0 and q.targets < len(targets) else '')
         if q.side > 0:
             flow = size * price * (1 - rules.sell_cost)
         else:
@@ -261,6 +274,17 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             q.stop = max(q.stop, l[d, q.j])
         return True
 
+    def cover_targets(q, d, reach):
+        """A short's target lines the day reaches (reach = the open on a stop day, else the low), in order."""
+        j = q.j
+        while q.targets < len(targets) and j in pos and d > 0:
+            lv = targets[q.targets][d - 1, j]
+            if not (np.isfinite(lv) and lv < q.fill and reach <= lv):
+                break
+            last_ = q.targets == len(targets) - 1 or not rules.short_target_frac
+            close_part(q, q.size if last_ else rules.short_target_frac * q.size0, min(o[d, j], lv), d, 'target')
+            q.targets = len(targets) if last_ else q.targets + 1
+
     month_open, month_losses, month_cap, month_blocked = 1.0, 0, rules.month_loss_cap, False
     if rules.month_cap_basis not in ('equity', 'opened'):
         raise ValueError('month_cap_basis')
@@ -296,6 +320,12 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     opened_feedback = 0.0
             longs = sum(q.size * last(q.j, d - 1) for q in pos.values() if q.side > 0)
             cash -= rules.margin_rate / 252 * max(0.0, longs - equity)
+            if rules.borrow_rate:                       # each short carries its fee in its own result too
+                for q in pos.values():
+                    if q.side < 0:
+                        fee = rules.borrow_rate / 252 * q.size * last(q.j, d - 1)
+                        cash -= fee
+                        q.cash -= fee
         for q in list(pos.values()):
             j, s = q.j, q.side
             policy = q.management
@@ -313,6 +343,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     close_part(q, policy.trim_frac * q.size0, o[d, j], d, 'trim')
                     q.trims += 1
                     levels.pop(0)
+                if targets and s < 0:
+                    cover_targets(q, d, o[d, j])
                 if j in pos:
                     close_part(q, q.size, q.stop, d, 'stop')
                 continue
@@ -321,6 +353,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 close_part(q, policy.trim_frac * q.size0, px_, d, 'trim')
                 q.trims += 1
                 levels.pop(0)
+            if targets and s < 0 and j in pos:
+                cover_targets(q, d, l[d, j])
             if j not in pos:
                 continue
             if rules.breakeven_r and (best - (q.fill + s * rules.breakeven_r * R)) * s >= 0:
@@ -354,6 +388,12 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                         continue
                     if rules.trim_day_breakeven:
                         q.stop = max(q.stop, q.fill)
+            if rules.short_trim_day and s < 0 and not q.day_trimmed                     and session[d] - session[q.d0] == rules.short_trim_day:
+                q.day_trimmed = True
+                if c[d, j] < q.fill:
+                    close_part(q, rules.short_trim_day_frac * q.size0, c[d, j], d, 'day_trim')
+                    if j not in pos:
+                        continue
             levels_add = policy.add_levels or ((policy.add_r,) if policy.add_r else ())
             if s > 0 and q.adds < len(levels_add) and c[d, j] >= q.fill + levels_add[q.adds] * R:
                 add_pos(q, c[d, j], d)

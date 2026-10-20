@@ -88,5 +88,65 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(RN.years_until(curve, days, '2025-01-02'), {'2024': 1.1 - 1, '2025': 1.21 / 1.1 - 1})
 
 
+class ToyShort(Toy):
+    """Toy's longs plus a short in T2 on day `day` (default the last; stop 3% above)."""
+
+    def __init__(self, P, day=None):
+        super().__init__(P)
+        self.day = len(P['days']) - 1 if day is None else day
+
+    def build(self, A, cfg, trace=None):
+        entries, rules, mask, pool = super().build(A, cfg, trace)
+        c, k = A['close'], self.day
+        entries = [[e for e in lst if e[1] != 2] for lst in entries]
+        entries[k].append((2.0, 2, -1, float(c[k, 2]), float(c[k, 2] * 1.03), 's_x'))
+        return entries, rules, mask, pool
+
+
+def short_system(P):
+    st = ToyShort(P)
+    return SimpleNamespace(id='toy', study=st, config={}, name='Toy', version='V1 + S1', status='research',
+                           label='V1 + S1', freeze=P['days'][-1], strategy={})
+
+
+class RunnerShortTests(unittest.TestCase):
+    def test_short_is_reported_with_its_side_and_stop_above(self):
+        P = panel()
+        r = RN.run(short_system(P), 'us')
+        (b,) = [x for x in r['buys'] if x['side'] < 0]
+        self.assertEqual((b['code'], b['setup']), ('US.T2', 's_x'))
+        self.assertGreater(b['stop'], b['price'])
+        h = next(x for x in r['holdings'] if x['code'] == 'US.T2')
+        self.assertEqual(h['side'], -1)
+        self.assertAlmostEqual(h['ret'], 0.0)
+        self.assertFalse(h['day_trim_pending'])
+        self.assertGreater(r['account']['short_exposure'], 0)
+        from studies.trader_screens import board as B
+        self.assertTrue(B.exit_text(h).startswith(f"涨破 {B.px(h['stop'])} 回补"))
+        self.assertIn('卖空 T2', B.today_text(dict(r, buys=r['buys'], sells=r['sells'])))
+
+    def test_reported_short_stop_is_where_the_engine_covers_next(self):
+        P = panel()
+        r = RN.run(short_system(P), 'us')
+        h = next(x for x in r['holdings'] if x['code'] == 'US.T2')
+        Q = {k: (np.vstack([v, v[-1:]]) if isinstance(v, np.ndarray) and v.ndim == 2 else v) for k, v in P.items()}
+        Q['days'] = np.append(P['days'], str(np.datetime64(P['days'][-1]) + 1))
+        j = 2
+        Q['open'][-1, j] = h['stop'] * .98                        # opens below the stop, trades through it
+        Q['low'][-1, j] = h['stop'] * .97
+        Q['high'][-1, j] = h['stop'] * 1.03
+        Q['close'][-1, j] = h['stop'] * 1.02
+        st = ToyShort(Q, day=len(P['days']) - 1)
+        entries, rules, _, _ = st.build(Q, {})
+        _, _, tr = Y.simulate(st.px(Q), {}, rules, entries, Q['days'][0], Q['days'][-1], audit=True)
+        t = next(x for x in tr if x['code'] == 'US.T2')
+        self.assertEqual((t['side'], t['why']), (-1, 'stop'))
+        self.assertAlmostEqual(t['executions'][-1]['price'], h['stop'])
+        rr = RN.run(SimpleNamespace(**{**vars(short_system(P)), 'study': st}), 'us', days=1)
+        (s,) = [x for x in rr['sells'] if x['code'] == 'US.T2']
+        self.assertEqual((s['why'], s['side']), ('涨破止损回补', -1))
+        self.assertAlmostEqual(s['ret'], -(h['stop'] / t['fill'] - 1))
+
+
 if __name__ == '__main__':
     unittest.main()

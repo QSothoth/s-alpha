@@ -172,7 +172,8 @@ def r19():
 
 
 POOLS = {'U0': (5, 20e6, 4), 'U1': (1, 100e6, 4), 'U2': (1, 100e6, 3), 'U3': (1, 50e6, 4), 'U4': (2, 50e6, 3),
-         'U5': (5, 100e6, 3), 'U6': (2, 50e6, 2)}
+         'U5': (5, 100e6, 3), 'U6': (2, 50e6, 2),
+         'U7': (5, 100e6, 4)}                       # short S4: his "premier" names (>= 100M USD a day), ADR >= 4
 
 
 def pool_mask(A, price, turnover, adr):
@@ -1573,10 +1574,51 @@ def r35():
                   'r35_minyear.json', 'R35', ref='L5')
 
 
+def rejection_shorts(A, pool):
+    """S2 (from the per-trade check of his dated shorts on daily bars): the day's high tags the 9 EMA (as of t-1) and
+    the day closes back under it on a red candle, no weekly or EMA-order condition.  Z11 on a former leader (on the
+    K9 strength list within 40 days, as Z6), Z12 on any pool name, Z13 = Z11 with the 9 EMA falling."""
+    o, h, c = A['open'], A['high'], A['close']
+    e9p = prev(A['e9'])
+    with np.errstate(invalid='ignore'):
+        rej = pool & (h >= e9p) & (c < e9p) & (c < o)
+        leader = S._past_any(strength_lists(A, pool)['K9'], 40)
+        return {'Z11': rej & leader, 'Z12': rej, 'Z13': rej & leader & (e9p < prev(e9p))}
+
+
+def level_shorts(A, pool):
+    """S3 (layer two of the three-layer check: our close entry earns nothing on his own shorts): his entry into the
+    rally as a sell-short limit decided at the previous close, filled by studies.trader_replication.shorts when the
+    day opens below the level and trades up to it.  Armed for day t on t-1 data: in the pool, closed under the line,
+    the line falling.  Z14 the 9 EMA on a former leader (K9 within 40 days), Z15 the 21 EMA on a former leader,
+    Z16 the 9 EMA on any pool name."""
+    c, e9, e21 = A['close'], A['e9'], A['e21']
+    leader = S._past_any(strength_lists(A, pool)['K9'], 40)
+    with np.errstate(invalid='ignore'):
+        under9 = prev((c < e9) & (e9 < prev(e9)))
+        under21 = prev((c < e21) & (e21 < prev(e21)))
+    return {'Z14': dict(armed=pool & leader & under9, level=prev(e9)),
+            'Z15': dict(armed=pool & leader & under21, level=prev(e21)),
+            'Z16': dict(armed=pool & under9, level=prev(e9))}
+
+
 def short_masks(A, pool):
     z = short_signals(A, pool)
     z.update(leader_shorts(A, pool))
+    z.update(rejection_shorts(A, pool))
+    z.update(level_shorts(A, pool))
     return z
+
+
+def short_setups(A, sc):
+    """The short side for studies.trader_replication.shorts (S rounds on the common data): his day-t short triggers
+    named in sc['setups'] (Z1 first rally back to the 50 EMA after the first break, weekly down; Z2 rally into the
+    declining 9 < 21 < 50 EMAs, rejected under the 9; Z6 a former leader rejected at the falling 9 EMA within 5 days
+    of its first close below the 21; Z8 a former leader opening up into the 21 and closing under the 9), each on the
+    long system's pool as of t-1 (or sc['pool'], a POOLS key), and that pool for the placebo."""
+    pool = pool_for(A, sc.get('pool'))
+    z = short_masks(A, pool)
+    return {n: z[n] for n in sc['setups']}, pool
 
 
 def entries_short_capped(A, m, size_mult=1.0):
