@@ -138,10 +138,16 @@ class Ryan(CF.Flanders):
         return out
 
     def entries(self, A, cfg, masks):
-        """'pivot': fill max(open, level), stop yesterday's low within [stop_min, stop_max]; the day-0 exit is the
-        stop when the day's low reaches it (pessimistic), else the close when it is under the fill.  Other modes:
-        the Flanders entries."""
-        if cfg.get('entry') != 'pivot':
+        """Stops sit at the setup's stop (yesterday's low) within [stop_min, stop_max] below the fill.
+        'pivot'        fill max(open, level); day-0 exit at the stop when the day's low reaches it (pessimistic: the
+                       low came after the fill), else at the close when it is under the fill
+        'pivot_close'  the same fill; on day 0 only a close at or under the stop counts as stopped (at the stop),
+                       a close under the fill sells at the close (the order of the day's low and the fill unknown)
+        'close'        buy the close of a day that closes above the level (his "where it ends the day"); no day-0
+                       exit; stop_from 'prev' (yesterday's low, default) or 'day' (the day's low)
+        Other modes: the Flanders entries."""
+        mode = cfg.get('entry')
+        if mode not in ('pivot', 'pivot_close', 'close'):
             return super().entries(A, cfg, masks)
         F = A['F']
         o, l, c = F.o, F.l, F.c
@@ -152,15 +158,21 @@ class Ryan(CF.Flanders):
             for d, j in zip(*np.nonzero(m)):
                 if d == 0 or not np.isfinite(c[d, j]):
                     continue
-                fill = max(o[d, j], level[d, j])
-                s = stop[d, j]
+                if mode == 'close':
+                    if not c[d, j] > level[d, j]:
+                        continue
+                    fill = c[d, j]
+                    s = l[d, j] if cfg.get('stop_from', 'prev') == 'day' else stop[d, j]
+                else:
+                    fill = max(o[d, j], level[d, j])
+                    s = stop[d, j]
                 if not (np.isfinite(fill) and np.isfinite(s) and fill > 0):
                     continue
                 s = max(min(s, fill * (1 - smin)), fill * (1 - smax))
                 exit0 = None
-                if l[d, j] <= s:
+                if mode == 'pivot' and l[d, j] <= s or mode == 'pivot_close' and c[d, j] <= s:
                     exit0 = s
-                elif c[d, j] < fill:
+                elif mode != 'close' and c[d, j] < fill:
                     exit0 = float(c[d, j])
                 pr = prio[d, j]
                 out[d].append((pr if np.isfinite(pr) else 0.0, int(j), 1, float(fill), float(s), kind, exit0))

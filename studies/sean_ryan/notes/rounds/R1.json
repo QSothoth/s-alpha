@@ -1,0 +1,13 @@
+{
+ "stage": "execution",
+ "base": ["r0.json", "chosen"],
+ "ref": "D0",
+ "objective": "behaviour",
+ "gates": ["placebo", "win<=0.35"],
+ "candidates": {
+  "E1": {"entry": "close", "stop_from": "prev"},
+  "E2": {"entry": "close", "stop_from": "day"},
+  "E3": {"entry": "pivot_close"},
+  "E4": {"entry": "close", "stop_from": "day", "stop_min": 0.03}
+ }
+}

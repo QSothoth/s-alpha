@@ -73,6 +73,24 @@ class WaveTests(unittest.TestCase):
         self.assertAlmostEqual(e[6], 15.0)
         self.assertTrue(A['low'][self.T, 0] <= e[3] <= A['high'][self.T, 0])
 
+    def test_close_and_pivot_close_modes(self):
+        rows = self.rows[:-1] + [(15.4, 15.8, 14.9, 15.45)]    # through the pivot 15.6, low under the stop 15.0
+        A = wave_panel(rows)
+        masks = R.STUDY.setups(A, self.cfg)
+        (e,) = [x for x in R.STUDY.entries(A, dict(self.cfg, entry='pivot_close'), masks)[self.T] if x[1] == 0]
+        self.assertAlmostEqual(e[6], 15.45)                    # closed above the stop: sold at the close
+        self.assertEqual([x for x in R.STUDY.entries(A, dict(self.cfg, entry='close'), masks)[self.T]
+                          if x[1] == 0], [])                   # closed under the pivot: no close entry
+        A = wave_panel(self.rows)
+        masks = R.STUDY.setups(A, self.cfg)
+        (e,) = [x for x in R.STUDY.entries(A, dict(self.cfg, entry='close'), masks)[self.T] if x[1] == 0]
+        self.assertAlmostEqual(e[3], 15.9)                     # the close
+        self.assertAlmostEqual(e[4], 15.0)                     # yesterday's low
+        self.assertIsNone(e[6])
+        (e,) = [x for x in R.STUDY.entries(A, dict(self.cfg, entry='close', stop_from='day'), masks)[self.T]
+                if x[1] == 0]
+        self.assertAlmostEqual(e[4], 15.3)                     # the day's low
+
     def test_stop_bounds(self):
         rows = self.rows[:-2] + [(15.3, 15.6, 13.0, 15.3), (15.4, 16.0, 15.3, 15.9)]   # yesterday's low far
         A = wave_panel(rows)
