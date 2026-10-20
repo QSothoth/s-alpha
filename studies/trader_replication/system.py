@@ -90,6 +90,8 @@ class Rules:
     no_rebuy_day: bool = False      # a name sold or stopped (any exit, partial or whole) is not opened again that session
     gross_cost: bool = False        # the gross room of an entry or add includes its buying cost (no margin is drawn)
     cap_adds_entry: bool = False    # adds stay inside the entry's own max_position (the tuple's), not only the policy's
+    gross_close: bool = False       # at each close a gross above max_gross (shorts that rose, fees) is brought back to it:
+                                    # shorts covered first (largest first), then longs sold, at that close ('gross')
 
 
 @dataclass
@@ -488,6 +490,17 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 new_longs += 1
             if len(e) > 6 and e[6] is not None and j in pos and not had:     # intraday entry stopped the same day
                 close_part(pos[j], pos[j].size, e[6], d, 'stop_day0')
+        if rules.gross_close and (daily_close is None or daily_close[d]):
+            for side_ in (-1, 1):
+                for q in sorted([q for q in pos.values() if q.side == side_ and np.isfinite(c[d, q.j])],
+                                key=lambda q: -q.size * c[d, q.j]):
+                    eq_c = cash + value(d)
+                    excess = gross(d) - rules.max_gross * eq_c
+                    if excess <= 1e-12:
+                        break
+                    cost = rules.buy_cost if side_ < 0 else rules.sell_cost
+                    x = excess / (1 - rules.max_gross * cost) * (1 + 1e-9)    # value to take off at this close
+                    close_part(q, min(q.size, x / c[d, q.j]), c[d, q.j], d, 'gross')
         curve.append(cash + value(d))
         if track is not None:
             track.setdefault('gross', []).append(gross(d) / curve[-1] if curve[-1] > 0 else float('inf'))

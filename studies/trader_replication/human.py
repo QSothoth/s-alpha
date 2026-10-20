@@ -121,20 +121,32 @@ def tiers(st, A, cfg, entries, spec, base):
     return out
 
 
-def limit_rules(rules):
-    """The hard limits on top of the study's own rules (its own tighter values stay)."""
+PARTS = ('gross', 'max_open', 'max_new', 'max_year', 'max_position', 'no_rebuy')
+
+
+def limit_rules(rules, only=None):
+    """The hard limits on top of the study's own rules (its own tighter values stay); `only` (decompose): just
+    these PARTS, to see what each one costs."""
+    if only is not None:
+        full = limit_rules(rules)
+        keep = {'gross': ('max_gross', 'gross_cost', 'gross_close'), 'max_open': ('max_open',),
+                'max_new': ('max_new_all',), 'max_year': ('max_new_year',),
+                'max_position': ('max_position', 'management_by_kind', 'cap_adds_entry'), 'no_rebuy': ('no_rebuy_day',)}
+        return replace(rules, **{f: getattr(full, f) for p in only for f in keep[p]})
     cap = LIMITS['max_position']
     mbk = {k: dict(v, max_position=min(v['max_position'], cap)) if 'max_position' in v else v
            for k, v in rules.management_by_kind.items()}
     return replace(rules, max_gross=min(rules.max_gross, LIMITS['gross']),
                    max_open=min(rules.max_open, LIMITS['max_open']) if rules.max_open else LIMITS['max_open'],
                    max_new_all=LIMITS['max_new'], max_new_year=LIMITS['max_year'], no_rebuy_day=True,
-                   gross_cost=True, cap_adds_entry=True, max_position=min(rules.max_position, cap),
+                   gross_cost=True, gross_close=True, cap_adds_entry=True, max_position=min(rules.max_position, cap),
                    management_by_kind=mbk)
 
 
 def apply(st, A, cfg, h, entries, rules):
     """(entries, rules) under the hard limits and the tiers of h."""
+    if h.get('only') is not None:                # decompose: one part of the limits alone, not a candidate
+        return entries, limit_rules(rules, h['only'])
     rules = limit_rules(rules)
     if h.get('rule_opts'):                       # sizing rules of his inside the limits (feedback, risk_high, ...)
         ro = {k: tuple(v) if isinstance(v, list) else v for k, v in h['rule_opts'].items()}
@@ -384,6 +396,32 @@ def h0(ids=()):
     return res
 
 
+def decompose(ids=()):
+    """Each part of the hard limits alone on the registered version (selection segment, US, no placebo): what the
+    registered returns owe to margin (gross), the number of names open, the daily and the yearly count.
+    reports/human_decompose.json."""
+    from . import systems as SY
+    path = OUT / 'human_decompose.json'
+    res = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+    for x in SY.all_():
+        if ids and x.id not in ids:
+            continue
+        st, cfg = x.load()
+        A = st.arrays('us')
+        r = {}
+        for p in PARTS:
+            v = run(st, A, dict(cfg, human={'only': [p]}), SELECT)
+            v.pop('_tr')
+            r[p] = {k: v[k] for k in ('total', 'by_year', 'maxdd', 'trades', 'human')}
+            print(x.id, p, f"total {v['total']:+.3f}", {y: round(q, 3) for y, q in v['by_year'].items()},
+                  f"n {v['trades']} open {v['human']['max_open']} gross {v['human']['max_gross']:.2f}", flush=True)
+        res[x.id] = r
+        del A
+        gc.collect()
+        path.write_text(json.dumps(res, indent=1, default=float, ensure_ascii=False), encoding='utf-8')
+    return res
+
+
 def round_(sid, name):
     """studies/<sid>/notes/rounds/<name>.json: {"base": "H0" | [report, key], "candidates": {key: changes},
     "draws": 50}.  Every candidate against H0 by accept(); the passing one with the best objective, if it also
@@ -449,6 +487,8 @@ def round_(sid, name):
 if __name__ == '__main__':
     if sys.argv[1] == 'h0':
         h0(sys.argv[2:])
+    elif sys.argv[1] == 'decompose':
+        decompose(sys.argv[2:])
     elif sys.argv[1] == 'round':
         round_(sys.argv[2], sys.argv[3])
     else:

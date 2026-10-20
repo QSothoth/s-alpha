@@ -138,6 +138,22 @@ class TiersAndGross(unittest.TestCase):
         self.assertEqual(tr_['margin'], 0)
         self.assertLessEqual(max(tr_['gross']), 1.0 + 1e-12)
 
+    def test_a_rising_short_is_covered_at_the_close_back_to_the_gross_limit(self):
+        c = np.full((len(DATES), N), 10.0)
+        c[2:, 1] = 12.0                                        # the short rises 20% on day 2
+        e = empty()
+        e[0] += [(0, 0, 1, 10.0, 9.0, 'brk', None, None, .5), (1, 1, -1, 10.0, 15.0, 's_x', None, None, .5)]
+        p = px(close=c, high=c + .1, low=c - .1)
+        kw = dict(max_gross=1.0, max_position=.5, risk=.5)
+        _, tr, tk = run(e, p, **kw)
+        self.assertGreater(max(tk['gross']), 1.0)              # off: 50% + 60% on an equity of 0.9
+        _, tr, tk = run(e, p, gross_close=True, **kw)
+        self.assertLessEqual(max(tk['gross']), 1.0 + 1e-9)
+        short = next(t for t in tr if t['side'] < 0)
+        self.assertEqual([(x['time'], x['action']) for x in short['executions']][:2],
+                         [('2024-12-30', 'entry'), ('2025-01-02', 'gross')])
+        self.assertTrue(all(x['action'] != 'gross' for t in tr if t['side'] > 0 for x in t['executions']))
+
     def test_track_counts_new_and_open(self):
         e = empty()
         e[0] += [(0, 0, 1, 10.0, 9.5, 'brk'), (1, 1, 1, 10.0, 9.5, 'brk')]

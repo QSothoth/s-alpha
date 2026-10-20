@@ -1,0 +1,12 @@
+{
+ "stage": "human sizing: tiers, progressive exposure, selection under the yearly limit, his other setups",
+ "base": "H0",
+ "draws": 50,
+ "candidates": {
+  "H1A": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}]}},
+  "H1B": {"human": {"tiers": [{"when": ["ep", "tight<=15"], "risk": 3, "cap": 0.5}]}},
+  "H1C": {"human": {"rule_opts": {"feedback": 3, "risk_low": 0.0025, "risk_high": 0.01, "max_position": 0.5}}},
+  "H1D": {"strength": "rs90"},
+  "H1E": {"setups": ["hi52", "ep", "vcp", "pp", "pb"]}
+ }
+}
