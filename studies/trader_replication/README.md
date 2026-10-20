@@ -16,6 +16,7 @@
 | `gate.py` | 工程门禁：数据版本与区间、不看未来（截面板前后决定一致）、成交价在当日区间内、胜率 ≤ 35%；单测 `tests/test_gate.py` |
 | `compare.py` | 各交易员当前配置在统一数据层上的三市场横向比对与门禁，写 `reports/compare.json`、`reports/COMPARISON_CN.md`：`python -m studies.trader_replication.compare run [us,hk,cn] [交易员 ...]` |
 | `shorts.py` | 空头（多空一体，[TRADER_PROTOCOL_CN 第 5 节](../../docs/TRADER_PROTOCOL_CN.md)）：`LongShort` 包住各人的研究模块，配置没有 `short` 时原样调用其 build（`systems.py` 一律包上）；各人的 `short_setups` 给出收盘卖空掩码，或前一日决定的限价（反抽到线）/ 开盘 / 卖空止损单（跌破），止损在上方；同一天先开多再开空；`round <交易员> S1` 跑预登记轮次（只做多 / 多空合计 / 只做空 + 同池随机做空、下跌时段按月、小盘空单单列、门禁），`gate` 跑不看未来，`render` 写 `studies/<id>/reports/SHORTS_CN.md` |
+| `common.py` | 7 套登记系统的共同缺口（2026-10-20）：`funnel` 统一漏斗与第二层 R，`round C<n>` 共享机制在 7 人选择段上的横向表与接受规则，`validate V1` 落到个人后的一次性验证。配置里的 `common` 开关（`rank` / `stop` / `add` / `ep_slots` / `floor` / `small`）默认关闭，`shorts.LongShort` 才调用；结论在 `reports/COMMON_RESULTS_CN.md`（没有通过的共享机制） |
 | `shorts_robust.py` | 带入的多空版本的稳健性（借券 6%、空单风险减半、只在指数 < EMA50 做空、成本加倍），只报告 |
 | `system.py` | 多空日 K 组合：收盘确认入场、固定风险定仓、分批（按 R / 按信号）、EMA 跟踪（分批后或回撤 / 指定市场日换另一条）、保本、信号全卖、加码（一档或多档，止损提到成本价）、次日无延续离场、新仓反馈调风险、按日风险倍数、同时持仓上限、当天盘中止损；安慰剂（同一天同一名单随机换股、同样止损宽度）。新规则都在 `Rules` 里、默认关闭 |
 
@@ -46,3 +47,5 @@ PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/
 $PY -m studies.trader_replication.martin diagnose r74.json && $PY -m studies.trader_replication.martin final r74.json
 $PY -m studies.trader_replication.martin robust r74.json && $PY -m studies.trader_replication.martin check
 ```
+
+2026-10-20 新增默认关闭的 `Rules` 字段（单测 `tests/test_day_trim_signal_add.py`、`tests/test_common.py`）：`add_signal_profit`（新买点加仓只在收盘高于成本时做）、`max_new_by_kind`（某些形态单独计每天成功新开多头数，不占 `max_new_long`）。`trader_screens.screens.Feat.floor`（只在 `common` 的 `floor` 开关的那次 build 里设上）。默认关闭时已登记 7 套在美股、港股的结果逐位不变（`compare run us,hk` 前后核对）。

@@ -133,7 +133,7 @@
 ### Christian Flanders（christian_flanders）
 
 - 别名：无另列别名
-- 实现边界：2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R15 C4 + S4（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头为已压回过反抽的下行 200 日线限价空单（指数 < 50 EMA，有利润马上了结）；合计改善偏弱；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。
+- 实现边界：2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R15 C4 + C1C + S4（2026-10-20 加当天 EP 先买）（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头为已压回过反抽的下行 200 日线限价空单（指数 < 50 EMA，有利润马上了结）；合计改善偏弱；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。
 - 来源账本：[studies/trader_registry/dossiers/active/active_source_ledger.json](../../studies/trader_registry/dossiers/active/active_source_ledger.json)；[studies/trader_registry/dossiers/active/active_claim_ledger.json](../../studies/trader_registry/dossiers/active/active_claim_ledger.json)
 - main代码：[studies/christian_flanders/replicate.py](../../studies/christian_flanders/replicate.py)；[studies/trader_replication/system.py](../../studies/trader_replication/system.py)；[studies/trader_replication/shorts.py](../../studies/trader_replication/shorts.py)；[studies/trader_replication/systems.py](../../studies/trader_replication/systems.py)
 - main报告：[studies/christian_flanders/reports/SHORTS_CN.md](../../studies/christian_flanders/reports/SHORTS_CN.md)；[studies/christian_flanders/reports/FINAL_CN.md](../../studies/christian_flanders/reports/FINAL_CN.md)
@@ -177,7 +177,7 @@
 ### Clement Ang（clement_ang）
 
 - 别名：无另列别名
-- 实现边界：2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R15 AA3 + S5（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头为大型前领涨股的晚期失败底部（市况连续转负后，最多 5 天）；他主要的反向 ETF 空头不在其中；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。
+- 实现边界：2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R15 AA3 + C4A + S5（2026-10-20 加 EP 另计每天 1 笔）（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头为大型前领涨股的晚期失败底部（市况连续转负后，最多 5 天）；他主要的反向 ETF 空头不在其中；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。
 - 来源账本：[studies/trader_registry/dossiers/active/active_source_ledger.json](../../studies/trader_registry/dossiers/active/active_source_ledger.json)；[studies/trader_registry/dossiers/active/active_claim_ledger.json](../../studies/trader_registry/dossiers/active/active_claim_ledger.json)
 - main代码：[studies/clement_ang/replicate.py](../../studies/clement_ang/replicate.py)；[studies/trader_replication/system.py](../../studies/trader_replication/system.py)；[studies/trader_replication/shorts.py](../../studies/trader_replication/shorts.py)；[studies/trader_replication/systems.py](../../studies/trader_replication/systems.py)
 - main报告：[studies/clement_ang/reports/SHORTS_CN.md](../../studies/clement_ang/reports/SHORTS_CN.md)；[studies/clement_ang/reports/FINAL_CN.md](../../studies/clement_ang/reports/FINAL_CN.md)
