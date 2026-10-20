@@ -1,0 +1,14 @@
+{
+ "stage": "exit: his 'trim 1/3-1/2 after 3-5 days, stop to cost, trail the 10 / 20-day' inside his own range, win rate within the gate",
+ "base": ["r7.json", "chosen"],
+ "ref": "R7",
+ "objective": "total",
+ "gates": ["placebo", "win<=0.35"],
+ "candidates": {
+  "L1": {"rule_opts": {"trim_day": 5}},
+  "L2": {"rule_opts": {"trim_day_frac": 0.3333}},
+  "L3": {"rule_opts": {"trim_day": 5, "trim_day_frac": 0.3333}},
+  "L4": {"rule_opts": {"trail": "sma10"}},
+  "L5": {"rule_opts": {"trim_day": 5, "trail": "sma10"}}
+ }
+}
