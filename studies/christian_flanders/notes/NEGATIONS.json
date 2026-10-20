@@ -5265,6 +5265,242 @@
   }
  },
  {
+  "round": "H7",
+  "stage": "human sizing",
+  "candidate": "H7A",
+  "change": {
+   "human": {
+    "cap_above": true
+   }
+  },
+  "base": [
+   "h5.json",
+   "H5A"
+  ],
+  "chosen": null,
+  "reason": "H gates: bought 4 < 5",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 2.348285619971244,
+   "by_year": {
+    "2024": 0.336247273314511,
+    "2025": 1.505738037291517
+   },
+   "placebo_median": 0.09877394723721222,
+   "win": 0.3035294117647059,
+   "bought": [
+    4,
+    54
+   ],
+   "year_gap": {
+    "2024": 1.3844237419490935,
+    "2025": 0.06536606353948368
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "hi52",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.06,
+   "priority": "rs",
+   "max_new": 2,
+   "strength": "rs90",
+   "filter": "",
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "ema21",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "trim_day": 3,
+    "trim_day_frac": 0.5
+   },
+   "ep_pool": {
+    "turnover": 5000000.0,
+    "price": 2.0
+   },
+   "ep": {
+    "near": null,
+    "far_low": 0.5,
+    "rvol": 3.0
+   },
+   "pool": {
+    "adr": 2.0
+   },
+   "common": {
+    "rank": "ep_own",
+    "add": {
+     "frac": 0.5,
+     "max": 1,
+     "stop": "keep",
+     "profit": true
+    }
+   },
+   "short": {
+    "setups": [
+     "r200"
+    ],
+    "r200_rej": 1,
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 1.0,
+    "max_days": 3
+   },
+   "human": {
+    "tiers": [
+     {
+      "when": [
+       "ep",
+       "near52<=0"
+      ],
+      "risk": 3,
+      "cap": 0.5
+     },
+     {
+      "when": [
+       "strength>=0.98"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ]
+   }
+  }
+ },
+ {
+  "round": "H7",
+  "stage": "human sizing",
+  "candidate": "H7B",
+  "change": {
+   "human": {
+    "cap_above": true,
+    "tiers": [
+     {
+      "when": [
+       "ep",
+       "near52<=0"
+      ],
+      "risk": 3,
+      "cap": 0.5
+     }
+    ]
+   }
+  },
+  "base": [
+   "h5.json",
+   "H5A"
+  ],
+  "chosen": null,
+  "reason": "H gates: bought 4 < 5",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 2.0833024452066127,
+   "by_year": {
+    "2024": 0.3010490047405292,
+    "2025": 1.3698588092932917
+   },
+   "placebo_median": 0.10607680969128785,
+   "win": 0.28868360277136257,
+   "bought": [
+    4,
+    54
+   ],
+   "year_gap": {
+    "2024": 1.4111180189530779,
+    "2025": 0.12111900111339101
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "hi52",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.06,
+   "priority": "rs",
+   "max_new": 2,
+   "strength": "rs90",
+   "filter": "",
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "ema21",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "trim_day": 3,
+    "trim_day_frac": 0.5
+   },
+   "ep_pool": {
+    "turnover": 5000000.0,
+    "price": 2.0
+   },
+   "ep": {
+    "near": null,
+    "far_low": 0.5,
+    "rvol": 3.0
+   },
+   "pool": {
+    "adr": 2.0
+   },
+   "common": {
+    "rank": "ep_own",
+    "add": {
+     "frac": 0.5,
+     "max": 1,
+     "stop": "keep",
+     "profit": true
+    }
+   },
+   "short": {
+    "setups": [
+     "r200"
+    ],
+    "r200_rej": 1,
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 1.0,
+    "max_days": 3
+   },
+   "human": {
+    "tiers": [
+     {
+      "when": [
+       "ep",
+       "near52<=0"
+      ],
+      "risk": 3,
+      "cap": 0.5
+     },
+     {
+      "when": [
+       "strength>=0.98"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ]
+   }
+  }
+ },
+ {
   "round": "R7",
   "stage": "exact_entry",
   "candidate": "W1",

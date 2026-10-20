@@ -63,6 +63,8 @@
 | R6 | sizing | S3 | `{"rule_opts": {"feedback": 4, "risk_low": 0.0025, "risk_high": 0.0075, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}}` | r5.json:chosen | R5 | gates: bought；全区间 +207%（带入 +463%） | open |
 | R6 | sizing | S4 | `{"rule_opts": {"risk": 0.005, "feedback": 4, "risk_low": 0.0025, "risk_high": 0.01, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}}` | r5.json:chosen | R5 | gates: bought；全区间 +187%（带入 +463%） | open |
 | R6 | sizing | S5 | `{"rule_opts": {"risk": 0.005, "feedback": 4, "risk_low": 0.0025, "risk_high": 0.015, "month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "max_gross": 2.0, "max_position": 0.5}}` | r5.json:chosen | R5 | gates: bought；全区间 +34%（带入 +463%） | open |
+| H7 | human sizing | H7A | `{"human": {"cap_above": true}}` | h5.json:H5A | None | H gates: bought 4 < 5；全区间 +235%（带入 +0%） | open |
+| H7 | human sizing | H7B | `{"human": {"cap_above": true, "tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}]}}` | h5.json:H5A | None | H gates: bought 4 < 5；全区间 +208%（带入 +0%） | open |
 | R7 | exact_entry | W1 | `{"ep": {"rvol": 3.0}}` | r6.json:chosen | W2 | objective below W2；全区间 +39%（带入 +54%） | open |
 | R7 | exact_entry | W3 | `{"rule_opts": {"trail": "ema21", "trim_signal": "ext200_120", "trim_signal_frac": 0.5}}` | r6.json:chosen | W2 | gates: bought；全区间 +43%（带入 +54%） | open |
 | R7 | exact_entry | W4 | `{"stop_cap": 0.0}` | r6.json:chosen | W2 | gates: placebo, bought；全区间 +4%（带入 +54%） | open |
