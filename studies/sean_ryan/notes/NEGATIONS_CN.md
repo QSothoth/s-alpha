@@ -14,3 +14,7 @@
 | R3 | return_exit_entry | P1 | `{"rule_opts": {"trims": [2], "trim_frac": 0.5}}` | r2.json:chosen | P4 | objective below P4；全区间 +50%（带入 +75%） | open |
 | R3 | return_exit_entry | P2 | `{"rule_opts": {"trims": [3], "trim_frac": 0.5}}` | r2.json:chosen | P4 | objective below P4；全区间 +40%（带入 +75%） | open |
 | R3 | return_exit_entry | P3 | `{"setups": ["wave2", "shake"]}` | r2.json:chosen | P4 | gates: behaviour；全区间 +54%（带入 +75%） | open |
+| R4 | market_selection | M1 | `{"filter": "RSIDIV"}` | r3.json:chosen | P4 | gates: behaviour；全区间 +9%（带入 +75%） | open |
+| R4 | market_selection | M2 | `{"priority": "wave"}` | r3.json:chosen | P4 | gates: behaviour；全区间 +125%（带入 +75%） | open |
+| R4 | market_selection | M3 | `{"wave": {"gain": 1.0}}` | r3.json:chosen | P4 | gates: behaviour；全区间 +67%（带入 +75%） | open |
+| R4 | market_selection | M4 | `{"max_new": 5}` | r3.json:chosen | P4 | gates: behaviour；全区间 +83%（带入 +75%） | open |
