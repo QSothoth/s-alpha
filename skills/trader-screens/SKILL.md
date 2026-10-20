@@ -19,9 +19,10 @@ description: 交易员看板：假设研究过的交易员此刻在美股 / 港�
 
 | 状态 | 现在有谁 | 能信到什么程度 |
 |---|---|---|
-| 已冻结 | Martin Luk（R74） | 用户认可的冻结配置；到冻结日 2026-10-16 为止全是样本内，之后是唯一的样本外 |
-| 研究带入配置，未冻结 | Christian Flanders（R15 C4）、Clement Ang（R15 AA3）、Qullamaggie（R7 X1）、Oliver Kell（R6 A5） | 研究里逐轮选出、还在优化；同样只有冻结日之后才算样本外 |
-| B 级基线 | Mark Minervini（R0b） | 台账不够，按原话的基线系统 |
+| 已冻结（多空一体，2026-10-20 用户认可） | Martin Luk（R74 + S7）、Christian Flanders（R15 C4 + S4）、Clement Ang（R15 AA3 + S5）、Qullamaggie（R11 N3 + S7）、Oliver Kell（R6 A5 + S5） | 到冻结日 2026-10-16 为止全是样本内，之后是唯一的样本外；空头只在美股（港股、A 股不适用，只跑多头），按 [TRADER_PROTOCOL_CN 第 5 节](../../docs/TRADER_PROTOCOL_CN.md) 的门禁 v2 选出；Qullamaggie 的多头同时换成了 R11 N3（+2R 才保本，偏离原话）；Flanders 的合计改善偏弱。各人结论在 `studies/<id>/notes/SHORTS_CONCLUSION_CN.md` |
+| B 级基线 | Mark Minervini（R0b，只做多） | 台账不够，按原话的基线系统；空头基线没通过 |
+
+空单在看板上写成“卖空 X 价格，涨破 Y 回补”，持仓表的方向列标“空”，离场线写成“涨破 X 回补 · 收盘站上某线回补”。live 数据遇到除权会把冻结日以前的价格重新复权，回放核对可能出现 1e-9 量级的浮点差，被标成“不一致”，这不是行为变化（冻结数据上回放完全一致）。
 
 研究里改出更好的配置，就在 `systems.py` 登记新版本，看板自动跟着变；冻结要用户同意，前向记录从新版本的冻结日重算。不要在看板里改规则来“让账户好看”。每次运行都把回放截到冻结日，与比对表逐年核对，不一致会在看板上标出。
 

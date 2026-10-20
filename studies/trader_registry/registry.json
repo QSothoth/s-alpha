@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-10-18",
+  "as_of": "2026-10-20",
   "traders": [
     {
       "id": "martin_luk",
@@ -66,36 +66,18 @@
       "implementation": {
         "status": "MAIN_EXECUTED_LIMITED_HYPOTHESES",
         "code_paths": [
-          "studies/martin_luk/checks.py",
-          "studies/martin_luk/fetch_r8.py",
-          "studies/martin_luk/intraday.py",
-          "studies/martin_luk/luk.py",
-          "studies/martin_luk/onemin_check.py",
-          "studies/martin_luk/r1.py",
-          "studies/martin_luk/r10.py",
-          "studies/martin_luk/r12.py",
-          "studies/martin_luk/r16.py",
-          "studies/martin_luk/r17.py",
-          "studies/martin_luk/r3.py",
-          "studies/martin_luk/r8.py",
-          "studies/martin_luk/r8_checks.py",
           "studies/martin_luk/replicate.py",
-          "studies/martin_luk/scale.py",
-          "studies/martin_luk/selection.py",
-          "studies/martin_luk/strength.py",
-          "studies/trader_replication/edge.py",
-          "studies/trader_replication/fidelity.py",
-          "studies/trader_replication/ledger.py",
-          "studies/trader_replication/system.py"
+          "studies/trader_replication/martin.py",
+          "studies/trader_replication/system.py",
+          "studies/trader_replication/shorts.py",
+          "studies/trader_replication/systems.py"
         ],
         "report_paths": [
-          "studies/martin_luk/reports/FINAL_CN.md",
-          "studies/martin_luk/reports/REPLICATION_CN.md",
-          "studies/martin_luk/reports/final_system.json",
-          "studies/martin_luk/reports/diagnose.json",
-          "studies/martin_luk/reports/robust.json"
+          "studies/martin_luk/reports/SHORTS_CN.md",
+          "studies/martin_luk/reports/final_system_r74.json",
+          "studies/martin_luk/reports/FINAL_CN.md"
         ],
-        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339已有R1–R18及R19–R74研究、replicate.py和通用trader_replication引擎；属于局部机械假设与同段择优，不是本人交易复刻、独立样本外或交易许可。main的RULES_CN.md另记录两场访谈自动字幕和3R/5R、15%退出的时间戳，较本次来源档案所审9bc6a6b历史基线更新；仍应分开2025-02本人>3×ADR评论、自动字幕解释和各轮代码，不能把版本差异宣判为所有R规则错误。本次未修改策略。原话整理：https://github.com/QSothoth/s-alpha/blob/5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339/studies/martin_luk/notes/RULES_CN.md"
+        "note": "2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R74 + S7（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头为前领涨股反抽到下行 21 EMA 的限价空单（只在指数 < 50 EMA，最多 5 天）；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。"
       }
     },
     {
@@ -150,10 +132,17 @@
         "补足失败案例、完整账本与风险变化记录"
       ],
       "implementation": {
-        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
-        "code_paths": [],
-        "report_paths": [],
-        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行真实日线局部假设和源参数筛选，非SEPA完整复刻。当前存续池及事后公司行动排除有选择偏差；完整原版验收、可部署性及独立样本外均未通过。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/mark_minervini/signals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/mark_minervini/reports/FINAL_CN.md"
+        "status": "EXECUTED_DAILY_LIMITED_HYPOTHESES",
+        "code_paths": [
+          "studies/mark_minervini/replicate.py",
+          "studies/trader_replication/system.py",
+          "studies/trader_replication/shorts.py",
+          "studies/trader_replication/systems.py"
+        ],
+        "report_paths": [
+          "studies/mark_minervini/reports/SHORTS_CN.md"
+        ],
+        "note": "2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R0b（B 级基线，只做多） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头基线两轮都没通过（他的空头主要是指数 ETF 对冲，不在范围内）；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。"
       }
     },
     {
@@ -494,10 +483,18 @@
         "审查尾部赢家、退出与订单幂等性"
       ],
       "implementation": {
-        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
-        "code_paths": [],
-        "report_paths": [],
-        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行真实日线局部突破/退出及风险假设，非本人比赛复刻；未把NVDA单次220%曝光设为固定配置。现存池及事后行动筛选限制外推。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/christian_flanders/signals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/christian_flanders/reports/FINAL_CN.md"
+        "status": "EXECUTED_DAILY_LIMITED_HYPOTHESES",
+        "code_paths": [
+          "studies/christian_flanders/replicate.py",
+          "studies/trader_replication/system.py",
+          "studies/trader_replication/shorts.py",
+          "studies/trader_replication/systems.py"
+        ],
+        "report_paths": [
+          "studies/christian_flanders/reports/SHORTS_CN.md",
+          "studies/christian_flanders/reports/FINAL_CN.md"
+        ],
+        "note": "2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R15 C4 + S4（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头为已压回过反抽的下行 200 日线限价空单（指数 < 50 EMA，有利润马上了结）；合计改善偏弱；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。"
       }
     },
     {
@@ -752,10 +749,18 @@
         "补失败订单及条件性风险例外的实际执行"
       ],
       "implementation": {
-        "status": "HISTORICAL_RESEARCH_BRANCH_ONLY",
-        "code_paths": [],
-        "report_paths": [],
-        "note": "main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339无可识别的该人专属实现；不迁入历史策略代码。历史research/individual-trader-studies分支 9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2：已执行两层数值筛选与分钟局部低点/转强触发代理。2026-10-06文字用于更早行情，属事后规则迁移；主题/收缩裁量未复制，QFQ单位非实盘净美元。 历史代码：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/clement_ang/signals.py；历史报告：https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/clement_ang/reports/FINAL_CN.md"
+        "status": "EXECUTED_DAILY_LIMITED_HYPOTHESES",
+        "code_paths": [
+          "studies/clement_ang/replicate.py",
+          "studies/trader_replication/system.py",
+          "studies/trader_replication/shorts.py",
+          "studies/trader_replication/systems.py"
+        ],
+        "report_paths": [
+          "studies/clement_ang/reports/SHORTS_CN.md",
+          "studies/clement_ang/reports/FINAL_CN.md"
+        ],
+        "note": "2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R15 AA3 + S5（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头为大型前领涨股的晚期失败底部（市况连续转负后，最多 5 天）；他主要的反向 ETF 空头不在其中；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。"
       }
     },
     {
@@ -1901,10 +1906,18 @@
         "未来只选一个日期版本/setup/股票池先冻结定义，再决定研究"
       ],
       "implementation": {
-        "status": "REFERENCE_ONLY_NOT_IMPLEMENTED",
-        "code_paths": [],
-        "report_paths": [],
-        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：追加参考，未新增本地策略代码或回测。本人教学、第三方实现及媒体/社区证据分层；第三方代码不是本人源码，未确认比赛冠军或完整独立审计交易记录。"
+        "status": "EXECUTED_DAILY_LIMITED_HYPOTHESES",
+        "code_paths": [
+          "studies/qullamaggie/replicate.py",
+          "studies/trader_replication/system.py",
+          "studies/trader_replication/shorts.py",
+          "studies/trader_replication/systems.py"
+        ],
+        "report_paths": [
+          "studies/qullamaggie/reports/SHORTS_CN.md",
+          "studies/qullamaggie/reports/FINAL_CN.md"
+        ],
+        "note": "2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R11 N3 + S7（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；多头 R11 把“卖后立刻保本”改为“+2R 才保本”（偏离原话，为胜率门禁）；空头为小盘抛物线收红后开盘 / 反弹卖空；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。"
       }
     },
     {
@@ -1965,10 +1978,18 @@
         "合法核原书与原音，第三方规则书不作本人算法"
       ],
       "implementation": {
-        "status": "REFERENCE_ONLY_NOT_IMPLEMENTED",
-        "code_paths": [],
-        "report_paths": [],
-        "note": "以main 5bd4c16d73a9ca7b2b2d2c94b145b4949e2eb339为准：追加参考，未新增本地策略代码或回测。访谈/署名教育文章构成局部规则证据，精选回顾非券商流水，第三方PRD不是本人系统。"
+        "status": "EXECUTED_DAILY_LIMITED_HYPOTHESES",
+        "code_paths": [
+          "studies/oliver_kell/replicate.py",
+          "studies/trader_replication/system.py",
+          "studies/trader_replication/shorts.py",
+          "studies/trader_replication/systems.py"
+        ],
+        "report_paths": [
+          "studies/oliver_kell/reports/SHORTS_CN.md",
+          "studies/oliver_kell/reports/FINAL_CN.md"
+        ],
+        "note": "2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R6 A5 + S5（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；空头为 Wedge Drop 后反抽到下行 10 / 20 EMA 的限价空单（指数 < 50 EMA，最多 10 天）；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。"
       }
     }
   ]
