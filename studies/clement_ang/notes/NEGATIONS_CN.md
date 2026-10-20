@@ -43,6 +43,9 @@
 | R5 | selection | H3 | `{"setups": ["fine", "pb"], "pb": {"fine": true}, "max_new": 5}` | r4.json:chosen | R4 | objective below R4；全区间 +13%（带入 +57%） | open |
 | R5 | selection | H4 | `{"setups": ["fine", "pb", "ep"], "pb": {"fine": true}}` | r4.json:chosen | R4 | gates: placebo；全区间 -2%（带入 +57%） | open |
 | R5 | selection | H5 | `{"setups": ["fine", "pb"], "pb": {"fine": true}, "fine": {"near": 0.25, "tight": 3.0}}` | r4.json:chosen | R4 | objective below R4；全区间 +26%（带入 +57%） | open |
+| S5 | short, gate v2: C4C / C4A only once the market has turned (index under EMA50 for several closes) | C5B | `{"setups": ["fb20"], "turnover": 500000000.0, "run": 1.0, "gate": "below50x10", "max_new": 1, "stop_w": "cap", "max_days": 5, "trail": "ema10"}` | :chosen | C5A | gates: alpha | open |
+| S5 | short, gate v2: C4C / C4A only once the market has turned (index under EMA50 for several closes) | C5C | `{"setups": ["fb20"], "turnover": 500000000.0, "run": 1.0, "gate": "below50x5", "max_new": 1, "stop_w": "cap", "max_days": 10, "trail": "ema10", "risk_mult": 0.5}` | :chosen | C5A | objective below C5A | open |
+| S5 | short, gate v2: C4C / C4A only once the market has turned (index under EMA50 for several closes) | C5D | `{"setups": ["fb20"], "turnover": 500000000.0, "run": 1.0, "gate": "below50x10", "max_new": 1, "stop_w": "cap", "max_days": 10, "trail": "ema10", "risk_mult": 0.5}` | :chosen | C5A | gates: alpha | open |
 | R6 | order | I1 | `{"priority": "turnover"}` | r5.json:chosen | I3 | objective below I3；全区间 +26%（带入 +117%） | open |
 | R6 | order | I2 | `{"priority": "turnover", "setups": ["fine", "pb"], "pb": {"fine": true}}` | r5.json:chosen | I3 | objective below I3；全区间 +73%（带入 +117%） | open |
 | R6 | order | I4 | `{"priority": "turnover", "fine": {"near": 0.25, "tight": 3.0}}` | r5.json:chosen | I3 | objective below I3；全区间 +59%（带入 +117%） | open |
