@@ -1,0 +1,12 @@
+{
+ "stage": "short, gate v2: the S2/S3 limit shorts after a Wedge Drop, capped at 10 days",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "K4A": {"setups": ["lim20", "lim10", "lim50"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 10},
+  "K4B": {"setups": ["lim20", "lim10", "lim50"], "gate": "below50", "max_new": 2, "max_open": 1, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 10},
+  "K4C": {"setups": ["lim20", "lim10", "lim50"], "gate": "below20", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 10},
+  "K4D": {"setups": ["lim20", "lim10", "lim50"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 5},
+  "K4E": {"setups": ["lim20", "lim10", "lim50"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 10, "trim_day": 1, "trim_day_frac": 0.5}
+ }
+}

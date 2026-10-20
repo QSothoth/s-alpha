@@ -32,6 +32,10 @@
 | R4 | ep_shape | U1 | `{"setups": ["ep", "brk"], "kind_order": ["ep", "brk"]}` | r3.json:chosen | U4 | objective below U4；全区间 +34%（带入 +25%） | open |
 | R4 | ep_shape | U2 | `{"ep": {"quiet": 0.3}}` | r3.json:chosen | U4 | gates: placebo；全区间 -13%（带入 +25%） | open |
 | R4 | ep_shape | U3 | `{"stop_adr": {"ep": 5.0}}` | r3.json:chosen | U4 | objective below U4；全区间 +19%（带入 +25%） | open |
+| S4 | short, gate v2: the parabolic short entered on the failed bounce (VWAP proxy), short-lived | Q4A | `{"setups": ["pvwap"], "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}` | :chosen | none | gates: gate, alpha, down | open |
+| S4 | short, gate v2: the parabolic short entered on the failed bounce (VWAP proxy), short-lived | Q4B | `{"setups": ["pvwap"], "streak": 5, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}` | :chosen | none | gates: gate, alpha | open |
+| S4 | short, gate v2: the parabolic short entered on the failed bounce (VWAP proxy), short-lived | Q4C | `{"setups": ["pvwap"], "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10"], "target_frac": 0.0, "trail": "", "trims": [], "max_days": 10}` | :chosen | none | gates: gate, alpha, down | open |
+| S4 | short, gate v2: the parabolic short entered on the failed bounce (VWAP proxy), short-lived | Q4D | `{"setups": ["ptop"], "streak": 5, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}` | :chosen | none | gates: gate, alpha | open |
 | R5 | market | V1 | `{"filter": "light_q"}` | r4.json:chosen | R4 | gates: placebo；全区间 +3%（带入 +25%） | open |
 | R5 | market | V2 | `{"filter": "light_q", "rule_opts": {"risk": 0.005}}` | r4.json:chosen | R4 | gates: placebo；全区间 -9%（带入 +25%） | open |
 | R6 | ep_volume | W1 | `{"ep": {"heavy": 5.0}}` | r5.json:chosen | R5 | objective below R5；全区间 +15%（带入 +25%） | open |
