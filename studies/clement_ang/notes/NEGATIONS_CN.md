@@ -30,6 +30,10 @@
 | S2 | short: only the former big leaders, only once the market has turned (his words at 01:24) | CF | `{"setups": ["fb20"], "turnover": 500000000.0, "gate": "below200", "max_new": 3, "stop_w": "cap"}` | :chosen | none | gates: short_placebo, total, years, down | open |
 | S2 | short: only the former big leaders, only once the market has turned (his words at 01:24) | CG | `{"setups": ["fb20c"], "turnover": 500000000.0, "gate": "below50", "max_new": 3}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
 | S2 | short: only the former big leaders, only once the market has turned (his words at 01:24) | CH | `{"setups": ["fb20"], "turnover": 500000000.0, "gate": "below50", "max_new": 1, "stop_w": "cap"}` | :chosen | none | gates: total, years, maxdd, down | open |
+| H3 | human sizing | H3A | `{"setups": ["fine", "pb"]}` | H:0 | None | H gates: gate；全区间 +163%（带入 +0%） | open |
+| H3 | human sizing | H3B | `{"setups": ["pb"]}` | H:0 | None | H gates: gate, his years not closer: 2024,2025, bought 1 < 3；全区间 +104%（带入 +0%） | open |
+| H3 | human sizing | H3C | `{"human": {"tiers": [{"when": ["kind=pb"], "risk": 2, "cap": 0.5}]}}` | H:0 | None | H gates: gate, his years not closer: 2024；全区间 +141%（带入 +0%） | open |
+| H3 | human sizing | H3D | `{"human": {"tiers": [{"when": ["kind=ep|fine"], "risk": 0.6, "cap": 0.3}]}}` | H:0 | None | H gates: gate, his years not closer: 2024,2025, bought 2 < 3；全区间 +98%（带入 +0%） | open |
 | R3 | selection | F2 | `{"fine": {"tight": 3.0}}` | r2.json:chosen | F1 | gates: placebo；全区间 -13%（带入 +57%） | open |
 | R3 | selection | F3 | `{"fine": {"near": 0.25, "tight": 3.0}}` | r2.json:chosen | F1 | objective below F1；全区间 +43%（带入 +57%） | open |
 | R3 | selection | F4 | `{"fine": {"near": 0.25, "tight": 3.0}, "setups": ["fine", "pb"]}` | r2.json:chosen | F1 | gates: width<=30；全区间 +15%（带入 +57%） | open |
