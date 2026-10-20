@@ -484,6 +484,42 @@ def round_(sid, name):
     return out
 
 
+def his_bound(sid, report, key):
+    """Layer two under the hard limits: his dated longs of the selection segment (his ticker, his day; the close
+    with our stop, studies' his_entry), each sized to the 50% cap, through the configuration's own exits and the
+    hard limits (10 open, 3 a day, 250 a year, 100% gross).  How much of his year our execution can reach without
+    margin; the account by year and its top trades."""
+    from . import systems as SY
+    x = SY.get(sid)
+    st, reg = x.load()
+    cfg = h0_cfg(reg) if report == 'H0' else json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
+    A = st.arrays('us')
+    _, rules, _, pool = st.build(A, cfg)
+    days = A['days']
+    di = {str(d): i for i, d in enumerate(days)}
+    mine = [[] for _ in days]
+    n = 0
+    for t, j, a, b in st.located(A, st.trades()):
+        if not (SELECT[0] <= t.entry_date <= SELECT[1]) or t.entry_date not in di:
+            continue
+        d = di[t.entry_date]
+        e = st.his_entry(A, d, j, {k: v for k, v in cfg.items() if k != 'human'})
+        if e is not None:
+            mine[d].append(tuple(e[:6]) + (None, None, LIMITS['max_position'], 1000.0))
+            n += 1
+    px, ema = st.px(A), st.ema_inputs(A, pool, rules)
+    track = {}
+    curve, dates, tr = Y.simulate(px, ema, rules, mine, *SELECT, audit=True, track=track)
+    s_ = Y.stats(curve, dates, tr)
+    print(sid, 'his dated longs', n, 'opened', len(tr), 'total', round(s_['total'], 3),
+          {y: round(v, 3) for y, v in s_['by_year'].items()}, 'maxdd', round(s_['maxdd'], 3),
+          'max gross', round(max(track['gross']), 2), flush=True)
+    for t in sorted(tr, key=lambda t: -t['pnl'])[:8]:
+        print('   ', t['code'], t['entry'], t['exit'], round(t['fill'], 2), round(t['stop'], 2), 'ret', round(t['ret'], 3),
+              'pnl', round(t['pnl'], 3), t['days'], t['why'], flush=True)
+    return s_
+
+
 def capdate(sid, report, key):
     """The yearly limit as a layer: for a configuration (studies/<sid>/reports/<report>, key; 'H0' for H0), the day
     each year's last allowed position was opened, the entries offered after it (all, and on his dated longs'
@@ -653,6 +689,8 @@ if __name__ == '__main__':
         h0(sys.argv[2:])
     elif sys.argv[1] == 'capdate':               # capdate <system> <report | H0> [key]
         capdate(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else None)
+    elif sys.argv[1] == 'bound':                 # bound <system> <report | H0> [key]
+        his_bound(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else None)
     elif sys.argv[1] == 'decompose':
         decompose(sys.argv[2:])
     elif sys.argv[1] == 'round':

@@ -49,6 +49,8 @@
 | S4 | short, gate v2: F3C (200-day limit after a rejection, index below EMA50) made fewer and smaller | F4B | `{"setups": ["r200"], "r200_rej": 1, "gate": "below50", "max_new": 2, "max_open": 1, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3}` | :chosen | F4A | gates: down | open |
 | S4 | short, gate v2: F3C (200-day limit after a rejection, index below EMA50) made fewer and smaller | F4C | `{"setups": ["r200"], "r200_rej": 1, "gate": "below50", "max_new": 1, "max_open": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3}` | :chosen | F4A | objective below F4A | open |
 | S4 | short, gate v2: F3C (200-day limit after a rejection, index below EMA50) made fewer and smaller | F4D | `{"setups": ["r200"], "r200_rej": 1, "gate": "below50", "max_new": 1, "risk_mult": 0.5, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3}` | :chosen | F4A | objective below F4A | open |
+| H5 | human sizing | H5B | `{"rule_opts": {"trim_day": 0}}` | h4.json:H4C | H5A | H gates: bought 4 < 5, behaviour gap 0.291 > 0.189 + 0.02；全区间 +198%（带入 +0%） | open |
+| H5 | human sizing | H5C | `{"rule_opts": {"trim_signal": "ext200_120", "trim_signal_frac": 0.7}}` | h4.json:H4C | H5A | H gates: his years not closer: 2025；全区间 +34%（带入 +0%） | open |
 | R5 | exits | X2 | `{"rule_opts": {"trail": "ema21"}}` | r4.json:chosen | X1 | gates: bought；全区间 +218%（带入 +463%） | open |
 | R5 | exits | X3 | `{"rule_opts": {"trail": "sma20"}}` | r4.json:chosen | X1 | gates: bought；全区间 +139%（带入 +463%） | open |
 | R5 | exits | X4 | `{"rule_opts": {"trail": "sma50"}}` | r4.json:chosen | X1 | gates: placebo, bought；全区间 -1%（带入 +463%） | open |
