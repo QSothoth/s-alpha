@@ -31,6 +31,8 @@ class ChoiceTests(unittest.TestCase):
         self.assertEqual(S.Study.passes(st(.6, 0, 3, 2), ref, ['placebo', 'hits', 'bought', 'behaviour']), [])
         self.assertEqual(S.Study.passes(dict(st(.6, 0, 3, 2), win=.36), ref, ['win<=0.35']), ['win<=0.35'])
         self.assertEqual(S.Study.passes(dict(st(.6, 0, 3, 2), win=.35), ref, ['win<=0.35']), [])
+        self.assertEqual(S.Study.passes(st(.6, 0, 3, 2, gap=.515), ref, ['behaviour+0.02']), [])
+        self.assertEqual(S.Study.passes(st(.6, 0, 3, 2, gap=.53), ref, ['behaviour+0.02']), ['behaviour+0.02'])
 
     def test_scores(self):
         a = st(.5, 0, 3, 2)

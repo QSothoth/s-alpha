@@ -1,0 +1,14 @@
+{
+ "stage": "adds_tolerance",
+ "base": ["r6.json", "chosen"],
+ "ref": "Q2",
+ "objective": "total",
+ "gates": ["placebo", "win<=0.35", "behaviour+0.02"],
+ "candidates": {
+  "B1": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low"}},
+  "B2": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.25, "add_signal_max": 2, "add_signal_stop": "low"}},
+  "B3": {"max_new": 5, "rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low"}},
+  "B4": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low",
+                       "trims": [2, 4], "trim_frac": 0.33}}
+ }
+}

@@ -21,3 +21,8 @@
 | R5 | selection_paired | Q1 | `{"priority": "wave", "max_new": 5}` | r4.json:chosen | Q2 | gates: behaviour；全区间 +116%（带入 +77%） | open |
 | R5 | selection_paired | Q3 | `{"priority": "wave", "max_new": 5, "rule_opts": {"trims": [2, 4], "trim_frac": 0.33}}` | r4.json:chosen | Q2 | gates: behaviour；全区间 +112%（带入 +77%） | open |
 | R5 | selection_paired | Q4 | `{"priority": "wave", "max_new": 5, "rule_opts": {"trims": [2], "trim_frac": 0.67}}` | r4.json:chosen | Q2 | objective below Q2；全区间 +64%（带入 +77%） | open |
+| R6 | adds_divergence | A1 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low"}}` | r5.json:chosen | Q2 | gates: behaviour；全区间 +195%（带入 +77%） | open |
+| R6 | adds_divergence | A2 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.25, "add_signal_max": 2, "add_signal_stop": "low"}}` | r5.json:chosen | Q2 | gates: behaviour；全区间 +156%（带入 +77%） | open |
+| R6 | adds_divergence | A3 | `{"rule_opts": {"trim_signal": "rsidiv", "trim_signal_frac": 0.5}}` | r5.json:chosen | Q2 | gates: win<=0.35；全区间 +136%（带入 +77%） | open |
+| R6 | adds_divergence | A4 | `{"rule_opts": {"trims": [2, 4], "trim_frac": 0.33}}` | r5.json:chosen | Q2 | gates: behaviour；全区间 +107%（带入 +77%） | open |
+| R6 | adds_divergence | A5 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "low", "trim_signal": "rsidiv", "trim_signal_frac": 0.5}}` | r5.json:chosen | Q2 | gates: win<=0.35, behaviour；全区间 +225%（带入 +77%） | open |
