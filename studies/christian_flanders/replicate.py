@@ -299,8 +299,9 @@ class Flanders(study.Study):
             gap = (F.o / lag(F.c) - 1 <= -sc.get('gap', .10)) & under & (n >= sc.get('rejections', 1))
         out = {}
         names = sc.get('setups', ['r200', 'gap200'])
-        if 'r200' in names:
-            out['r200'] = dict(armed=pool & under, level=lag(s200))
+        if 'r200' in names:                          # r200_rej: the line already turned back this many rallies in
+            k = sc.get('r200_rej', 0)                # the last 60 sessions ("rejected four times", Micron)
+            out['r200'] = dict(armed=pool & under & (n >= k) if k else pool & under, level=lag(s200))
         if 'gap200' in names:
             out['gap200'] = dict(armed=pool & gap, at_open=True)
             if sc.get('gap_stop') == 'sma150':       # S2: MU "tapped the 150 and got within 20 cents of my stop":

@@ -32,6 +32,17 @@ class FlandersShortTests(unittest.TestCase):
         e = SH.short_entries(A, {'r200': z}, {})
         self.assertEqual([x for x in e[250] if x[1] == 0], [])         # the day never got near the line
 
+    def test_r200_can_require_earlier_rejections(self):
+        rows = falling()
+        s200 = panel(rows)['F'].sma(200)[:, 0]
+        o, h, l, c = rows[240]
+        rows[240] = (o, s200[240] * 1.01, l, c)                         # one rally turned back at the line
+        A = panel(rows)
+        none = R.STUDY.short_setups(A, {'setups': ['r200']})[0]['r200']['armed'][:, 0]
+        one = R.STUDY.short_setups(A, {'setups': ['r200'], 'r200_rej': 1})[0]['r200']['armed'][:, 0]
+        two = R.STUDY.short_setups(A, {'setups': ['r200'], 'r200_rej': 2})[0]['r200']['armed'][:, 0]
+        self.assertTrue(none[240] and not one[240] and one[241] and not two.any())
+
     def test_gap_short_after_a_rejection(self):
         rows = falling()
         s200 = panel(rows)['F'].sma(200)[:, 0]

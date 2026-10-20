@@ -1,0 +1,11 @@
+{
+ "stage": "short, gate v2: S5A (ST only below the index EMA50) with less drawdown -- size, holding, how many at once",
+ "base": "",
+ "draws": 50,
+ "candidates": {
+  "S6A": {"setups": ["Z15"], "pool": "U7", "gate": "below50", "max_new": 1, "max_open": 2, "stop_w": "cap", "trail": "e9", "trims": [], "trim_day": 2, "trim_day_frac": 0.5, "max_days": 10},
+  "S6B": {"setups": ["Z15"], "pool": "U7", "gate": "below50", "max_new": 1, "stop_w": "cap", "trail": "e9", "trims": [], "trim_day": 2, "trim_day_frac": 0.5, "max_days": 5},
+  "S6C": {"setups": ["Z15"], "pool": "U7", "gate": "below50", "max_new": 1, "stop_w": "cap", "trail": "e9", "trims": [], "trim_day": 2, "trim_day_frac": 0.5, "max_days": 10, "risk_mult": 0.5},
+  "S6D": {"setups": ["Z15"], "pool": "U7", "gate": "below50", "max_new": 1, "stop_w": "cap", "trail": "e9", "trims": [], "trim_day": 2, "trim_day_frac": 0.5, "max_days": 5, "risk_mult": 0.5}
+ }
+}

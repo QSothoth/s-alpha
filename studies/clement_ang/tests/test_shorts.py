@@ -27,6 +27,18 @@ class ClementShortTests(unittest.TestCase):
         self.assertLess(A['F'].c[t - 1, 0], e20[t - 1])             # still under the line the day before
         self.assertAlmostEqual(z['fb20']['level'][t, 0], e20[t - 1])
 
+    def test_late_stage_needs_a_big_advance(self):
+        rows = self.rows()
+        A = panel(rows)
+        A['F'].v[-3:, 0] = 2e5
+        sc = {'turnover': 20e6, 'adr': 1.0, 'setups': ['fb20']}
+        base = R.STUDY.short_setups(A, sc)[0]['fb20']['armed'][:, 0]
+        big = R.STUDY.short_setups(A, dict(sc, run=1.0))[0]['fb20']['armed'][:, 0]      # 10 -> 26: +160%
+        huge = R.STUDY.short_setups(A, dict(sc, run=2.0))[0]['fb20']['armed'][:, 0]
+        self.assertTrue(base.any())
+        np.testing.assert_array_equal(base, big)
+        self.assertFalse(huge.any())
+
     def test_no_later_bars_are_read(self):
         rng = np.random.default_rng(13)
         c = 20 * np.exp(np.cumsum(rng.normal(.001, .04, 260)))

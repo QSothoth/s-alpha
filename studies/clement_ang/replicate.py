@@ -113,6 +113,8 @@ class Clement(CF.Flanders):
                     broke |= lag(under, k)
             quiet = lag(F.vol(3) < F.vol(50))
             armed = pool & leader & broke & lag(under) & quiet
+            if sc.get('run'):                         # late stage: the 3-month high at least (1 + run) x the
+                armed &= lag(F.hi(63) >= (1 + sc['run']) * self.low52(F))   # 52-week low (or since listing)
             level = lag(e20)
             red = (F.h >= level) & (F.c < level) & (F.c < F.o)
         out = {}
