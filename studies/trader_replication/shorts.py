@@ -240,7 +240,11 @@ class LongShort:
 
     def build(self, A, cfg, trace=None):
         long_cfg, sc = split_cfg(cfg)
-        entries, rules, mask, pool = self.base.build(A, long_cfg, trace)
+        if long_cfg.get('common'):                 # shared mechanisms (common.py), off unless the config has them
+            from . import common
+            entries, rules, mask, pool = common.build_long(self.base, A, long_cfg, trace)
+        else:
+            entries, rules, mask, pool = self.base.build(A, long_cfg, trace)
         if not sc or A['market'] != 'us':
             return entries, rules, mask, pool
         masks, spool = self.base.short_setups(A, sc)

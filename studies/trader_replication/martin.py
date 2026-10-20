@@ -60,6 +60,17 @@ class Martin(study.Study):
     def build(self, A, cfg, trace=None):
         return self.R.build_system(A, cfg, trace)
 
+    daily_cap = 'build'             # build_system keeps the day's first max_new entries before the engine
+
+    def ep_mask(self, A, cfg):
+        """His pre-market gapper EP as build_system makes it (on the liquidity pool, not the leader list)."""
+        return self.R.ep_signal(A, self.R.pool_for(A, cfg.get('pool')), **cfg.get('ep_opts', {}))
+
+    def own_stop_off(self, cfg, mode):
+        """His min(5%, 0.5 ADR) is built into his entries: the common rule's mode picks 'cap' (move up) or 'skip';
+        a tighter common limit then applies on top."""
+        return dict(cfg, stop='skip' if mode == 'skip' else 'cap')
+
     def short_setups(self, A, sc):
         return self.R.short_setups(A, sc)
 

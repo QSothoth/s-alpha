@@ -83,6 +83,13 @@ class SignalAddTests(unittest.TestCase):
         _, _, (t,) = run(UP, ema=self.sig([2]), add_signal='buy', add_signal_frac=.25, add_r=1.0)
         self.assertEqual([e['time'] for e in t['executions'] if e['action'] == 'add'], ['2025-01-02', '2025-01-03'])
 
+    def test_winners_only(self):
+        rows = UP[:2] + [(10.0, 10.1, 9.7, 9.9)] + UP[3:]       # day 2 closes under the 10.0 fill: no add then
+        _, _, (t,) = run(rows, ema=self.sig([2, 3]), add_signal='buy', add_signal_frac=.25, add_signal_profit=True)
+        self.assertEqual([e['time'] for e in t['executions'] if e['action'] == 'add'], ['2025-01-04'])
+        _, _, (t,) = run(rows, ema=self.sig([2, 3]), add_signal='buy', add_signal_frac=.25)
+        self.assertEqual([e['time'] for e in t['executions'] if e['action'] == 'add'], ['2025-01-03', '2025-01-04'])
+
     def test_defaults_change_nothing(self):
         a = run(UP)[0]
         b = run(UP, ema=self.sig([1, 2]), trim_day=0, add_signal='')[0]

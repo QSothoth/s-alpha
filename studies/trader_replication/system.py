@@ -70,6 +70,7 @@ class Rules:
     add_signal_frac: float = 0.0    # add_frac) of its original size at that close, at most add_signal_max times
     add_signal_max: int = 0         # (0 = no limit), not on its entry day; then the stop is kept ('keep'), moved to
     add_signal_stop: str = 'keep'   # the original fill ('fill') or raised to the add day's low ('low')
+    add_signal_profit: bool = False  # signal adds only while that close is above the fill (winners only)
     month_loss_cap: float = 0.0     # > 0: no new trades for the rest of a calendar month once equity (as of the previous
     month_cap_ladder: tuple = ()    # close) is this far below the month's opening equity; after 1, 2, ... losing
                                     # months in a row the cap is month_cap_ladder[0], [1], ... (the last one repeats)
@@ -398,7 +399,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             if s > 0 and q.adds < len(levels_add) and c[d, j] >= q.fill + levels_add[q.adds] * R:
                 add_pos(q, c[d, j], d)
             if sig_add is not None and s > 0 and sig_add[d, j] and session[d] > session[q.d0] \
-                    and (not rules.add_signal_max or q.sig_adds < rules.add_signal_max):
+                    and (not rules.add_signal_max or q.sig_adds < rules.add_signal_max) \
+                    and (not rules.add_signal_profit or c[d, j] > q.fill):
                 add_pos(q, c[d, j], d, rules.add_signal_frac or rules.add_frac, signal=True)
             if sig_exit is not None and s > 0 and sig_exit[d, j]:
                 close_part(q, q.size, c[d, j], d, 'signal')

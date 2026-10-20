@@ -160,6 +160,18 @@ class Study:
         """Per day: whether the market filter lets new longs in that day (None: no filter)."""
         return None
 
+    daily_cap = 'engine'             # 'engine': the engine counts successful new longs (Rules.max_new_long);
+                                     # 'build': build() keeps the day's first max_new entries (Martin R74)
+
+    def ep_mask(self, A, cfg):
+        """Days x codes: his EP signal, for studies whose entries do not carry the kind 'ep' (None: by kind)."""
+        return None
+
+    def own_stop_off(self, cfg, mode):
+        """cfg with his own handling of wide stops (skip wider than k ADR, cap at a percentage) taken out, for the
+        common stop rule (common.py) that replaces it; `mode` is that rule's 'cap' or 'skip'."""
+        return dict(cfg, stop_adr={}, stop_cap=0.0) if cfg.get('stop_adr') or cfg.get('stop_cap') else cfg
+
     def named(self, A, pool, name):
         """Day arrays the engine reads by name (exit / trim signals, risk scales) that A does not hold."""
         raise KeyError(name)
