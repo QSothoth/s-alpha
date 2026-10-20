@@ -85,15 +85,15 @@
 
 ## 门禁明细与版本
 
-- Martin Luk us：通过（配置 4d177f95，数据 920f88c4，代码 d672dfef，numpy 2.4.6）
-- Martin Luk hk：通过（配置 4d177f95，数据 13b801ca，代码 d672dfef，numpy 2.4.6）
-- Christian Flanders us：通过（配置 aec818f9，数据 920f88c4，代码 d672dfef，numpy 2.4.6）
-- Christian Flanders hk：胜率 35.5% > 35%（498 笔已平仓）（配置 aec818f9，数据 13b801ca，代码 d672dfef，numpy 2.4.6）
-- Clement Ang us：通过（配置 51dc21cd，数据 920f88c4，代码 d672dfef，numpy 2.4.6）
-- Clement Ang hk：通过（配置 51dc21cd，数据 13b801ca，代码 d672dfef，numpy 2.4.6）
-- Qullamaggie us：胜率 37.8% > 35%（662 笔已平仓）（配置 6eb26406，数据 920f88c4，代码 d672dfef，numpy 2.4.6）
-- Qullamaggie hk：胜率 40.0% > 35%（145 笔已平仓）（配置 6eb26406，数据 13b801ca，代码 d672dfef，numpy 2.4.6）
-- Oliver Kell us：通过（配置 f14a2262，数据 920f88c4，代码 d672dfef，numpy 2.4.6）
-- Oliver Kell hk：通过（配置 f14a2262，数据 13b801ca，代码 d672dfef，numpy 2.4.6）
-- Mark Minervini us：通过（配置 826f0114，数据 920f88c4，代码 d672dfef，numpy 2.4.6）
-- Mark Minervini hk：通过（配置 826f0114，数据 13b801ca，代码 d672dfef，numpy 2.4.6）
+- Martin Luk us：通过（配置 4d177f95，数据 920f88c4，代码 e827cff5，numpy 2.4.6）
+- Martin Luk hk：通过（配置 4d177f95，数据 13b801ca，代码 e827cff5，numpy 2.4.6）
+- Christian Flanders us：通过（配置 aec818f9，数据 920f88c4，代码 e827cff5，numpy 2.4.6）
+- Christian Flanders hk：胜率 35.5% > 35%（498 笔已平仓）（配置 aec818f9，数据 13b801ca，代码 e827cff5，numpy 2.4.6）
+- Clement Ang us：通过（配置 51dc21cd，数据 920f88c4，代码 e827cff5，numpy 2.4.6）
+- Clement Ang hk：通过（配置 51dc21cd，数据 13b801ca，代码 e827cff5，numpy 2.4.6）
+- Qullamaggie us：胜率 37.8% > 35%（662 笔已平仓）（配置 6eb26406，数据 920f88c4，代码 e827cff5，numpy 2.4.6）
+- Qullamaggie hk：胜率 40.0% > 35%（145 笔已平仓）（配置 6eb26406，数据 13b801ca，代码 e827cff5，numpy 2.4.6）
+- Oliver Kell us：通过（配置 f14a2262，数据 920f88c4，代码 e827cff5，numpy 2.4.6）
+- Oliver Kell hk：通过（配置 f14a2262，数据 13b801ca，代码 e827cff5，numpy 2.4.6）
+- Mark Minervini us：通过（配置 826f0114，数据 920f88c4，代码 e827cff5，numpy 2.4.6）
+- Mark Minervini hk：通过（配置 826f0114，数据 13b801ca，代码 e827cff5，numpy 2.4.6）
