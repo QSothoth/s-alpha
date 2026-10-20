@@ -3552,6 +3552,210 @@
   }
  },
  {
+  "round": "S5",
+  "stage": "short, gate v2: on S4 K4A (his 10 or 20 EMA, his EMA lines only, a shorter cap)",
+  "candidate": "K5A",
+  "change": {
+   "setups": [
+    "lim20",
+    "lim10",
+    "lim50"
+   ],
+   "gate": "below50",
+   "max_new": 2,
+   "stop_w": "cap",
+   "trail": "ema20",
+   "trims": [],
+   "max_days": 10
+  },
+  "base": [
+   "s4.json",
+   "chosen"
+  ],
+  "chosen": "K5B",
+  "reason": "gates: alpha",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": 0.05532217130493544,
+   "short_placebo_median": 0.000161473824804248,
+   "both_total": 1.323714011917016,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.11947155473069548,
+    "2025": 0.3834549534108962,
+    "2026": 0.5003914867083987
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": 0.15053052105677778,
+    "short": 0.09094670940154259
+   },
+   "win": 0.2074235807860262
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": {
+    "setups": [
+     "lim20",
+     "lim10",
+     "lim50"
+    ],
+    "gate": "below50",
+    "max_new": 2,
+    "stop_w": "cap",
+    "trail": "ema10",
+    "trims": [],
+    "max_days": 10
+   }
+  }
+ },
+ {
+  "round": "S5",
+  "stage": "short, gate v2: on S4 K4A (his 10 or 20 EMA, his EMA lines only, a shorter cap)",
+  "candidate": "K5C",
+  "change": {
+   "setups": [
+    "lim20",
+    "lim10",
+    "lim50"
+   ],
+   "gate": "below50",
+   "max_new": 2,
+   "stop_w": "cap",
+   "trail": "ema10",
+   "trims": [],
+   "max_days": 7
+  },
+  "base": [
+   "s4.json",
+   "chosen"
+  ],
+  "chosen": "K5B",
+  "reason": "objective below K5B",
+  "objective": "down_gain",
+  "evidence": {
+   "short_total": 0.0472129650652966,
+   "short_placebo_median": -0.007315474119627574,
+   "both_total": 1.3044533085368348,
+   "long_total": 1.1573907780827186,
+   "both_by_year": {
+    "2024": 0.12486931299283399,
+    "2025": 0.3766447295669557,
+    "2026": 0.4881406072399812
+   },
+   "long_by_year": {
+    "2024": 0.13154113724372363,
+    "2025": 0.32604401975920205,
+    "2026": 0.43780678701122255
+   },
+   "down": {
+    "long": 0.05079995379152691,
+    "both": 0.12159832474195365,
+    "short": 0.06771954194628549
+   },
+   "win": 0.21109902067464636
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": {
+    "setups": [
+     "lim20",
+     "lim10",
+     "lim50"
+    ],
+    "gate": "below50",
+    "max_new": 2,
+    "stop_w": "cap",
+    "trail": "ema10",
+    "trims": [],
+    "max_days": 10
+   }
+  }
+ },
+ {
   "round": "R6",
   "stage": "capacity",
   "candidate": "A1",

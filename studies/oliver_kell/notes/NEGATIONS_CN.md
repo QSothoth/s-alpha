@@ -44,6 +44,8 @@
 | R5 | entry | Z2 | `{"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "max_new": 3}` | r4.json:chosen | Z5 | objective below Z5；全区间 +116%（带入 +173%） | open |
 | R5 | entry | Z3 | `{"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "strength": "rs80"}` | r4.json:chosen | Z5 | objective below Z5；全区间 +61%（带入 +173%） | open |
 | R5 | entry | Z4 | `{"close_any": ["pb", "ib2", "cross", "vcp", "brk52"], "rule_opts": {"trim_day": 11, "trim_day_frac": 0.3333}}` | r4.json:chosen | Z5 | objective below Z5；全区间 +103%（带入 +173%） | open |
+| S5 | short, gate v2: on S4 K4A (his 10 or 20 EMA, his EMA lines only, a shorter cap) | K5A | `{"setups": ["lim20", "lim10", "lim50"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "ema20", "trims": [], "max_days": 10}` | s4.json:chosen | K5B | gates: alpha | open |
+| S5 | short, gate v2: on S4 K4A (his 10 or 20 EMA, his EMA lines only, a shorter cap) | K5C | `{"setups": ["lim20", "lim10", "lim50"], "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "ema10", "trims": [], "max_days": 7}` | s4.json:chosen | K5B | objective below K5B | open |
 | R6 | capacity | A1 | `{"max_new": 4}` | r5.json:chosen | A5 | objective below A5；全区间 +83%（带入 +116%） | open |
 | R6 | capacity | A2 | `{"rule_opts": {"max_open": 10}}` | r5.json:chosen | A5 | objective below A5；全区间 +144%（带入 +116%） | open |
 | R6 | capacity | A3 | `{"max_new": 4, "rule_opts": {"max_open": 10}}` | r5.json:chosen | A5 | objective below A5；全区间 +134%（带入 +116%） | open |
