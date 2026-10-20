@@ -4,6 +4,10 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| H1 | human sizing | H1A | `{"rule_opts": {"max_position": 0.15}}` | H:0 | H1B | H gates: drawdown；全区间 +98%（带入 +0%） | open |
+| H1 | human sizing | H1C | `{"rule_opts": {"max_position": 0.15, "add_r": 1.0, "add_frac": 1.0}}` | H:0 | H1B | H gates: drawdown, bought 2 < 3, avg_win 0.257 vs H0 0.207；全区间 +106%（带入 +0%） | open |
+| H1 | human sizing | H1D | `{"rule_opts": {"max_position": 0.3, "add_r": 1.0, "add_frac": 1.0}}` | H:0 | H1B | H gates: drawdown, bought 2 < 3, avg_win 0.239 vs H0 0.207；全区间 +109%（带入 +0%） | open |
+| H1 | human sizing | H1E | `{"rule_opts": {"max_open": 7}}` | H:0 | H1B | H gates: segment not above H0, avg_win 0.176 vs H0 0.207；全区间 +33%（带入 +0%） | open |
 | R1 | end_to_end | V1 | `{"priority": "turnover"}` | :base | D0c | gates: placebo；全区间 -13%（带入 -2%） | open |
 | R1 | end_to_end | V2 | `{"rule_opts": {"trim_signal": "below_ema10", "trim_signal_frac": 0.5}}` | :base | D0c | gates: placebo；全区间 -17%（带入 -2%） | open |
 | R1 | end_to_end | V3 | `{"filter": "IDX20", "rule_opts": {"risk_scale": "", "max_position": 0.15, "max_open": 7, "max_gross": 1.5}}` | :base | D0c | gates: placebo；全区间 -0%（带入 -2%） | open |

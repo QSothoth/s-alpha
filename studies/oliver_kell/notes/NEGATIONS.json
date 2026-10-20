@@ -1,5 +1,345 @@
 [
  {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1A",
+  "change": {
+   "rule_opts": {
+    "max_position": 0.15
+   }
+  },
+  "base": "H0",
+  "chosen": "H1B",
+  "reason": "H gates: drawdown",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.983405754034439,
+   "by_year": {
+    "2024": 0.42866466482169985,
+    "2025": 0.3882934203331556
+   },
+   "placebo_median": 0.12120719783288503,
+   "win": 0.2112970711297071,
+   "bought": [
+    4,
+    30
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": {
+    "setups": [
+     "lim20",
+     "lim10"
+    ],
+    "gate": "below50",
+    "max_new": 2,
+    "stop_w": "cap",
+    "trail": "ema10",
+    "trims": [],
+    "max_days": 10
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1C",
+  "change": {
+   "rule_opts": {
+    "max_position": 0.15,
+    "add_r": 1.0,
+    "add_frac": 1.0
+   }
+  },
+  "base": "H0",
+  "chosen": "H1B",
+  "reason": "H gates: drawdown, bought 2 < 3, avg_win 0.257 vs H0 0.207",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.0619326521043142,
+   "by_year": {
+    "2024": 0.47688602885931464,
+    "2025": 0.3961352547270458
+   },
+   "placebo_median": 0.1324400067287692,
+   "win": 0.18503118503118504,
+   "bought": [
+    2,
+    30
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": {
+    "setups": [
+     "lim20",
+     "lim10"
+    ],
+    "gate": "below50",
+    "max_new": 2,
+    "stop_w": "cap",
+    "trail": "ema10",
+    "trims": [],
+    "max_days": 10
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1D",
+  "change": {
+   "rule_opts": {
+    "max_position": 0.3,
+    "add_r": 1.0,
+    "add_frac": 1.0
+   }
+  },
+  "base": "H0",
+  "chosen": "H1B",
+  "reason": "H gates: drawdown, bought 2 < 3, avg_win 0.239 vs H0 0.207",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.0891027591357156,
+   "by_year": {
+    "2024": 1.0795278013340823,
+    "2025": 0.004604390379147949
+   },
+   "placebo_median": 0.06876924318484046,
+   "win": 0.19786096256684493,
+   "bought": [
+    2,
+    30
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": {
+    "setups": [
+     "lim20",
+     "lim10"
+    ],
+    "gate": "below50",
+    "max_new": 2,
+    "stop_w": "cap",
+    "trail": "ema10",
+    "trims": [],
+    "max_days": 10
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1E",
+  "change": {
+   "rule_opts": {
+    "max_open": 7
+   }
+  },
+  "base": "H0",
+  "chosen": "H1B",
+  "reason": "H gates: segment not above H0, avg_win 0.176 vs H0 0.207",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.33415339745928385,
+   "by_year": {
+    "2024": 0.271767491092638,
+    "2025": 0.04905449054453115
+   },
+   "placebo_median": 0.11775300400919109,
+   "win": 0.2048780487804878,
+   "bought": [
+    3,
+    30
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": {
+    "setups": [
+     "lim20",
+     "lim10"
+    ],
+    "gate": "below50",
+    "max_new": 2,
+    "stop_w": "cap",
+    "trail": "ema10",
+    "trims": [],
+    "max_days": 10
+   },
+   "human": {}
+  }
+ },
+ {
   "round": "R1",
   "stage": "end_to_end",
   "candidate": "V1",
