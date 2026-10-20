@@ -53,6 +53,8 @@
 | R7 | exits | X2 | `{"rule_opts": {"trim_signal": "atr50x7", "trim_signal_frac": 0.5}}` | r6.json:chosen | X1 | objective below X1；全区间 -0%（带入 +31%） | open |
 | R7 | exits | X3 | `{"rule_opts": {"trail": "sma10"}}` | r6.json:chosen | X1 | objective below X1；全区间 +4%（带入 +31%） | open |
 | R7 | exits | X4 | `{"rule_opts": {"trim_day_frac": 0.5, "trim_signal": "atr50x7", "trim_signal_frac": 0.5}}` | r6.json:chosen | X1 | objective below X1；全区间 +3%（带入 +31%） | open |
+| S7 | short, gate v2: the S6 shorts on the R11 N3 longs (breakeven only after +2R) | Q7A | `{"setups": ["ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}` | :chosen | Q7C | objective below Q7C | open |
+| S7 | short, gate v2: the S6 shorts on the R11 N3 longs (breakeven only after +2R) | Q7B | `{"setups": ["pvwap", "ptop"], "streak": 3, "large": 99.0, "small": 3.0, "max_new": 2, "max_width_adr": 1.5, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": [], "max_days": 10}` | :chosen | Q7C | objective below Q7C | open |
 | R8 | exits_by_kind | Y1 | `{"rule_opts": {"risk": 0.005}}` | r7.json:chosen | R7 | objective below R7；全区间 +67%（带入 +31%） | open |
 | R8 | exits_by_kind | Y2 | `{"rule_opts": {"management_by_kind": {"brk": {"trail": "sma10"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +24%（带入 +31%） | open |
 | R8 | exits_by_kind | Y3 | `{"rule_opts": {"management_by_kind": {"ep": {"trail": "sma50"}}}}` | r7.json:chosen | R7 | objective below R7；全区间 +29%（带入 +31%） | open |
