@@ -73,7 +73,7 @@ class RegistryTests(unittest.TestCase):
             row['implementation']['code_paths'] = []
         self.reject(missing_code)
         def invented_code(data):
-            row = next(r for r in data['traders'] if r['id'] == 'mark_minervini')
+            row = next(r for r in data['traders'] if r['id'] == 'judy_lai')     # an unimplemented record
             row['implementation']['code_paths'] = ['studies/martin_luk/luk.py']
         self.reject(invented_code)
 
