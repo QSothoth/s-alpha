@@ -1,0 +1,212 @@
+"""Sean Ryan through skills/trader-replication, on the Flanders machinery (entries, priorities, the generic loop);
+his stages are the "second wave": a name that went sideways, shot up on big volume (the first wave), held the new
+price and tightened into a small base, bought through the base's top line.
+
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    $PY -m studies.sean_ryan.replicate round R1
+
+Everything on day t uses bars up to t; the pivot is the top of the last `base` sessions before t, so the fill is
+max(open, pivot) and the stop the previous day's low (his "low of the previous day", PLTR).  His entry-day rule
+("if I'm down on the position by the end of the day I sell it on the close") is the day-0 exit: a day that
+touches the stop after the fill is stopped there (pessimistic), else a close under the fill sells at the close.
+Rounds choose on the selection segment only (2024-01-02 -> 2025-12-31, PREREG_R0); the 2026 segment is
+evaluated once by `validate`.  His rules and sources: notes/RULES_CN.md; his trades: notes/trades.csv.
+"""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+
+from studies.christian_flanders import replicate as CF
+from studies.trader_replication import study
+from studies.trader_screens import screens as S
+
+ROOT = Path(__file__).resolve().parents[2]
+lag = S.lag
+
+SELECT = ('2024-01-02', '2025-12-31')
+VALIDATE = ('2026-01-02', '2026-10-16')
+WINDOW = ('2024-01-02', '2026-10-16')
+
+WAVE = dict(look=40,       # the first wave lies within the last `look` sessions before t
+            gain=.50,      # low to later high at least +50% ("from 2 to 5"; "up 20% -> the next move only 20%")
+            surge=3.0,     # one session of the wave with turnover >= 3x its 50-day average ("big volume")
+            hold=.50,      # yesterday's close holds at least half of the wave ("holds that new price")
+            base=10,       # the base: the last `base` sessions before t ...
+            tight=.50,     # ... ranging at most half the wave's range ("tighten up, a nice little handle")
+            rest=5)        # the wave's high is at least this many sessions before t (a base exists)
+
+DRAFT = dict(
+    setups=['wave2'],
+    entry='pivot',                   # fill max(open, pivot); stop yesterday's low; entry-day close rule
+    stop_min=.02, stop_max=.08,      # stop at least 2% (keeps a position <= 50% at 1% risk), at most 8% below
+    priority='strength', max_new=3, strength='', filter='',
+    pool=dict(turnover=2e6, price=1.0),
+    wave=WAVE,
+    rule_opts=dict(risk=.01, max_position=.50, max_gross=1.0, max_open=0, trail='plo10',
+                   arm_trail_on_entry=True, trims=(), breakeven_r=1.0, exit_signal='rev', margin_rate=0.0),
+)
+
+
+def since_extreme(x, n, how):
+    """(value, sessions since) of the max / min of the last n rows including today; NaN rows are skipped."""
+    best = np.full(x.shape, np.nan)
+    age = np.full(x.shape, -1)
+    better = np.greater if how == 'max' else np.less
+    for k in range(n):
+        v = lag(x, k) if k else x.astype(float)
+        with np.errstate(invalid='ignore'):
+            take = np.isfinite(v) & (np.isnan(best) | better(v, best))
+        best = np.where(take, v, best)
+        age = np.where(take, k, age)
+    return best, age
+
+
+class Ryan(CF.Flanders):
+    id, name = 'sean_ryan', 'Sean Ryan'
+    root = ROOT / 'studies' / 'sean_ryan'
+    ledger = root / 'notes' / 'trades.csv'
+    cutoff = '2024-01-01'           # PREREG_R0: every dated trade of his is 2023 (selection); no ledger validation
+    full = SELECT                   # rounds see the selection segment only
+    home = ('us',)
+    his = {'2024': dict(ret=.408), '2025': dict(ret=.888)}
+    his_behaviour = dict(per_year=577, win=.27, avg_win=.057, avg_loss=-.0371)   # his 2023 statistics
+    starts = ('2024-01-02', '2024-02-01', '2024-03-01', '2024-04-01', '2024-07-01', '2025-01-02')
+    base = DRAFT
+
+    # ----- named day arrays -----
+    def named(self, A, pool, name):
+        F = A['F']
+        if name.startswith('plo'):                       # the lowest low of the n sessions before today
+            return lag(F.lo(int(name[3:])))
+        if name == 'rev':                                # reversal day: a new 20-day high, a close in the day's
+            return self.reversal(F)                      # bottom quarter, the biggest volume in 50 sessions
+        return super().named(A, pool, name)
+
+    @staticmethod
+    def reversal(F):
+        def f():
+            rng = F.h - F.l
+            return ((F.h >= F.hi(20)) & (rng > 0) & (F.c <= F.l + .25 * rng)
+                    & (F.v >= S.rolling(F.v, 50, 'max')))
+        return F.get('ryan_rev', f)
+
+    # ----- stages -----
+    def pool(self, A, cfg):
+        """Every name above the data set's floors (he flips through every chart): price >= 1, turnover >= 2M."""
+        F, p = A['F'], cfg.get('pool', {})
+        with np.errstate(invalid='ignore'):
+            if A['market'] == 'us':
+                return (F.raw >= p.get('price', 1.0)) & (F.to20 >= p.get('turnover', 2e6))
+            return F.liquid(0)
+
+    def wave(self, A, cfg):
+        """Day-t readiness, all from bars up to t-1: (ready, pivot)."""
+        F = A['F']
+        w = dict(WAVE, **cfg.get('wave', {}))
+        n, b = w['look'], w['base']
+        def f():
+            hi, hi_age = since_extreme(F.h, n, 'max')            # the wave's high within the look-back
+            lo, lo_age = since_extreme(F.l, n + 20, 'min')        # its low: before the high
+            with np.errstate(invalid='ignore', divide='ignore'):
+                rel = F.turnover / lag(S.rolling(F.turnover, 50, 'mean'))
+                surge = S.rolling(np.nan_to_num(rel), n, 'max') >= w['surge']
+                gain = (hi / lo - 1 >= w['gain']) & (lo_age > hi_age)
+                held = F.c >= lo + w['hold'] * (hi - lo)
+                wave_rng = (hi / lo - 1) * 100
+                tight = F.range(b) <= w['tight'] * wave_rng
+                ready = gain & surge & held & tight & (hi_age >= w['rest'] - 1)
+            return ready, F.hi(b)
+        key = ('ryan_wave',) + tuple(sorted(w.items()))
+        ready, top = F.get(key, f)
+        return lag(ready), lag(top)
+
+    def setups(self, A, cfg):
+        F = A['F']
+        out = super().setups(A, dict(cfg, setups=[s for s in cfg.get('setups', [])
+                                                  if s in ('ep', 'brk52', 'pp', 'vcp', 'pb')]))
+        names = cfg.get('setups', ['wave2'])
+        pool = lag(self.pool(A, cfg))
+        if 'wave2' in names:
+            ready, pivot = self.wave(A, cfg)
+            with np.errstate(invalid='ignore'):
+                m = pool & ready & (F.h > pivot)
+            out['wave2'] = (m, pivot, lag(F.l))
+        return out
+
+    def entries(self, A, cfg, masks):
+        """'pivot': fill max(open, level), stop yesterday's low within [stop_min, stop_max]; the day-0 exit is the
+        stop when the day's low reaches it (pessimistic), else the close when it is under the fill.  Other modes:
+        the Flanders entries."""
+        if cfg.get('entry') != 'pivot':
+            return super().entries(A, cfg, masks)
+        F = A['F']
+        o, l, c = F.o, F.l, F.c
+        smin, smax = cfg.get('stop_min', .02), cfg.get('stop_max', .08)
+        prio = self.priority(A, cfg)
+        out = [[] for _ in range(len(c))]
+        for kind, (m, level, stop) in masks.items():
+            for d, j in zip(*np.nonzero(m)):
+                if d == 0 or not np.isfinite(c[d, j]):
+                    continue
+                fill = max(o[d, j], level[d, j])
+                s = stop[d, j]
+                if not (np.isfinite(fill) and np.isfinite(s) and fill > 0):
+                    continue
+                s = max(min(s, fill * (1 - smin)), fill * (1 - smax))
+                exit0 = None
+                if l[d, j] <= s:
+                    exit0 = s
+                elif c[d, j] < fill:
+                    exit0 = float(c[d, j])
+                pr = prio[d, j]
+                out[d].append((pr if np.isfinite(pr) else 0.0, int(j), 1, float(fill), float(s), kind, exit0))
+        return out
+
+    def build(self, A, cfg, trace=None):
+        entries, rules, mask, placebo_pool = super().build(A, cfg, trace)
+        return entries, rules, mask, lag(self.pool(A, cfg))
+
+    def his_entry(self, A, d, j, cfg):
+        """His ticker on his day with our execution: the close, stop at yesterday's low within the stop bounds."""
+        c = A['close'][d, j]
+        pl = A['low'][d - 1, j] if d > 0 else np.nan
+        if not (np.isfinite(c) and np.isfinite(pl) and c > 0):
+            return None
+        s = max(min(pl, c * (1 - cfg.get('stop_min', .02))), c * (1 - cfg.get('stop_max', .08)))
+        return (0.0, j, 1, c, s, 'his')
+
+    # ----- the 2026 segment, once -----
+    def validate(self, report, key='chosen'):
+        """The chosen configuration on the validation segment (and the whole window), reported only."""
+        cfg = self.config(report, key)
+        A = self.arrays('us')
+        entries, rules, mask, pool = self.build(A, cfg)
+        out = {'report': report, 'config': cfg}
+        for name, seg in (('validate', VALIDATE), ('window', WINDOW)):
+            st, tr = self.run(A, entries, seg, pool, rules, audit=True)
+            st.pop('_curve', None)
+            st['ew_hold_pool'] = study.ew_hold(A, pool, seg, lagged=True)
+            out[name] = st
+            print('VALIDATE', name, f"total {st['total']:+.3f} dd {st['maxdd']:.2f} placebo median "
+                  f"{st['placebo']['median']:+.3f} rank {st['placebo']['rank']:.2f} ew {st['ew_hold_pool']:+.3f}",
+                  {a: round(b, 3) for a, b in st['by_year'].items()}, 'n', st['trades'], 'win', st['win'], flush=True)
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / f'validate_{self.tag(report, key)}.json').write_text(json.dumps(out, indent=1, default=float),
+                                                                       encoding='utf-8')
+        return out
+
+
+STUDY = Ryan()
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'validate':
+        STUDY.validate(sys.argv[2] if len(sys.argv) > 2 else '', sys.argv[3] if len(sys.argv) > 3 else 'chosen')
+    elif len(sys.argv) > 1 and sys.argv[1] in ('diagnose', 'three'):
+        STUDY.full = ('2023-03-01', SELECT[1])          # his dated trades are 2023 (data from 2023-01-03)
+        study.main(STUDY, sys.argv)
+    else:
+        study.main(STUDY, sys.argv)
