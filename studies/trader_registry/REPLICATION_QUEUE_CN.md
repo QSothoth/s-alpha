@@ -151,7 +151,7 @@ v1（下表，S1–S4 等）的结论不改判，作为过程记录保留。
 
 ## 可以冻结的人
 
-**2026-10-20 已冻结（用户同意，PR #9 合入 main）**：Martin Luk R74 + S7、Christian Flanders R15 C4 + S4、Clement Ang R15 AA3 + S5、Qullamaggie R11 N3 + S7、Oliver Kell R6 A5 + S5（多空一体，登记在 `studies/trader_replication/systems.py`）；Mark Minervini 仍是 R0b B 级基线。下面是冻结前（2026-10-18）只做多时的建议，保留作记录。
+**2026-10-20 已冻结（用户同意，PR #9 合入 main）**：Martin Luk R74 + S7、Christian Flanders R15 C4 + S4、Clement Ang R15 AA3 + S5、Qullamaggie R11 N3 + S7、Oliver Kell R6 A5 + S5（多空一体，登记在 `studies/trader_replication/systems.py`）；Mark Minervini 仍是 R0b B 级基线。**2026-10-20 更新**（共同缺口研究，用户同意）：Flanders 换成 R15 C4 + C1C + S4、Clement 换成 R15 AA3 + C4A + S5、Marios（研究版）换成 R1 L4 + C4B + S1 P4，见 `studies/trader_replication/reports/COMMON_RESULTS_CN.md`。下面是冻结前（2026-10-18）只做多时的建议，保留作记录。
 
 冻结要用户同意。下面是建议，等你决定。
 
