@@ -15,6 +15,9 @@ registered system) shorts.LongShort calls the study's own build unchanged.  The 
     add        a held long whose close is above its fill buys `frac` of its original size at the close of a day his
                signal mask fires again (not the entry day), at most `max` times, the stop then at the fill ('fill')
                or kept ('keep'): engine add_signal with add_signal_profit
+    ep_slots   his EPs (kind 'ep', or the study's ep_mask) opened up to this many a day on their own count, not
+               taking the daily cap of his other setups (engine max_new_by_kind; a build-capped study keeps the
+               day's first max_new non-EP entries plus its first ep_slots EPs)
 
 Commands:
 
@@ -129,9 +132,18 @@ def build_long(base, A, cfg, trace=None):
         rules = replace(rules, add_signal='common_sig', add_signal_frac=a.get('frac', .5),
                         add_signal_max=a.get('max', 1), add_signal_stop=a.get('stop', 'fill'),
                         add_signal_profit=a.get('profit', True))
-    if precap:
+    slots = cm.get('ep_slots')                     # his EPs get their own daily count, outside max_new
+    if slots and precap:
+        entries = [sorted([e for e in lst if not (e[2] > 0 and ep(d, e))], key=lambda e: e[0])[:cfg['max_new']]
+                   + sorted([e for e in lst if e[2] > 0 and ep(d, e)], key=lambda e: e[0])[:slots]
+                   for d, lst in enumerate(entries)]
+    elif slots:
+        entries = [[e[:5] + ('ep',) + tuple(e[6:]) if e[2] > 0 and ep(d, e) else e for e in lst]
+                   for d, lst in enumerate(entries)]
+        rules = replace(rules, max_new_by_kind={**rules.max_new_by_kind, 'ep': slots})
+    elif precap:
         entries = [sorted(lst, key=lambda e: e[0])[:cfg['max_new']] for lst in entries]
-    if trace is not None and (precap or cm.get('rank')):
+    if trace is not None and (precap or cm.get('rank') or slots):
         trace['capped'] = entries
     return entries, rules, mask, pool
 

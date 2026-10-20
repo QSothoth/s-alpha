@@ -2,6 +2,7 @@
 when asked, a study that caps inside its build is cut after the reordering, and a configuration without `common`
 passes through the long-short wrapper untouched."""
 import unittest
+from dataclasses import replace
 
 import numpy as np
 
@@ -128,6 +129,24 @@ class AddTests(unittest.TestCase):
         self.assertIs(A['common_sig'], mask)
         rules = C.build_long(Fake(), arrays(), {'common': {'rank': 'rvol'}})[1]
         self.assertEqual(rules.add_signal, '')
+
+
+class EpSlotTests(unittest.TestCase):
+    def test_build_capped_study_keeps_its_cap_plus_the_ep_slots(self):
+        A = arrays()
+        e = C.build_long(Fake('build'), A, {'max_new': 1, 'common': {'ep_slots': 1}})[0]
+        self.assertEqual(sorted(x[1] for x in e[2]), [0, 2])           # first non-EP + the EP
+        self.assertEqual(order(Fake('build').build(A, {'max_new': 1})[0]), [0])
+
+    def test_engine_counts_eps_on_their_own(self):
+        A = arrays(5, 3)
+        e, rules, _, _ = C.build_long(Fake(), A, {'common': {'ep_slots': 1}})
+        rules = replace(rules, max_new_long=1, risk=.01, max_position=.2, max_gross=10.0)
+        px = dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'])
+        _, _, tr = Y.simulate(px, {}, rules, e, A['days'][0], A['days'][-1])
+        self.assertEqual(sorted(t['code'] for t in tr), ['US.S0', 'US.S2'])
+        _, _, tr = Y.simulate(px, {}, replace(rules, max_new_by_kind={}), e, A['days'][0], A['days'][-1])
+        self.assertEqual([t['code'] for t in tr], ['US.S0'])               # without: the EP waits behind the cap
 
 
 class PassThroughTests(unittest.TestCase):

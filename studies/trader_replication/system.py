@@ -46,6 +46,8 @@ class Rules:
     short_trim_day_frac: float = 0.0  # short_trim_day_frac of its original size, once, when that close is below the fill
     max_open: int = 0               # > 0: no new trade while this many are open
     max_new_long: int = 0           # > 0: count successful new long positions per trading session
+    max_new_by_kind: dict = field(default_factory=dict)     # entry kind -> its own limit of successful new longs a
+                                                            # session, not counted in max_new_long
     exit_signal: str = ''           # name of a boolean (days x codes) array in `ema`: longs exit at that close
     trail_after_trim: str = ''      # EMA name the close trail switches to after the first partial ('' = keep)
     breakeven_r: float = 0.0        # > 0: once the day's best price reaches this R multiple, the stop moves to the fill
@@ -313,6 +315,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             and (alt_days is None or bool(alt_days[d]))
         if d == d0 or session[d] != session[d - 1]:
             new_longs = 0
+            new_by_kind = {}
             if rules.feedback_opened and rules.feedback and len(recent_positions) >= rules.feedback:
                 opened_feedback = sum(
                     (q.cash + (q.side * q.size * last(q.j, d - 1) if q.size > 0 else 0))
@@ -422,19 +425,25 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     continue
                 k = int(placebo.choice(cand))
                 pct = abs(fill - stop) / fill
-                kind_ = kind if kind in management or kind in rules.max_open_by_kind else 'placebo'
+                kind_ = kind if kind in management or kind in rules.max_open_by_kind \
+                    or kind in rules.max_new_by_kind else 'placebo'
                 swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), kind_, None) + tuple(e[7:9]))
             todays = swapped
         for e in sorted(todays, key=lambda x: x[0]):
             pr, j, side, fill, stop, kind = e[:6]
             if month_blocked:
                 break
-            if side > 0 and rules.max_new_long and new_longs >= rules.max_new_long:
+            own = side > 0 and kind in rules.max_new_by_kind
+            if own and new_by_kind.get(kind, 0) >= rules.max_new_by_kind[kind]:
+                continue
+            if side > 0 and not own and rules.max_new_long and new_longs >= rules.max_new_long:
                 continue
             had = j in pos
             opened = open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,
                               e[8] if len(e) > 8 else None)
-            if opened and side > 0:
+            if opened and own:
+                new_by_kind[kind] = new_by_kind.get(kind, 0) + 1
+            elif opened and side > 0:
                 new_longs += 1
             if len(e) > 6 and e[6] is not None and j in pos and not had:     # intraday entry stopped the same day
                 close_part(pos[j], pos[j].size, e[6], d, 'stop_day0')
