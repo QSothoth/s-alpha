@@ -469,8 +469,8 @@ def round_(sid, name):
             break
     out = dict(name=name, base=spec['base'], configs=dict(cfgs, **({'base': base})), results=dict(res, base=base_r),
                why=why, chosen=chosen, h0=dict(total=h0r['total'], by_year=h0r['by_year']))
-    st.out.mkdir(parents=True, exist_ok=True)
-    (st.out / f'{name.lower()}.json').write_text(json.dumps(out, indent=1, default=float, ensure_ascii=False),
+    st.reports.mkdir(parents=True, exist_ok=True)
+    (st.reports / f'{name.lower()}.json').write_text(json.dumps(out, indent=1, default=float, ensure_ascii=False),
                                                 encoding='utf-8')
     for k in cfgs:
         if k == chosen:
@@ -498,7 +498,7 @@ def final(sid, report, key):
     x = SY.get(sid)
     st, reg = x.load()
     cfg = json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
-    path = st.out / 'human_final.json'
+    path = st.reports / 'human_final.json'
     res = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
     out = {}
     for m in ('us', 'hk', 'cn'):
@@ -670,7 +670,7 @@ def render():
                      f"{x['H0']['human']['max_open']} / {_p(x['H0']['human']['max_gross'], '{:.0%}')} |")
     for sid in ORDER:
         st = names[sid].study
-        reps = sorted(st.out.glob('h[0-9]*.json'), key=lambda q: int(q.stem[1:]))
+        reps = sorted(st.reports.glob('h[0-9]*.json'), key=lambda q: int(q.stem[1:]))
         if not reps:
             continue
         L += ['', f'## {st.name}：H 轮', '']
