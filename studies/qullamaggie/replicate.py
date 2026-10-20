@@ -144,6 +144,10 @@ class Qullamaggie(CF.Flanders):
             out['pbrk'] = dict(armed=pool & para, level=lag(F.l), below=True)   # after the close (shorts.py)
         if 'popen' in names:         # S2: the morning after the first red day, sold at the open
             out['popen'] = dict(armed=pool & lag(para & red), at_open=True)
+        if 'pvwap' in names:         # S4: "first a drop, then the bounce to VWAP fails": the day after the first red
+            out['pvwap'] = dict(armed=pool & lag(para & red),            # day, a limit at that day's typical price
+                                level=lag((F.h + F.l + F.c) / 3),        # (VWAP proxy), stop above the top
+                                stop_line=np.fmax(lag(F.h), lag(F.h, 2)) * 1.01)
         if 'ptop' in names:          # S3: the same, the stop just above the top (the higher of the last two highs)
             out['ptop'] = dict(armed=pool & lag(para & red), at_open=True,
                                stop_line=np.fmax(lag(F.h), lag(F.h, 2)) * 1.01)

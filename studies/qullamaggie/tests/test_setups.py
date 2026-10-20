@@ -75,6 +75,13 @@ class ParabolicShortTests(unittest.TestCase):
         self.assertEqual(z['pbrk']['level'][35, 0], 38.8)                        # day 34's low
         self.assertEqual(list(np.flatnonzero(z['popen']['armed'][:, 0])), [36])  # after the red day 35
 
+    def test_vwap_bounce_limit_after_the_first_red_day(self):
+        A = panel(BASE + self.RUN + [(46, 48, 40, 41), (40, 42, 38, 39)])
+        z = R.STUDY.short_setups(A, {'setups': ['pvwap']})[0]['pvwap']
+        self.assertEqual(list(np.flatnonzero(z['armed'][:, 0])), [36])
+        self.assertAlmostEqual(z['level'][36, 0], (48 + 40 + 41) / 3)          # the red day's typical price
+        self.assertAlmostEqual(z['stop_line'][36, 0], 48 * 1.01)               # above the top
+
     def test_large_names_need_less_of_a_run(self):
         run = [(10.5, 11.3, 10.4, 11), (11.2, 12.3, 11.1, 12), (12.2, 13.3, 12.1, 13), (13.2, 15.6, 13.1, 15.5)]
         A = panel(BASE + run + [(16, 16.5, 14, 14.5)])
