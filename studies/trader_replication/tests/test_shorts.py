@@ -114,6 +114,19 @@ class LevelEntryTests(unittest.TestCase):
         (e,) = SH.short_entries(A, {'x': {'armed': armed, 'at_open': True, 'stop_line': line}}, {})[1]
         self.assertAlmostEqual(e[4], 9.999)
 
+    def test_stop_wider_than_k_adr_is_skipped(self):
+        A = arrays([(10, 10.2, 9.8, 10), (9.9, 10.3, 9.5, 9.6)])     # ADR 5% on the test panel
+        armed = np.array([[False], [True]])
+        line = np.full((2, 1), 10.8)                                   # 9.1% above the 9.9 open fill
+        m = {'x': {'armed': armed, 'at_open': True, 'stop_line': line}}
+        self.assertEqual(len(SH.short_entries(A, m, {})[1]), 1)
+        self.assertEqual(SH.short_entries(A, m, {'max_width_adr': 1.5})[1], [])   # 9.1% > 7.5%
+        self.assertEqual(len(SH.short_entries(A, m, {'max_width_adr': 2.0})[1]), 1)
+        mc = np.zeros((2, 1), bool)
+        mc[1, 0] = True                                                # a close entry: stop at the high 10.3
+        self.assertEqual(SH.short_entries(A, {'x': mc}, {'max_width_adr': 1.5})[1][0][4], 10.3)   # 7.3% <= 7.5%
+        self.assertEqual(SH.short_entries(A, {'x': mc}, {'max_width_adr': 1.0})[1], [])
+
     def test_risk_mult_sizes_level_entries_too(self):
         (e,) = self.level([(10, 10.2, 9.8, 10), (10.0, 10.4, 9.7, 9.8)], risk_mult=.5)
         self.assertAlmostEqual(e[7], .04)

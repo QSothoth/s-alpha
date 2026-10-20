@@ -104,6 +104,14 @@ def gate_days(A, spec):
     raise ValueError(spec)
 
 
+def too_wide(A, sc, d, j, fill, stop):
+    """max_width_adr: skip a short whose stop is more than this many ADRs (as of t-1) above the fill (Qullamaggie's
+    "no wider than the ADR", his longs' rule turned over)."""
+    k = sc.get('max_width_adr', 0)
+    adr = A['adr'][d - 1, j]
+    return bool(k) and np.isfinite(adr) and (stop - fill) / fill > k * adr / 100
+
+
 def level_width(A, sc, d, j):
     """Stop distance above a level entry: 'cap' = his long stop rule turned over, min(5%, half the ADR as of t-1)
     and at least stop_min; a number = that fraction."""
@@ -139,6 +147,8 @@ def level_entries(A, name, armed, level, sc, out, at_open=False, below=False, st
                 continue
             w = max(stop_line[d, j] / lv - 1, sc.get('stop_min', .01))
         s = max(stop_line[d, j], lv * (1 + sc.get('stop_min', .01))) if stop_line is not None else lv * (1 + w)
+        if too_wide(A, sc, d, j, lv, s):
+            continue
         pr = -to20[d - 1, j] if np.isfinite(to20[d - 1, j]) else 0.0
         mult = sc.get('risk_mult', 1.0)
         out[d].append((float(pr), int(j), -1, float(lv), float(s), f's_{name}', float(s) if h[d, j] >= s else None,
@@ -185,7 +195,7 @@ def short_entries(A, masks, sc):
             s = max(s, fill * (1 + smin))
             if cap:
                 s = min(s, fill * (1 + cap))
-            if not s > fill:
+            if not s > fill or too_wide(A, sc, d, j, fill, s):
                 continue
             pr = -to20[d - 1, j] if np.isfinite(to20[d - 1, j]) else 0.0
             width = (s - fill) / fill
