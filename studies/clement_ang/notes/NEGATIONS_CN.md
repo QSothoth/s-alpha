@@ -4,6 +4,11 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| H1 | human sizing | H1A | `{"human": {"tiers": [{"when": ["kind=fine"], "risk": 2, "cap": 0.5}]}}` | H:0 | None | H gates: gate, his years not closer: 2024,2025；全区间 +105%（带入 +0%） | open |
+| H1 | human sizing | H1B | `{"human": {"rule_opts": {"feedback": 1, "risk_low": 0.0025}}}` | H:0 | None | H gates: gate, his years not closer: 2024,2025, bought 2 < 3；全区间 +48%（带入 +0%） | open |
+| H1 | human sizing | H1C | `{"rule_opts": {"trail": "ema10"}}` | H:0 | None | H gates: his years not closer: 2024, bought 2 < 3；全区间 +56%（带入 +0%） | open |
+| H1 | human sizing | H1D | `{"rule_opts": {"max_days": 3}}` | H:0 | None | H gates: gate, his years not closer: 2024,2025, bought 2 < 3；全区间 +22%（带入 +0%） | open |
+| H1 | human sizing | H1E | `{"common": {"add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}}` | H:0 | None | H gates: his years not closer: 2024,2025, behaviour gap 0.816 > 0.766 + 0.02；全区间 +81%（带入 +0%） | open |
 | R1 | setups | C1 | `{"setups": ["fine", "pb"]}` | :base | D0c | gates: placebo, width<=30；全区间 +2%（带入 -2%） | open |
 | R1 | setups | C2 | `{"setups": ["fine", "ep"], "ep_pool": {"turnover": 5000000.0, "price": 2.0}}` | :base | D0c | gates: placebo；全区间 -28%（带入 -2%） | open |
 | R1 | setups | C3 | `{"setups": ["fine", "pb", "ep"], "ep_pool": {"turnover": 5000000.0, "price": 2.0}}` | :base | D0c | gates: placebo, width<=30；全区间 -49%（带入 -2%） | open |

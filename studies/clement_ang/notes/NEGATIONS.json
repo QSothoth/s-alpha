@@ -1,5 +1,476 @@
 [
  {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1A",
+  "change": {
+   "human": {
+    "tiers": [
+     {
+      "when": [
+       "kind=fine"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ]
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: gate, his years not closer: 2024,2025",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.050215252269176,
+   "by_year": {
+    "2024": 0.4656038817255468,
+    "2025": 0.39888770617564795
+   },
+   "placebo_median": 0.043612907587622485,
+   "win": 0.3467741935483871,
+   "bought": [
+    3,
+    12
+   ],
+   "year_gap": {
+    "2024": 0.20162283113149645,
+    "2025": 0.541456591419459
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "common": {
+    "ep_slots": 1
+   },
+   "short": {
+    "setups": [
+     "fb20"
+    ],
+    "turnover": 500000000.0,
+    "run": 1.0,
+    "gate": "below50x5",
+    "max_new": 1,
+    "stop_w": "cap",
+    "max_days": 5,
+    "trail": "ema10"
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1B",
+  "change": {
+   "human": {
+    "rule_opts": {
+     "feedback": 1,
+     "risk_low": 0.0025
+    }
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: gate, his years not closer: 2024,2025, bought 2 < 3",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.4811503408694193,
+   "by_year": {
+    "2024": 0.18977479835456146,
+    "2025": 0.24489974314284124
+   },
+   "placebo_median": 0.031785189142080505,
+   "win": 0.3473895582329317,
+   "bought": [
+    2,
+    12
+   ],
+   "year_gap": {
+    "2024": 0.410126150488868,
+    "2025": 0.6580790175949225
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "common": {
+    "ep_slots": 1
+   },
+   "short": {
+    "setups": [
+     "fb20"
+    ],
+    "turnover": 500000000.0,
+    "run": 1.0,
+    "gate": "below50x5",
+    "max_new": 1,
+    "stop_w": "cap",
+    "max_days": 5,
+    "trail": "ema10"
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1C",
+  "change": {
+   "rule_opts": {
+    "trail": "ema10"
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: his years not closer: 2024, bought 2 < 3",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.5575098997406065,
+   "by_year": {
+    "2024": -0.15440301269241918,
+    "2025": 0.8419056868920367
+   },
+   "placebo_median": 0.08115268629095018,
+   "win": 0.332,
+   "bought": [
+    2,
+    12
+   ],
+   "year_gap": {
+    "2024": 0.7516026018421348,
+    "2025": 0.26633328162080727
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "common": {
+    "ep_slots": 1
+   },
+   "short": {
+    "setups": [
+     "fb20"
+    ],
+    "turnover": 500000000.0,
+    "run": 1.0,
+    "gate": "below50x5",
+    "max_new": 1,
+    "stop_w": "cap",
+    "max_days": 5,
+    "trail": "ema10"
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1D",
+  "change": {
+   "rule_opts": {
+    "max_days": 3
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: gate, his years not closer: 2024,2025, bought 2 < 3",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.2162049641943944,
+   "by_year": {
+    "2024": 0.03806844755694172,
+    "2025": 0.17160382540928865
+   },
+   "placebo_median": -0.007914643310686476,
+   "win": 0.392,
+   "bought": [
+    2,
+    12
+   ],
+   "year_gap": {
+    "2024": 0.5465284702836686,
+    "2025": 0.7187604155913768
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "common": {
+    "ep_slots": 1
+   },
+   "short": {
+    "setups": [
+     "fb20"
+    ],
+    "turnover": 500000000.0,
+    "run": 1.0,
+    "gate": "below50x5",
+    "max_new": 1,
+    "stop_w": "cap",
+    "max_days": 5,
+    "trail": "ema10"
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "H1",
+  "stage": "human sizing",
+  "candidate": "H1E",
+  "change": {
+   "common": {
+    "add": {
+     "frac": 0.5,
+     "max": 1,
+     "stop": "keep",
+     "profit": true
+    }
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: his years not closer: 2024,2025, behaviour gap 0.816 > 0.766 + 0.02",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.814268039975421,
+   "by_year": {
+    "2024": 0.3197002209151343,
+    "2025": 0.37475769968223016
+   },
+   "placebo_median": 0.045689555477746335,
+   "win": 0.2845360824742268,
+   "bought": [
+    3,
+    12
+   ],
+   "year_gap": {
+    "2024": 0.30648558918436797,
+    "2025": 0.5588565194956389
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "fine",
+    "pb",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 10,
+   "strength": "",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 50000000.0,
+    "adr": 3.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 2.0,
+    "max_open": 30,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [
+     2
+    ],
+    "trim_frac": 0.3333,
+    "breakeven_r": 2.0,
+    "trim_signal": "atr50x8",
+    "trim_signal_frac": 0.3333
+   },
+   "fine": {
+    "near": 0.25
+   },
+   "pb": {
+    "fine": true
+   },
+   "close_any": [
+    "pb"
+   ],
+   "common": {
+    "ep_slots": 1
+   },
+   "short": {
+    "setups": [
+     "fb20"
+    ],
+    "turnover": 500000000.0,
+    "run": 1.0,
+    "gate": "below50x5",
+    "max_new": 1,
+    "stop_w": "cap",
+    "max_days": 5,
+    "trail": "ema10"
+   },
+   "human": {}
+  }
+ },
+ {
   "round": "R1",
   "stage": "setups",
   "candidate": "C1",
