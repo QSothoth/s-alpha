@@ -58,6 +58,23 @@ class EpTests(unittest.TestCase):
         self.assertTrue(masks['ep'][0][-1, 0])
         self.assertEqual([x for x in R.STUDY.entries(A, self.cfg, masks)[len(BASE)] if x[1] == 0], [])
 
+    def test_floors_as_options(self):
+        """brk on the board's floors equals the board's breakout; a 1-USD EP price floor admits a 3-USD name."""
+        rows = [(10 + .05 * i, 10.3 + .05 * i, 9.8 + .05 * i, 10.1 + .05 * i) for i in range(80)]
+        A = panel(rows)
+        board = R.STUDY.setups(A, dict(R.DRAFT, setups=['brk']))['brk'][0]
+        mine = R.STUDY.setups(A, dict(R.DRAFT, setups=['brk'], brk=dict(turnover=20e6, price=5.0, adr=4.0, top=.02)))
+        np.testing.assert_array_equal(board, mine['brk'][0])
+        cheap = [(3, 3.1, 2.9, 3)] * 80 + [(3.2, 3.4, 3.15, 3.3)]
+        A = panel(cheap)
+        F = A['F']
+        F.v = np.full(F.c.shape, 1e6)
+        F.v[-1, 0] = 4e6
+        F.turnover = F.v * F.c
+        self.assertFalse(R.STUDY.setups(A, self.cfg)['ep'][0][-1, 0])                 # under 5 USD
+        ok = R.STUDY.setups(A, dict(self.cfg, ep=dict(R.DRAFT['ep'], price=1.0, liquid=2e6)))['ep'][0]
+        self.assertTrue(ok[-1, 0])
+
     def test_no_future_bars(self):
         A = ep_panel((10.6, 11.2, 10.5, 11.0))
         B = panel(BASE + [(10.6, 11.2, 10.5, 11.0)] + [(30, 40, 1, 2)] * 3)

@@ -53,16 +53,40 @@ class Marios(Q.Qullamaggie):
     base = DRAFT
 
     def setups(self, A, cfg):
-        """The Qullamaggie setups; the EP option 'escape' n also requires the open above the prior n-day high
-        ("gapping up more than 5%, escaping a range they have been in for many months")."""
-        out = super().setups(A, cfg)
-        n = cfg.get('ep', {}).get('escape')
-        if 'ep' in out and n:
-            F = A['F']
-            m, lv, st = out['ep']
-            with np.errstate(invalid='ignore'):
-                out['ep'] = (m & (F.o > lag(F.hi(n))), lv, st)
+        """The Qullamaggie setups with his liquidity floors as options.
+        ep['escape'] n     the open above the prior n-day high ("escaping a range they have been in for many months")
+        ep['price']        a price floor for the EP instead of the board's 5 USD (with ep['liquid'] as turnover)
+        brk = {turnover, price, adr, top}   the board's leader breakout on these floors instead of 20M / 5 USD /
+                           ADR 4 / top 2% (his own scan: price > 1, ADR > 5, dollar volume >= 1M a day)"""
+        bo = cfg.get('brk')
+        names = cfg.get('setups', ['brk', 'ep'])
+        out = super().setups(A, dict(cfg, setups=[s for s in names if s != 'brk' or not bo]))
+        F = A['F']
+        o = cfg.get('ep', {})
+        with np.errstate(invalid='ignore', divide='ignore'):
+            if 'ep' in out and 'price' in o:
+                m = ((F.to20 >= o.get('liquid', 20e6)) & (F.raw >= o['price'])
+                     & (F.o / lag(F.c) - 1 >= o.get('min_gap', .10)) & (F.v >= o.get('heavy', 3.0) * lag(F.vol(20))))
+                out['ep'] = (m, F.o, F.l)
+            if 'ep' in out and o.get('escape'):
+                m, lv, st = out['ep']
+                out['ep'] = (m & (F.o > lag(F.hi(o['escape']))), lv, st)
+            if 'brk' in names and bo:
+                out['brk'] = self.leader_breakout(F, bo)
         return out
+
+    @staticmethod
+    def leader_breakout(F, bo):
+        """screens.Qullamaggie's breakout (10-day tightening within 3 ADR, narrowing, higher lows, within 1 ADR of
+        the base high; bought over the base high) on other floors."""
+        adr = F.adr
+        with np.errstate(invalid='ignore'):
+            pool = (F.to20 >= bo.get('turnover', 20e6)) & (F.raw >= bo.get('price', 5.0)) & (adr >= bo.get('adr', 4.0))
+            watch = pool & (S.strength(F) >= 1 - bo.get('top', .02))
+            base = ((F.range(10) <= 3 * adr) & (F.range(5) < F.range(5, 5)) & (F.lo(5) > lag(F.lo(5), 5))
+                    & (F.c >= F.hi(10) * (1 - adr / 100)))
+        m, entry = S.triggered_from(F, watch & base, F.hi(10))
+        return m, entry, F.l
 
     def his_entry(self, A, d, j, cfg):
         """His ticker on his day with our execution: the close, stop at the day's low (at least stop_min)."""

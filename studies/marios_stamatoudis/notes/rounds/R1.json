@@ -1,0 +1,14 @@
+{
+ "stage": "selection_floors",
+ "base": ["r0.json", "chosen"],
+ "ref": "D0",
+ "objective": "behaviour",
+ "gates": ["placebo", "win<=0.35", "behaviour+0.02"],
+ "candidates": {
+  "L1": {"ep": {"escape": 0}},
+  "L2": {"stop_adr": {"brk": 1.0, "ep": 3.0}},
+  "L3": {"ep": {"price": 1.0, "liquid": 2e6}, "brk": {"turnover": 2e6, "price": 1.0, "adr": 4.0, "top": 0.02}},
+  "L4": {"ep": {"escape": 0, "price": 1.0, "liquid": 2e6}, "stop_adr": {"brk": 1.0, "ep": 3.0},
+         "brk": {"turnover": 2e6, "price": 1.0, "adr": 4.0, "top": 0.02}}
+ }
+}
