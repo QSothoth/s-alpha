@@ -24,6 +24,10 @@
 | R3 | entry_stop | E3 | `{"entry_by_kind": {"ep": "open_pct"}, "open_pct": 0.06}` | r2.json:chosen | E2 | gates: placebo；全区间 -40%（带入 +261%） | open |
 | R3 | entry_stop | E4 | `{"entry": "close"}` | r2.json:chosen | E2 | gates: placebo；全区间 -18%（带入 +261%） | open |
 | R3 | entry_stop | E5 | `{"entry": "level_pess", "stop_cap": 0.06}` | r2.json:chosen | E2 | objective below E2；全区间 +486%（带入 +261%） | open |
+| S3 | short, gate v2: the 200-day limit only after the line already turned rallies back ('rejected four times') | F3A | `{"setups": ["r200"], "r200_rej": 1, "gate": "below200", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3}` | :chosen | none | gates: alpha | open |
+| S3 | short, gate v2: the 200-day limit only after the line already turned rallies back ('rejected four times') | F3B | `{"setups": ["r200"], "r200_rej": 2, "gate": "below200", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3}` | :chosen | none | gates: alpha | open |
+| S3 | short, gate v2: the 200-day limit only after the line already turned rallies back ('rejected four times') | F3C | `{"setups": ["r200"], "r200_rej": 1, "gate": "below50", "max_new": 2, "stop_w": "cap", "trail": "", "trims": [], "trim_day": 1, "trim_day_frac": 1.0, "max_days": 3}` | :chosen | none | gates: count, maxdd | open |
+| S3 | short, gate v2: the 200-day limit only after the line already turned rallies back ('rejected four times') | F3D | `{"setups": ["r200"], "r200_rej": 1, "gate": "below200", "max_new": 2, "stop_w": "cap", "trail": "sma10", "trims": [], "trim_day": 1, "trim_day_frac": 0.5, "max_days": 10}` | :chosen | none | gates: alpha, down | open |
 | R4 | daily_choice | K2 | `{"ep_first": true}` | r3.json:chosen | K1 | objective below K1；全区间 +1039%（带入 +351%） | open |
 | R4 | daily_choice | K3 | `{"max_new": 3}` | r3.json:chosen | K1 | objective below K1；全区间 +296%（带入 +351%） | open |
 | R4 | daily_choice | K4 | `{"rule_opts": {"max_open": 12}}` | r3.json:chosen | K1 | objective below K1；全区间 +242%（带入 +351%） | open |
