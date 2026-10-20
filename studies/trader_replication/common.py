@@ -37,6 +37,7 @@ round      notes/common_rounds/<name>.json: each candidate on every registered s
     PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
     $PY -m studies.trader_replication.common funnel [system ...]
     $PY -m studies.trader_replication.common round C1 [system ...]
+    $PY -m studies.trader_replication.common validate V1      # once: the validation segment (2026)
 """
 from __future__ import annotations
 
@@ -454,6 +455,67 @@ def round_(name, ids=()):
     return out
 
 
+VCUTS = ('2024-09-30', '2025-09-30', '2026-06-30')
+
+
+def validate(name):
+    """notes/common_rounds/<name>.json {"systems": {id: common dict}}: each new version once on the validation
+    segment (a fresh account from its first day, against the registered version), the four engineering gates, the
+    down-market days, and every market over the whole window (reported only); reports/common_<name>.json."""
+    from . import gate as G, panels, shorts as SH
+    spec = json.loads((ROUNDS / f'{name}.json').read_text(encoding='utf-8'))
+    path = OUT / f'common_{name.lower()}.json'
+    res = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+    pin = panels.pinned()['markets']
+    for x in SY.all_():
+        if x.id not in spec['systems'] or x.id in res:
+            continue
+        st, cfg = x.load()
+        new = dict(cfg, common=spec['systems'][x.id])
+        A = st.arrays('us')
+        located = [t for t in st.located(A, st.trades()) if VALIDATE[0] <= t[0].entry_date <= VALIDATE[1]]
+        r = {}
+        for k, c in (('base', cfg), ('new', new)):
+            v = evaluate(st, A, c, located, 50, seg=VALIDATE)
+            entries, rules, mask, pool = st.build(A, c)
+            px, ema = st.px(A), st.ema_inputs(A, pool, rules)
+            curve, dates, tr = Y.simulate(px, ema, rules, entries, *VALIDATE, audit=True)
+            v['down'] = SH.down_report(A, {'x': curve}, dates)['total']['x']
+            v['gate_validate'] = dict(win=G.check_win(tr), fills=G.check_fills(A, tr))
+            wc, wd, wt = Y.simulate(px, ema, rules, entries, *panels.WINDOW, audit=True)
+            w = Y.stats(wc, wd, wt)
+            v['window'] = dict(total=w['total'], by_year=w['by_year'], maxdd=w['maxdd'],
+                               win=G.check_win(wt), fills=G.check_fills(A, wt))
+            r[k] = v
+            row(name, x.id, k, v)
+            del entries, mask, pool, tr, wt
+        g = dict(data=A.get('digest') == pin.get('us'), lookahead=G.check_lookahead(st, new, 'us', full=A, cuts=VCUTS))
+        g['ok'] = bool(g['data'] and g['lookahead']['ok'] and r['new']['gate_validate']['win']['ok']
+                       and r['new']['gate_validate']['fills']['ok'] and r['new']['window']['win']['ok']
+                       and r['new']['window']['fills']['ok'])
+        b, n = r['base'], r['new']
+        checks = dict(gate=g['ok'], total=n['total'] >= b['total'], maxdd=n['maxdd'] <= b['maxdd'] + .01,
+                      down=n['down'] >= b['down'],
+                      behaviour=(n['behaviour_gap'] or 9) <= (b['behaviour_gap'] or 9) + GAP_WORSE)
+        r.update(gate=g, checks=checks, passed=all(checks.values()))
+        del A
+        gc.collect()
+        r['markets'] = {}
+        for m in ('hk', 'cn'):
+            B = st.arrays(m)
+            r['markets'][m] = {}
+            for k, c in (('base', cfg), ('new', new)):
+                v = evaluate(st, B, c, [], 50, seg=panels.WINDOW)
+                r['markets'][m][k] = {q: v[q] for q in ('total', 'by_year', 'maxdd', 'trades', 'win', 'placebo')}
+                row(name, x.id, f'{m} {k}', v)
+            del B
+            gc.collect()
+        res[x.id] = r
+        print('VALIDATE', x.id, 'passed', r['passed'], checks, flush=True)
+        path.write_text(json.dumps(res, indent=1, default=float), encoding='utf-8')
+    return res
+
+
 def row(name, sid, k, r):
     p = r.get('placebo', {})
     print(name, sid, k, f"total {r['total']:+.3f} dd {r['maxdd']:.3f} years",
@@ -467,5 +529,7 @@ if __name__ == '__main__':
         funnel(sys.argv[2:])
     elif sys.argv[1] == 'round':
         round_(sys.argv[2], sys.argv[3:])
+    elif sys.argv[1] == 'validate':
+        validate(sys.argv[2])
     else:
         raise SystemExit(__doc__)
