@@ -4,6 +4,10 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| H1 | human sizing | H1B | `{"human": {"tiers": [{"when": ["ep", "tight<=15"], "risk": 3, "cap": 0.5}]}}` | H:0 | H1A | objective not above the base / H1A；全区间 +59%（带入 +0%） | open |
+| H1 | human sizing | H1C | `{"human": {"rule_opts": {"feedback": 3, "risk_low": 0.0025, "risk_high": 0.01, "max_position": 0.5}}}` | H:0 | H1A | H gates: his years not closer: 2025；全区间 +7%（带入 +0%） | open |
+| H1 | human sizing | H1D | `{"strength": "rs90"}` | H:0 | H1A | objective not above the base / H1A；全区间 +50%（带入 +0%） | open |
+| H1 | human sizing | H1E | `{"setups": ["hi52", "ep", "vcp", "pp", "pb"]}` | H:0 | H1A | H gates: placebo, his years not closer: 2024,2025, bought 3 < 5；全区间 -8%（带入 +0%） | open |
 | R1 | setups | C2 | `{"setups": ["brk52", "ep"]}` | :base | C1 | gates: width<=30；全区间 +173%（带入 +208%） | open |
 | R1 | setups | C3 | `{"setups": ["brk52", "ep", "pp", "vcp"]}` | :base | C1 | gates: width<=30；全区间 +89%（带入 +208%） | open |
 | R1 | setups | C4 | `{"setups": ["brk52", "ep", "pp", "vcp"], "ep": {"near": 0.15}}` | :base | C1 | gates: width<=30；全区间 +55%（带入 +208%） | open |

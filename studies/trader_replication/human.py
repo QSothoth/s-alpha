@@ -484,7 +484,135 @@ def round_(sid, name):
     return out
 
 
+ORDER = ('christian_flanders', 'clement_ang', 'martin_luk', 'oliver_kell', 'qullamaggie', 'marios_stamatoudis',
+         'mark_minervini')
+NOTES = Path(__file__).resolve().parent / 'notes'
+
+
+def _p(x, f='{:+.0%}'):
+    return '—' if x is None else f.format(x)
+
+
+def _hum(hm):
+    yrs = '/'.join(str(v) for _, v in sorted(hm['per_year'].items()))
+    return [f"{hm['max_open']} / {hm['mean_open']:.1f}", _p(hm['max_gross'], '{:.0%}'), str(hm['max_new_day']), yrs,
+            '是' if hm['ok'] else '否']
+
+
+def render():
+    """reports/HUMAN_SIZING_CN.md from human_h0.json, human_decompose.json, studies/<id>/reports/h*.json and the
+    hand-written notes/HUMAN_CONCLUSIONS_CN.md."""
+    from . import systems as SY
+    h0 = json.loads((OUT / 'human_h0.json').read_text(encoding='utf-8'))
+    dc_path = OUT / 'human_decompose.json'
+    dc = json.loads(dc_path.read_text(encoding='utf-8')) if dc_path.exists() else {}
+    names = {x.id: x for x in SY.all_()}
+    L = ['# 人性化仓位：不融资、少持仓、分档定仓（H 轮）', '',
+         '由 `python -m studies.trader_replication.human render` 生成；结论段落来自 '
+         '[notes/HUMAN_CONCLUSIONS_CN.md](../notes/HUMAN_CONCLUSIONS_CN.md)，预登记见 '
+         '[notes/HUMAN_PREREG_CN.md](../notes/HUMAN_PREREG_CN.md)。数据 trader-data-v1；选择段 2024-01-02 → 2025-12-31（美股），'
+         '2026 段已被 V1 / V2 用过，只报告。全部是样本内结论。', '',
+         f"硬约束：总敞口 ≤ {LIMITS['gross']:.0%}（入场、加仓扣成本，收盘超限先回补空单再减多头，不产生融资利息）、同时持仓 ≤ "
+         f"{LIMITS['max_open']} 只、每天新开 ≤ {LIMITS['max_new']} 笔、每年开仓 ≤ {LIMITS['max_year']} 笔（多空合计）、单只 ≤ "
+         f"{LIMITS['max_position']:.0%}、仓位档 ≤ {LIMITS['tiers']} 档、卖出或止损当天不买回。", '']
+    cpath = NOTES / 'HUMAN_CONCLUSIONS_CN.md'
+    if cpath.exists():
+        L += [cpath.read_text(encoding='utf-8').strip(), '']
+    L += ['## H0：登记版本原样套上硬约束（选择段，美股）', '',
+          '“持仓 最大 / 平均”“最大总敞口”“每天最多新开”“每年开仓”都是选择段实测；收益按最后收盘估值，交易统计只算已平仓。', '',
+          '| 交易员 | 版本 | 选择段 | 2024 | 2025 | 他 2024 / 2025 | 回撤 | 已平仓 | 胜率 | 平均赚 / 亏 | 赢家持有（天） | 前 10% 利润占比 | '
+          '持仓 最大 / 平均 | 最大总敞口 | 每天最多新开 | 每年开仓 | 满足硬约束 | 安慰剂中位 / 排位 | 买到他的 | 2026（只报告） |',
+          '|' + '---|' * 20]
+    for sid in ORDER:
+        if sid not in h0:
+            continue
+        st = names[sid].study
+        his = st.his or {}
+        hs = ' / '.join(_p(his[y]['ret']) if y in his and his[y].get('ret') is not None else '—' for y in ('2024', '2025'))
+        for k in ('registered', 'H0'):
+            r = h0[sid][k]
+            L.append('| ' + ' | '.join([st.name, names[sid].version if k == 'registered' else 'H0', _p(r['total']),
+                                         _p(r['by_year'].get('2024')), _p(r['by_year'].get('2025')), hs,
+                                         _p(r['maxdd'], '{:.0%}'), str(r['trades']), _p(r['win'], '{:.0%}'),
+                                         f"{_p(r['avg_win'])} / {_p(r['avg_loss'])}", _p(r['days_win'], '{:.0f}'),
+                                         _p(r['pnl_top10'], '{:.0%}')] + _hum(r['human']) +
+                                        [f"{_p(r['placebo']['median'])} / {r['placebo']['rank']:.2f}",
+                                         f"{r['bought'][0]} / {r['bought'][1]}", _p(r['validate']['total'])]) + ' |')
+    if dc:
+        lab = dict(gross='只压总敞口 ≤ 100%', max_open='只限 10 只', max_new='只限每天 3 笔', max_year='只限每年 250 笔',
+                   max_position='只限单只 50%', no_rebuy='只禁当天买回')
+        L += ['', '## 收益从哪来：每次只套一条约束（选择段，美股，无安慰剂）', '',
+              '| 交易员 | 登记版本 | ' + ' | '.join(lab[p] for p in PARTS) + ' | 全部（H0） |', '|' + '---|' * (len(PARTS) + 3)]
+        for sid in ORDER:
+            if sid not in dc:
+                continue
+            cells = [names[sid].study.name, _p(h0[sid]['registered']['total'])]
+            cells += [f"{_p(dc[sid][p]['total'])}（{_p(dc[sid][p]['by_year'].get('2024'))} / "
+                      f"{_p(dc[sid][p]['by_year'].get('2025'))}）" for p in PARTS]
+            cells.append(_p(h0[sid]['H0']['total']))
+            L.append('| ' + ' | '.join(cells) + ' |')
+    L += ['', '## 港股、A 股（全区间 2024-01-02 → 2026-10-16，只报告）', '',
+          '| 交易员 | 市场 | 登记版本 全段（2024 / 2025 / 2026） | H0 全段（2024 / 2025 / 2026） | H0 持仓最大 / 总敞口最大 |',
+          '|---|---|---|---|---|']
+    for sid in ORDER:
+        for m in ('hk', 'cn'):
+            x = h0.get(sid, {}).get('markets', {}).get(m)
+            if not x:
+                continue
+            f = lambda r: f"{_p(r['total'])}（{' / '.join(_p(v) for _, v in sorted(r['by_year'].items()))}）"
+            L.append(f"| {names[sid].study.name} | {dict(hk='港股', cn='A 股')[m]} | {f(x['registered'])} | {f(x['H0'])} | "
+                     f"{x['H0']['human']['max_open']} / {_p(x['H0']['human']['max_gross'], '{:.0%}')} |")
+    for sid in ORDER:
+        st = names[sid].study
+        reps = sorted(st.out.glob('h[0-9]*.json'), key=lambda q: int(q.stem[1:]))
+        if not reps:
+            continue
+        L += ['', f'## {st.name}：H 轮', '']
+        for q in reps:
+            r = json.loads(q.read_text(encoding='utf-8'))
+            L += [f"### {r['name']}（基础 {r['base'] if isinstance(r['base'], str) else ' '.join(r['base'])}，"
+                  f"带入：{r['chosen'] or '无'}）", '',
+                  '| 候选 | 选择段 | 2024 | 2025 | 对他的对数差 2024 / 2025 | 回撤 | 已平仓 | 胜率 | 平均赚 / 亏 | 赢家持有 | 前 10% 利润 | '
+                  '持仓 最大 / 平均 | 最大总敞口 | 每天最多新开 | 每年开仓 | 硬约束 | 安慰剂中位 / 排位 | 买到他的 | 仓位档（笔 / 赚 / 盈亏） | '
+                  '2026（只报告） | 判定 |', '|' + '---|' * 21]
+            for k, x in r['results'].items():
+                if k == 'base' and r['base'] == 'H0':
+                    k_ = 'H0'
+                else:
+                    k_ = k
+                yg = x.get('year_gap') or year_gaps(st, x['by_year'])
+                tiers_ = '；'.join(f"{t} {v['n']}/{v['wins']}/{v['pnl']:+.2f}" for t, v in sorted(x.get('tiers', {}).items()))
+                why = r['why'].get(k.replace('@100', ''))
+                verdict = '' if k == 'base' else ('带入' if k == r['chosen'] or k == f"{r['chosen']}@100" else
+                                                  ('；'.join(why) if why else '未超过基础'))
+                pl = x.get('placebo') or {}
+                L.append('| ' + ' | '.join([k_, _p(x['total']), _p(x['by_year'].get('2024')), _p(x['by_year'].get('2025')),
+                                             ' / '.join(f'{v:.2f}' for _, v in sorted(yg.items())) or '—',
+                                             _p(x['maxdd'], '{:.0%}'), str(x['trades']), _p(x['win'], '{:.0%}'),
+                                             f"{_p(x['avg_win'])} / {_p(x['avg_loss'])}", _p(x['days_win'], '{:.0f}'),
+                                             _p(x.get('pnl_top10'), '{:.0%}')] + _hum(x['human']) +
+                                            [f"{_p(pl.get('median'))} / {pl.get('rank', float('nan')):.2f}",
+                                             f"{x['bought'][0]} / {x['bought'][1]}" if x.get('bought') else '—', tiers_ or '—',
+                                             _p((x.get('validate') or {}).get('total')), verdict]) + ' |')
+            ch = r['chosen']
+            if ch:
+                x = r['results'].get(ch + '@100', r['results'][ch])
+                L += ['', f'{ch} 的头部交易（选择段）：', '', '| 股票 | 形态 | 买入 | 卖出 | 成交价 | 止损 | 档位 | 单笔仓位 | 入场日总敞口 | 盈亏 | 收益 | 天 | 加仓 | 离场 |',
+                      '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|']
+                for t in x['top']:
+                    L.append('| ' + ' | '.join([t['code'], t['kind'], t['entry'], t['exit'], f"{t['fill']:.2f}",
+                                                 f"{t['stop']:.2f}", '基础' if t['tier'] is None else f"×{t['tier']:g}",
+                                                 _p(t['weight'], '{:.0%}'), _p(t['gross_at_entry'], '{:.0%}'),
+                                                 f"{t['pnl']:+.3f}", _p(t['ret']), str(t['days']), str(t['adds']),
+                                                 t['why']]) + ' |')
+            L.append('')
+    (OUT / 'HUMAN_SIZING_CN.md').write_text('\n'.join(L) + '\n', encoding='utf-8')
+
+
 if __name__ == '__main__':
+    if sys.argv[1] == 'render':
+        render()
+        sys.exit()
     if sys.argv[1] == 'h0':
         h0(sys.argv[2:])
     elif sys.argv[1] == 'decompose':
