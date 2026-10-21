@@ -233,6 +233,10 @@ class Transform(unittest.TestCase):
         self.assertEqual(r.max_position, .5)
         self.assertEqual([(x[1], x[8], x[9]) for x in e[0]], [(0, .5, None), (1, .5, 3.0)])
 
+        e, _, _, _ = SH.wrap(Fake()).build(A, {'human': {'tiers': [{'when': ['ep'], 'cap': .5, 'add_mult': 2}],
+                                                         'base': {'add_mult': 1}}})
+        self.assertEqual([x[10] for x in e[0]], [1, 2])          # each tier's own add multiple, field 10
+
         class Low(Fake):
             def build(self, A, cfg, trace=None):
                 e, rules, m, p = super().build(A, cfg, trace)

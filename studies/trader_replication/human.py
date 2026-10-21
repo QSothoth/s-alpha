@@ -12,7 +12,8 @@ side; without it every registered system is unchanged):
     tiers         [{"when": [condition, ...], "risk": multiplier, "cap": max_position}, ...]: the first tier whose
                   conditions all hold sizes the entry (its risk times the multiplier, at most cap of equity, adds
                   inside the same cap); entries no tier takes keep the base tier (`base`: {"risk", "cap"}, default
-                  1 and the study's own cap).  At most three tiers counting the base.  Conditions are known at the
+                  1 and the study's own cap; `add_mult`: the tier's own add_cap_mult, how far an R-level add may
+                  grow the position past its cap).  At most three tiers counting the base.  Conditions are known at the
                   entry's close (CONDITIONS, or the study's own tier_mask(A, cfg, name))
     engine_cap    a study that keeps the day's first max_new entries inside its build (daily_cap 'build', Martin
                   R74) is built uncapped and the engine counts max_new successful new longs instead (names already
@@ -128,7 +129,10 @@ def tiers(st, A, cfg, entries, spec, base):
                 own = min(cap, own) if own is not None else cap
             if own is not None:
                 own = min(own, LIMITS['max_position'])
-            row.append(e[:8] + (own, mult if (mult != 1.0 or k is not None) else None))
+            e = e[:8] + (own, mult if (mult != 1.0 or k is not None) else None)
+            if any('add_mult' in x for x in spec + [base]):
+                e += (t.get('add_mult'),)        # the tier's own add_cap_mult (None: the rules')
+            row.append(e)
         out.append(row)
     return out
 

@@ -124,6 +124,7 @@ class Pos:
     state: dict | None = None       # audit: an open position's state at the last close ('end')
     cap: float = 0.0                # its own max_position (the policy's, or the entry's when lower)
     tier: float | None = None       # the entry's risk multiplier (sizing tier), when it carried one
+    add_mult: float | None = None   # the entry's own add_cap_mult (its sizing tier's), overriding the rules'
     avg: float = 0.0                # average cost of the shares held once it has been added to (0 = the fill)
 
 
@@ -233,7 +234,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 if why == 'end':
                     trades[-1]['state'] = q.state
 
-    def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None, mult=None):
+    def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None, mult=None, add_mult=None):
         nonlocal cash
         if j in pos or not np.isfinite(fill) or fill <= 0:
             return
@@ -273,7 +274,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         flow = -val * (1 + rules.buy_cost) if side > 0 else val * (1 - rules.sell_cost)
         cash += flow
         pos[j] = Pos(j, side, kind, d, fill, stop, stop, size, size, cash=flow, invested=val, management=policy,
-                     cap=cap, tier=mult)
+                     cap=cap, tier=mult, add_mult=add_mult)
         month_trades.append(pos[j])
         if rules.feedback_opened:
             recent_positions.append(pos[j])
@@ -291,8 +292,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         if rules.gross_cost:
             room /= 1 + rules.buy_cost
         cap = min(q.management.max_position, q.cap) if rules.cap_adds_entry else q.management.max_position
-        if rules.add_cap_mult > 0 and not signal:
-            cap = min(cap * rules.add_cap_mult, rules.add_cap_limit)
+        mult = rules.add_cap_mult if q.add_mult is None else q.add_mult
+        if mult > 0 and not signal:
+            cap = min(cap * mult, rules.add_cap_limit)
         val = min((rules.add_frac if frac is None else frac) * q.size0 * price, cap * eq - q.size * price, room)
         if signal:
             q.sig_adds += 1
@@ -488,7 +490,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 continue
             had = j in pos
             opened = open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,
-                              e[8] if len(e) > 8 else None, e[9] if len(e) > 9 else None)
+                              e[8] if len(e) > 8 else None, e[9] if len(e) > 9 else None,
+                              e[10] if len(e) > 10 else None)
             if opened:
                 new_all += 1
                 year_new += 1

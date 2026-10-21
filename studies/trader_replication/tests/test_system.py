@@ -214,9 +214,9 @@ class SystemTests(unittest.TestCase):
         rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 12, 11, 12)]
         p = px(rows)
 
-        def shares(**kw):
+        def shares(ent=None, **kw):
             _, _, tr = Y.simulate(p, {}, Y.Rules(trail='', trims=(), add_r=2, max_position=.05, **{**NOCOST, **kw}),
-                                  one(3, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1], audit=True)
+                                  ent or one(3, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1], audit=True)
             return [x['shares'] for x in tr[0]['executions'] if x['action'] in ('entry', 'add')]
         self.assertEqual(len(shares()), 1)                              # off: no room left for the add
         s = shares(add_cap_mult=2.0)
@@ -224,6 +224,11 @@ class SystemTests(unittest.TestCase):
         self.assertAlmostEqual(s[1] * 11, .1 * (1 + .005) - .005 * 11)  # up to 10% of equity at day 1's close
         s = shares(add_cap_mult=2.0, add_cap_limit=.06)
         self.assertAlmostEqual(s[1] * 11, .06 * (1 + .005) - .005 * 11)
+        # an entry's own multiple (field 10, a sizing tier's add_mult) overrides the rules': 1 = no room past its cap
+        e = [[(0, 0, 1, 10.0, 9.5, 'x', None, None, None, None, 1.0)], [], []]
+        self.assertEqual(len(shares(e, add_cap_mult=2.0)), 1)
+        e = [[(0, 0, 1, 10.0, 9.5, 'x', None, None, None, None, 2.0)], [], []]
+        self.assertAlmostEqual(shares(e)[1] * 11, .1 * (1 + .005) - .005 * 11)
 
     def test_two_add_levels_each_add_once(self):
         # fill 10, R = 0.5: +2R = 11 on day 1, +4R = 12 on day 2; the position ends with three times its size

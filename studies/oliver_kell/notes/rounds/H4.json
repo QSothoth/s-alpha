@@ -1,0 +1,9 @@
+{
+ "stage": "human sizing: on H1B, only his liquid 15% core is doubled by an add (secondary names keep their 9%), stop to the average cost / the fill",
+ "base": ["h1.json", "H1B"],
+ "draws": 50,
+ "candidates": {
+  "H4A": {"human": {"tiers": [{"when": ["adr<=5"], "risk": 1, "cap": 0.15, "add_mult": 2}], "base": {"add_mult": 1}}, "rule_opts": {"add_r": 1.0, "add_frac": 1.0, "add_stop": "cost"}},
+  "H4B": {"human": {"tiers": [{"when": ["adr<=5"], "risk": 1, "cap": 0.15, "add_mult": 2}], "base": {"add_mult": 1}}, "rule_opts": {"add_r": 1.0, "add_frac": 1.0, "add_stop": "fill"}}
+ }
+}
