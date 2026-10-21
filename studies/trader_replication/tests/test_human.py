@@ -224,6 +224,18 @@ class Transform(unittest.TestCase):
         with self.assertRaises(ValueError):
             SH.wrap(Fake()).build(A, {'human': h})
 
+    def test_limits_off_keeps_his_own_rules_and_applies_only_the_changes(self):
+        A = arrays()
+        _, r0, _, _ = SH.wrap(Fake()).build(A, {})
+        e, r, _, _ = SH.wrap(Fake()).build(A, {'human': {'limits': False, 'rule_opts': {'risk': .004},
+                                                         'tiers': [{'when': ['ep'], 'risk': 2, 'cap': .7}]}})
+        self.assertEqual((r.max_gross, r.max_open, r.max_new_all, r.max_new_year, r.no_rebuy_day),
+                         (r0.max_gross, r0.max_open, r0.max_new_all, r0.max_new_year, r0.no_rebuy_day))
+        self.assertEqual(r.risk, .004)
+        self.assertEqual([(x[8], x[9]) for x in e[0]], [(None, None), (.7, 2.0)])  # no 50% clamp: his own caps
+        e, r, _, _ = SH.wrap(Fake('build')).build(A, {'max_new': 1, 'human': {'limits': False, 'engine_cap': True}})
+        self.assertEqual((len(e[0]), r.max_new_long, r.max_gross), (2, 1, 2.8))  # the engine counts his max_new
+
     def test_a_tier_cap_stays_under_the_study_cap_unless_cap_above(self):
         A = arrays()
         h = {'tiers': [{'when': ['ep'], 'risk': 3, 'cap': .5}]}

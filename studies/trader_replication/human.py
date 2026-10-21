@@ -165,7 +165,7 @@ def regime(A, entries, spec):
     return out
 
 
-def tiers(st, A, cfg, entries, spec, base):
+def tiers(st, A, cfg, entries, spec, base, top=LIMITS['max_position']):
     """Entries with the tier's risk multiplier (field 9) and cap (field 8, the lower of it and the entry's own);
     a list of (tier index, d, entry) for the report."""
     if len(spec) + 1 > LIMITS['tiers']:
@@ -183,8 +183,8 @@ def tiers(st, A, cfg, entries, spec, base):
             own = e[8]
             if cap is not None:
                 own = min(cap, own) if own is not None else cap
-            if own is not None:
-                own = min(own, LIMITS['max_position'])
+            if own is not None and top is not None:
+                own = min(own, top)
             e = e[:8] + (own, mult if (mult != 1.0 or k is not None) else None)
             if any('add_mult' in x for x in spec + [base]):
                 e += (t.get('add_mult'),)        # the tier's own add_cap_mult (None: the rules')
@@ -217,23 +217,28 @@ def limit_rules(rules, only=None):
 
 
 def apply(st, A, cfg, h, entries, rules):
-    """(entries, rules) under the hard limits and the tiers of h."""
+    """(entries, rules) under the hard limits and the tiers of h.  `limits: false` (2026-10-21, the user: keep a
+    change on his registered system only when it brings it closer to his published results): his own rules and
+    caps stay, only the changes of h apply (rule_opts, tiers, regime, engine_cap)."""
     if h.get('only') is not None:                # decompose: one part of the limits alone, not a candidate
         return entries, limit_rules(rules, h['only'])
-    rules = limit_rules(rules)
+    on = h.get('limits', True) is not False
+    lim = limit_rules if on else (lambda r: r)
+    rules = lim(rules)
     if h.get('rule_opts'):                       # sizing rules of his inside the limits (feedback, risk_high, ...)
         ro = {k: tuple(v) if isinstance(v, list) else v for k, v in h['rule_opts'].items()}
-        rules = limit_rules(replace(rules, **ro))
+        rules = lim(replace(rules, **ro))
     if h.get('tiers') or h.get('base'):
         base = dict(h.get('base', {}))
         spec = h.get('tiers', [])
         if h.get('cap_above'):                   # a tier's cap may be above the study's own per-name cap (<= 50%):
             own = rules.max_position             # the account cap rises to the highest tier, the base keeps its own,
-            top = min(max([t.get('cap') or own for t in spec] + [own]), LIMITS['max_position'])
+            top = max([t.get('cap') or own for t in spec] + [own])
+            top = min(top, LIMITS['max_position']) if on else top
             rules = replace(rules, max_position=top)     # and only longs take a tier
             base.setdefault('cap', own)
             spec = [dict(t, when=list(t.get('when', [])) + ['long']) for t in spec]
-        entries = tiers(st, A, cfg, entries, spec, base)
+        entries = tiers(st, A, cfg, entries, spec, base, top=LIMITS['max_position'] if on else None)
     if h.get('regime'):                          # the market's down days: longs sized down (G rounds)
         entries = regime(A, entries, h['regime'])
     return entries, rules
@@ -573,6 +578,98 @@ def round_(sid, name):
     return out
 
 
+def claim_distance(st, r):
+    """Mean |log| distance of r's behaviour from what he published (win rate as log odds; per_year too when he
+    published it), None when he published none."""
+    tg = dict(targets(st))
+    his = st.his or {}
+    py = [h['per_year'] for y, h in his.items() if h.get('per_year')] or \
+        ([st.his_behaviour['per_year']] if (getattr(st, 'his_behaviour', None) or {}).get('per_year') else [])
+    if py:
+        tg['per_year'] = float(np.mean(py))
+    if not tg:
+        return None
+    out = []
+    for k, b in tg.items():
+        a = r.get(k)
+        if a is None:
+            return None
+        if k == 'win':
+            out.append(abs(np.log(a / (1 - a)) - np.log(b / (1 - b))))
+        else:
+            out.append(abs(np.log(abs(a) / abs(b))) if a * b > 0 else np.inf)
+    return float(np.mean(out))
+
+
+def claims(sid, name):
+    """studies/<sid>/notes/rounds/<name>.json: {"candidates": {key: {"from": [report, key] | null, "change": {..}}}}.
+    Each candidate (a configuration from a report, or the registered one, with `change` merged) against the
+    registered system on the selection segment: kept only when it is closer to what he published (PREREG_P1_CN):
+    his published years both closer, or (no published years) his published behaviour closer; the gate's checks,
+    the placebo median and (for the kept one) the lookahead check still hold; behaviour no farther than the
+    registered one's + GAP_TOL when he published years.  studies/<sid>/reports/<name lower>.json."""
+    from . import gate as G, systems as SY
+    x = SY.get(sid)
+    st, reg = x.load()
+    spec = json.loads((st.rounds / f'{name}.json').read_text(encoding='utf-8'))
+    A = st.arrays('us')
+    loc = located_select(st, A)
+    cfgs = {'registered': reg}
+    for k, v in spec['candidates'].items():
+        src = reg if not v.get('from') else \
+            json.loads((st.reports / v['from'][0]).read_text(encoding='utf-8'))['configs'][v['from'][1]]
+        cfgs[k] = ST.merged(src, v.get('change', {}))
+    res, why = {}, {}
+    for k, c in cfgs.items():
+        r = evaluate(st, A, c, spec.get('draws', 50), loc)
+        r['claim'] = dict(year_gap=r['year_gap'], behaviour=claim_distance(st, r))
+        res[k] = r
+        line(sid, k, r)
+        print('   claim', {y: round(v, 3) for y, v in r['year_gap'].items()}, 'behaviour',
+              None if r['claim']['behaviour'] is None else round(r['claim']['behaviour'], 3), flush=True)
+    rb = res['registered']['claim']
+    kept = []
+    for k in spec['candidates']:
+        c, w = res[k]['claim'], []
+        if not res[k]['gate']['win']['ok'] or not res[k]['gate']['fills']['ok'] or not res[k]['gate']['data']:
+            w.append('gate')
+        if not res[k]['total'] > res[k]['placebo']['median']:
+            w.append('placebo')
+        if rb['year_gap']:
+            far = [y for y in rb['year_gap'] if not c['year_gap'][y] < rb['year_gap'][y] - 1e-12]
+            if far:
+                w.append('his years not closer: ' + ','.join(far))
+            if c['behaviour'] is not None and rb['behaviour'] is not None and c['behaviour'] > rb['behaviour'] + GAP_TOL:
+                w.append(f"behaviour {c['behaviour']:.3f} > {rb['behaviour']:.3f} + {GAP_TOL}")
+        elif rb['behaviour'] is not None:
+            if not (c['behaviour'] is not None and c['behaviour'] < rb['behaviour'] - 1e-12):
+                w.append('published behaviour not closer')
+        else:
+            w.append('nothing published to compare')
+        why[k] = w
+        print(' ', k, 'keep' if not w else 'drop', w, flush=True)
+        if not w:
+            kept.append(k)
+    kept.sort(key=lambda k: np.mean(list(res[k]['claim']['year_gap'].values())) if rb['year_gap']
+              else res[k]['claim']['behaviour'])
+    chosen = None
+    for k in kept:
+        la = G.check_lookahead(st, cfgs[k], 'us', full=A)
+        res[k]['lookahead'] = la
+        print('  lookahead', k, la['ok'], flush=True)
+        if la['ok']:
+            chosen = k
+            break
+        why[k].append('lookahead')
+    out = dict(name=name, configs=cfgs, results=res, why=why, chosen=chosen)
+    (st.reports / f'{name.lower()}.json').write_text(json.dumps(out, indent=1, default=float, ensure_ascii=False),
+                                                   encoding='utf-8')
+    print(name, 'chosen', chosen, flush=True)
+    del A
+    gc.collect()
+    return out
+
+
 def final(sid, report, key):
     """The carried H version in every market over the whole window (reported only; chosen on US 2024-2025):
     totals by year, drawdown, the hard limits as measured, same-pool placebo (100); studies/<sid>/reports/
@@ -812,6 +909,8 @@ if __name__ == '__main__':
         final(sys.argv[2], sys.argv[3], sys.argv[4])
     elif sys.argv[1] == 'decompose':
         decompose(sys.argv[2:])
+    elif sys.argv[1] == 'claims':                # claims <system> P1
+        claims(sys.argv[2], sys.argv[3])
     elif sys.argv[1] == 'round':
         round_(sys.argv[2], sys.argv[3])
     else:
