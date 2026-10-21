@@ -34,7 +34,8 @@ class Provider(ABC):
 
     @abstractmethod
     def snapshot(self, codes) -> dict:
-        """{code: dict(open, high, low, close, volume, turnover, prev_close, trading)}"""
+        """{code: dict(open, high, low, close, volume, turnover, prev_close, trading, time)}; time: the quote's
+        update time in market time ('YYYY-MM-DD HH:MM:SS' from OpenD, 'HH:MM:SS' from Sina)"""
 
     @abstractmethod
     def history(self, codes, start, end):
@@ -79,7 +80,7 @@ class OpenDProvider(Provider):
             for r in df.itertuples():
                 out[r.code] = dict(open=float(r.open_price), high=float(r.high_price), low=float(r.low_price),
                                    close=float(r.last_price), volume=float(r.volume), turnover=float(r.turnover),
-                                   prev_close=float(r.prev_close_price),
+                                   prev_close=float(r.prev_close_price), time=str(getattr(r, 'update_time', '')),
                                    trading=not bool(getattr(r, 'suspension', False)) and float(r.volume) > 0)
             time.sleep(.6)                                  # 60 snapshot calls / 30 s
         return out
@@ -118,7 +119,8 @@ class SinaProvider(Provider):
                     vol = float(r.get('volume') or 0)
                     out[code] = dict(open=float(r['open']), high=float(r['high']), low=float(r['low']),
                                      close=float(r['trade']), volume=vol, turnover=float(r.get('amount') or 0),
-                                     prev_close=float(r['settlement']), trading=vol > 0 and float(r['open']) > 0)
+                                     prev_close=float(r['settlement']), time=str(r.get('ticktime', '')),
+                                     trading=vol > 0 and float(r['open']) > 0)
             page += 1
             time.sleep(1.0)
         return out

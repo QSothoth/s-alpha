@@ -14,16 +14,22 @@ Each trader is exactly the system the research compares (same configuration, eng
     $PY -m studies.trader_screens.scan run us --mode frozen        # on the frozen release (to 2026-10-16)
     $PY -m studies.trader_screens.scan industry us                 # fill missing OpenD industry names
     $PY -m studies.trader_screens.scan board                       # newest run of every market -> board.md
+    $PY -m studies.trader_screens.scan run us --provisional        # during the session, ~10 min before the close
+    $PY -m studies.trader_screens.scan diff us 2026-10-21          # after the close: provisional vs official
 
 ``run`` writes data/trader-screens/out/<market>_<day>_<n>d.json and board_<market>_<day>_<n>d.md.  Output is the
-rule state, not orders.
+rule state, not orders.  ``run --provisional`` (intraday.py) adds today's bar from one snapshot taken during the
+session, stores no data, and writes <market>_<day>_provisional_<HHMM>.json / board_<market>_<day>_provisional_<HHMM>.md;
+``diff`` compares it with the official run of that day.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import time
 import warnings
 from collections import Counter, defaultdict
+from contextlib import nullcontext
 
 import numpy as np
 
@@ -62,28 +68,35 @@ def overlaps(traders, inds):
                 in_cash=[t['name'] for t in traders if not t['holdings']])
 
 
-def run(market, mode='live', days=1, only=None):
-    """The board of one market: every registered system through the runner on the given data mode."""
+def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
+    """The board of one market: every registered system through the runner on the given data mode; `panel` (the
+    provisional panel of intraday.py) is used instead of the dataset's and shared by every system; `seconds`
+    (a dict) receives each system's run time."""
     from studies import trader_data as TD
     from studies.trader_replication import runner, systems as SY
     warnings.simplefilter('ignore', RuntimeWarning)
     np.seterr(invalid='ignore', divide='ignore')
+    from . import intraday
     ds = TD.dataset(market, mode)
-    p = ds.panel()
+    p = ds.panel() if panel is None else panel
     F = S.Feat(p, market)
     state = {f'above_ema{n}': bool(index_above(F, n)[-1]) for n in (20, 50)}
     last, digest, codes = str(p['days'][-1]), p['digest'], [str(c) for c in p['codes']]
     del p, F
     traders = []
-    for x in SY.all_():
-        if only and x.id not in only:
-            continue
-        t = runner.run(x, market, mode, days)
-        if t['last_day'] != last:
-            raise RuntimeError(f"{x.id}: replay ends {t['last_day']}, data {last}")
-        t['wanted_n'] = len(t['wanted'])
-        t['wanted'] = t['wanted'][:WANTED_N]
-        traders.append(t)
+    with intraday.shared(panel, market) if panel is not None else nullcontext():
+        for x in SY.all_():
+            if only and x.id not in only:
+                continue
+            t0 = time.perf_counter()
+            t = runner.run(x, market, mode, days)
+            if seconds is not None:
+                seconds[x.id] = round(time.perf_counter() - t0, 2)
+            if t['last_day'] != last:
+                raise RuntimeError(f"{x.id}: replay ends {t['last_day']}, data {last}")
+            t['wanted_n'] = len(t['wanted'])
+            t['wanted'] = t['wanted'][:WANTED_N]
+            traders.append(t)
     nm = ds.names()
     inds = data.industries(codes, market)
     for t in traders:
@@ -150,8 +163,12 @@ def show(r):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('action', choices=('list', 'refresh', 'run', 'industry', 'board'))
+    parser.add_argument('action', choices=('list', 'refresh', 'run', 'industry', 'board', 'diff'))
     parser.add_argument('market', nargs='?', default='us', choices=('us', 'hk', 'cn'))
+    parser.add_argument('day', nargs='?', help='diff: the session (ISO date)')
+    parser.add_argument('--provisional', action='store_true',
+                        help='run: during the session, today from one snapshot (stores no data; intraday.py)')
+    parser.add_argument('--at', help='diff: the provisional run HHMM (default: the latest of the day)')
     parser.add_argument('--mode', choices=('live', 'frozen'), default='live',
                         help='live (default): the release continued to the newest finished session; frozen: the '
                              'release only')
@@ -179,6 +196,12 @@ def main(argv=None):
         print('看板：' + str(latest) + '（另存 ' + dated.name + '；' +
               '、'.join(f"{data.NAMES[r['market']]} {r['last_day']}" for r in runs) + '）')
         return
+    if args.action == 'diff':
+        diff_cli(args.market, args.day, args.at)
+        return
+    if args.action == 'run' and args.provisional:
+        provisional_cli(args.market, set(args.traders.split(',')) if args.traders else None)
+        return
     if args.action == 'refresh' or (args.action == 'run' and args.mode == 'live'):
         r = TD.dataset(args.market, 'live').update()
         print(f"== {data.NAMES[args.market]} 数据：原有最后一天 {r['last_before']}，补 {len(r['missing'])} 个交易日"
@@ -200,6 +223,47 @@ def main(argv=None):
     md.write_text(board.render(r), encoding='utf-8')
     show(r)
     print(f'\n结果：{path}\n看板：{md}')
+
+
+def provisional_cli(market, only=None):
+    from . import intraday
+    t0 = time.perf_counter()
+    print(f'== {data.NAMES[market]} 盘中临时看板（只取一次快照，不写数据）')
+    try:
+        r = intraday.run(market, only=only)
+    except intraday.Refused as e:
+        raise SystemExit(f'拒绝运行：{e}')
+    p = r['provisional']
+    print('  各系统耗时：' + '，'.join(f'{k} {v:.1f}' for k, v in p['system_seconds'].items()) + ' 秒')
+    out = data.SCANS / 'out'
+    out.mkdir(parents=True, exist_ok=True)
+    stem = f"{market}_{r['last_day']}_provisional_{p['hhmm']}"
+    path = out / f'{stem}.json'
+    md = out / f'board_{stem}.md'
+    p['stages']['total'] = round(time.perf_counter() - t0, 2)
+    path.write_text(json.dumps(r, indent=1, ensure_ascii=False, default=float), encoding='utf-8')
+    md.write_text(board.render(r), encoding='utf-8')
+    show(r)
+    print(f"\n合计 {p['stages']['total']:.0f} 秒；结果：{path}\n看板：{md}")
+
+
+def diff_cli(market, day, at=None):
+    from . import intraday
+    if not day:
+        raise SystemExit('diff 需要日期：scan diff us 2026-10-21')
+    out = data.SCANS / 'out'
+    provs = sorted(out.glob(f'{market}_{day}_provisional_{at or "????"}.json'))
+    official = out / f'{market}_{day}_1d.json'
+    if not provs or not official.exists():
+        raise SystemExit(f'缺少 {market} {day} 的盘中临时结果或收盘后的正式结果（先 run --provisional，收盘后 run）')
+    prov = json.loads(provs[-1].read_text(encoding='utf-8'))
+    off = json.loads(official.read_text(encoding='utf-8'))
+    d = intraday.diff(prov, off)
+    text = intraday.diff_text(d, prov, off)
+    stem = provs[-1].stem.replace('_provisional_', '_diff_')
+    (out / f'{stem}.json').write_text(json.dumps(d, indent=1, ensure_ascii=False, default=float), encoding='utf-8')
+    (out / f'{stem}.md').write_text(text, encoding='utf-8')
+    print(text + f'\n结果：{out / (stem + ".md")}')
 
 
 if __name__ == '__main__':
