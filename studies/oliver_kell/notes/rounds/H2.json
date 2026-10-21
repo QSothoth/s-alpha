@@ -1,0 +1,10 @@
+{
+ "stage": "human sizing: on H1B, his split stop, doubling a core winner with no risk, smaller after losses",
+ "base": ["h1.json", "H1B"],
+ "draws": 50,
+ "candidates": {
+  "H2A": {"rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5}},
+  "H2B": {"human": {"tiers": [{"when": ["adr<=5"], "risk": 1, "cap": 0.3}]}, "rule_opts": {"add_r": 1.0, "add_frac": 1.0}},
+  "H2C": {"human": {"rule_opts": {"feedback": 3, "risk_low": 0.0025}}}
+ }
+}

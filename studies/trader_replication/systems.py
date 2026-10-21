@@ -87,6 +87,15 @@ def _study(module, report, short=None, common=None):
     return load
 
 
+def _carried(module, report, key):
+    """A whole configuration carried out of a later round (studies/<id>/reports/<report>, key), short side included."""
+    def load():
+        import importlib
+        st = importlib.import_module(f'studies.{module}.replicate').STUDY
+        return st, json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
+    return load
+
+
 def all_():
     # 2026-10-19: long-short versions frozen by the user (gate v2, studies/<id>/notes/SHORTS_CONCLUSION_CN.md)
     return [System('martin_luk', 'R74 + S7', 'frozen', _martin(('s7.json', 'S7C'))),
@@ -95,7 +104,9 @@ def all_():
                    _study('christian_flanders', 'r15.json', ('s4.json', 'F4A'), {'rank': 'ep_own'})),
             System('clement_ang', 'R15 AA3 + C4A + S5', 'frozen',
                    _study('clement_ang', 'r15.json', ('s5.json', 'C5A'), {'ep_slots': 1})),
-            System('qullamaggie', 'R11 N3 + S7', 'frozen', _study('qullamaggie', 'r11.json', ('s7.json', 'Q7C'))),
+            # 2026-10-21: + his risk per trade, half size after losses and in a weak market, kept because his
+            # published win rate came closer (user approved; trader_replication/notes/SHARED_ROUNDS_CN.md, P1)
+            System('qullamaggie', 'R11 N3 + S7 + P1B', 'frozen', _carried('qullamaggie', 'p1.json', 'P1B')),
             System('oliver_kell', 'R6 A5 + S5', 'frozen', _study('oliver_kell', 'r6.json', ('s5.json', 'K5B'))),
             System('mark_minervini', 'R0b', 'baseline', _study('mark_minervini', 'r0b.json')),
             # 2026-10-20: put on the board by the user as a research version (B ledger; the 2026 validation segment
@@ -127,11 +138,11 @@ STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, �
                     '+2R 卖 1/3 并保本，高出 50 日线 8 ATR 再卖 1/3，余下收盘跌破 20 EMA',
                     '每笔风险 0.5%，单只 ≤ 30%，总敞口 ≤ 200%，最多 30 只，每天 ≤ 10 笔（EP 另计，每天 ≤ 1 笔，C4A）；池等权指数在 20 EMA 上方才开新仓。'
                     '空头 S5：晚期失败底部——大型前领涨股（成交额 ≥ 5 亿、3 个月高点 ≥ 52 周低点 2 倍）收破 20 EMA 后缩量反抽，次日到 20 EMA 限价卖空；指数连续 5 个收盘 < 50 EMA 才开、每天 1 笔；站上 10 EMA 回补，最多 5 天'),
-    'qullamaggie': ('R11 N3 + S7（已冻结）',
+    'qullamaggie': ('R11 N3 + S7 + P1B（已冻结）',
                     'EP 优先；10 天收紧底部的突破（1 / 3 / 6 月强度前 2%）。池：成交额 ≥ 2000 万、ADR ≥ 4%',
                     '收盘买，当日低点止损；突破单止损宽于 1 ADR 就不做',
                     '第 3 天赚钱时卖一半，最好价到 +2R 才把止损移到成本（R11，偏离“卖后立刻保本”），余下收盘跌破 20 EMA',
-                    '每笔风险 0.3%，单只 ≤ 30%，总敞口 ≤ 100%，最多 15 只，每天 ≤ 5 笔；池等权指数 10 日线在 20 日线上方且都向上（他的“绿灯”）。'
+                    '每笔风险 0.5%（最近 5 笔合计亏时 0.25%；池等权指数在 20 日线下方时再减半，P1B），单只 ≤ 30%，总敞口 ≤ 100%，最多 15 只，每天 ≤ 5 笔；池等权指数 10 日线在 20 日线上方且都向上（他的“绿灯”）。'
                     '空头 S7：小盘抛物线（20 日涨 ≥ 300%、连涨 ≥ 3 天）收红后，次日开盘或反弹到 VWAP 近似价卖空，止损在顶部上方且 ≤ 1.5 ADR；10 日线回补，最多 10 天'),
     'oliver_kell': ('R6 A5 + S5（已冻结）',
                     'Wedge Pop、EMA Crossback、10 / 20 EMA 回踩、VCP、52 周突破、两根内包、跌破又收回 20 EMA；只做相对强度前 10%。池：成交额 ≥ 1 亿、ADR ≥ 3%，按成交额排序',

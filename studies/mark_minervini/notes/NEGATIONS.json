@@ -1,5 +1,248 @@
 [
  {
+  "round": "G1",
+  "stage": "human sizing",
+  "candidate": "GA",
+  "change": {
+   "common": {
+    "rank": "strength"
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.1358642248347253,
+   "by_year": {
+    "2024": 0.6732823627441042,
+    "2025": 0.27645176474101385
+   },
+   "placebo_median": 0.22399545059763504,
+   "win": 0.14450867052023122,
+   "bought": [
+    0,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "G1",
+  "stage": "human sizing",
+  "candidate": "GB",
+  "change": {
+   "human": {
+    "regime": {
+     "risk": 0.5,
+     "sma": 20
+    }
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.0544731418419158,
+   "by_year": {
+    "2024": 0.5986696240458389,
+    "2025": 0.28511426685055197
+   },
+   "placebo_median": 0.19546230992942315,
+   "win": 0.1262135922330097,
+   "bought": [
+    1,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "G1",
+  "stage": "human sizing",
+  "candidate": "GC",
+  "change": {
+   "human": {
+    "cap_above": true,
+    "tiers": [
+     {
+      "when": [
+       "strength>=0.98"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ]
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.6211898511101026,
+   "by_year": {
+    "2024": 0.7014726977346075,
+    "2025": -0.04718432845346032
+   },
+   "placebo_median": 0.20115292573996935,
+   "win": 0.13966480446927373,
+   "bought": [
+    0,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "G1",
+  "stage": "human sizing",
+  "candidate": "GD",
+  "change": {
+   "human": {
+    "rule_opts": {
+     "feedback": 5,
+     "risk_low": 0.0025
+    }
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0, avg_win 0.266 vs H0 0.304",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.9442767597043096,
+   "by_year": {
+    "2024": 0.5859118073449596,
+    "2025": 0.22596776863607793
+   },
+   "placebo_median": 0.1665597591044774,
+   "win": 0.13270142180094788,
+   "bought": [
+    1,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
+  }
+ },
+ {
   "round": "S1",
   "stage": "short: B-grade baseline (stage-4 template turned over, breakdown, stop above the recent high)",
   "candidate": "MA",
@@ -141,6 +384,199 @@
     "trims": []
    },
    "short": null
+  }
+ },
+ {
+  "round": "G2",
+  "stage": "human sizing",
+  "candidate": "G2A",
+  "change": {
+   "human": {
+    "regime": {
+     "risk": 0.5,
+     "sma": 20
+    },
+    "cap_above": true,
+    "tiers": [
+     {
+      "when": [
+       "strength>=0.98"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ]
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.536238344270425,
+   "by_year": {
+    "2024": 0.6224655189763757,
+    "2025": -0.05314576716573427
+   },
+   "placebo_median": 0.19535965604400818,
+   "win": 0.12442396313364056,
+   "bought": [
+    0,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "G2",
+  "stage": "human sizing",
+  "candidate": "G2B",
+  "change": {
+   "human": {
+    "regime": {
+     "kind": "breadth",
+     "sma": 50,
+     "below": 0.5,
+     "risk": 0.5
+    }
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0, win 0.118 < H0 0.143 - 0.02",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.023879922530408,
+   "by_year": {
+    "2024": 0.5898887019129777,
+    "2025": 0.27296956075934475
+   },
+   "placebo_median": 0.13663676795967716,
+   "win": 0.11818181818181818,
+   "bought": [
+    1,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "G2",
+  "stage": "human sizing",
+  "candidate": "G2C",
+  "change": {
+   "human": {
+    "regime": {
+     "kind": "index",
+     "sma": 50,
+     "risk": 0
+    }
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0, avg_win 0.260 vs H0 0.304",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.8422338539545406,
+   "by_year": {
+    "2024": 0.38193216446067635,
+    "2025": 0.33308558938817745
+   },
+   "placebo_median": 0.1783159985700129,
+   "win": 0.16279069767441862,
+   "bought": [
+    1,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
   }
  },
  {
@@ -430,6 +866,127 @@
     "trims": []
    },
    "short": null
+  }
+ },
+ {
+  "round": "G3",
+  "stage": "human sizing",
+  "candidate": "G3A",
+  "change": {
+   "human": {
+    "rule_opts": {
+     "feedback": 5,
+     "risk_low": 0.0025,
+     "risk_high": 0.0075
+    }
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.4768665687314835,
+   "by_year": {
+    "2024": 0.5303466108357151,
+    "2025": -0.03494635903106058
+   },
+   "placebo_median": 0.16571125603630432,
+   "win": 0.12669683257918551,
+   "bought": [
+    1,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
+  }
+ },
+ {
+  "round": "G3",
+  "stage": "human sizing",
+  "candidate": "G3B",
+  "change": {
+   "human": {
+    "rule_opts": {
+     "dd_risk": 0.1,
+     "dd_risk_mult": 0.5
+    }
+   }
+  },
+  "base": "H0",
+  "chosen": null,
+  "reason": "H gates: segment not above H0",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.9882290149110078,
+   "by_year": {
+    "2024": 0.6823789433926621,
+    "2025": 0.18179618374298756
+   },
+   "placebo_median": 0.1292200910572857,
+   "win": 0.13471502590673576,
+   "bought": [
+    0,
+    18
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "vcp_mm"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "strength",
+   "max_new": 2,
+   "strength": "",
+   "filter": "",
+   "stop": "day",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "sma50",
+    "arm_trail_on_entry": true,
+    "trims": []
+   },
+   "human": {}
   }
  }
 ]

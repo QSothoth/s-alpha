@@ -1,0 +1,9 @@
+{
+ "stage": "human sizing: on H1A, half size after losses (his bad-market half size), then paired with the EP tier",
+ "base": ["h1.json", "H1A"],
+ "draws": 50,
+ "candidates": {
+  "H3A": {"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}}},
+  "H3B": {"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}, "tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}}
+ }
+}

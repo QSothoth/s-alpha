@@ -1,0 +1,9 @@
+{
+ "stage": "human sizing: on H1B, his 15% core doubled by an add with no risk left (the cap rises, the stop goes to the average cost / the fill)",
+ "base": ["h1.json", "H1B"],
+ "draws": 50,
+ "candidates": {
+  "H3A": {"rule_opts": {"add_r": 1.0, "add_frac": 1.0, "add_cap_mult": 2.0, "add_stop": "cost"}},
+  "H3B": {"rule_opts": {"add_r": 1.0, "add_frac": 1.0, "add_cap_mult": 2.0, "add_stop": "fill"}}
+ }
+}

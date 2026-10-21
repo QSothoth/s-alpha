@@ -1,0 +1,12 @@
+{
+ "stage": "human sizing: the engine counts the daily places, his per-name size and his number of names, the EP tier",
+ "base": "H0",
+ "draws": 50,
+ "candidates": {
+  "H1A": {"human": {"engine_cap": true}},
+  "H1B": {"max_position": 0.3},
+  "H1C": {"human": {"rule_opts": {"max_open": 4}}},
+  "H1D": {"human": {"engine_cap": true, "rule_opts": {"max_open": 4}}},
+  "H1E": {"human": {"tiers": [{"when": ["ep", "gap>=0.1", "near52<=0.05"], "risk": 2, "cap": 0.5}]}}
+ }
+}

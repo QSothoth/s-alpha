@@ -1,0 +1,11 @@
+{
+ "stage": "human sizing: on H3D, his monthly loss limit, a leader tier, his slower trails",
+ "base": ["h3.json", "H3D"],
+ "draws": 50,
+ "candidates": {
+  "H4A": {"rule_opts": {"month_loss_cap": 0.05, "month_cap_ladder": [0.03, 0.02, 0.01, 0.005], "month_cap_basis": "opened"}},
+  "H4B": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}},
+  "H4C": {"rule_opts": {"trail": "ema21"}},
+  "H4D": {"rule_opts": {"trail": "sma20"}}
+ }
+}

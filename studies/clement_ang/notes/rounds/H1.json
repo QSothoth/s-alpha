@@ -1,0 +1,12 @@
+{
+ "stage": "human sizing: high-conviction tier, his loss rule, his holding period, adds on winners",
+ "base": "H0",
+ "draws": 50,
+ "candidates": {
+  "H1A": {"human": {"tiers": [{"when": ["kind=fine"], "risk": 2, "cap": 0.5}]}},
+  "H1B": {"human": {"rule_opts": {"feedback": 1, "risk_low": 0.0025}}},
+  "H1C": {"rule_opts": {"trail": "ema10"}},
+  "H1D": {"rule_opts": {"max_days": 3}},
+  "H1E": {"common": {"add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}}
+ }
+}

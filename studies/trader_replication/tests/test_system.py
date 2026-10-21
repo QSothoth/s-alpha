@@ -194,6 +194,42 @@ class SystemTests(unittest.TestCase):
         self.assertEqual(tr[0]['why'], 'stop')
         self.assertAlmostEqual(tr[0]['pnl'], 2 * size0 * 10.0 - size0 * 10.0 - size0 * 11.0)
 
+    def test_free_roll_add_moves_the_whole_stop_to_the_average_cost(self):
+        # add_stop 'cost' (Marios' free-roll): the add at 11 makes the average cost 10.5 and the whole stop goes there;
+        # day 3 opens at 11 and trades down to 9.9 -> stopped at 10.5: the add's loss is paid by the first half
+        rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 11.5, 11, 11.5), (11.0, 11.0, 9.9, 10.5)]
+        p = px(rows)
+        _, _, tr = Y.simulate(p, {}, Y.Rules(trail='', trims=(), add_r=2, add_stop='cost', max_position=10,
+                                             **NOCOST), one(4, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1])
+        size0 = .005 / .05 / 10.0
+        self.assertEqual(tr[0]['why'], 'stop')
+        self.assertAlmostEqual(tr[0]['pnl'], size0 * (10.5 - 10.0) + size0 * (10.5 - 11.0))
+        _, _, tr = Y.simulate(p, {}, Y.Rules(trail='', trims=(), add_r=2, max_position=10, **NOCOST),
+                              one(4, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1])
+        self.assertAlmostEqual(tr[0]['pnl'], 2 * size0 * 10.0 - size0 * 10.0 - size0 * 11.0)   # default: the fill
+
+    def test_add_cap_mult_lets_the_add_grow_the_position_past_its_cap(self):
+        # risk .5% on a 5% stop wants 10% of equity but the cap is 5%; at +2R (11, day 1's close) the add of the
+        # original size fits only under add_cap_mult 2 (up to 10% of equity), never above add_cap_limit
+        rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 12, 11, 12)]
+        p = px(rows)
+
+        def shares(ent=None, **kw):
+            _, _, tr = Y.simulate(p, {}, Y.Rules(trail='', trims=(), add_r=2, max_position=.05, **{**NOCOST, **kw}),
+                                  ent or one(3, 0, 1, 10.0, 9.5), p['dates'][0], p['dates'][-1], audit=True)
+            return [x['shares'] for x in tr[0]['executions'] if x['action'] in ('entry', 'add')]
+        self.assertEqual(len(shares()), 1)                              # off: no room left for the add
+        s = shares(add_cap_mult=2.0)
+        self.assertAlmostEqual(s[0], .005)                              # 5% of equity at 10
+        self.assertAlmostEqual(s[1] * 11, .1 * (1 + .005) - .005 * 11)  # up to 10% of equity at day 1's close
+        s = shares(add_cap_mult=2.0, add_cap_limit=.06)
+        self.assertAlmostEqual(s[1] * 11, .06 * (1 + .005) - .005 * 11)
+        # an entry's own multiple (field 10, a sizing tier's add_mult) overrides the rules': 1 = no room past its cap
+        e = [[(0, 0, 1, 10.0, 9.5, 'x', None, None, None, None, 1.0)], [], []]
+        self.assertEqual(len(shares(e, add_cap_mult=2.0)), 1)
+        e = [[(0, 0, 1, 10.0, 9.5, 'x', None, None, None, None, 2.0)], [], []]
+        self.assertAlmostEqual(shares(e)[1] * 11, .1 * (1 + .005) - .005 * 11)
+
     def test_two_add_levels_each_add_once(self):
         # fill 10, R = 0.5: +2R = 11 on day 1, +4R = 12 on day 2; the position ends with three times its size
         rows = [(10, 10, 10, 10), (10, 11, 10, 11), (11, 12, 11, 12), (12, 13, 12, 13)]

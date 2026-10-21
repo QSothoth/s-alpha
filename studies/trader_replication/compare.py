@@ -16,7 +16,7 @@ from pathlib import Path
 
 import numpy as np
 
-from . import gate as G, panels, study, system as Y
+from . import gate as G, human as H, panels, study, system as Y
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(__file__).resolve().parent / 'reports'
@@ -164,7 +164,8 @@ def one(name, st, cfg, market, src, draws=DRAWS, seed=1):
     t0 = time.time()
     A = st.arrays(market)
     entries, rules, mask, pool = st.build(A, cfg)
-    res, tr = st.run(A, entries, panels.WINDOW, pool, rules, placebo=0, audit=True)
+    track = {}
+    res, tr = st.run(A, entries, panels.WINDOW, pool, rules, placebo=0, audit=True, track=track)
     curve = res['_curve']
     px, ema = st.px(A), st.ema_inputs(A, pool, rules)
     placebo = Y.placebo_rank(px, ema, rules, entries, *panels.WINDOW, pool, draws=draws, seed=seed)
@@ -172,6 +173,7 @@ def one(name, st, cfg, market, src, draws=DRAWS, seed=1):
     d1 = int(np.searchsorted(A['days'], panels.WINDOW[1], side='right'))
     days = A['days'][d0:d1]
     out = metrics(curve, days, tr, entries, d0, d1)
+    out['human'] = H.humanized(tr, track, days)       # the hard limits of human-sized trading, as measured
     years = sorted(out['by_year'])
     out.update(placebo=placebo, ew=ew_bench(A, panels.WINDOW),
                ew_by_year={y: ew_bench(A, (f'{y}-01-01', f'{y}-12-31')) for y in years})
@@ -295,6 +297,20 @@ def render(res=None):
                      pct(r['stop_width'], '{:.1%}'), pct(r['entry_weight'], '{:.0%}'), num(r['open_mean']),
                      num(r['candidates_day'], '{:.0f}')]
             L.append('| ' + ' | '.join(cells) + ' |')
+        L.append('')
+        L += [f'人性化（{dict(us="美股", hk="港股", cn="A 股")[m]}）：硬约束为总敞口 ≤ {H.LIMITS["gross"]:.0%}（不产生融资利息）、'
+              f'同时持仓 ≤ {H.LIMITS["max_open"]} 只、每天新开 ≤ {H.LIMITS["max_new"]} 笔、每年开仓 ≤ {H.LIMITS["max_year"]} 笔、'
+              f'单只 ≤ {H.LIMITS["max_position"]:.0%}、卖出当天不买回（`human.py`，reports/HUMAN_SIZING_CN.md）。', '',
+              '| 交易员 | 配置 | 最大同时持仓 | 平均同时持仓 | 最大总敞口 | 每天最多新开 | 每年开仓（最多的一年） | 融资利息 | 当天买回 | 满足硬约束 |',
+              '|---|---|---|---|---|---|---|---|---|---|']
+        for k in names:
+            r = res[k]['markets'].get(m)
+            if not r or 'human' not in r:
+                continue
+            hm = r['human']
+            L.append('| ' + ' | '.join([res[k]['name'], r['run']['source'], str(hm['max_open']), num(hm['mean_open']),
+                                         pct(hm['max_gross'], '{:.0%}'), str(hm['max_new_day']), str(hm['max_year']),
+                                         f"{hm['margin']:.3f}", str(hm['rebuy']), '是' if hm['ok'] else '否']) + ' |')
         L.append('')
     L += ['## 多空：多空合计与只做空', '',
           '多空合计就是上表的账户（登记版本带空头时）；只做空是同一系统去掉多头、只留空单的账户，安慰剂为同池随机做空（同一天、'

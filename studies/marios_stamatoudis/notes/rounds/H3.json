@@ -1,0 +1,10 @@
+{
+ "stage": "human sizing: on H1C, his free-roll add (whole stop at the average cost, at most 30%), his top normal risk, the two paired",
+ "base": ["h1.json", "H1C"],
+ "draws": 50,
+ "candidates": {
+  "H3A": {"rule_opts": {"add_r": 2.0, "add_frac": 1.0, "add_cap_mult": 1.2, "add_stop": "cost"}},
+  "H3B": {"rule_opts": {"risk": 0.004}},
+  "H3C": {"rule_opts": {"risk": 0.004, "add_r": 2.0, "add_frac": 1.0, "add_cap_mult": 1.2, "add_stop": "cost"}}
+ }
+}

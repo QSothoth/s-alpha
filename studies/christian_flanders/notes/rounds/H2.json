@@ -1,0 +1,12 @@
+{
+ "stage": "human sizing: on H1A, pairs with the other passing changes and the yearly limit",
+ "base": ["h1.json", "H1A"],
+ "draws": 50,
+ "candidates": {
+  "H2A": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["ep", "tight<=15"], "risk": 3, "cap": 0.5}]}},
+  "H2B": {"strength": "rs90"},
+  "H2C": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 4, "cap": 0.5}]}},
+  "H2D": {"max_new": 1},
+  "H2E": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}], "base": {"risk": 0.5}}}
+ }
+}

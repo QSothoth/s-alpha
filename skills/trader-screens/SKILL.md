@@ -19,7 +19,7 @@ description: 交易员看板：假设研究过的交易员此刻在美股 / 港�
 
 | 状态 | 现在有谁 | 能信到什么程度 |
 |---|---|---|
-| 已冻结（多空一体，2026-10-20 用户认可） | Martin Luk（R74 + S7）、Christian Flanders（R15 C4 + C1C + S4）、Clement Ang（R15 AA3 + C4A + S5）、Qullamaggie（R11 N3 + S7）、Oliver Kell（R6 A5 + S5） | 到冻结日 2026-10-16 为止全是样本内，之后是唯一的样本外；空头只在美股（港股、A 股不适用，只跑多头），按 [TRADER_PROTOCOL_CN 第 5 节](../../docs/TRADER_PROTOCOL_CN.md) 的门禁 v2 选出；Qullamaggie 的多头同时换成了 R11 N3（+2R 才保本，偏离原话）；Flanders 的合计改善偏弱。各人结论在 `studies/<id>/notes/SHORTS_CONCLUSION_CN.md`；2026-10-20 起 Flanders 加 C1C（当天 EP 先买）、Clement 加 C4A（EP 另计每天 1 笔），见 `studies/trader_replication/reports/COMMON_RESULTS_CN.md`（2026 段是看过结果后放宽门槛才通过的，不再是独立检验） |
+| 已冻结（多空一体，2026-10-20 用户认可） | Martin Luk（R74 + S7）、Christian Flanders（R15 C4 + C1C + S4）、Clement Ang（R15 AA3 + C4A + S5）、Qullamaggie（R11 N3 + S7 + P1B：2026-10-21 加他的每笔 0.5% 风险、亏后与弱市减半）、Oliver Kell（R6 A5 + S5） | 到冻结日 2026-10-16 为止全是样本内，之后是唯一的样本外；空头只在美股（港股、A 股不适用，只跑多头），按 [TRADER_PROTOCOL_CN 第 5 节](../../docs/TRADER_PROTOCOL_CN.md) 的门禁 v2 选出；Qullamaggie 的多头同时换成了 R11 N3（+2R 才保本，偏离原话）；Flanders 的合计改善偏弱。各人结论在 `studies/<id>/notes/SHORTS_CONCLUSION_CN.md`；2026-10-20 起 Flanders 加 C1C（当天 EP 先买）、Clement 加 C4A（EP 另计每天 1 笔），见 `studies/trader_replication/reports/COMMON_RESULTS_CN.md`（2026 段是看过结果后放宽门槛才通过的，不再是独立检验） |
 | B 级基线 | Mark Minervini（R0b，只做多） | 台账不够，按原话的基线系统；空头基线没通过 |
 | 研究版（2026-10-20 用户同意放进看板，未冻结） | Marios Stamatoudis（R1 L4 + C4B + S1 P4） | B 级台账（有日期 19 笔）；只在选择段 2024–2025 逐轮选择，2026 验证段 R1 L4 + P4 −4.3%、未跑赢同池随机入场（排位 0.33），2026-10-20 加 C4B（EP 另计每天 2 笔）后 −0.4%（排位 0.52）；选择段利润约九成来自 ABVX、INBX 两笔；结论在 `studies/marios_stamatoudis/reports/FINAL_CN.md` |
 

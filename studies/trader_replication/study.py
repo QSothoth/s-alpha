@@ -261,12 +261,12 @@ class Study:
                 A[k] = self.named(A, pool, k)
         return {k: A[k] for k in names if k and k in A}
 
-    def run(self, A, entries, seg, pool, rules, placebo=None, audit=False):
+    def run(self, A, entries, seg, pool, rules, placebo=None, audit=False, track=None):
         """(stats, trades): the real run with bootstrap R interval, and (placebo > 0) its rank among same-pool
-        random entries with the same stop widths."""
+        random entries with the same stop widths; track: system.simulate's per-session record."""
         placebo = self.draws if placebo is None else placebo
         px, ema = self.px(A), self.ema_inputs(A, pool, rules)
-        curve, dates, tr = Y.simulate(px, ema, rules, entries, *seg, audit=audit)
+        curve, dates, tr = Y.simulate(px, ema, rules, entries, *seg, audit=audit, track=track)
         st = Y.stats(curve, dates, tr)
         r = np.array([t['r'] for t in tr]) if tr else np.zeros(1)
         boots = np.random.default_rng(0).choice(r, (2000, len(r))).mean(axis=1)

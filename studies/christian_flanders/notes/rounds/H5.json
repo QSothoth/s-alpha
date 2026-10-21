@@ -1,0 +1,10 @@
+{
+ "stage": "human sizing: on H4C, the leader tier paired, his 2025 selling",
+ "base": ["h4.json", "H4C"],
+ "draws": 50,
+ "candidates": {
+  "H5A": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}},
+  "H5B": {"rule_opts": {"trim_day": 0}},
+  "H5C": {"rule_opts": {"trim_signal": "ext200_120", "trim_signal_frac": 0.7}}
+ }
+}

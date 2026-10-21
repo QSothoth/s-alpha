@@ -235,6 +235,10 @@ class Flanders(study.Study):
             return -(A['F'].turnover / lag(A['F'].to20))
         if p == 'turnover':                              # the most liquid first (20-day turnover as of t-1)
             return -lag(A['F'].to20)
+        if p == 'off_low':                               # "up the most off the 52-week lows" (8vX@00:23:48), t-1
+            F = A['F']
+            with np.errstate(invalid='ignore', divide='ignore'):
+                return -lag(F.c / self.low52(F))
         raise ValueError(p)
 
     def market_ok(self, A, cfg):

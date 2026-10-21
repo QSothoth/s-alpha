@@ -1,0 +1,11 @@
+{
+ "stage": "human sizing: his risk per trade, adds on winners, the EP tier, fewer trades",
+ "base": "H0",
+ "draws": 50,
+ "candidates": {
+  "H1A": {"rule_opts": {"risk": 0.005}},
+  "H1B": {"common": {"add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}},
+  "H1C": {"human": {"tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}},
+  "H1D": {"max_new": 2}
+ }
+}

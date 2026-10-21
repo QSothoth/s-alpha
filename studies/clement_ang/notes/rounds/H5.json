@@ -1,0 +1,9 @@
+{
+ "stage": "human sizing: on H4B, the conviction tiers with the 50% cap the pre-registration meant (cap_above)",
+ "base": ["h4.json", "H4B"],
+ "draws": 50,
+ "candidates": {
+  "H5A": {"human": {"cap_above": true, "tiers": [{"when": ["kind=fine"], "risk": 2, "cap": 0.5}]}},
+  "H5B": {"human": {"cap_above": true, "tiers": [{"when": ["kind=pb"], "risk": 2, "cap": 0.5}]}}
+ }
+}

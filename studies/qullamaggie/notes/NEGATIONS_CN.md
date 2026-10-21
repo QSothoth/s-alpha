@@ -4,6 +4,11 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| G1 | human sizing | GA | `{"common": {"rank": "ep_strength"}}` | h3.json:H3A | GB | objective not above the base / GB；全区间 +62%（带入 +0%） | open |
+| G1 | human sizing | GC | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}, "cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | h3.json:H3A | GB | H gates: gate, drawdown, behaviour gap 0.634 > 0.610 + 0.02；全区间 +97%（带入 +0%） | open |
+| H1 | human sizing | H1B | `{"common": {"add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}}` | H:0 | H1A | H gates: segment not above H0, avg_loss -0.086 vs H0 -0.076；全区间 +31%（带入 +0%） | open |
+| H1 | human sizing | H1C | `{"human": {"tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}}` | H:0 | H1A | H gates: drawdown；全区间 +70%（带入 +0%） | open |
+| H1 | human sizing | H1D | `{"max_new": 2}` | H:0 | H1A | H gates: gate, drawdown；全区间 +45%（带入 +0%） | open |
 | R1 | end_to_end | Q1 | `{"setups": ["ep"]}` | r0.json:chosen | Q5 | gates: placebo；全区间 -20%（带入 +33%） | open |
 | R1 | end_to_end | Q2 | `{"stop_adr": {"brk": 1.0, "ep": 3.0}}` | r0.json:chosen | Q5 | gates: placebo；全区间 -32%（带入 +33%） | open |
 | R1 | end_to_end | Q3 | `{"setups": ["ep"], "stop_adr": {"ep": 3.0}}` | r0.json:chosen | Q5 | gates: placebo；全区间 -34%（带入 +33%） | open |
@@ -12,6 +17,11 @@
 | S1 | short: parabolic short end-to-end from RULES 4.3 | QB | `{"setups": ["para"], "trigger": "pdl", "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": []}` | :chosen | none | gates: gate, long_behaviour, total, years, down | open |
 | S1 | short: parabolic short end-to-end from RULES 4.3 | QC | `{"setups": ["para"], "trigger": "red", "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10"], "target_frac": 0.0, "trail": "", "trims": []}` | :chosen | none | gates: gate, short_placebo, total, years | open |
 | S1 | short: parabolic short end-to-end from RULES 4.3 | QD | `{"setups": ["para"], "trigger": "red", "streak": 5, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": []}` | :chosen | none | gates: gate, total, down | open |
+| G2 | human sizing | G2A | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}, "regime": {"risk": 0.5, "sma": 20}, "cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | g1.json:GB | None | H gates: drawdown；全区间 +97%（带入 +0%） | open |
+| G2 | human sizing | G2B | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}, "regime": {"kind": "breadth", "sma": 50, "below": 0.5, "risk": 0.5}}}` | g1.json:GB | None | objective not above the base / None；全区间 +57%（带入 +0%） | open |
+| G2 | human sizing | G2C | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}, "regime": {"kind": "index", "sma": 50, "risk": 0}}}` | g1.json:GB | None | objective not above the base / None；全区间 +63%（带入 +0%） | open |
+| H2 | human sizing | H2A | `{"human": {"tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}}` | h1.json:H1A | None | H gates: gate, drawdown, behaviour gap 0.664 > 0.610 + 0.02；全区间 +60%（带入 +0%） | open |
+| H2 | human sizing | H2B | `{"rule_opts": {"max_position": 0.2}}` | h1.json:H1A | None | objective not above the base / None；全区间 +54%（带入 +0%） | open |
 | R2 | ep_market | S1 | `{"filter": "", "rule_opts": {"risk_scale": "lighthalf"}}` | r1.json:chosen | R1 | gates: placebo；全区间 -19%（带入 +33%） | open |
 | R2 | ep_market | S2 | `{"ep": {"min_gap": 0.08}}` | r1.json:chosen | R1 | objective below R1；全区间 +18%（带入 +33%） | open |
 | R2 | ep_market | S3 | `{"ep": {"liquid": 5000000.0}}` | r1.json:chosen | R1 | gates: placebo；全区间 +3%（带入 +33%） | open |
@@ -21,6 +31,9 @@
 | S2 | short: the parabolic short entered like him (break of the low / the open after the first red day) | QF | `{"setups": ["popen"], "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "stop_w": "cap", "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": []}` | :chosen | none | gates: gate, short_placebo, total, years, down | open |
 | S2 | short: the parabolic short entered like him (break of the low / the open after the first red day) | QG | `{"setups": ["pbrk", "popen"], "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "stop_w": "cap", "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": []}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
 | S2 | short: the parabolic short entered like him (break of the low / the open after the first red day) | QH | `{"setups": ["pbrk"], "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "stop_w": "cap", "targets": ["sma10"], "target_frac": 0.0, "trail": "", "trims": []}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
+| G3 | human sizing | G3A | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025, "risk_high": 0.0075}, "regime": {"risk": 0.5, "sma": 20}}}` | g1.json:GB | None | H gates: drawdown；全区间 +96%（带入 +0%） | open |
+| G3 | human sizing | G3B | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025, "dd_risk": 0.1, "dd_risk_mult": 0.5}, "regime": {"risk": 0.5, "sma": 20}}}` | g1.json:GB | None | objective not above the base / None；全区间 +55%（带入 +0%） | open |
+| H3 | human sizing | H3B | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}, "tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}}` | h1.json:H1A | H3A | H gates: drawdown；全区间 +57%（带入 +0%） | open |
 | R3 | capacity_setups | T1 | `{"setups": ["ep", "brk"], "kind_order": ["ep", "brk"]}` | r2.json:chosen | T3 | objective below T3；全区间 +42%（带入 +20%） | open |
 | R3 | capacity_setups | T2 | `{"max_new": 5, "rule_opts": {"max_open": 15}}` | r2.json:chosen | T3 | objective below T3；全区间 +46%（带入 +20%） | open |
 | R3 | capacity_setups | T4 | `{"rule_opts": {"trim_day": 5}}` | r2.json:chosen | T3 | objective below T3；全区间 +18%（带入 +20%） | open |

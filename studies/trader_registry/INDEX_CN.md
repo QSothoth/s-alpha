@@ -419,7 +419,7 @@
 ### Qullamaggie（qullamaggie）
 
 - 别名：Kristjan Kullamägi、Kristjan Kullamagi、@Qullamaggie
-- 实现边界：2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R11 N3 + S7（多空一体） 经用户同意登记冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；多头 R11 把“卖后立刻保本”改为“+2R 才保本”（偏离原话，为胜率门禁）；空头为小盘抛物线收红后开盘 / 反弹卖空；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。
+- 实现边界：2026-10-20 main：在统一数据层 trader-data-v1 上按本人原话逐环节复刻（日 K、收盘或前一日决定的限价 / 开盘入场），R11 N3 + S7（多空一体）经用户同意登记（2026-10-21 起为 R11 N3 + S7 + P1B：每笔风险 0.5%、最近 5 笔合计亏或池等权指数在 20 日线下方时减半，因更贴近他公布的胜率而保留，见 studies/trader_replication/notes/SHARED_ROUNDS_CN.md）冻结在 studies/trader_replication/systems.py，比对表与交易员看板运行同一版本；多头 R11 把“卖后立刻保本”改为“+2R 才保本”（偏离原话，为胜率门禁）；空头为小盘抛物线收红后开盘 / 反弹卖空；全部是样本内（2024-01-02 → 2026-10-16 逐轮选择），冻结后的前向记录才是样本外；是有限假设的日线翻译，不是本人完整系统，盘中入场、锚定 VWAP、反向 / 指数 ETF 等不在其中。
 - 来源账本：[studies/trader_registry/dossiers/qullamaggie/source-ledger.md](../../studies/trader_registry/dossiers/qullamaggie/source-ledger.md)
 - main代码：[studies/qullamaggie/replicate.py](../../studies/qullamaggie/replicate.py)；[studies/trader_replication/system.py](../../studies/trader_replication/system.py)；[studies/trader_replication/shorts.py](../../studies/trader_replication/shorts.py)；[studies/trader_replication/systems.py](../../studies/trader_replication/systems.py)
 - main报告：[studies/qullamaggie/reports/SHORTS_CN.md](../../studies/qullamaggie/reports/SHORTS_CN.md)；[studies/qullamaggie/reports/FINAL_CN.md](../../studies/qullamaggie/reports/FINAL_CN.md)

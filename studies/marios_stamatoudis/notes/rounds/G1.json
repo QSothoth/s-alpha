@@ -1,0 +1,11 @@
+{
+ "stage": "shared G1 (every trader on his carried version): strength ranking, half risk below the index 20-day average, a leader tier, half risk after losing trades",
+ "base": ["h3.json", "H3B"],
+ "draws": 50,
+ "candidates": {
+  "GA": {"common": {"ep_slots": 1, "rank": "strength"}},
+  "GB": {"human": {"regime": {"risk": 0.5, "sma": 20}}},
+  "GC": {"human": {"cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}},
+  "GD": {"human": {"rule_opts": {"feedback": 5, "risk_low": 0.002}}}
+ }
+}
