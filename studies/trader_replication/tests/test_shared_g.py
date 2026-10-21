@@ -71,5 +71,25 @@ class Regime(unittest.TestCase):
         self.assertEqual(out[4][0][9], 2.0)                 # an up day: the tier's own multiplier stays
 
 
+    def test_breadth_is_the_share_above_the_average_as_of_the_day_before(self):
+        c = np.tile(np.linspace(1, 1.7, 8)[:, None], (1, 4))   # all rising: every name above its average
+        c[5:, :3] = .5                                      # three of four names fall on day 5
+        down = H.regime_down(arrays(c), 3, kind='breadth', below=.5)
+        self.assertEqual(list(down), [False] * 6 + [True, True])
+
+    def test_a_zero_multiplier_opens_nothing(self):
+        from studies.trader_replication import system as Y
+        c = np.ones((8, 2))
+        c[5:] = .5
+        A = arrays(c)
+        e = [[] for _ in range(8)]
+        e[6] = [(0, 0, 1, .5, .45, 'x')]
+        e[7] = [(0, 1, 1, .5, .45, 'x')]
+        e = H.regime(A, e, {'risk': 0, 'sma': 3})
+        px = {'open': c, 'high': c, 'low': c, 'close': c, 'dates': DAYS, 'codes': np.array(['US.A', 'US.B'])}
+        _, _, tr = Y.simulate(px, {}, Y.Rules(trail='', trims=()), e, DAYS[0], DAYS[-1])
+        self.assertEqual(tr, [])
+
+
 if __name__ == '__main__':
     unittest.main()

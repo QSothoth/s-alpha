@@ -1,0 +1,10 @@
+{
+ "stage": "shared G2 (every trader on his carried version): the leader tier with the index regime, a breadth regime, no new longs below the index 50-day average",
+ "base": ["h4.json", "H4B"],
+ "draws": 50,
+ "candidates": {
+  "G2A": {"human": {"regime": {"risk": 0.5, "sma": 20}, "cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}},
+  "G2B": {"human": {"regime": {"kind": "breadth", "sma": 50, "below": 0.5, "risk": 0.5}}},
+  "G2C": {"human": {"regime": {"kind": "index", "sma": 50, "risk": 0}}}
+ }
+}

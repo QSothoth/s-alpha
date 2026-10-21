@@ -110,10 +110,24 @@ def condition(st, A, cfg, name):
     raise KeyError(name)
 
 
-def regime_down(A, sma=20):
-    """1-D: the panel's equal-weight index (mean daily return of the names quoted that day) closed below its
-    `sma`-session average, as of the day before (False before the average exists)."""
+def regime_down(A, sma=20, kind='index', below=.5):
+    """1-D, as of the day before (False before the average exists): 'index' = the panel's equal-weight index (mean
+    daily return of the names quoted that day) closed below its `sma`-session average; 'breadth' = under `below`
+    of the quoted names closed above their own `sma`-session averages."""
     c = A['close']
+    if kind == 'breadth':
+        k = np.nancumsum(np.where(np.isfinite(c), c, 0.0), axis=0)
+        n = np.cumsum(np.isfinite(c), axis=0)
+        ma = np.full(c.shape, np.nan)
+        if len(c) >= sma:
+            s = k[sma - 1:] - np.vstack([np.zeros((1, c.shape[1])), k[:-sma]])
+            m = n[sma - 1:] - np.vstack([np.zeros((1, c.shape[1])), n[:-sma]])
+            with np.errstate(invalid='ignore', divide='ignore'):
+                ma[sma - 1:] = np.where(m == sma, s / sma, np.nan)
+        ok = np.isfinite(ma) & np.isfinite(c)
+        with np.errstate(invalid='ignore', divide='ignore'):
+            share = (ok & (c > ma)).sum(axis=1) / np.maximum(ok.sum(axis=1), 1)
+        return lag(ok.any(axis=1) & (share < below))
     with np.errstate(invalid='ignore', divide='ignore'):
         r = c[1:] / c[:-1] - 1
     r = np.where(np.isfinite(r), r, np.nan)
@@ -134,7 +148,7 @@ def regime(A, entries, spec):
     """Longs entered while regime_down (the index below its average as of the day before) take spec['risk'] times
     their risk (on top of a tier's multiplier); shorts as they were.  Kell: "risk halved below the 20 EMA";
     Qullamaggie: "half size in a market that's bad"."""
-    down = regime_down(A, spec.get('sma', 20))
+    down = regime_down(A, spec.get('sma', 20), spec.get('kind', 'index'), spec.get('below', .5))
     k = float(spec.get('risk', .5))
     out = []
     for d, lst in enumerate(entries):
