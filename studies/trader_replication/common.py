@@ -72,9 +72,36 @@ def rvol(A):
         return A['turnover'] / lag(A['to20'])
 
 
+def strength(A):
+    """The best of the 1 / 3 / 6-month (21 / 63 / 126-session) return percentiles across the panel's names on each
+    day (1 = the strongest), NaN before any window; as of that close (callers lag it).  The board's strength for
+    studies without its features (Martin), shared by the G rounds."""
+    if '_strength' in A:
+        return A['_strength']
+    c = A['close']
+    best = np.full(c.shape, np.nan)
+    for k in (21, 63, 126):
+        r = np.full(c.shape, np.nan)
+        with np.errstate(invalid='ignore', divide='ignore'):
+            r[k:] = c[k:] / c[:-k] - 1
+        for d in range(k, len(c)):
+            ok = np.isfinite(r[d])
+            n = int(ok.sum())
+            if n < 2:
+                continue
+            pct = np.empty(n)
+            pct[np.argsort(r[d, ok], kind='stable')] = np.arange(n) / (n - 1)
+            row = best[d, ok]
+            best[d, ok] = np.fmax(row, pct)
+    A['_strength'] = best
+    return best
+
+
 def rerank(A, entries, how, ep=None):
-    """Long entries with a new first field (lower goes first); `ep(d, e)` tells his EPs apart."""
+    """Long entries with a new first field (lower goes first); `ep(d, e)` tells his EPs apart.  'strength' /
+    'ep_strength': by the strength percentile as of the day before (his EPs first in the second)."""
     rv = rvol(A)
+    st = lag(strength(A)) if how in ('strength', 'ep_strength') else None
 
     def key(d, e):
         v = rv[d, e[1]]
@@ -82,6 +109,12 @@ def rerank(A, entries, how, ep=None):
         own = e[0]
         if how == 'rvol':
             return neg
+        if st is not None:
+            s = st[d, e[1]]
+            s = -float(s) if np.isfinite(s) else np.inf
+            if how == 'strength':
+                return s
+            return (0 if ep(d, e) else 1, s)
         first = 0 if ep(d, e) else 1
         if how == 'ep_rvol':
             return (first, neg if first == 0 else own)

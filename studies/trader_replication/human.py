@@ -103,10 +103,52 @@ def condition(st, A, cfg, name):
         return lambda d, e: bool(rg[d, e[1]] <= k)
     if name.startswith('strength>='):             # the board's strength percentile (best of 1 / 3 / 6 months), t-1
         from studies.trader_screens import screens as S
+        from . import common as C
         k = float(name[10:])
-        s = lag(S.strength(F))
+        s = lag(S.strength(F)) if F is not None else lag(C.strength(A))     # no board features (Martin)
         return lambda d, e: bool(s[d, e[1]] >= k)
     raise KeyError(name)
+
+
+def regime_down(A, sma=20):
+    """1-D: the panel's equal-weight index (mean daily return of the names quoted that day) closed below its
+    `sma`-session average, as of the day before (False before the average exists)."""
+    c = A['close']
+    with np.errstate(invalid='ignore', divide='ignore'):
+        r = c[1:] / c[:-1] - 1
+    r = np.where(np.isfinite(r), r, np.nan)
+    with np.errstate(invalid='ignore'):
+        cnt = np.isfinite(r).sum(axis=1)
+        mean = np.where(cnt > 0, np.nansum(r, axis=1) / np.maximum(cnt, 1), 0.0)
+    idx = np.concatenate([[1.0], np.cumprod(1 + mean)])
+    ma = np.full(len(idx), np.nan)
+    if len(idx) >= sma:
+        k = np.cumsum(np.concatenate([[0.0], idx]))
+        ma[sma - 1:] = (k[sma:] - k[:-sma]) / sma
+    with np.errstate(invalid='ignore'):
+        down = np.isfinite(ma) & (idx < ma)
+    return lag(down)
+
+
+def regime(A, entries, spec):
+    """Longs entered while regime_down (the index below its average as of the day before) take spec['risk'] times
+    their risk (on top of a tier's multiplier); shorts as they were.  Kell: "risk halved below the 20 EMA";
+    Qullamaggie: "half size in a market that's bad"."""
+    down = regime_down(A, spec.get('sma', 20))
+    k = float(spec.get('risk', .5))
+    out = []
+    for d, lst in enumerate(entries):
+        if not down[d]:
+            out.append(lst)
+            continue
+        row = []
+        for e in lst:
+            if e[2] > 0:
+                e = tuple(e) + (None,) * (10 - len(e)) if len(e) < 10 else tuple(e)
+                e = e[:9] + ((e[9] or 1.0) * k,) + e[10:]
+            row.append(e)
+        out.append(row)
+    return out
 
 
 def tiers(st, A, cfg, entries, spec, base):
@@ -178,6 +220,8 @@ def apply(st, A, cfg, h, entries, rules):
             base.setdefault('cap', own)
             spec = [dict(t, when=list(t.get('when', [])) + ['long']) for t in spec]
         entries = tiers(st, A, cfg, entries, spec, base)
+    if h.get('regime'):                          # the market's down days: longs sized down (G rounds)
+        entries = regime(A, entries, h['regime'])
     return entries, rules
 
 

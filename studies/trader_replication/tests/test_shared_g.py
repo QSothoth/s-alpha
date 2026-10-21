@@ -1,0 +1,75 @@
+"""Shared daily mechanisms of the G rounds (2026-10-21): the strength percentile and the market regime are read as of
+the day before the entry; the regime scales a long's risk without touching shorts; the strength ranking orders the
+day's longs before the daily cap."""
+import unittest
+
+import numpy as np
+
+from studies.trader_replication import common as C, human as H
+
+DAYS = np.array(['2025-01-%02d' % (i + 1) for i in range(8)])
+
+
+def arrays(close):
+    c = np.asarray(close, float)
+    return {'close': c, 'open': c, 'high': c, 'low': c, 'has': np.isfinite(c), 'days': DAYS[:len(c)],
+            'turnover': np.ones_like(c), 'to20': np.ones_like(c), 'adr': np.full_like(c, 5.0)}
+
+
+class Strength(unittest.TestCase):
+    def test_percentile_of_the_best_window_across_names(self):
+        T = 130
+        c = np.ones((T, 3))
+        c[:, 0] = np.linspace(1, 3, T)                      # the strongest on every window
+        c[:, 1] = np.linspace(1, 2, T)
+        c[:, 2] = np.linspace(1, .5, T)
+        s = C.strength(arrays(c))
+        self.assertTrue(np.isnan(s[0]).all())               # no window yet
+        self.assertEqual(list(s[-1]), [1.0, .5, 0.0])
+
+    def test_ranking_uses_the_day_before(self):
+        T = 30
+        c = np.ones((T, 2))
+        c[:, 0] = np.linspace(1, 2, T)
+        c[:, 1] = np.linspace(1, 1.5, T)
+        c[-1, 1] = 10.0                                     # name 1 jumps on the entry day itself
+        A = arrays(c)
+        e = [[] for _ in range(T)]
+        e[-1] = [(0, 1, 1, 10.0, 9.0, 'x'), (1, 0, 1, 2.0, 1.9, 'x')]
+        out = C.rerank(A, e, 'strength')
+        self.assertEqual([x[1] for x in sorted(out[-1], key=lambda x: x[0])], [0, 1])
+
+    def test_ep_strength_keeps_eps_first(self):
+        T = 30
+        c = np.ones((T, 2))
+        c[:, 0] = np.linspace(1, 2, T)
+        A = arrays(c)
+        e = [[] for _ in range(T)]
+        e[-1] = [(0, 0, 1, 2.0, 1.9, 'brk'), (1, 1, 1, 1.0, .9, 'ep')]
+        out = C.rerank(A, e, 'ep_strength', ep=lambda d, x: x[5] == 'ep')
+        self.assertEqual([x[1] for x in sorted(out[-1], key=lambda x: x[0])], [1, 0])
+
+
+class Regime(unittest.TestCase):
+    def test_down_is_the_equal_weight_index_below_its_average_as_of_the_day_before(self):
+        c = np.ones((8, 2))
+        c[5:] = .5                                          # the pool falls on day 5
+        A = arrays(c)
+        down = H.regime_down(A, 3)
+        self.assertEqual(list(down), [False] * 6 + [True, True])   # known from day 6 (the day after the fall)
+
+    def test_longs_on_down_days_take_the_multiplier_and_shorts_are_untouched(self):
+        c = np.ones((8, 2))
+        c[5:] = .5
+        A = arrays(c)
+        e = [[] for _ in range(8)]
+        e[6] = [(0, 0, 1, .5, .45, 'x'), (1, 1, -1, .5, .55, 's_x')]
+        e[4] = [(0, 0, 1, 1.0, .9, 'x', None, None, None, 2.0)]
+        out = H.regime(A, e, {'risk': .5, 'sma': 3})
+        self.assertEqual(out[6][0][9], .5)
+        self.assertEqual(len(out[6][1]), 6)                 # the short as it was
+        self.assertEqual(out[4][0][9], 2.0)                 # an up day: the tier's own multiplier stays
+
+
+if __name__ == '__main__':
+    unittest.main()
