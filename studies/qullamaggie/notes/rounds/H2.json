@@ -1,0 +1,9 @@
+{
+ "stage": "human sizing: on H1A (0.5% risk), the EP tier and his usual position size",
+ "base": ["h1.json", "H1A"],
+ "draws": 50,
+ "candidates": {
+  "H2A": {"human": {"tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}},
+  "H2B": {"rule_opts": {"max_position": 0.2}}
+ }
+}

@@ -4,6 +4,9 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| H1 | human sizing | H1A | `{"max_new": 1}` | H:0 | H1C | H gates: segment not above H0, drawdown；全区间 +134%（带入 +0%） | open |
+| H1 | human sizing | H1B | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.003, "risk_high": 0.005}}}` | H:0 | H1C | H gates: drawdown；全区间 +153%（带入 +0%） | open |
+| H1 | human sizing | H1D | `{"human": {"rule_opts": {"max_open": 8}}}` | H:0 | H1C | H gates: drawdown；全区间 +194%（带入 +0%） | open |
 | R1 | selection_floors | L1 | `{"ep": {"escape": 0}}` | r0.json:chosen | L4 | gates: placebo；全区间 -29%（带入 +405%） | open |
 | R1 | selection_floors | L2 | `{"stop_adr": {"brk": 1.0, "ep": 3.0}}` | r0.json:chosen | L4 | gates: win<=0.35；全区间 +13%（带入 +405%） | open |
 | R1 | selection_floors | L3 | `{"ep": {"price": 1.0, "liquid": 2000000.0}, "brk": {"turnover": 2000000.0, "price": 1.0, "adr": 4.0, "top": 0.02}}` | r0.json:chosen | L4 | objective below L4；全区间 +238%（带入 +405%） | open |
@@ -11,6 +14,8 @@
 | S1 | shorts_v2 | P2 | `{"setups": ["para"], "trigger": "pdl", "max_days": 5, "max_new": 1}` | :chosen | P4 | gates: down | open |
 | S1 | shorts_v2 | P3 | `{"setups": ["ptop"], "max_days": 5, "max_new": 1}` | :chosen | P4 | objective below P4 | open |
 | S1 | shorts_v2 | P5 | `{"setups": ["para"], "trigger": "red", "max_days": 3, "max_new": 1, "small": 4.0}` | :chosen | P4 | gates: alpha, down | open |
+| H2 | human sizing | H2A | `{"human": {"rule_opts": {"max_open": 8}}}` | h1.json:H1C | None | H gates: avg_win 0.228 vs H0 0.206；全区间 +190%（带入 +0%） | open |
+| H2 | human sizing | H2B | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.003, "risk_high": 0.005}}}` | h1.json:H1C | None | objective not above the base / None；全区间 +164%（带入 +0%） | open |
 | R2 | exits_sizing | T1 | `{"rule_opts": {"trail": "sma20"}}` | r1.json:chosen | L4 | gates: behaviour+0.02；全区间 +454%（带入 +405%） | open |
 | R2 | exits_sizing | T2 | `{"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.33, "add_signal_max": 1, "add_signal_stop": "fill"}}` | r1.json:chosen | L4 | gates: behaviour+0.02；全区间 +331%（带入 +405%） | open |
 | R2 | exits_sizing | T3 | `{"stop_adr": {"brk": 2.0, "ep": 3.0}}` | r1.json:chosen | L4 | objective below L4；全区间 +325%（带入 +405%） | open |

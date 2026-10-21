@@ -18,6 +18,9 @@
 | S1 | short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7) | KC | `{"setups": ["drop", "dcross"], "gate": "below20", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
 | S1 | short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7) | KD | `{"setups": ["drop", "dcross"], "gate": "", "max_new": 2, "trail": "ema20", "trims": [], "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
 | S1 | short: Wedge Drop and Downside EMA Crossback end-to-end (RULES 9, OK6, OK7) | KE | `{"setups": ["drop", "dcross"], "gate": "below20", "max_new": 2, "trail": "ema10", "trims": [], "max_days": 0}` | :chosen | none | gates: short_placebo, total, years, down | open |
+| H2 | human sizing | H2A | `{"rule_opts": {"trim_signal2": "below_ema10", "trim_signal2_frac": 0.5}}` | h1.json:H1B | None | H gates: segment not above H0, avg_win 0.161 vs H0 0.207；全区间 +55%（带入 +0%） | open |
+| H2 | human sizing | H2B | `{"human": {"tiers": [{"when": ["adr<=5"], "risk": 1, "cap": 0.3}]}, "rule_opts": {"add_r": 1.0, "add_frac": 1.0}}` | h1.json:H1B | None | H gates: bought 2 < 3, avg_win 0.242 vs H0 0.207；全区间 +76%（带入 +0%） | open |
+| H2 | human sizing | H2C | `{"human": {"rule_opts": {"feedback": 3, "risk_low": 0.0025}}}` | h1.json:H1B | None | objective not above the base / None；全区间 +70%（带入 +0%） | open |
 | R2 | setups | W1 | `{"setups": ["pop", "cross", "pb"]}` | r1.json:chosen | R1 | gates: placebo, width<=30；全区间 -63%（带入 -2%） | open |
 | R2 | setups | W2 | `{"setups": ["pop", "cross", "vcp", "brk52"]}` | r1.json:chosen | R1 | gates: placebo, width<=30；全区间 -28%（带入 -2%） | open |
 | R2 | setups | W3 | `{"setups": ["pop", "cross", "ib2"]}` | r1.json:chosen | R1 | gates: placebo；全区间 -8%（带入 -2%） | open |

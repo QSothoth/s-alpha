@@ -59,6 +59,10 @@ class Rules:
     trim_signal2_frac: float = 0.0  # size at the first close it is true, once per position (Kell: half off at the 10 EMA)
     add_r: float = 0.0              # > 0: once a long closes at least this R above its fill, buy add_frac of the original
     add_frac: float = 1.0           # size at that close (once) and move the whole stop to the original fill
+    add_cap_mult: float = 0.0       # > 0: such an add may take the position up to this multiple of its own cap
+    add_cap_limit: float = 1.0      # ... never above this share of equity (Kell: a 15% core doubled to 30%)
+    add_stop: str = 'fill'          # 'cost': after such an add the whole stop goes to the position's average cost
+                                    # instead (Marios' free-roll: the add risks only the open profit)
     add_levels: tuple = ()          # several R levels instead of add_r, one add at each; an add the position or gross
                                     # caps leave no room for still uses up its level (no breakeven then)
     risk_scale: str = ''            # 1-D (days) array in `ema`: risk per new trade is multiplied by its value that day
@@ -120,6 +124,7 @@ class Pos:
     state: dict | None = None       # audit: an open position's state at the last close ('end')
     cap: float = 0.0                # its own max_position (the policy's, or the entry's when lower)
     tier: float | None = None       # the entry's risk multiplier (sizing tier), when it carried one
+    avg: float = 0.0                # average cost of the shares held once it has been added to (0 = the fill)
 
 
 def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False, track=None):
@@ -286,6 +291,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         if rules.gross_cost:
             room /= 1 + rules.buy_cost
         cap = min(q.management.max_position, q.cap) if rules.cap_adds_entry else q.management.max_position
+        if rules.add_cap_mult > 0 and not signal:
+            cap = min(cap * rules.add_cap_mult, rules.add_cap_limit)
         val = min((rules.add_frac if frac is None else frac) * q.size0 * price, cap * eq - q.size * price, room)
         if signal:
             q.sig_adds += 1
@@ -296,12 +303,13 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         flow = -val * (1 + rules.buy_cost)
         cash += flow
         q.cash += flow
+        q.avg = ((q.avg or q.fill) * q.size + val) / (q.size + val / price)
         q.size += val / price
         q.invested += val
         if audit:
             q.executions.append(dict(time=str(dates[d]), action='add', price=float(price), shares=float(val / price)))
         if not signal:
-            q.stop = max(q.stop, q.fill)
+            q.stop = max(q.stop, q.avg if rules.add_stop == 'cost' else q.fill)
         elif rules.add_signal_stop == 'fill':
             q.stop = max(q.stop, q.fill)
         elif rules.add_signal_stop == 'low' and np.isfinite(l[d, q.j]):

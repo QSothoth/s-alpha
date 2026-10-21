@@ -4,6 +4,9 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| H1 | human sizing | H1B | `{"common": {"add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}}` | H:0 | H1A | H gates: segment not above H0, avg_loss -0.086 vs H0 -0.076；全区间 +31%（带入 +0%） | open |
+| H1 | human sizing | H1C | `{"human": {"tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}}` | H:0 | H1A | H gates: drawdown；全区间 +70%（带入 +0%） | open |
+| H1 | human sizing | H1D | `{"max_new": 2}` | H:0 | H1A | H gates: gate, drawdown；全区间 +45%（带入 +0%） | open |
 | R1 | end_to_end | Q1 | `{"setups": ["ep"]}` | r0.json:chosen | Q5 | gates: placebo；全区间 -20%（带入 +33%） | open |
 | R1 | end_to_end | Q2 | `{"stop_adr": {"brk": 1.0, "ep": 3.0}}` | r0.json:chosen | Q5 | gates: placebo；全区间 -32%（带入 +33%） | open |
 | R1 | end_to_end | Q3 | `{"setups": ["ep"], "stop_adr": {"ep": 3.0}}` | r0.json:chosen | Q5 | gates: placebo；全区间 -34%（带入 +33%） | open |
@@ -12,6 +15,8 @@
 | S1 | short: parabolic short end-to-end from RULES 4.3 | QB | `{"setups": ["para"], "trigger": "pdl", "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": []}` | :chosen | none | gates: gate, long_behaviour, total, years, down | open |
 | S1 | short: parabolic short end-to-end from RULES 4.3 | QC | `{"setups": ["para"], "trigger": "red", "streak": 3, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10"], "target_frac": 0.0, "trail": "", "trims": []}` | :chosen | none | gates: gate, short_placebo, total, years | open |
 | S1 | short: parabolic short end-to-end from RULES 4.3 | QD | `{"setups": ["para"], "trigger": "red", "streak": 5, "large": 0.5, "small": 3.0, "max_new": 2, "targets": ["sma10", "sma20"], "target_frac": 0.5, "trail": "", "trims": []}` | :chosen | none | gates: gate, total, down | open |
+| H2 | human sizing | H2A | `{"human": {"tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}}` | h1.json:H1A | None | H gates: gate, drawdown, behaviour gap 0.664 > 0.610 + 0.02；全区间 +60%（带入 +0%） | open |
+| H2 | human sizing | H2B | `{"rule_opts": {"max_position": 0.2}}` | h1.json:H1A | None | objective not above the base / None；全区间 +54%（带入 +0%） | open |
 | R2 | ep_market | S1 | `{"filter": "", "rule_opts": {"risk_scale": "lighthalf"}}` | r1.json:chosen | R1 | gates: placebo；全区间 -19%（带入 +33%） | open |
 | R2 | ep_market | S2 | `{"ep": {"min_gap": 0.08}}` | r1.json:chosen | R1 | objective below R1；全区间 +18%（带入 +33%） | open |
 | R2 | ep_market | S3 | `{"ep": {"liquid": 5000000.0}}` | r1.json:chosen | R1 | gates: placebo；全区间 +3%（带入 +33%） | open |

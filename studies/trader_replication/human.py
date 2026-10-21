@@ -152,6 +152,7 @@ def limit_rules(rules, only=None):
                    max_open=min(rules.max_open, LIMITS['max_open']) if rules.max_open else LIMITS['max_open'],
                    max_new_all=LIMITS['max_new'], max_new_year=LIMITS['max_year'], no_rebuy_day=True,
                    gross_cost=True, gross_close=True, cap_adds_entry=True, max_position=min(rules.max_position, cap),
+                   add_cap_limit=min(rules.add_cap_limit, cap),
                    management_by_kind=mbk)
 
 
