@@ -8,7 +8,8 @@
 
 ### 待用户决定
 
-- **是否登记**（通过预登记轮次与门禁的带入版本）：Flanders H5A、Clement H4B、Martin H1A、Kell H1B、Qullamaggie H3A、Marios H3B。Minervini 不变。
+- **是否登记**（通过预登记轮次与门禁的带入版本，含 2026-10-21 的共享轮 G1–G3，见 [SHARED_ROUNDS_CN](SHARED_ROUNDS_CN.md)）：Flanders H5A、Clement H4B、Martin H1A + G1 GB + G2B、Kell H1B + G1 GB、Qullamaggie H3A + G1 GB、Marios H3B + G2B。Minervini 不变。
+- **Clement 的行为门槛**：G1–G3 有 6 个候选收益 +175%～+196%、两年都更近他，只因行为差距超上限（他一年 800 多笔、赢单 3 天）不过；是否对他放宽，交用户判断。
 - **只差一项、按规则未带入的候选**：Clement H5B（回踩 ×2 真 50%，行为差距超上限 0.001）、Kell H3A（按原话加仓 +142%，卡行为门槛；但 H4 显示增量来自给高波动次级仓加仓，与原话相反）。
 - 全部是样本内结论；2026 段已被 V1 / V2 用过，只报告。
 

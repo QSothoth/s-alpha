@@ -3037,6 +3037,245 @@
   }
  },
  {
+  "round": "G3",
+  "stage": "human sizing",
+  "candidate": "G3A",
+  "change": {
+   "human": {
+    "cap_above": true,
+    "tiers": [
+     {
+      "when": [
+       "adr<=5"
+      ],
+      "risk": 1,
+      "cap": 0.15
+     }
+    ],
+    "regime": {
+     "risk": 0.5,
+     "sma": 20
+    },
+    "rule_opts": {
+     "feedback": 5,
+     "risk_low": 0.0025,
+     "risk_high": 0.0075
+    }
+   }
+  },
+  "base": [
+   "g1.json",
+   "GB"
+  ],
+  "chosen": null,
+  "reason": "objective not above the base / None",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.6833701639051464,
+   "by_year": {
+    "2024": 0.31884664908011895,
+    "2025": 0.2763956788147268
+   },
+   "placebo_median": 0.10893403601202623,
+   "win": 0.2125506072874494,
+   "bought": [
+    4,
+    30
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": {
+    "setups": [
+     "lim20",
+     "lim10"
+    ],
+    "gate": "below50",
+    "max_new": 2,
+    "stop_w": "cap",
+    "trail": "ema10",
+    "trims": [],
+    "max_days": 10
+   },
+   "human": {
+    "cap_above": true,
+    "tiers": [
+     {
+      "when": [
+       "adr<=5"
+      ],
+      "risk": 1,
+      "cap": 0.15
+     }
+    ],
+    "regime": {
+     "risk": 0.5,
+     "sma": 20
+    }
+   }
+  }
+ },
+ {
+  "round": "G3",
+  "stage": "human sizing",
+  "candidate": "G3B",
+  "change": {
+   "human": {
+    "cap_above": true,
+    "tiers": [
+     {
+      "when": [
+       "adr<=5"
+      ],
+      "risk": 1,
+      "cap": 0.15
+     }
+    ],
+    "regime": {
+     "risk": 0.5,
+     "sma": 20
+    },
+    "rule_opts": {
+     "dd_risk": 0.1,
+     "dd_risk_mult": 0.5
+    }
+   }
+  },
+  "base": [
+   "g1.json",
+   "GB"
+  ],
+  "chosen": null,
+  "reason": "objective not above the base / None",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 0.6260579321359327,
+   "by_year": {
+    "2024": 0.2584211659051121,
+    "2025": 0.29214127685654434
+   },
+   "placebo_median": 0.10355055096123,
+   "win": 0.21084337349397592,
+   "bought": [
+    4,
+    30
+   ],
+   "year_gap": {},
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "pop",
+    "cross",
+    "pb",
+    "vcp",
+    "brk52",
+    "ib2",
+    "ur"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "turnover",
+   "max_new": 4,
+   "strength": "rs90",
+   "filter": "IDX20",
+   "pool": {
+    "turnover": 100000000.0,
+    "adr": 3.0,
+    "above50": false
+   },
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.09,
+    "max_gross": 1.5,
+    "max_open": 12,
+    "trail": "ema20",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "risk_scale": "",
+    "trim_signal": "ext10_30",
+    "trim_signal_frac": 0.3333
+   },
+   "close_any": [
+    "pb",
+    "ib2",
+    "cross",
+    "vcp",
+    "brk52"
+   ],
+   "short": {
+    "setups": [
+     "lim20",
+     "lim10"
+    ],
+    "gate": "below50",
+    "max_new": 2,
+    "stop_w": "cap",
+    "trail": "ema10",
+    "trims": [],
+    "max_days": 10
+   },
+   "human": {
+    "cap_above": true,
+    "tiers": [
+     {
+      "when": [
+       "adr<=5"
+      ],
+      "risk": 1,
+      "cap": 0.15
+     }
+    ],
+    "regime": {
+     "risk": 0.5,
+     "sma": 20
+    }
+   }
+  }
+ },
+ {
   "round": "H3",
   "stage": "human sizing",
   "candidate": "H3A",

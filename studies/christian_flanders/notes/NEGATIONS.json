@@ -2752,6 +2752,273 @@
   }
  },
  {
+  "round": "G3",
+  "stage": "human sizing",
+  "candidate": "G3A",
+  "change": {
+   "human": {
+    "tiers": [
+     {
+      "when": [
+       "ep",
+       "near52<=0"
+      ],
+      "risk": 3,
+      "cap": 0.5
+     },
+     {
+      "when": [
+       "strength>=0.98"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ],
+    "rule_opts": {
+     "feedback": 5,
+     "risk_low": 0.0025,
+     "risk_high": 0.0075
+    }
+   }
+  },
+  "base": [
+   "h5.json",
+   "H5A"
+  ],
+  "chosen": null,
+  "reason": "H gates: bought 4 < 5",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.6932079319092086,
+   "by_year": {
+    "2024": 0.13373759859157208,
+    "2025": 1.3755125835598525
+   },
+   "placebo_median": 0.06345359564298814,
+   "win": 0.3022222222222222,
+   "bought": [
+    4,
+    54
+   ],
+   "year_gap": {
+    "2024": 1.5487691007640634,
+    "2025": 0.118736141491376
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "hi52",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.06,
+   "priority": "rs",
+   "max_new": 2,
+   "strength": "rs90",
+   "filter": "",
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "ema21",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "trim_day": 3,
+    "trim_day_frac": 0.5
+   },
+   "ep_pool": {
+    "turnover": 5000000.0,
+    "price": 2.0
+   },
+   "ep": {
+    "near": null,
+    "far_low": 0.5,
+    "rvol": 3.0
+   },
+   "pool": {
+    "adr": 2.0
+   },
+   "common": {
+    "rank": "ep_own",
+    "add": {
+     "frac": 0.5,
+     "max": 1,
+     "stop": "keep",
+     "profit": true
+    }
+   },
+   "short": {
+    "setups": [
+     "r200"
+    ],
+    "r200_rej": 1,
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 1.0,
+    "max_days": 3
+   },
+   "human": {
+    "tiers": [
+     {
+      "when": [
+       "ep",
+       "near52<=0"
+      ],
+      "risk": 3,
+      "cap": 0.5
+     },
+     {
+      "when": [
+       "strength>=0.98"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ]
+   }
+  }
+ },
+ {
+  "round": "G3",
+  "stage": "human sizing",
+  "candidate": "G3B",
+  "change": {
+   "human": {
+    "tiers": [
+     {
+      "when": [
+       "ep",
+       "near52<=0"
+      ],
+      "risk": 3,
+      "cap": 0.5
+     },
+     {
+      "when": [
+       "strength>=0.98"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ],
+    "rule_opts": {
+     "dd_risk": 0.1,
+     "dd_risk_mult": 0.5
+    }
+   }
+  },
+  "base": [
+   "h5.json",
+   "H5A"
+  ],
+  "chosen": null,
+  "reason": "H gates: bought 4 < 5",
+  "objective": "human.objective",
+  "evidence": {
+   "total": 1.2216564090061426,
+   "by_year": {
+    "2024": 0.3597674747629851,
+    "2025": 0.6338502356025169
+   },
+   "placebo_median": 0.09089166707047658,
+   "win": 0.3039647577092511,
+   "bought": [
+    4,
+    54
+   ],
+   "year_gap": {
+    "2024": 1.3669751740625333,
+    "2025": 0.49301004318876107
+   },
+   "human_ok": true
+  },
+  "base_config": {
+   "setups": [
+    "hi52",
+    "ep"
+   ],
+   "entry": "close",
+   "stop_min": 0.01,
+   "stop_cap": 0.06,
+   "priority": "rs",
+   "max_new": 2,
+   "strength": "rs90",
+   "filter": "",
+   "rule_opts": {
+    "risk": 0.005,
+    "max_position": 0.3,
+    "max_gross": 1.0,
+    "max_open": 8,
+    "trail": "ema21",
+    "arm_trail_on_entry": true,
+    "trims": [],
+    "trim_day": 3,
+    "trim_day_frac": 0.5
+   },
+   "ep_pool": {
+    "turnover": 5000000.0,
+    "price": 2.0
+   },
+   "ep": {
+    "near": null,
+    "far_low": 0.5,
+    "rvol": 3.0
+   },
+   "pool": {
+    "adr": 2.0
+   },
+   "common": {
+    "rank": "ep_own",
+    "add": {
+     "frac": 0.5,
+     "max": 1,
+     "stop": "keep",
+     "profit": true
+    }
+   },
+   "short": {
+    "setups": [
+     "r200"
+    ],
+    "r200_rej": 1,
+    "gate": "below50",
+    "max_new": 1,
+    "stop_w": "cap",
+    "trail": "",
+    "trims": [],
+    "trim_day": 1,
+    "trim_day_frac": 1.0,
+    "max_days": 3
+   },
+   "human": {
+    "tiers": [
+     {
+      "when": [
+       "ep",
+       "near52<=0"
+      ],
+      "risk": 3,
+      "cap": 0.5
+     },
+     {
+      "when": [
+       "strength>=0.98"
+      ],
+      "risk": 2,
+      "cap": 0.5
+     }
+    ]
+   }
+  }
+ },
+ {
   "round": "H3",
   "stage": "human sizing",
   "candidate": "H3A",

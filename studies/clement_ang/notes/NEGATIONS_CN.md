@@ -37,6 +37,8 @@
 | S2 | short: only the former big leaders, only once the market has turned (his words at 01:24) | CF | `{"setups": ["fb20"], "turnover": 500000000.0, "gate": "below200", "max_new": 3, "stop_w": "cap"}` | :chosen | none | gates: short_placebo, total, years, down | open |
 | S2 | short: only the former big leaders, only once the market has turned (his words at 01:24) | CG | `{"setups": ["fb20c"], "turnover": 500000000.0, "gate": "below50", "max_new": 3}` | :chosen | none | gates: short_placebo, total, years, maxdd, down | open |
 | S2 | short: only the former big leaders, only once the market has turned (his words at 01:24) | CH | `{"setups": ["fb20"], "turnover": 500000000.0, "gate": "below50", "max_new": 1, "stop_w": "cap"}` | :chosen | none | gates: total, years, maxdd, down | open |
+| G3 | human sizing | G3A | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025, "risk_high": 0.0075}}}` | h4.json:H4B | None | H gates: his years not closer: 2025, behaviour gap 0.843 > 0.766 + 0.02；全区间 +134%（带入 +0%） | open |
+| G3 | human sizing | G3B | `{"human": {"rule_opts": {"dd_risk": 0.1, "dd_risk_mult": 0.5}}}` | h4.json:H4B | None | H gates: behaviour gap 0.859 > 0.766 + 0.02；全区间 +152%（带入 +0%） | open |
 | H3 | human sizing | H3A | `{"setups": ["fine", "pb"]}` | H:0 | None | H gates: gate；全区间 +163%（带入 +0%） | open |
 | H3 | human sizing | H3B | `{"setups": ["pb"]}` | H:0 | None | H gates: gate, his years not closer: 2024,2025, bought 1 < 3；全区间 +104%（带入 +0%） | open |
 | H3 | human sizing | H3C | `{"human": {"tiers": [{"when": ["kind=pb"], "risk": 2, "cap": 0.5}]}}` | H:0 | None | H gates: gate, his years not closer: 2024；全区间 +141%（带入 +0%） | open |

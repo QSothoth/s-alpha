@@ -27,5 +27,7 @@
 | R2 | exits_sizing | T3 | `{"stop_adr": {"brk": 2.0, "ep": 3.0}}` | r1.json:chosen | L4 | objective below L4；全区间 +325%（带入 +405%） | open |
 | R2 | exits_sizing | T4 | `{"rule_opts": {"trims": [3, 8], "trim_frac": 0.25}}` | r1.json:chosen | L4 | objective below L4；全区间 +342%（带入 +405%） | open |
 | R2 | exits_sizing | T5 | `{"rule_opts": {"risk": 0.004}}` | r1.json:chosen | L4 | objective below L4；全区间 +390%（带入 +405%） | open |
+| G3 | human sizing | G3A | `{"human": {"regime": {"kind": "breadth", "sma": 50, "below": 0.5, "risk": 0.5}, "rule_opts": {"feedback": 5, "risk_low": 0.002, "risk_high": 0.006}}}` | g2.json:G2B | None | objective not above the base / None；全区间 +150%（带入 +0%） | open |
+| G3 | human sizing | G3B | `{"human": {"regime": {"kind": "breadth", "sma": 50, "below": 0.5, "risk": 0.5}, "rule_opts": {"dd_risk": 0.1, "dd_risk_mult": 0.5}}}` | g2.json:G2B | None | objective not above the base / None；全区间 +153%（带入 +0%） | open |
 | H3 | human sizing | H3A | `{"rule_opts": {"add_r": 2.0, "add_frac": 1.0, "add_cap_mult": 1.2, "add_stop": "cost"}}` | h1.json:H1C | H3B | H gates: drawdown, behaviour gap 0.151 > 0.018 + 0.02, avg_win 0.229 vs H0 0.206, days_win 9.868 vs H0 11.310；全区间 +148%（带入 +0%） | open |
 | H3 | human sizing | H3C | `{"rule_opts": {"risk": 0.004, "add_r": 2.0, "add_frac": 1.0, "add_cap_mult": 1.2, "add_stop": "cost"}}` | h1.json:H1C | H3B | H gates: drawdown, behaviour gap 0.161 > 0.018 + 0.02, avg_win 0.231 vs H0 0.206, days_win 10.049 vs H0 11.310；全区间 +154%（带入 +0%） | open |
