@@ -4,6 +4,10 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| G1 | human sizing | GA | `{"common": {"rank": "strength"}}` | H:0 | None | H gates: segment not above H0；全区间 +114%（带入 +0%） | open |
+| G1 | human sizing | GB | `{"human": {"regime": {"risk": 0.5, "sma": 20}}}` | H:0 | None | H gates: segment not above H0；全区间 +105%（带入 +0%） | open |
+| G1 | human sizing | GC | `{"human": {"cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | H:0 | None | H gates: segment not above H0；全区间 +62%（带入 +0%） | open |
+| G1 | human sizing | GD | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}}}` | H:0 | None | H gates: segment not above H0, avg_win 0.266 vs H0 0.304；全区间 +94%（带入 +0%） | open |
 | S1 | short: B-grade baseline (stage-4 template turned over, breakdown, stop above the recent high) | MA | `{"setups": ["s4"], "gate": "below50", "max_new": 2, "trail": "sma50", "trims": [], "max_days": 0}` | :chosen | none | gates: long_behaviour, down | open |
 | S1 | short: B-grade baseline (stage-4 template turned over, breakdown, stop above the recent high) | MB | `{"setups": ["s4"], "gate": "", "max_new": 2, "trail": "sma50", "trims": [], "max_days": 0}` | :chosen | none | gates: long_behaviour, total, years, down | open |
 | S2 | short, gate v2: the stage-4 baseline made few and short-lived | M2A | `{"setups": ["s4"], "gate": "below50", "max_new": 1, "trail": "sma50", "trims": [], "max_days": 10}` | :chosen | none | gates: long_behaviour, alpha, count, maxdd, down | open |

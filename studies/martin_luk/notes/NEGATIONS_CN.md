@@ -4,6 +4,9 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| G1 | human sizing | GA | `{"common": {"rank": "strength"}}` | h1.json:H1A | GB | H gates: placebo, his years not closer: 2024,2025, bought 0 < 1, behaviour gap 0.550 > 0.074 + 0.02；全区间 -42%（带入 +0%） | open |
+| G1 | human sizing | GC | `{"human": {"engine_cap": true, "cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | h1.json:H1A | GB | H gates: his years not closer: 2024,2025；全区间 +64%（带入 +0%） | open |
+| G1 | human sizing | GD | `{"human": {"engine_cap": true, "rule_opts": {"feedback": 5, "risk_low": 0.0025}}}` | h1.json:H1A | GB | H gates: his years not closer: 2025；全区间 +132%（带入 +0%） | open |
 | H1 | human sizing | H1B | `{"max_position": 0.3}` | H:0 | H1A | H gates: his years not closer: 2025；全区间 +119%（带入 +0%） | open |
 | H1 | human sizing | H1C | `{"human": {"rule_opts": {"max_open": 4}}}` | H:0 | H1A | H gates: his years not closer: 2024,2025, behaviour gap 0.118 > 0.074 + 0.02；全区间 +127%（带入 +0%） | open |
 | H1 | human sizing | H1D | `{"human": {"engine_cap": true, "rule_opts": {"max_open": 4}}}` | H:0 | H1A | H gates: his years not closer: 2025, behaviour gap 0.103 > 0.074 + 0.02；全区间 +141%（带入 +0%） | open |

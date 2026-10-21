@@ -4,6 +4,10 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| G1 | human sizing | GA | `{"common": {"ep_slots": 1, "rank": "strength"}}` | h3.json:H3B | None | objective not above the base / None；全区间 +165%（带入 +0%） | open |
+| G1 | human sizing | GB | `{"human": {"regime": {"risk": 0.5, "sma": 20}}}` | h3.json:H3B | None | objective not above the base / None；全区间 +190%（带入 +0%） | open |
+| G1 | human sizing | GC | `{"human": {"cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | h3.json:H3B | None | H gates: drawdown；全区间 +269%（带入 +0%） | open |
+| G1 | human sizing | GD | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.002}}}` | h3.json:H3B | None | objective not above the base / None；全区间 +161%（带入 +0%） | open |
 | H1 | human sizing | H1A | `{"max_new": 1}` | H:0 | H1C | H gates: segment not above H0, drawdown；全区间 +134%（带入 +0%） | open |
 | H1 | human sizing | H1B | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.003, "risk_high": 0.005}}}` | H:0 | H1C | H gates: drawdown；全区间 +153%（带入 +0%） | open |
 | H1 | human sizing | H1D | `{"human": {"rule_opts": {"max_open": 8}}}` | H:0 | H1C | H gates: drawdown；全区间 +194%（带入 +0%） | open |

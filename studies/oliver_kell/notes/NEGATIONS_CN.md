@@ -4,6 +4,9 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| G1 | human sizing | GA | `{"common": {"rank": "strength"}}` | h1.json:H1B | GB | H gates: segment not above H0, drawdown, bought 0 < 3, avg_win 0.254 vs H0 0.207, avg_loss -0.048 vs H0 -0.036；全区间 +38%（带入 +0%） | open |
+| G1 | human sizing | GC | `{"human": {"cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}, {"when": ["adr<=5"], "risk": 1, "cap": 0.15}]}}` | h1.json:H1B | GB | H gates: segment not above H0, drawdown；全区间 +22%（带入 +0%） | open |
+| G1 | human sizing | GD | `{"human": {"cap_above": true, "tiers": [{"when": ["adr<=5"], "risk": 1, "cap": 0.15}], "rule_opts": {"feedback": 5, "risk_low": 0.0025}}}` | h1.json:H1B | GB | objective not above the base / GB；全区间 +59%（带入 +0%） | open |
 | H1 | human sizing | H1A | `{"rule_opts": {"max_position": 0.15}}` | H:0 | H1B | H gates: drawdown；全区间 +98%（带入 +0%） | open |
 | H1 | human sizing | H1C | `{"rule_opts": {"max_position": 0.15, "add_r": 1.0, "add_frac": 1.0}}` | H:0 | H1B | H gates: drawdown, bought 2 < 3, avg_win 0.257 vs H0 0.207；全区间 +106%（带入 +0%） | open |
 | H1 | human sizing | H1D | `{"rule_opts": {"max_position": 0.3, "add_r": 1.0, "add_frac": 1.0}}` | H:0 | H1B | H gates: drawdown, bought 2 < 3, avg_win 0.239 vs H0 0.207；全区间 +109%（带入 +0%） | open |

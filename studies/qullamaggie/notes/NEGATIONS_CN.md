@@ -4,6 +4,8 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| G1 | human sizing | GA | `{"common": {"rank": "ep_strength"}}` | h3.json:H3A | GB | objective not above the base / GB；全区间 +62%（带入 +0%） | open |
+| G1 | human sizing | GC | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}, "cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | h3.json:H3A | GB | H gates: gate, drawdown, behaviour gap 0.634 > 0.610 + 0.02；全区间 +97%（带入 +0%） | open |
 | H1 | human sizing | H1B | `{"common": {"add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}}` | H:0 | H1A | H gates: segment not above H0, avg_loss -0.086 vs H0 -0.076；全区间 +31%（带入 +0%） | open |
 | H1 | human sizing | H1C | `{"human": {"tiers": [{"when": ["kind=ep"], "risk": 2, "cap": 0.3}]}}` | H:0 | H1A | H gates: drawdown；全区间 +70%（带入 +0%） | open |
 | H1 | human sizing | H1D | `{"max_new": 2}` | H:0 | H1A | H gates: gate, drawdown；全区间 +45%（带入 +0%） | open |

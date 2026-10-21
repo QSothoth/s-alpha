@@ -4,6 +4,10 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| G1 | human sizing | GA | `{"common": {"ep_slots": 1, "add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}, "rank": "strength"}}` | h4.json:H4B | None | H gates: his years not closer: 2024,2025, bought 1 < 3, behaviour gap 0.880 > 0.766 + 0.02；全区间 +24%（带入 +0%） | open |
+| G1 | human sizing | GB | `{"human": {"regime": {"risk": 0.5, "sma": 20}}}` | h4.json:H4B | None | H gates: behaviour gap 0.818 > 0.766 + 0.02；全区间 +176%（带入 +0%） | open |
+| G1 | human sizing | GC | `{"human": {"cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | h4.json:H4B | None | H gates: behaviour gap 0.791 > 0.766 + 0.02；全区间 +175%（带入 +0%） | open |
+| G1 | human sizing | GD | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.0025}}}` | h4.json:H4B | None | H gates: his years not closer: 2025, behaviour gap 0.879 > 0.766 + 0.02；全区间 +121%（带入 +0%） | open |
 | H1 | human sizing | H1A | `{"human": {"tiers": [{"when": ["kind=fine"], "risk": 2, "cap": 0.5}]}}` | H:0 | None | H gates: gate, his years not closer: 2024,2025；全区间 +105%（带入 +0%） | open |
 | H1 | human sizing | H1B | `{"human": {"rule_opts": {"feedback": 1, "risk_low": 0.0025}}}` | H:0 | None | H gates: gate, his years not closer: 2024,2025, bought 2 < 3；全区间 +48%（带入 +0%） | open |
 | H1 | human sizing | H1C | `{"rule_opts": {"trail": "ema10"}}` | H:0 | None | H gates: his years not closer: 2024, bought 2 < 3；全区间 +56%（带入 +0%） | open |

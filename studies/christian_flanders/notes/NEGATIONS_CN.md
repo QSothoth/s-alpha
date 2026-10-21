@@ -4,6 +4,9 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| G1 | human sizing | GA | `{"common": {"rank": "ep_strength", "add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}}` | h5.json:H5A | None | objective not above the base / None；全区间 +182%（带入 +0%） | open |
+| G1 | human sizing | GB | `{"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}], "regime": {"risk": 0.5, "sma": 20}}}` | h5.json:H5A | None | objective not above the base / None；全区间 +214%（带入 +0%） | open |
+| G1 | human sizing | GD | `{"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}], "rule_opts": {"feedback": 5, "risk_low": 0.0025}}}` | h5.json:H5A | None | objective not above the base / None；全区间 +177%（带入 +0%） | open |
 | H1 | human sizing | H1B | `{"human": {"tiers": [{"when": ["ep", "tight<=15"], "risk": 3, "cap": 0.5}]}}` | H:0 | H1A | objective not above the base / H1A；全区间 +59%（带入 +0%） | open |
 | H1 | human sizing | H1C | `{"human": {"rule_opts": {"feedback": 3, "risk_low": 0.0025, "risk_high": 0.01, "max_position": 0.5}}}` | H:0 | H1A | H gates: his years not closer: 2025；全区间 +7%（带入 +0%） | open |
 | H1 | human sizing | H1D | `{"strength": "rs90"}` | H:0 | H1A | objective not above the base / H1A；全区间 +50%（带入 +0%） | open |
