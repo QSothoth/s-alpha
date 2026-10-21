@@ -68,6 +68,8 @@ class Rules:
     risk_scale: str = ''            # 1-D (days) array in `ema`: risk per new trade is multiplied by its value that day
     trail_alt: str = ''             # EMA name the close trail uses instead while the conditions below hold
     trail_alt_dd: float = 0.0       # > 0: ... while equity (as of the previous close) is this far below its peak
+    dd_risk: float = 0.0            # > 0: while equity (as of the previous close) is this far below its peak, the risk
+    dd_risk_mult: float = .5        # of new trades is multiplied by dd_risk_mult (a drawdown brake)
     trail_alt_days: str = ''        # 1-D bool array in `ema`: ... on these days (both set: both must hold)
     trim_day: int = 0               # > 0: at the close this many sessions after entry a long sells trim_day_frac of
     trim_day_frac: float = 0.0      # its original size, once (only when that close is above the fill if
@@ -158,6 +160,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     if rules.add_signal_stop not in ('keep', 'fill', 'low'):
         raise ValueError('add_signal_stop')
     peak = 1.0
+    braked = False
     cash, pos, trades, curve = 1.0, {}, [], []
     month_trades = []
     sold_today = set()
@@ -259,6 +262,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 frac = rules.risk_high
         if scale is not None and np.isfinite(scale[d]):
             frac *= scale[d]
+        if braked:
+            frac *= rules.dd_risk_mult
         if mult is not None:
             frac *= mult
         policy = management.get(kind, rules)
@@ -351,6 +356,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             now = month_open + month_pnl(d) if rules.month_cap_basis == 'opened' else equity
             month_blocked = month_blocked or now <= month_open * (1 - month_cap)
         peak = max(peak, equity)
+        braked = rules.dd_risk > 0 and equity < peak * (1 - rules.dd_risk)
         alt = trail3 is not None and (rules.trail_alt_dd > 0 or alt_days is not None) \
             and (rules.trail_alt_dd <= 0 or equity < peak * (1 - rules.trail_alt_dd)) \
             and (alt_days is None or bool(alt_days[d]))

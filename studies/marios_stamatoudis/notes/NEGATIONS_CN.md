@@ -18,6 +18,8 @@
 | S1 | shorts_v2 | P2 | `{"setups": ["para"], "trigger": "pdl", "max_days": 5, "max_new": 1}` | :chosen | P4 | gates: down | open |
 | S1 | shorts_v2 | P3 | `{"setups": ["ptop"], "max_days": 5, "max_new": 1}` | :chosen | P4 | objective below P4 | open |
 | S1 | shorts_v2 | P5 | `{"setups": ["para"], "trigger": "red", "max_days": 3, "max_new": 1, "small": 4.0}` | :chosen | P4 | gates: alpha, down | open |
+| G2 | human sizing | G2A | `{"human": {"regime": {"risk": 0.5, "sma": 20}, "cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | h3.json:H3B | G2B | H gates: drawdown；全区间 +276%（带入 +0%） | open |
+| G2 | human sizing | G2C | `{"human": {"regime": {"kind": "index", "sma": 50, "risk": 0}}}` | h3.json:H3B | G2B | H gates: behaviour gap 0.142 > 0.018 + 0.02, avg_win 0.237 vs H0 0.206；全区间 +177%（带入 +0%） | open |
 | H2 | human sizing | H2A | `{"human": {"rule_opts": {"max_open": 8}}}` | h1.json:H1C | None | H gates: avg_win 0.228 vs H0 0.206；全区间 +190%（带入 +0%） | open |
 | H2 | human sizing | H2B | `{"human": {"rule_opts": {"feedback": 5, "risk_low": 0.003, "risk_high": 0.005}}}` | h1.json:H1C | None | objective not above the base / None；全区间 +164%（带入 +0%） | open |
 | R2 | exits_sizing | T1 | `{"rule_opts": {"trail": "sma20"}}` | r1.json:chosen | L4 | gates: behaviour+0.02；全区间 +454%（带入 +405%） | open |

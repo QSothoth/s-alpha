@@ -91,5 +91,28 @@ class Regime(unittest.TestCase):
         self.assertEqual(tr, [])
 
 
+
+class DrawdownBrake(unittest.TestCase):
+    def test_risk_scales_down_while_equity_at_the_previous_close_is_far_below_its_peak(self):
+        from studies.trader_replication import system as Y
+        # day 0: buy 10 with the stop at 9 (risk 20% of equity -> 2x equity); day 1: stopped at 9, equity 0.8;
+        # day 2: a new long at 10, stop 9.5: 20% risk wants 4x equity, braked (20% below the peak) to half
+        c = np.array([[10.0], [9.0], [10.0], [10.0]])
+        low = c.copy()
+        low[1] = 9.0
+        px = {'open': c, 'high': c, 'low': low, 'close': c, 'dates': DAYS[:4], 'codes': np.array(['US.A'])}
+        e = [[(0, 0, 1, 10.0, 9.0, 'x')], [], [(0, 0, 1, 10.0, 9.5, 'x')], []]
+
+        def size(**kw):
+            _, _, tr = Y.simulate(px, {}, Y.Rules(trail='', trims=(), risk=.2, max_position=10, max_gross=10,
+                                                  buy_cost=0, sell_cost=0, margin_rate=0, **kw),
+                                  e, DAYS[0], DAYS[3], audit=True)
+            t = [t for t in tr if t['entry'] == DAYS[2]][0]
+            return t['executions'][0]['shares'] * t['executions'][0]['price']
+        self.assertAlmostEqual(size(), .8 * 4)
+        self.assertAlmostEqual(size(dd_risk=.10, dd_risk_mult=.5), .8 * 2)
+        self.assertAlmostEqual(size(dd_risk=.25, dd_risk_mult=.5), .8 * 4)    # 20% down: not past 25%
+
+
 if __name__ == '__main__':
     unittest.main()

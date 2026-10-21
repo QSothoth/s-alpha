@@ -1,0 +1,9 @@
+{
+ "stage": "shared G3 (every trader on his carried version): progressive exposure (scale up after winning, down after losing), a drawdown brake",
+ "base": ["g2.json", "G2B"],
+ "draws": 50,
+ "candidates": {
+  "G3A": {"human": {"regime": {"kind": "breadth", "sma": 50, "below": 0.5, "risk": 0.5}, "rule_opts": {"feedback": 5, "risk_low": 0.002, "risk_high": 0.006}}},
+  "G3B": {"human": {"regime": {"kind": "breadth", "sma": 50, "below": 0.5, "risk": 0.5}, "rule_opts": {"dd_risk": 0.1, "dd_risk_mult": 0.5}}}
+ }
+}

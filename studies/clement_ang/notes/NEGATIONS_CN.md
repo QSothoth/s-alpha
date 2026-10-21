@@ -22,6 +22,9 @@
 | S1 | short: late-stage failed base into the 20 EMA (Gil Morales; RULES 8, zw96) | CB | `{"setups": ["fb20c"], "gate": "below20", "max_new": 3}` | :chosen | none | gates: long_behaviour, short_placebo, total, years, maxdd, down | open |
 | S1 | short: late-stage failed base into the 20 EMA (Gil Morales; RULES 8, zw96) | CC | `{"setups": ["fb20"], "gate": "", "max_new": 3, "stop_w": "cap"}` | :chosen | none | gates: long_behaviour, total, years, maxdd, down | open |
 | S1 | short: late-stage failed base into the 20 EMA (Gil Morales; RULES 8, zw96) | CD | `{"setups": ["fb20"], "gate": "below50", "max_new": 3, "stop_w": "cap"}` | :chosen | none | gates: total, years, maxdd, down | open |
+| G2 | human sizing | G2A | `{"human": {"regime": {"risk": 0.5, "sma": 20}, "cap_above": true, "tiers": [{"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}]}}` | h4.json:H4B | None | H gates: behaviour gap 0.812 > 0.766 + 0.02；全区间 +186%（带入 +0%） | open |
+| G2 | human sizing | G2B | `{"human": {"regime": {"kind": "breadth", "sma": 50, "below": 0.5, "risk": 0.5}}}` | h4.json:H4B | None | H gates: behaviour gap 0.829 > 0.766 + 0.02；全区间 +194%（带入 +0%） | open |
+| G2 | human sizing | G2C | `{"human": {"regime": {"kind": "index", "sma": 50, "risk": 0}}}` | h4.json:H4B | None | H gates: bought 2 < 3, behaviour gap 0.823 > 0.766 + 0.02；全区间 +196%（带入 +0%） | open |
 | H2 | human sizing | H2A | `{"rule_opts": {"month_loss_cap": 0.05, "month_cap_ladder": [0.025]}}` | H:0 | None | H gates: gate, his years not closer: 2024,2025；全区间 +82%（带入 +0%） | open |
 | H2 | human sizing | H2B | `{"rs_phase": true}` | H:0 | None | H gates: his years not closer: 2024,2025, bought 2 < 3；全区间 +14%（带入 +0%） | open |
 | H2 | human sizing | H2C | `{"rule_opts": {"trail": "ema10"}, "common": {"add": {"frac": 0.5, "max": 1, "stop": "keep", "profit": true}}}` | H:0 | None | H gates: his years not closer: 2024, bought 2 < 3；全区间 +56%（带入 +0%） | open |
