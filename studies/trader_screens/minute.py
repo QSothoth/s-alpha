@@ -10,7 +10,9 @@ foreground fetch per market, never scheduled, no historical K-line quota.
     PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
     $PY -m studies.trader_screens.minute fetch hk          # data/trader-screens/k5/hk_<day>.csv.gz
 
-partial(bars, cut) turns one session's bars into the daily bar known at `cut` (HH:MM, bars ending at or before it).
+aggregate(stream(path), cuts) turns every (code, session) into the daily bar known at each cut (HH:MM, bars ending
+at or before it), one row at a time: the US file holds ~3.4M bars, and reading it whole once took the 4GB machine
+out of memory.
 """
 from __future__ import annotations
 
@@ -19,12 +21,12 @@ import gzip
 import json
 import sys
 import time
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 K5 = ROOT / 'data' / 'trader-screens' / 'k5'
 HEADER = ('code', 'time_key', 'open', 'high', 'low', 'close', 'volume', 'turnover')
+LAST_BAR = {'us': '16:00', 'hk': '16:00', 'cn': '15:00'}
 
 
 def opend_k5(codes, log=print):
@@ -94,27 +96,52 @@ def fetch(market, log=print):
     return path
 
 
-def read(path):
-    """{(code, day): [(hhmm, o, h, l, c, v, t), ...]} sorted by time."""
-    out = {}
+def latest(market):
+    """The newest fetch of the market."""
+    got = sorted(K5.glob(f'{market}_????-??-??.csv.gz'))
+    if not got:
+        raise SystemExit(f'no five-minute bars of {market}: run `minute fetch {market}` first')
+    return got[-1]
+
+
+def stream(path, days=None, codes=None):
+    """(code, day, hhmm, o, h, l, c, v, t) of a fetch file, one row at a time (only `days` / `codes` when given)."""
     with gzip.open(path, 'rt', encoding='utf-8', newline='') as f:
         rows = csv.reader(f)
         if tuple(next(rows)) != HEADER:
             raise ValueError(f'unexpected header in {path}')
         for code, tk, *v in rows:
-            out.setdefault((code, tk[:10]), []).append((tk[11:16], *map(float, v)))
-    for v in out.values():
-        v.sort()
+            day = tk[:10]
+            if (days is None or day in days) and (codes is None or code in codes):
+                yield (code, day, tk[11:16], *map(float, v))
+
+
+def aggregate(rows, cuts):
+    """{(code, day): dict(first, last, last_v, parts={cut | 'full': (o, h, l, c, v, t)})} from rows in time order
+    within each (code, day): the bar known at every cut (bars ending at or before it), without keeping the bars."""
+    out = {}
+    for code, day, hh, o, h, l, c, v, t in rows:
+        s = out.get((code, day))
+        if s is None:
+            s = out[(code, day)] = dict(first=hh, last=hh, last_v=v, cur=[o, h, l, c, v, t], parts={})
+        else:
+            cur = s['cur']
+            cur[1], cur[2], cur[3] = max(cur[1], h), min(cur[2], l), c
+            cur[4] += v
+            cur[5] += t
+            s['last'], s['last_v'] = hh, v
+        for cut in cuts:
+            if hh <= cut:
+                s['parts'][cut] = tuple(s['cur'])
+    for s in out.values():
+        s['parts']['full'] = tuple(s.pop('cur'))
     return out
 
 
-def partial(bars, cut):
-    """(open, high, low, close, volume, turnover) of the bars ending at or before `cut`; None if there are none."""
-    got = [b for b in bars if b[0] <= cut]
-    if not got:
-        return None
-    return (got[0][1], max(b[2] for b in got), min(b[3] for b in got), got[-1][4], sum(b[5] for b in got),
-            sum(b[6] for b in got))
+def complete(s, market):
+    """A whole session: first bar by 10:00 (the first day of a 1000-bar window starts mid-session), last at the
+    close."""
+    return s['first'] <= '10:00' and s['last'] == LAST_BAR[market]
 
 
 if __name__ == '__main__':

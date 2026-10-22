@@ -9,7 +9,7 @@ from unittest import mock
 import numpy as np
 
 import studies.trader_data as TD
-from studies.trader_data import panel as TP, providers as PV
+from studies.trader_data import panel as TP
 from studies.trader_data.tests.test_trader_data import CODES, DAYS, SESS, Fake, ny, snap, write_folder
 from studies.trader_screens import intraday as I
 
@@ -141,6 +141,25 @@ class LimitTests(unittest.TestCase):
         self.assertTrue(I.at_limit_up('SZ.000001', '*ST 某某', 10.5, 10.0))
         self.assertTrue(I.at_limit_up('SH.600001', '', 11.28, 10.25))   # 11.275 rounds to the cent: 11.28
         self.assertFalse(I.at_limit_up('SH.600001', '', 11.27, 10.25))
+
+
+class MinuteTests(unittest.TestCase):
+    def test_bar_known_at_each_cut_and_whole_sessions(self):
+        from studies.trader_screens import minute as MN
+        rows = [('US.A', TODAY, '15:45', 10, 11, 9, 10.5, 100, 1000), ('US.A', TODAY, '15:50', 10.5, 12, 10, 11, 50, 600),
+                ('US.A', TODAY, '16:00', 11, 11.5, 8, 9, 300, 2700), ('US.B', TODAY, '13:00', 5, 5, 5, 5, 1, 5),
+                ('US.B', TODAY, '16:00', 5, 6, 4, 6, 1, 6)]
+        g = MN.aggregate(iter(rows), ('15:40', '15:50', '15:55'))
+        a = g[('US.A', TODAY)]
+        self.assertNotIn('15:40', a['parts'])                        # nothing had ended by then
+        self.assertEqual(a['parts']['15:50'], (10, 12, 9, 11, 150, 1600))
+        self.assertEqual(a['parts']['15:55'], a['parts']['15:50'])
+        self.assertEqual(a['parts']['full'], (10, 12, 8, 9, 450, 4300))
+        self.assertEqual(a['last_v'], 300)
+        self.assertFalse(MN.complete(a, 'us'))                        # first bar after 10:00
+        self.assertFalse(MN.complete(g[('US.B', TODAY)], 'us'))
+        a['first'] = '09:35'
+        self.assertTrue(MN.complete(a, 'us'))
 
 
 class DiffTests(unittest.TestCase):

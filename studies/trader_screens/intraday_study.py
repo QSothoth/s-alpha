@@ -1,26 +1,25 @@
 """Provisional (pre-close) daily bars against the closing bars: how far the seven registered systems' decisions move,
-and whether the partial volume should be scaled up.  Pre-registration notes/INTRADAY_PREREG_CN.md (I1); report
-reports/INTRADAY_CN.md.
+and whether the partial volume should be scaled up.  Pre-registration notes/INTRADAY_PREREG_CN.md (I1-lite, the run
+version); report reports/INTRADAY_CN.md.
 
-For a test day D, cut C and scheme V the panel is the true daily panel up to D - 1 plus D's provisional bar from the
-five- / one-minute bars ending at or before C (prices unscaled, volume and turnover scaled by V); every registered
-system runs on it and its D decisions (entry candidates, buys, exits) are stored, beside the same on the true bar.
+For a test day D and cut C the panel is the true daily panel up to D - 1 plus D's provisional bar from the
+five-minute bars ending at or before C (minute.py; prices as they are, volume and turnover as they are (V0) or
+divided by the market's cumulative share f_m(C) (V1)); every registered system runs on it and its D decisions
+(entry candidates, buys, exits) are stored beside the same on the true bar.  Test days: the last 5 full sessions of
+the one fetch; f_m comes from the fetch's earlier full sessions only.
 
     PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
-    $PY -m studies.trader_screens.intraday_study days us             # the test days (selection / validation)
+    $PY -m studies.trader_screens.minute fetch us                    # once: the five-minute bars (no quota)
     $PY -m studies.trader_screens.intraday_study reconcile us        # minute aggregate vs daily bars
-    $PY -m studies.trader_screens.intraday_study select us           # selection half: V0 at every cut, V1-V3 main cut
-    $PY -m studies.trader_screens.intraday_study choose              # the scheme, from the three selection halves
-    $PY -m studies.trader_screens.intraday_study validate us         # once: V0 and the chosen scheme, every cut
+    $PY -m studies.trader_screens.intraday_study days us             # the test days
+    $PY -m studies.trader_screens.intraday_study lite us             # V0 at every cut; V1 and the causes at the main cut
     $PY -m studies.trader_screens.intraday_study summary             # reports/intraday_summary.json
 
 Raw decisions go to data/trader-screens/intraday-study/<market>.jsonl (resumable; one line per day, cut, scheme).
 """
 from __future__ import annotations
 
-import csv
 import gc
-import gzip
 import json
 import sys
 import time
@@ -32,26 +31,14 @@ import numpy as np
 from . import minute as MN
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA = ROOT / 'data'
-WORK = DATA / 'trader-screens' / 'intraday-study'
-HERE = Path(__file__).resolve().parent
-REPORTS = HERE / 'reports'
-CHOICE = HERE / 'notes' / 'intraday_choice.json'
+WORK = ROOT / 'data' / 'trader-screens' / 'intraday-study'
+REPORTS = Path(__file__).resolve().parent / 'reports'
 
 CUTS = {'us': ('15:40', '15:45', '15:50', '15:55'), 'hk': ('15:40', '15:45', '15:50', '15:55'),
         'cn': ('14:40', '14:45', '14:50', '14:55')}
 MAIN = {'us': '15:50', 'hk': '15:50', 'cn': '14:50'}
-LAST_BAR = {'us': '16:00', 'hk': '16:00', 'cn': '15:00'}
-SCHEMES = ('V0', 'V1', 'V2', 'V3')
-LOCAL_N = {'us': 0, 'hk': 0, 'cn': 0}        # I1-lite: no local minute sets (I1 had us 12, hk 10)
-LITE_DAYS = 5                                  # I1-lite: the last 5 full sessions of the one fetch
-LOCAL_MIN = {'us': 150, 'hk': 100}
-US_LOCAL = ('martin-luk-k5-r8', 'p3-k5-validation-raw/k5', 'preopen-s20-valid-v1/k5', 'preopen-s20-k5-raw-a/k5',
-            'preopen-s20-k5-raw-b/k5', 'preopen-us-k5-raw/k5')       # first wins for a code
-HK_LOCAL = ('watch-hk1m-holdout-2025h2-v1', 'watch-hk1m-train-v1', 'watch-hk1m-valid-v1')
-START = '2024-01-02'
-PRIOR = 20                     # V2: the stock's last <= 20 minute days before D
-PRIOR_MIN = 5
+TEST_DAYS = 5
+CAUSES = ('close', 'range', 'volume')        # the provisional field replaced by the true one
 WORK_SECONDS, REST_SECONDS = 40 * 60, 8 * 60     # pause the CPU (vps: two busy cores for hours shut it down)
 
 
@@ -59,228 +46,90 @@ def log(*a):
     print(time.strftime('%H:%M:%S'), *a, flush=True)
 
 
-# ----- minute sources -----
 def universe(market):
     from studies import trader_data as TD
     return {s['code'] for s in TD.dataset(market, 'live').stocks()}
 
 
-def us_local_files():
-    best = {}
-    for src in US_LOCAL:
-        base = DATA / src
-        for f in sorted(list(base.glob('*.csv.gz')) + list(base.glob('*.csv'))):
-            sym = f.name.split('.')[0]
-            if sym in ('progress', 'sample') or not f.stat().st_size:
-                continue
-            best.setdefault('US.' + sym, f)
-    return best
-
-
-def opener(f):
-    return gzip.open(f, 'rt', encoding='utf-8', newline='') if f.suffix == '.gz' else open(f, newline='')
-
-
-def local_rows(market, want_days=None, codes=None):
-    """yield (code, day, hhmm, o, h, l, c, v, t) of the local minute sets (want_days: only those days)."""
-    if market == 'us':
-        for code, f in sorted(us_local_files().items()):
-            if codes is not None and code not in codes:
-                continue
-            with opener(f) as fh:
-                rd = csv.reader(fh)
-                head = next(rd)
-                ix = [head.index(k) for k in ('time_key', 'open', 'high', 'low', 'close', 'volume', 'turnover')]
-                for r in rd:
-                    day = r[ix[0]][:10]
-                    if want_days is not None and day not in want_days:
-                        continue
-                    yield (code, day, r[ix[0]][11:16], *(float(r[i]) for i in ix[1:]))
-    elif market == 'hk':
-        for src in HK_LOCAL:
-            with gzip.open(DATA / src / 'bars_1m.csv.gz', 'rt', encoding='utf-8', newline='') as fh:
-                rd = csv.reader(fh)
-                head = next(rd)
-                ix = [head.index(k) for k in ('code', 'time_key', 'open', 'high', 'low', 'close', 'volume',
-                                              'turnover')]
-                for r in rd:
-                    day = r[ix[1]][:10]
-                    if want_days is not None and day not in want_days:
-                        continue
-                    if codes is not None and r[ix[0]] not in codes:
-                        continue
-                    yield (r[ix[0]], day, r[ix[1]][11:16], *(float(r[i]) for i in ix[2:]))
-
-
-def recent_path(market):
-    got = sorted(MN.K5.glob(f'{market}_????-??-??.csv.gz'))
-    return got[-1] if got else None
+def panel(market):
+    from studies import trader_data as TD
+    return TD.dataset(market, 'live').panel()
 
 
 # ----- test days -----
-def days(market, P=None):
-    """{'local': [...], 'recent': [...], 'select': [...], 'validate': [...]} (pre-registered rules)."""
+def days(market):
     path = WORK / f'{market}_days.json'
-    if path.exists():
-        return json.loads(path.read_text(encoding='utf-8'))
-    raise SystemExit(f'run `days {market}` first')
+    if not path.exists():
+        raise SystemExit(f'run `days {market}` first')
+    return json.loads(path.read_text(encoding='utf-8'))
 
 
 def make_days(market):
-    from studies import trader_data as TD
-    P = TD.dataset(market, 'live').panel()
-    pdays = [str(d) for d in P['days']]
+    """The fetch's full sessions with >= half the list complete and in our daily panel: the last TEST_DAYS are the
+    test days, the earlier ones estimate f_m."""
+    pdays = {str(d) for d in panel(market)['days']}
     uni = universe(market)
-    local = []
-    if LOCAL_N.get(market):
-        count = defaultdict(int)
-        for code, day, hhmm, *_ in local_rows(market):
-            if hhmm == LAST_BAR[market] and code in uni and day >= START:
-                count[day] += 1
-        ok = sorted(d for d, n in count.items() if n >= LOCAL_MIN[market] and d in pdays)
-        idx = np.round(np.linspace(0, len(ok) - 1, LOCAL_N[market])).astype(int)
-        local = [ok[i] for i in idx]
-        log(market, 'local days with >=', LOCAL_MIN[market], 'names:', len(ok), ok[:1], ok[-1:])
-    recent = []
-    rp = recent_path(market)
-    if rp:
-        count = defaultdict(int)
-        for (code, day), s in aggregate(stream_recent(rp, codes=uni), ()).items():
-            if complete(s, market):
-                count[day] += 1
-        recent = sorted(d for d, n in count.items() if n >= .5 * len(uni) and d in pdays and d not in local)
-        log(market, 'recent full-universe days', recent, {d: count[d] for d in recent})
-    out = dict(local=local, recent=recent[-LITE_DAYS:], earlier=recent[:-LITE_DAYS], select=[],
-               validate=recent[-LITE_DAYS:], recent_file=rp.name if rp else None)   # I1-lite: no halves
-    path = WORK / f'{market}_days.json'
-    if path.exists():                                     # US: recent days added after its selection half ran
-        old = json.loads(path.read_text(encoding='utf-8'))
-        if old['select'] != out['select']:
-            raise SystemExit(f"{market}: the selection half would change {old['select']} -> {out['select']}")
+    rp = MN.latest(market)
+    count = defaultdict(int)
+    for (code, day), s in MN.aggregate(MN.stream(rp, codes=uni), ()).items():
+        if MN.complete(s, market):
+            count[day] += 1
+    full = sorted(d for d, n in count.items() if n >= .5 * len(uni) and d in pdays)
+    out = dict(test=full[-TEST_DAYS:], earlier=full[:-TEST_DAYS], file=rp.name,
+               names={d: count[d] for d in full})
     WORK.mkdir(parents=True, exist_ok=True)
     (WORK / f'{market}_days.json').write_text(json.dumps(out, indent=1), encoding='utf-8')
     return out
 
 
-def stream_recent(path, need=None, codes=None):
-    """(code, day, hhmm, o, h, l, c, v, t) of a minute.fetch file, one row at a time (the US file holds ~3.4M bars:
-    read whole, it took the 4GB machine out of memory)."""
-    with gzip.open(path, 'rt', encoding='utf-8', newline='') as f:
-        rows = csv.reader(f)
-        if tuple(next(rows)) != MN.HEADER:
-            raise ValueError(f'unexpected header in {path}')
-        for code, tk, *v in rows:
-            day = tk[:10]
-            if (need is None or day in need) and (codes is None or code in codes):
-                yield (code, day, tk[11:16], *map(float, v))
-
-
-def aggregate(rows, cuts):
-    """{(code, day): dict(first, last, last_v, parts={cut | 'full': (o, h, l, c, v, t)})} from rows in time order
-    within each (code, day): the partial bar at every cut, without keeping the bars."""
-    out = {}
-    for code, day, hh, o, h, l, c, v, t in rows:
-        s = out.get((code, day))
-        if s is None:
-            s = out[(code, day)] = dict(first=hh, last=hh, last_v=v, cur=[o, h, l, c, v, t], parts={})
-        else:
-            cur = s['cur']
-            cur[1], cur[2], cur[3] = max(cur[1], h), min(cur[2], l), c
-            cur[4] += v
-            cur[5] += t
-            s['last'], s['last_v'] = hh, v
-        for cut in cuts:
-            if hh <= cut:
-                s['parts'][cut] = tuple(s['cur'])
-    for s in out.values():
-        s['parts']['full'] = tuple(s.pop('cur'))
-    return out
-
-
-def complete(s, market):
-    """From the morning (first bar by 10:00; the first day of a 1000-bar window starts mid-session) to the close."""
-    return s['first'] <= '10:00' and s['last'] == LAST_BAR[market]
-
-
-def minute_for(market, test_days, P):
-    """{day: {code: (kind, parts)}} for the test days, and {(code, day): {cut: f}} volume fractions for the test
-    days and, for V2, every earlier minute day of the same source (>= the 20 before each test day)."""
-    pdays = [str(d) for d in P['days']]
-    uni = universe(market)
-    di = {d: i for i, d in enumerate(pdays)}
-    need = set(test_days)
-    for d in test_days:                                   # V2 history: the 20 sessions before each test day
-        i = di[d]
-        need.update(pdays[max(0, i - PRIOR - 5):i])
-    rp = recent_path(market)
-    sources = []
-    if rp:
-        sources.append(('recent', aggregate(stream_recent(rp, need, uni), CUTS[market])))
-    if LOCAL_N.get(market):
-        sources.append(('local', aggregate(local_rows(market, need, uni), CUTS[market])))
+def minute_for(market, D):
+    """{day: {code: parts}} for the test days and {(code, day): {cut: cumulative volume share}} for every full
+    session of the fetch."""
+    rp = MN.latest(market)
     bars, frac = defaultdict(dict), {}
-    for kind, g in sources:
-        for (code, day), s in g.items():
-            if not complete(s, market):
-                continue
-            tot = s['parts']['full'][4]
-            if tot > 0:
-                frac.setdefault((code, day), {c: s['parts'][c][4] / tot if c in s['parts'] else 0.0
-                                              for c in CUTS[market]})
-            if day in test_days and code not in bars[day]:
-                bars[day][code] = (kind, s['parts'])
+    for (code, day), s in MN.aggregate(MN.stream(rp, set(D['test']) | set(D['earlier']), universe(market)),
+                                       CUTS[market]).items():
+        if not MN.complete(s, market):
+            continue
+        tot = s['parts']['full'][4]
+        if tot > 0:
+            frac[(code, day)] = {c: s['parts'][c][4] / tot if c in s['parts'] else 0.0 for c in CUTS[market]}
+        if day in D['test']:
+            bars[day][code] = s['parts']
     return bars, frac
 
 
 # ----- the provisional panel -----
-def provisional_row(P, d, bars, cut, scheme, frac, fm, prior, subst=None):
-    """D's row (dict field -> array over codes) with the covered names provisional; others stay true."""
+def provisional_row(P, d, bars, cut, scale=1.0, cause=None):
+    """D's row (field -> array over codes): every name with minute bars gets its bar at `cut` (open = the day's
+    open, high / low include it, unadjusted prices on the day's adjustment, volume and turnover / scale); `cause`
+    puts the true close, high / low or volume / turnover back.  Names without minute bars keep the true bar."""
     row = {k: P[k][d].astype(float).copy() for k in ('open', 'high', 'low', 'close', 'volume', 'turnover')}
-    codes = [str(c) for c in P['codes']]
-    covered = []
-    for j, c in enumerate(codes):
-        got = bars.get(c)
-        if got is None or not np.isfinite(P['close'][d, j]):
+    covered = 0
+    for j, c in enumerate(str(c) for c in P['codes']):
+        parts = bars.get(c)
+        if parts is None or not np.isfinite(P['close'][d, j]) or cut not in parts or not parts['full'][4] > 0:
             continue
-        kind, parts = got
-        part, full = parts.get(cut), parts['full']
-        if part is None or not full[4] > 0:
-            continue
-        o, h, l, cl, v, t = part
-        if kind == 'recent':                              # unadjusted: the day's adjustment factor
-            k = float(P['close'][d, j] / P['raw_close'][d, j])
-            vol = v / k
-            to = t
-        else:                                             # local adjusted sets: rescaled to our bar, ratios for v / t
-            k = float(np.median([P['open'][d, j] / full[0], P['high'][d, j] / full[1], P['low'][d, j] / full[2]]))
-            vol = P['volume'][d, j] * v / full[4]
-            to = P['turnover'][d, j] * (t / full[5] if full[5] > 0 else v / full[4])
+        _, h, l, cl, v, t = parts[cut]
+        k = float(P['close'][d, j] / P['raw_close'][d, j])
         op = float(P['open'][d, j])
-        hi, lo, close = h * k, l * k, cl * k
-        if scheme in ('V1', 'V3'):
-            s_v = fm
-        elif scheme == 'V2':
-            s_v = prior.get(c, fm)
-        else:
-            s_v = 1.0
-        s_t = 1.0 if scheme in ('V0', 'V3') else s_v
-        vol, to = vol / s_v, to / s_t
-        if subst == 'close':
+        hi, lo, close, vol, to = h * k, l * k, cl * k, v / k / scale, t / scale
+        if cause == 'close':
             close = float(P['close'][d, j])
-        elif subst == 'range':
+        elif cause == 'range':
             hi, lo = float(P['high'][d, j]), float(P['low'][d, j])
-        elif subst == 'volume':
+        elif cause == 'volume':
             vol, to = float(P['volume'][d, j]), float(P['turnover'][d, j])
         row['open'][j], row['close'][j] = op, close
         row['high'][j], row['low'][j] = max(hi, op, close), min(lo, op, close)
         row['volume'][j], row['turnover'][j] = vol, to
-        covered.append(c)
+        covered += 1
     return row, covered
 
 
-def with_row(P, d, row):
+def cut_at(P, d, row=None):
     q = {k: (v[:d + 1] if isinstance(v, np.ndarray) and v.ndim and k != 'codes' else v) for k, v in P.items()}
-    for k, v in row.items():
+    for k, v in (row or {}).items():
         q[k] = q[k].copy()
         q[k][d] = v
     return q
@@ -308,104 +157,57 @@ def decide(P, market, day):
     return out
 
 
-class Pacer:
-    def __init__(self):
-        self.t0 = time.time()
-
-    def tick(self):
-        if time.time() - self.t0 > WORK_SECONDS:
-            log(f'rest {REST_SECONDS // 60} min')
-            time.sleep(REST_SECONDS)
-            self.t0 = time.time()
-
-
-def done_keys(market):
-    path = WORK / f'{market}.jsonl'
-    if not path.exists():
-        return set()
-    return {(r['day'], r['cut'], r['scheme']) for r in map(json.loads, path.open(encoding='utf-8'))}
-
-
-def market_fraction(market, select_days, frac, cut):
-    vals = [f[cut] for (c, d), f in frac.items() if d in select_days]
-    return float(np.median(vals)) if vals else 1.0
-
-
-def run_phase(market, phase):
-    from studies import trader_data as TD
+def run(market):
+    """Every test day: the true bar; V0 at every cut; V1 at the main cut; the three causes (V0, main cut)."""
     import warnings
     warnings.simplefilter('ignore', RuntimeWarning)
     np.seterr(invalid='ignore', divide='ignore')
     D = days(market)
-    test = D['validate'] if phase == 'lite' else D[phase]
-    P = TD.dataset(market, 'live').panel()
+    P = panel(market)
     pdays = [str(d) for d in P['days']]
-    bars, frac = minute_for(market, set(D['select']) | set(test), P)
-    est = set(D['earlier']) if phase == 'lite' else set(D['select'])   # lite: f_m from the days before the test
-    fm = {c: market_fraction(market, est, frac, c) for c in CUTS[market]}
-    log(market, phase, 'f_m', fm, 'from', len(est), 'days')
-    if phase == 'lite':
-        plan = [(c, 'V0', None) for c in CUTS[market]] + [(MAIN[market], 'V1', None)] + \
-               [(MAIN[market], 'V0', s) for s in ('close', 'range', 'volume')]
-    elif phase == 'select':
-        plan = [(c, 'V0', None) for c in CUTS[market]] + [(MAIN[market], v, None) for v in SCHEMES[1:]] + \
-               [(MAIN[market], 'V0', s) for s in ('close', 'range', 'volume')]
-    else:
-        chosen = json.loads(CHOICE.read_text(encoding='utf-8'))['chosen']
-        plan = [(c, v, None) for c in CUTS[market] for v in sorted({'V0', chosen})] + \
-               [(MAIN[market], 'V0', s) for s in ('close', 'range', 'volume')]
-    done = done_keys(market)
-    out = (WORK / f'{market}.jsonl').open('a', encoding='utf-8')
-    pace = Pacer()
-    for day in test:
-        d = pdays.index(day)
-        known = set(pdays[:d])
-        prior = {}
-        for c in CUTS[market]:
-            pc = {}
-            for (code, dd), f in frac.items():
-                pc.setdefault(code, []).append((dd, f[c]))
-            prior[c] = {}
-            for code, lst in pc.items():
-                past = sorted(x for x in lst if x[0] in known)[-PRIOR:]
-                if len(past) >= PRIOR_MIN:
-                    prior[c][code] = float(np.mean([x[1] for x in past]))
-        kind = 'local' if day in D['local'] else 'recent'
-        if (day, 'true', 'true') not in done:
-            t0 = time.time()
-            res = decide({k: (v[:d + 1] if isinstance(v, np.ndarray) and v.ndim and k != 'codes' else v)
-                          for k, v in P.items()}, market, day)
-            out.write(json.dumps(dict(day=day, kind=kind, cut='true', scheme='true', systems=res)) + '\n')
-            out.flush()
-            log(market, day, 'true', f'{time.time() - t0:.0f}s')
-            pace.tick()
-        for cut, scheme, subst in plan:
-            key = (day, cut, scheme if subst is None else f'{scheme}:{subst}')
-            if key in done:
-                continue
-            t0 = time.time()
-            row, covered = provisional_row(P, d, bars.get(day, {}), cut, scheme, frac, fm[cut], prior[cut], subst)
-            res = decide(with_row(P, d, row), market, day)
-            out.write(json.dumps(dict(day=day, kind=kind, cut=cut, scheme=key[2], covered=covered, systems=res,
-                                      fm=fm[cut])) + '\n')
-            out.flush()
-            log(market, day, cut, key[2], f'{len(covered)} names', f'{time.time() - t0:.0f}s')
-            pace.tick()
-    out.close()
+    bars, frac = minute_for(market, D)
+    fm = {c: float(np.median([f[c] for (_, day), f in frac.items() if day in D['earlier']])) for c in CUTS[market]}
+    log(market, 'f_m', fm, 'from', len(D['earlier']), 'days')
+    main = MAIN[market]
+    plan = [(c, 'V0', 1.0, None) for c in CUTS[market]] + [(main, 'V1', fm[main], None)] + \
+           [(main, f'V0:{x}', 1.0, x) for x in CAUSES]
+    path = WORK / f'{market}.jsonl'
+    done = {(r['day'], r['cut'], r['scheme']) for r in map(json.loads, path.open(encoding='utf-8'))} \
+        if path.exists() else set()
+    t_rest = time.time()
+    with path.open('a', encoding='utf-8') as out:
+        for day in D['test']:
+            d = pdays.index(day)
+            for cut, scheme, scale, cause in [('true', 'true', None, None)] + plan:
+                if (day, cut, scheme) in done:
+                    continue
+                t0 = time.time()
+                if cut == 'true':
+                    rec = dict(day=day, cut=cut, scheme=scheme, systems=decide(cut_at(P, d), market, day))
+                else:
+                    row, covered = provisional_row(P, d, bars.get(day, {}), cut, scale, cause)
+                    rec = dict(day=day, cut=cut, scheme=scheme, covered=covered, fm=fm[cut],
+                               systems=decide(cut_at(P, d, row), market, day))
+                out.write(json.dumps(rec) + '\n')
+                out.flush()
+                log(market, day, cut, scheme, f'{time.time() - t0:.0f}s')
+                if time.time() - t_rest > WORK_SECONDS:
+                    log(f'rest {REST_SECONDS // 60} min')
+                    time.sleep(REST_SECONDS)
+                    t_rest = time.time()
 
 
 # ----- the reconciliation -----
 def reconcile(market):
-    """Full-session minute aggregates of the recent fetch against our unadjusted daily bars."""
-    from studies import trader_data as TD
-    P = TD.dataset(market, 'live').panel()
+    """Full-session minute aggregates of the fetch against our unadjusted daily bars."""
+    P = panel(market)
     pdays = {str(d): i for i, d in enumerate(P['days'])}
     col = {str(c): j for j, c in enumerate(P['codes'])}
-    rp = recent_path(market)
+    rp = MN.latest(market)
     diffs = defaultdict(list)
     n = 0
-    for (code, day), s in aggregate(stream_recent(rp, codes=set(col)), CUTS[market][-1:]).items():
-        if day not in pdays or not complete(s, market):
+    for (code, day), s in MN.aggregate(MN.stream(rp, codes=set(col)), CUTS[market][-1:]).items():
+        if day not in pdays or not MN.complete(s, market):
             continue
         d, j = pdays[day], col[code]
         rc = P['raw_close'][d, j]
@@ -443,23 +245,22 @@ def load(market):
     return rows
 
 
-def keys(sysres, what, covered=None):
+def keys(sysres, what):
     if what == 'sig':
-        return {tuple(x) for x in sysres['sig'] if covered is None or x[0] in covered}
+        return {tuple(x) for x in sysres['sig']}
     if what == 'buys':
         return {(x[0], x[1], x[2]) for x in sysres['buys']}
     return {(x[0], x[1]) for x in sysres['sells']}
 
 
-def compare(true, prov, covered):
+def compare(true, prov):
     """Per system and what: [same, false, missed], plus price / stop gaps of shared buys and per-setup counts."""
-    cov = set(covered) if covered is not None else None
     out = {}
     for sid, t in true['systems'].items():
         p = prov['systems'][sid]
         o = {}
         for what in ('sig', 'buys', 'sells'):
-            a, b = keys(p, what, cov), keys(t, what, cov)
+            a, b = keys(p, what), keys(t, what)
             o[what] = [len(a & b), len(a - b), len(b - a)]
             if what == 'sig':
                 per = defaultdict(lambda: [0, 0, 0])
@@ -486,126 +287,82 @@ def compare(true, prov, covered):
 
 
 def summarize(market):
+    """({'cut|scheme': {'all': totals over the test days}}, per day comparisons)."""
     rows = load(market)
-    D = days(market)
     res = {}
     for day, r in sorted(rows.items()):
         true = r.get(('true', 'true'))
         if not true:
             continue
         for (cut, scheme), prov in r.items():
-            if cut == 'true':
-                continue
-            res.setdefault(f'{cut}|{scheme}', {})[day] = compare(true, prov, prov.get('covered')
-                                                                if prov.get('kind') == 'local' else None)
+            if cut != 'true':
+                res.setdefault(f'{cut}|{scheme}', {})[day] = compare(true, prov)
     agg = {}
     for key, per_day in res.items():
-        a = dict(days=sorted(per_day), select=[d for d in per_day if d in D['select']],
-                 validate=[d for d in per_day if d in D['validate']])
-        for seg in ('select', 'validate', 'all'):
-            ds = per_day if seg == 'all' else {d: v for d, v in per_day.items() if d in D[seg]}
-            if not ds:
-                continue
-            tot = defaultdict(lambda: np.zeros(3, int))
-            setup = defaultdict(lambda: np.zeros(3, int))
-            gaps = []
-            for d, v in ds.items():
-                for sid, o in v.items():
-                    for what in ('sig', 'buys', 'sells'):
-                        tot[(sid, what)] += o[what]
-                        tot[('all', what)] += o[what]
-                    for s, c in o['setup'].items():
-                        setup[(sid, s)] += c
-                    gaps += o['gaps']
-            g = np.array([x['gap'] for x in gaps]) if gaps else np.zeros(0)
-            w = np.array([x['width'] for x in gaps if 'width' in x]) if gaps else np.zeros(0)
-            a[seg] = dict(
-                counts={f'{s}|{w_}': v.tolist() for (s, w_), v in tot.items()},
-                setup={f'{s}|{k}': v.tolist() for (s, k), v in setup.items()},
-                gap=dict(n=len(g), abs_median=float(np.median(np.abs(g))) if len(g) else None,
-                         abs_p90=float(np.quantile(np.abs(g), .9)) if len(g) else None,
-                         median=float(np.median(g)) if len(g) else None),
-                width=dict(n=len(w), abs_median=float(np.median(np.abs(w))) if len(w) else None,
-                           median=float(np.median(w)) if len(w) else None),
-                days=len(ds))
-        agg[key] = a
+        tot = defaultdict(lambda: np.zeros(3, int))
+        setup = defaultdict(lambda: np.zeros(3, int))
+        gaps = []
+        for v in per_day.values():
+            for sid, o in v.items():
+                for what in ('sig', 'buys', 'sells'):
+                    tot[(sid, what)] += o[what]
+                    tot[('all', what)] += o[what]
+                for s, c in o['setup'].items():
+                    setup[(sid, s)] += c
+                gaps += o['gaps']
+        g = np.array([x['gap'] for x in gaps]) if gaps else np.zeros(0)
+        w = np.array([x['width'] for x in gaps if 'width' in x]) if gaps else np.zeros(0)
+        agg[key] = dict(days=sorted(per_day), all=dict(
+            counts={f'{s}|{w_}': v.tolist() for (s, w_), v in tot.items()},
+            setup={f'{s}|{k}': v.tolist() for (s, k), v in setup.items()},
+            gap=dict(n=len(g), abs_median=float(np.median(np.abs(g))) if len(g) else None,
+                     abs_p90=float(np.quantile(np.abs(g), .9)) if len(g) else None,
+                     median=float(np.median(g)) if len(g) else None),
+            width=dict(n=len(w), abs_median=float(np.median(np.abs(w))) if len(w) else None,
+                       median=float(np.median(w)) if len(w) else None),
+            days=len(per_day)))
     return agg, res
 
 
-def attribution(market, res):
-    """Main cut, V0: each mismatch (false or missed) of buys / sells / signals, by the substitution that removes it."""
-    rows = load(market)
+def attribution(market):
+    """Main cut, V0: each mismatch (false or missed) by the replaced field that removes it ('several' when more
+    than one does, 'joint' when none alone does)."""
     cut = MAIN[market]
     out = defaultdict(lambda: defaultdict(int))
-    for day, r in rows.items():
+    for day, r in load(market).items():
         true, base = r.get(('true', 'true')), r.get((cut, 'V0'))
-        if not true or not base:
-            continue
-        cov = set(base['covered']) if base.get('kind') == 'local' else None
-        subs = {s: r.get((cut, f'V0:{s}')) for s in ('close', 'range', 'volume')}
-        if not all(subs.values()):
+        subs = {x: r.get((cut, f'V0:{x}')) for x in CAUSES}
+        if not true or not base or not all(subs.values()):
             continue
         for sid, t in true['systems'].items():
             for what in ('sig', 'buys', 'sells'):
-                a, b = keys(base['systems'][sid], what, cov), keys(t, what, cov)
+                a, b = keys(base['systems'][sid], what), keys(t, what)
                 for x, side in [(x, 'false') for x in a - b] + [(x, 'missed') for x in b - a]:
-                    fixed = [s for s, rr in subs.items()
-                             if (x in keys(rr['systems'][sid], what, cov)) == (x in b)]
+                    fixed = [s for s, rr in subs.items() if (x in keys(rr['systems'][sid], what)) == (x in b)]
                     why = fixed[0] if len(fixed) == 1 else ('several' if fixed else 'joint')
                     out[f'{what}|{side}'][why] += 1
                     out[f'{what}|{side}|{sid}'][why] += 1
     return {k: dict(v) for k, v in out.items()}
 
 
-def choose():
-    """Pre-registered: fewest (false + missed) buys + sells at the main cut over the three selection halves; a
-    scheme replaces V0 only with >= 10% fewer."""
-    tot = defaultdict(int)
-    per = {}
-    for m in ('us', 'hk', 'cn'):
-        agg, _ = summarize(m)
-        per[m] = {}
-        for v in SCHEMES:
-            a = agg.get(f'{MAIN[m]}|{v}', {}).get('select')
-            if not a:
-                continue
-            c = a['counts']
-            n = sum(c['all|buys'][1:]) + sum(c['all|sells'][1:])
-            per[m][v] = n
-            tot[v] += n
-    base = tot['V0']
-    best = min(SCHEMES, key=lambda v: (tot.get(v, 1e18), v != 'V0'))
-    chosen = best if tot[best] <= .9 * base else 'V0'
-    out = dict(rule='min (false + missed) buys + sells at the main cut, selection halves of us + hk + cn; '
-                    'replace V0 only with >= 10% fewer', totals=dict(tot), per_market=per, best=best, chosen=chosen,
-               utc=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
-    CHOICE.write_text(json.dumps(out, indent=1), encoding='utf-8')
-    print(json.dumps(out, indent=1))
-    return out
-
-
 def summary():
     out = {}
     for m in ('us', 'hk', 'cn'):
-        if not (WORK / f'{m}.jsonl').exists():
-            continue
-        agg, res = summarize(m)
-        out[m] = dict(days=days(m), agg=agg, attribution=attribution(m, res))
+        if (WORK / f'{m}.jsonl').exists():
+            out[m] = dict(days=days(m), agg=summarize(m)[0], attribution=attribution(m))
     REPORTS.mkdir(exist_ok=True)
     (REPORTS / 'intraday_summary.json').write_text(json.dumps(out, indent=1, default=float), encoding='utf-8')
     return out
 
 
 if __name__ == '__main__':
-    cmd = sys.argv[1]
+    cmd = sys.argv[1] if len(sys.argv) > 1 else ''
     if cmd == 'days':
         print(json.dumps(make_days(sys.argv[2]), indent=1))
     elif cmd == 'reconcile':
         reconcile(sys.argv[2])
-    elif cmd in ('select', 'validate', 'lite'):
-        run_phase(sys.argv[2], cmd)
-    elif cmd == 'choose':
-        choose()
+    elif cmd == 'lite':
+        run(sys.argv[2])
     elif cmd == 'summary':
         summary()
     else:
