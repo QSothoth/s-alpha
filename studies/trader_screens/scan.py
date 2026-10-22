@@ -225,12 +225,50 @@ def main(argv=None):
     print(f'\n结果：{path}\n看板：{md}')
 
 
+def with_confidence(market, mode, days, only, panel=None, seconds=None):
+    """run() on the provisional panel, plus the I3 confidence columns (confidence.live) when the validated model
+    is present and was judged worth using (reports/confidence_model.json meta.integrate)."""
+    from studies import trader_data as TD
+    from studies.trader_replication import systems as SY
+    from . import confidence as CF, intraday
+    r = run(market, mode, days, only, panel=panel, seconds=seconds)
+    if not CF.MODEL_PATH.exists():
+        return r
+    model = CF.load_model()
+    if not model[4].get('integrate'):
+        return r
+    t0 = time.perf_counter()
+    hhmm = intraday.market_now(market).strftime('%H:%M')
+    systems = [x for x in SY.all_() if not only or x.id in only]
+    try:
+        c = CF.live(panel, market, hhmm, model, systems=systems)
+    except Exception as e:                          # the direct board stands on its own
+        c = dict(skipped=f'置信度没有算出（{type(e).__name__}: {e}）', hhmm=hhmm)
+    if c.get('rows') is not None:
+        direct = {(t['id'], b['code'], b.get('side', 1), b['setup'] == '加码') for t in r['traders'] for b in t['buys']}
+        direct |= {(t['id'], s['code'], s.get('side', 1)) for t in r['traders'] for s in t['sells']}
+        nm = TD.dataset(market, mode).names()
+        d = len(panel['days']) - 1
+        col = {str(x): j for j, x in enumerate(panel['codes'])}
+        for x in c['rows']:
+            key = (x['trader'], x['code'], x['side'], x['add']) if x['kind'] == 'buy' else \
+                (x['trader'], x['code'], x['side'])
+            x['direct'], x['name'] = key in direct, nm.get(x['code'], '')
+            j = col.get(x['code'])
+            if market == 'cn' and x['kind'] == 'buy' and x['side'] > 0 and j is not None:
+                x['limit_up'] = intraday.at_limit_up(x['code'], x['name'], float(panel['raw_close'][d, j]),
+                                                     float(panel['raw_close'][d - 1, j]))
+    c['seconds'] = round(time.perf_counter() - t0, 2)
+    r['confidence'] = c
+    return r
+
+
 def provisional_cli(market, only=None):
     from . import intraday
     t0 = time.perf_counter()
     print(f'== {data.NAMES[market]} 盘中临时看板（只取一次快照，不写数据）')
     try:
-        r = intraday.run(market, only=only)
+        r = intraday.run(market, only=only, board=with_confidence)
     except intraday.Refused as e:
         raise SystemExit(f'拒绝运行：{e}')
     p = r['provisional']
@@ -244,6 +282,15 @@ def provisional_cli(market, only=None):
     path.write_text(json.dumps(r, indent=1, ensure_ascii=False, default=float), encoding='utf-8')
     md.write_text(board.render(r), encoding='utf-8')
     show(r)
+    c = r.get('confidence')
+    if c:
+        print('\n== 盘中置信度' + (f"：{c['skipped']}" if c.get('skipped') else
+                                    f"（{c['hhmm']}，{c['seconds']:.0f} 秒）"))
+        for x in (c.get('rows') or []):
+            if x['column']:
+                print(f"  {'下单' if x['column'] == 'order' else '观察'} p={x['p']:.2f} {x['trader']} {x['kind']} "
+                      f"{x['code']} {'空' if x['side'] < 0 else '多'} {x['setup']}｜{x['distance']}"
+                      f"{'｜直接跑有' if x.get('direct') else ''}")
     print(f"\n合计 {p['stages']['total']:.0f} 秒；结果：{path}\n看板：{md}")
 
 
