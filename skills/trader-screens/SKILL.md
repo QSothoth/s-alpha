@@ -40,7 +40,21 @@ $PY -m studies.trader_screens.scan board                     # 把三个市场�
 $PY -m studies.trader_screens.scan run us --days 5           # 这周的买卖（持仓仍是最新一天）
 $PY -m studies.trader_screens.scan industry hk               # 补行业名（OpenD，不扣额度）
 $PY -m studies.trader_screens.scan run us --mode frozen      # 只用冻结的研究数据（截至 2026-10-16）
+$PY -m studies.trader_screens.scan run us --provisional      # 盘中临时：收盘前约 10 分钟，给出尾盘要买、要卖的单子
+$PY -m studies.trader_screens.scan diff us 2026-10-21        # 收盘后：盘中临时结果对照正式结果
 ```
+
+**盘中模式**（`studies/trader_screens/intraday.py`，报告 [INTRADAY_CN](../../studies/trader_screens/reports/INTRADAY_CN.md)）
+- 为什么：所有系统都在 T 日收盘确认、按收盘价成交、止损在 T 日低点；改成次日开盘买，收益大幅退化（X1 轮）。所以要在收盘前跑、尾盘执行。
+- 怎么跑：先在开盘前用 `refresh` 把数据补到上一交易日，收盘前约 10 分钟运行 `run <市场> --provisional`。它只取一次快照，7 个系统共用；把快照当作今天的临时日 K 接在已存数据后面，不写数据，也不进面板缓存。结果单独存成 `out/<市场>_<日期>_provisional_<HHMM>.json` 和 `board_<市场>_<日期>_provisional_<HHMM>.md`，看板顶部标“盘中临时”，并列出尾盘单子：买入、卖空、加码、卖出、回补，卖出包括破跟踪线。
+- 拒绝运行的情况：
+  - 非交易日、开盘前、已收盘（半日市按提前收盘算）；
+  - 已存数据不是到上一交易日为止（先 `refresh`）；
+  - 快照不是今天的（OpenD 的报价时间；新浪只有时刻，要在 15 分钟内，午休除外）；
+  - 快照的昨收与我们存的收盘对不上（< 95%）。
+- A 股：收盘价在涨停价的买单标“涨停，收盘买不到，跳过”。系统本身不改，名额不顺延。
+- 收盘后照常 `run <市场>`，再用 `diff` 分成一致、收盘后消失、尾盘漏掉三类，给出成交价差和止损宽度差。
+- 耗时与建议运行时点见 INTRADAY_CN。`board` 只合成正式的日看板，不收盘中临时结果。
 
 **数据**（统一接口 `studies/trader_data`，见 [TRADER_PROTOCOL_CN](../../docs/TRADER_PROTOCOL_CN.md) 第 4 节）
 - 看板默认 live：冻结的 Release `trader-data-v1` 加本地增量缓存 `data/trader-live/trader-data-v1/<市场>/`，和复刻研究用同一份底座、同一个面板构建、同一份名单（美股 3433、港股 505、A 股 1697 只）。
@@ -63,7 +77,7 @@ $PY -m studies.trader_screens.scan run us --mode frozen      # 只用冻结的�
 
 **末尾**：回放核对一句（到冻结日的分年收益与比对表一致；不一致的会在对应市场里标出），以及折叠的各系统规则（选股与形态｜入场与止损｜离场｜仓位与市况）。
 
-**执行时点**：所有系统都是收盘价买卖，“今天买入 / 卖出”是收盘那一刻的操作；收盘后才看到时实际只能次日处理。
+**执行时点**：所有系统都是收盘价买卖，“今天买入 / 卖出”是收盘那一刻的操作；收盘后才看到时实际只能次日处理，而次日开盘买会让收益大幅退化（X1 轮）。要按系统执行，用盘中模式（`run --provisional`）在收盘前拿到单子、尾盘下单。
 
 ## 不做的事
 

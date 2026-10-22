@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import json
 import time
-import urllib.request
 from abc import ABC, abstractmethod
 from datetime import time as clock
 
@@ -106,11 +105,10 @@ class SinaProvider(Provider):
         return opend_calendar('cn', start, end)
 
     def snapshot(self, codes):
+        from studies.trend_breakout.sources import CnHttpSource
         want, out, page = set(codes), {}, 1
-        while True:
-            req = urllib.request.Request(self.URL.format(page=page), headers={'User-Agent': 'Mozilla/5.0',
-                                                                               'Referer': self.REFERER})
-            part = json.loads(urllib.request.urlopen(req, timeout=20).read().decode('gbk', 'replace'))
+        while True:                                         # a dropped connection is retried (4 tries, backoff)
+            part = json.loads(CnHttpSource.get(self.URL.format(page=page), self.REFERER).decode('gbk', 'replace'))
             if not part:
                 break
             for r in part:
