@@ -43,7 +43,8 @@ CUTS = {'us': ('15:40', '15:45', '15:50', '15:55'), 'hk': ('15:40', '15:45', '15
 MAIN = {'us': '15:50', 'hk': '15:50', 'cn': '14:50'}
 LAST_BAR = {'us': '16:00', 'hk': '16:00', 'cn': '15:00'}
 SCHEMES = ('V0', 'V1', 'V2', 'V3')
-LOCAL_N = {'us': 12, 'hk': 10, 'cn': 0}
+LOCAL_N = {'us': 0, 'hk': 0, 'cn': 0}        # I1-lite: no local minute sets (I1 had us 12, hk 10)
+LITE_DAYS = 5                                  # I1-lite: the last 5 full sessions of the one fetch
 LOCAL_MIN = {'us': 150, 'hk': 100}
 US_LOCAL = ('martin-luk-k5-r8', 'p3-k5-validation-raw/k5', 'preopen-s20-valid-v1/k5', 'preopen-s20-k5-raw-a/k5',
             'preopen-s20-k5-raw-b/k5', 'preopen-us-k5-raw/k5')       # first wins for a code
@@ -116,20 +117,6 @@ def recent_path(market):
     return got[-1] if got else None
 
 
-def group(rows):
-    out = defaultdict(list)
-    for code, day, hhmm, *v in rows:
-        out[(code, day)].append((hhmm, *v))
-    for v in out.values():
-        v.sort()
-    return out
-
-
-def full_session(bars, market):
-    """From the morning (first bar by 10:00; the first day of a 1000-bar window starts mid-session) to the close."""
-    return bool(bars) and bars[0][0] <= '10:00' and bars[-1][0] == LAST_BAR[market]
-
-
 # ----- test days -----
 def days(market, P=None):
     """{'local': [...], 'recent': [...], 'select': [...], 'validate': [...]} (pre-registered rules)."""
@@ -157,17 +144,14 @@ def make_days(market):
     recent = []
     rp = recent_path(market)
     if rp:
-        g = MN.read(rp)
         count = defaultdict(int)
-        for (code, day), bars in g.items():
-            if code in uni and full_session([(b[0],) for b in bars], market):
+        for (code, day), s in aggregate(stream_recent(rp, codes=uni), ()).items():
+            if complete(s, market):
                 count[day] += 1
         recent = sorted(d for d, n in count.items() if n >= .5 * len(uni) and d in pdays and d not in local)
         log(market, 'recent full-universe days', recent, {d: count[d] for d in recent})
-    allx = sorted(local + recent)
-    half = len(allx) // 2
-    out = dict(local=local, recent=recent, select=allx[:half], validate=allx[half:],
-               recent_file=rp.name if rp else None)
+    out = dict(local=local, recent=recent[-LITE_DAYS:], earlier=recent[:-LITE_DAYS], select=[],
+               validate=recent[-LITE_DAYS:], recent_file=rp.name if rp else None)   # I1-lite: no halves
     path = WORK / f'{market}_days.json'
     if path.exists():                                     # US: recent days added after its selection half ran
         old = json.loads(path.read_text(encoding='utf-8'))
@@ -178,9 +162,49 @@ def make_days(market):
     return out
 
 
+def stream_recent(path, need=None, codes=None):
+    """(code, day, hhmm, o, h, l, c, v, t) of a minute.fetch file, one row at a time (the US file holds ~3.4M bars:
+    read whole, it took the 4GB machine out of memory)."""
+    with gzip.open(path, 'rt', encoding='utf-8', newline='') as f:
+        rows = csv.reader(f)
+        if tuple(next(rows)) != MN.HEADER:
+            raise ValueError(f'unexpected header in {path}')
+        for code, tk, *v in rows:
+            day = tk[:10]
+            if (need is None or day in need) and (codes is None or code in codes):
+                yield (code, day, tk[11:16], *map(float, v))
+
+
+def aggregate(rows, cuts):
+    """{(code, day): dict(first, last, last_v, parts={cut | 'full': (o, h, l, c, v, t)})} from rows in time order
+    within each (code, day): the partial bar at every cut, without keeping the bars."""
+    out = {}
+    for code, day, hh, o, h, l, c, v, t in rows:
+        s = out.get((code, day))
+        if s is None:
+            s = out[(code, day)] = dict(first=hh, last=hh, last_v=v, cur=[o, h, l, c, v, t], parts={})
+        else:
+            cur = s['cur']
+            cur[1], cur[2], cur[3] = max(cur[1], h), min(cur[2], l), c
+            cur[4] += v
+            cur[5] += t
+            s['last'], s['last_v'] = hh, v
+        for cut in cuts:
+            if hh <= cut:
+                s['parts'][cut] = tuple(s['cur'])
+    for s in out.values():
+        s['parts']['full'] = tuple(s.pop('cur'))
+    return out
+
+
+def complete(s, market):
+    """From the morning (first bar by 10:00; the first day of a 1000-bar window starts mid-session) to the close."""
+    return s['first'] <= '10:00' and s['last'] == LAST_BAR[market]
+
+
 def minute_for(market, test_days, P):
-    """{day: {code: bars}} for the test days, and {(code, day): {cut: f}} volume fractions for the test days and,
-    for V2, every earlier minute day of the same source (>= the 20 before each test day)."""
+    """{day: {code: (kind, parts)}} for the test days, and {(code, day): {cut: f}} volume fractions for the test
+    days and, for V2, every earlier minute day of the same source (>= the 20 before each test day)."""
     pdays = [str(d) for d in P['days']]
     uni = universe(market)
     di = {d: i for i, d in enumerate(pdays)}
@@ -191,20 +215,20 @@ def minute_for(market, test_days, P):
     rp = recent_path(market)
     sources = []
     if rp:
-        sources.append(('recent', group(r for (c, d), bars in MN.read(rp).items() for r in
-                                        [(c, d, *b) for b in bars] if d in need and c in uni)))
+        sources.append(('recent', aggregate(stream_recent(rp, need, uni), CUTS[market])))
     if LOCAL_N.get(market):
-        sources.append(('local', group(local_rows(market, need, uni))))
+        sources.append(('local', aggregate(local_rows(market, need, uni), CUTS[market])))
     bars, frac = defaultdict(dict), {}
     for kind, g in sources:
-        for (code, day), b in g.items():
-            if not full_session(b, market):
+        for (code, day), s in g.items():
+            if not complete(s, market):
                 continue
-            tot = sum(x[5] for x in b)
+            tot = s['parts']['full'][4]
             if tot > 0:
-                frac.setdefault((code, day), {c: sum(x[5] for x in b if x[0] <= c) / tot for c in CUTS[market]})
+                frac.setdefault((code, day), {c: s['parts'][c][4] / tot if c in s['parts'] else 0.0
+                                              for c in CUTS[market]})
             if day in test_days and code not in bars[day]:
-                bars[day][code] = (kind, b)
+                bars[day][code] = (kind, s['parts'])
     return bars, frac
 
 
@@ -218,9 +242,8 @@ def provisional_row(P, d, bars, cut, scheme, frac, fm, prior, subst=None):
         got = bars.get(c)
         if got is None or not np.isfinite(P['close'][d, j]):
             continue
-        kind, b = got
-        part = MN.partial(b, cut)
-        full = MN.partial(b, '99:99')
+        kind, parts = got
+        part, full = parts.get(cut), parts['full']
         if part is None or not full[4] > 0:
             continue
         o, h, l, cl, v, t = part
@@ -314,13 +337,17 @@ def run_phase(market, phase):
     warnings.simplefilter('ignore', RuntimeWarning)
     np.seterr(invalid='ignore', divide='ignore')
     D = days(market)
-    test = D[phase]
+    test = D['validate'] if phase == 'lite' else D[phase]
     P = TD.dataset(market, 'live').panel()
     pdays = [str(d) for d in P['days']]
     bars, frac = minute_for(market, set(D['select']) | set(test), P)
-    fm = {c: market_fraction(market, set(D['select']), frac, c) for c in CUTS[market]}
-    log(market, phase, 'f_m', fm)
-    if phase == 'select':
+    est = set(D['earlier']) if phase == 'lite' else set(D['select'])   # lite: f_m from the days before the test
+    fm = {c: market_fraction(market, est, frac, c) for c in CUTS[market]}
+    log(market, phase, 'f_m', fm, 'from', len(est), 'days')
+    if phase == 'lite':
+        plan = [(c, 'V0', None) for c in CUTS[market]] + [(MAIN[market], 'V1', None)] + \
+               [(MAIN[market], 'V0', s) for s in ('close', 'range', 'volume')]
+    elif phase == 'select':
         plan = [(c, 'V0', None) for c in CUTS[market]] + [(MAIN[market], v, None) for v in SCHEMES[1:]] + \
                [(MAIN[market], 'V0', s) for s in ('close', 'range', 'volume')]
     else:
@@ -377,24 +404,23 @@ def reconcile(market):
     rp = recent_path(market)
     diffs = defaultdict(list)
     n = 0
-    for (code, day), b in MN.read(rp).items():
-        if day not in pdays or code not in col or not full_session(b, market):
+    for (code, day), s in aggregate(stream_recent(rp, codes=set(col)), CUTS[market][-1:]).items():
+        if day not in pdays or not complete(s, market):
             continue
         d, j = pdays[day], col[code]
         rc = P['raw_close'][d, j]
         if not np.isfinite(rc) or not P['volume'][d, j] > 0:
             continue
         k = P['close'][d, j] / rc
-        o, h, l, c, v, t = MN.partial(b, '99:99')
+        o, h, l, c, v, t = s['parts']['full']
         truth = dict(open=P['open'][d, j] / k, high=P['high'][d, j] / k, low=P['low'][d, j] / k, close=rc,
                      volume=P['volume'][d, j] * k, turnover=P['turnover'][d, j])
         mine = dict(open=o, high=h, low=l, close=c, volume=v, turnover=t)
         for key in truth:
             diffs[key].append(mine[key] / truth[key] - 1 if truth[key] else np.nan)
-        before = MN.partial(b, LAST_BAR[market] if market == 'cn' else '15:55')
-        last = b[-1]
-        diffs['last_bar_volume_share'].append(last[5] / v if v else np.nan)
-        diffs['close_vs_prior_bar'].append(rc / before[3] - 1)
+        before = s['parts'].get(CUTS[market][-1])          # the last cut: 15:55 / 14:55
+        diffs['last_bar_volume_share'].append(s['last_v'] / v if v else np.nan)
+        diffs['close_vs_prior_bar'].append(rc / before[3] - 1 if before else np.nan)
         n += 1
     out = dict(market=market, file=rp.name, pairs=n)
     for key, v in diffs.items():
@@ -576,7 +602,7 @@ if __name__ == '__main__':
         print(json.dumps(make_days(sys.argv[2]), indent=1))
     elif cmd == 'reconcile':
         reconcile(sys.argv[2])
-    elif cmd in ('select', 'validate'):
+    elif cmd in ('select', 'validate', 'lite'):
         run_phase(sys.argv[2], cmd)
     elif cmd == 'choose':
         choose()
