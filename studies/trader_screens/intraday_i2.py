@@ -497,16 +497,17 @@ def keys(sysres, what, covered=None):
     return {x for x in k if x[0] in covered} if covered is not None and what == 'sig' else k
 
 
-def summarize(market):
+def summarize(market, only=None):
     """{(kind, cut, scheme): totals}: same / false / missed per system and setup, price gaps, stop widths, and the
-    side-adjusted move from the provisional price to the close of every provisional buy (same and false)."""
+    side-adjusted move from the provisional price to the close of every provisional buy (same and false); `only`:
+    these days alone (A-shares: the model is judged on the second half of its test days)."""
     P = IS.panel(market)
     pdays = {str(d): i for i, d in enumerate(P['days'])}
     col = {str(c): j for j, c in enumerate(P['codes'])}
     out = {}
     for day, r in sorted(load(market).items()):
         true = r.get(('true', 'true'))
-        if not true:
+        if not true or (only is not None and day not in only):
             continue
         d = pdays[day]
         for (cut, scheme), prov in r.items():
@@ -564,6 +565,8 @@ def summary():
             model = json.loads((WORK / f'i2_{m}_model.json').read_text(encoding='utf-8'))
             out[m] = dict(days=days(m), model={c: {k: v for k, v in x.items()} for c, x in model['cuts'].items()},
                           fm=model['fm'], agg=summarize(m))
+            if m == 'cn':
+                out[m]['agg_model_days'] = summarize(m, set(model['cuts'][MAIN[m]]['model_days']))
     (REPORTS / 'intraday_i2_summary.json').write_text(json.dumps(out, indent=1, default=float), encoding='utf-8')
     return out
 
