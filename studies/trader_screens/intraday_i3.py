@@ -11,6 +11,7 @@ training / selection / validation days and scores them.
     $PY -m studies.trader_screens.intraday_i3 run us test
     $PY -m studies.trader_screens.intraday_i3 prob            # fit PL / PG, thresholds, choose; saves the live model
     $PY -m studies.trader_screens.intraday_i3 evaluate        # validation (once) -> reports/intraday_i3_summary.json
+    $PY -m studies.trader_screens.intraday_i3 posthoc         # after it, not a result: other thresholds (next round)
 
 Work files: data/trader-screens/intraday-study/i3_*.
 """
@@ -617,8 +618,31 @@ def evaluate():
     for s, sd in segs.items():
         out[s] = finish(score_segment(sd, mdl, th))
     out['judge'] = judge(out['validate'])
+    if CF.MODEL_PATH.exists():                         # the board uses the model only when the judgement says so
+        d = json.loads(CF.MODEL_PATH.read_text(encoding='utf-8'))
+        d['meta']['integrate'] = out['judge']['integrate']
+        d['meta']['judge'] = {m: dict(main_ok=v['main']['ok'], early_ok=v['early_ok'])
+                              for m, v in out['judge'].items() if m != 'integrate'}
+        CF.MODEL_PATH.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding='utf-8')
     (REPORTS / 'intraday_i3_summary.json').write_text(json.dumps(out, indent=1, default=float, ensure_ascii=False),
                                                      encoding='utf-8')
+    return out
+
+
+def posthoc():
+    """After the validation, NOT a validated result: the validation days under order thresholds 0.5 and 0.8 (the
+    training rule gave 0.2), to point the next round; reports/intraday_i3_posthoc.json."""
+    pr = json.loads((WORK / 'i3_prob.json').read_text(encoding='utf-8'))
+    mdl = CF.ProbModel.from_json(pr['models'][pr['chosen']])
+    sd = {m: days(m)['validate'] for m in ('us', 'hk', 'cn')}
+    out = {}
+    for th in ((.5, .2), (.8, .2)):
+        fin = finish(score_segment(sd, mdl, th))
+        out[f'{th[0]}/{th[1]}'] = {m: {c: dict(order=a['order'], direct=a['direct'],
+                                               watch_recall=a['order_watch_recall'], false_order=a['false_order'],
+                                               false_direct=a['false_direct'])
+                                       for c, a in cuts.items()} for m, cuts in fin.items()}
+    (REPORTS / 'intraday_i3_posthoc.json').write_text(json.dumps(out, default=float, indent=1), encoding='utf-8')
     return out
 
 
@@ -636,5 +660,7 @@ if __name__ == '__main__':
         prob()
     elif cmd == 'evaluate':
         evaluate()
+    elif cmd == 'posthoc':
+        posthoc()
     else:
         raise SystemExit(__doc__)
