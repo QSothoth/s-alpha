@@ -144,13 +144,47 @@ def orders(r):
     return lines + ['']
 
 
+def confidence(r):
+    """The I3 columns of a provisional run: every order the scenario reruns found, with its chance to stand at the
+    close (p) and how far it is from triggering; p >= p_hi to order, p_lo <= p < p_hi to watch."""
+    c = r.get('confidence')
+    if not c:
+        return []
+    if c.get('skipped'):
+        return [f"**盘中置信度**：{c['skipped']}。", '']
+    th = c['thresholds']
+    names = {t['id']: t['name'] for t in r['traders']}
+    lines = [f"**盘中置信度**（{c['hhmm']}，已过交易时间 {c['t']:.0%}）：p 是这笔单子到收盘仍成立的估计概率；"
+             f"p ≥ {th['p_hi']:.2f} 进“下单”，{th['p_lo']:.2f}–{th['p_hi']:.2f} 进“观察”"
+             f"（阈值在训练段按下单栏精确率 ≥ 80% 定，所有时点共用；`notes/INTRADAY_I3_PREREG_CN.md`）。", '']
+    for col, title in (('order', '下单'), ('watch', '观察')):
+        rows = []
+        for x in c['rows']:
+            if x['column'] != col:
+                continue
+            short = x['side'] < 0
+            if x['kind'] == 'buy':
+                act = '加码' if x['add'] else ('卖空' if short else '买')
+                what = '涨停，收盘买不到' if x.get('limit_up') else kind(x['setup'] or '')
+            else:
+                act = '回补' if short else '卖'
+                what = WHY.get(x['setup'], x['setup'])
+            rows.append([names.get(x['trader'], x['trader']), act, stock(x), px(x['price']), f"{x['p']:.2f}", what,
+                         x['distance'], '有' if x.get('direct') else '—'])
+        lines.append(f'{title}（{len(rows)}）：')
+        lines += table(['交易员', '操作', '股票', '快照价', 'p', '说明', '离触发 / 失效', '直接跑'], rows,
+                       right=('快照价', 'p')) or ['无。']
+        lines.append('')
+    return lines
+
+
 def market(r):
     days = r['days']
     st = r['state']
     state = '、'.join(f"{'站上' if st[f'above_ema{n}'] else '跌破'} {n} EMA" for n in (20, 50))
     lines = [f"## {NAMES[r['market']]} · {r['last_day']}", '', f'股票池等权指数{state}。', '']
     if r.get('provisional'):
-        lines = lines[:1] + [''] + orders(r) + lines[1:]
+        lines = lines[:1] + [''] + orders(r) + confidence(r) + lines[1:]
     lines += table(['交易员', '版本', '仓位', '市况', '账户', '冻结后', '今天' if days == 1 else f'近 {days} 天'], [
         [t['name'], f"{t['version']}（{STATUS[t['status']]}）", pct(t['account']['exposure'], False), gate_text(t),
          f"{pct(t['account']['ret'])} / 回撤 {pct(t['account']['maxdd'], False)}",

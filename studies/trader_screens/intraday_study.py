@@ -13,6 +13,7 @@ the one fetch; f_m comes from the fetch's earlier full sessions only.
     $PY -m studies.trader_screens.intraday_study reconcile us        # minute aggregate vs daily bars
     $PY -m studies.trader_screens.intraday_study days us             # the test days
     $PY -m studies.trader_screens.intraday_study lite us             # V0 at every cut; V1 and the causes at the main cut
+    $PY -m studies.trader_screens.intraday_study early us            # V0 at 1 h / 3 h after the open
     $PY -m studies.trader_screens.intraday_study summary             # reports/intraday_summary.json
 
 Raw decisions go to data/trader-screens/intraday-study/<market>.jsonl (resumable; one line per day, cut, scheme).
@@ -82,18 +83,19 @@ def make_days(market):
     return out
 
 
-def minute_for(market, D):
+def minute_for(market, D, cuts=None):
     """{day: {code: parts}} for the test days and {(code, day): {cut: cumulative volume share}} for every full
     session of the fetch."""
+    cuts = cuts or CUTS[market]
     rp = MN.latest(market)
     bars, frac = defaultdict(dict), {}
     for (code, day), s in MN.aggregate(MN.stream(rp, set(D['test']) | set(D['earlier']), universe(market)),
-                                       CUTS[market]).items():
+                                       cuts).items():
         if not MN.complete(s, market):
             continue
         tot = s['parts']['full'][4]
         if tot > 0:
-            frac[(code, day)] = {c: s['parts'][c][4] / tot if c in s['parts'] else 0.0 for c in CUTS[market]}
+            frac[(code, day)] = {c: s['parts'][c][4] / tot if c in s['parts'] else 0.0 for c in cuts}
         if day in D['test']:
             bars[day][code] = s['parts']
     return bars, frac
@@ -195,6 +197,38 @@ def run(market):
                     log(f'rest {REST_SECONDS // 60} min')
                     time.sleep(REST_SECONDS)
                     t_rest = time.time()
+
+
+EARLY = {'us': ('10:30', '12:30'), 'hk': ('10:30', '13:30')}   # 1 h / 3 h of trading after the open (HK: lunch)
+
+
+def run_early(market):
+    """V0 at EARLY's cuts on the same test days (the true decisions are the ones `lite` stored): what an earlier run
+    of the board would have shown."""
+    import warnings
+    warnings.simplefilter('ignore', RuntimeWarning)
+    np.seterr(invalid='ignore', divide='ignore')
+    D = days(market)
+    P = panel(market)
+    pdays = [str(d) for d in P['days']]
+    bars, _ = minute_for(market, D, EARLY[market])
+    path = WORK / f'{market}.jsonl'
+    done = {(r['day'], r['cut'], r['scheme']) for r in map(json.loads, path.open(encoding='utf-8'))}
+    with path.open('a', encoding='utf-8') as out:
+        for day in D['test']:
+            if (day, 'true', 'true') not in done:
+                raise SystemExit(f'{market} {day}: run `lite {market}` first (the true decisions)')
+            d = pdays.index(day)
+            for cut in EARLY[market]:
+                for scheme, cause in (('V0', None), ('V0:volume', 'volume')):   # V0:volume: the ceiling of any
+                    if (day, cut, scheme) in done:                           # full-day volume estimate
+                        continue
+                    t0 = time.time()
+                    row, covered = provisional_row(P, d, bars.get(day, {}), cut, cause=cause)
+                    out.write(json.dumps(dict(day=day, cut=cut, scheme=scheme, covered=covered,
+                                              systems=decide(cut_at(P, d, row), market, day))) + '\n')
+                    out.flush()
+                    log(market, day, cut, scheme, f'{time.time() - t0:.0f}s')
 
 
 # ----- the reconciliation -----
@@ -363,6 +397,8 @@ if __name__ == '__main__':
         reconcile(sys.argv[2])
     elif cmd == 'lite':
         run(sys.argv[2])
+    elif cmd == 'early':
+        run_early(sys.argv[2])
     elif cmd == 'summary':
         summary()
     else:
