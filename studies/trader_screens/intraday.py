@@ -68,8 +68,9 @@ def session(market, last, now=None, calendar=opend_calendar):
         raise Refused(f'{market}: stored data ends {last}, the previous session is {prev}: '
                       f'run `scan refresh {market}` first (before the open, one snapshot)')
     close_at = HALF_CLOSE[market] if cal[today] == 'MORNING' else CLOSE_AT[market]
-    if mnow.time() < OPEN_AT[market]:
-        raise Refused(f'{market}: the session has not opened ({mnow:%H:%M} < {OPEN_AT[market]:%H:%M})')
+    open_at = clock(13, 0) if cal[today] == 'AFTERNOON' else OPEN_AT[market]
+    if mnow.time() < open_at:
+        raise Refused(f'{market}: the session has not opened ({mnow:%H:%M} < {open_at:%H:%M})')
     if mnow.time() >= close_at:
         raise Refused(f'{market}: the session has closed ({mnow:%H:%M} >= {close_at:%H:%M}); run the board normally')
     return dict(day=today, prev=prev, close_at=close_at.strftime('%H:%M'), hhmm=mnow.strftime('%H%M'),
@@ -80,18 +81,35 @@ def check_time(market, snap, day, now=None):
     """The snapshot shows today: OpenD update times on `day` for >= SNAP_MATCH of the trading names; Sina (time only)
     the newest tick within QUOTE_AGE of now, or the lunch break."""
     from studies.trader_data.live import SNAP_MATCH
+    mnow = market_now(market, now)
     times = [s.get('time') or '' for s in snap.values() if s['trading']]
     if not times:
         raise Refused(f'{market}: the snapshot has no trading names')
     dated = [t for t in times if len(t) >= 10 and t[4] == '-']
     if dated:
         on_day = sum(t[:10] == day for t in dated)
-        if on_day / len(dated) < SNAP_MATCH:
-            raise Refused(f'{market}: snapshot is not of {day}: {on_day}/{len(dated)} quotes dated that day')
-        return dict(quotes_on_day=[on_day, len(dated)], newest=max(dated))
-    mnow = market_now(market, now)
+        if on_day / len(times) < SNAP_MATCH:
+            raise Refused(f'{market}: snapshot is not of {day}: {on_day}/{len(times)} quotes dated that day')
+        try:
+            parsed = [datetime.fromisoformat(t) for t in dated if t[:10] == day]
+            parsed = [t.replace(tzinfo=mnow.tzinfo) if t.tzinfo is None else t.astimezone(mnow.tzinfo)
+                      for t in parsed]
+        except ValueError as e:
+            raise Refused(f'{market}: malformed quote time') from e
+        if any(t > mnow for t in parsed):
+            raise Refused(f'{market}: quote time is after snapshot capture {mnow.isoformat()}')
+        return dict(quotes_on_day=[on_day, len(times)], newest=max(dated),
+                    rejected_times=[c for c, s in snap.items() if (s.get('time') or '')[:10] != day])
+    if market != 'cn':
+        raise Refused(f'{market}: quotes have no session date')
     newest = max(times)
-    tick = datetime.combine(mnow.date(), clock.fromisoformat(newest), mnow.tzinfo)
+    try:
+        ticks = [datetime.combine(mnow.date(), clock.fromisoformat(t), mnow.tzinfo) for t in times]
+    except ValueError as e:
+        raise Refused(f'{market}: malformed quote time') from e
+    if any(t > mnow for t in ticks):
+        raise Refused(f'{market}: quote time is after snapshot capture {mnow.isoformat()}')
+    tick = max(ticks)
     lunch = market in ('hk', 'cn') and HALF_CLOSE[market] <= mnow.time() < clock(13, 0)
     if not lunch and mnow - tick > QUOTE_AGE:
         raise Refused(f'{market}: newest quote {newest} is older than {QUOTE_AGE} at {mnow:%H:%M:%S}')
@@ -206,6 +224,7 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
     'provisional' (snapshot, checks, stage seconds)."""
     from studies import trader_data as TD
     from studies.trader_data.live import LiveDataset
+    from studies.trader_data import panel as TP
     from . import scan
     stages, t0 = {}, time.perf_counter()
 
@@ -216,7 +235,7 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
         log(f'  [{name}] {t - t0:.1f} 秒')
         t0 = t
     ds = TD.dataset(market, 'live')
-    base = ds.panel()
+    base = TP.build(ds, write_cache=False)
     last = str(base['days'][-1])
     stage('stored panel')
     sess = session(market, last, now, calendar or (lambda s, e: opend_calendar(market, s, e)))
@@ -235,9 +254,19 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
         if provider is None:
             prov.close()
     stage('snapshot')
-    captured_at = market_now(market, now).isoformat(timespec='seconds')
+    captured = market_now(market, now)
+    captured_at = captured.isoformat(timespec='seconds')
+    if captured.date().isoformat() != sess['day'] or captured.time() >= clock.fromisoformat(sess['close_at']):
+        raise Refused(f'{market}: the session closed while collecting the snapshot')
+    sess.update(started_at=sess['now'], now=captured_at, hhmm=captured.strftime('%H%M'))
     snap, rejected, coverage = valid_snapshot(snap, codes, base)
-    timing = check_time(market, snap, sess['day'], now)
+    timing = check_time(market, snap, sess['day'], captured)
+    rejected_times = timing.pop('rejected_times', [])
+    if rejected_times:
+        rejected_set = set(rejected_times)
+        snap = {c: s for c, s in snap.items() if c not in rejected_set}
+        snap, _, coverage = valid_snapshot(snap, codes, base)
+        rejected += rejected_times
 
     class Once:                                     # from_snapshot reads the snapshot already taken
         @staticmethod
@@ -253,9 +282,16 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
     seconds = {}
     r = (board or scan.run)(market, 'live', 1, only, panel=p, seconds=seconds)
     stage('systems')
+    finished = market_now(market, now)
+    if finished.date().isoformat() != sess['day'] or finished.time() >= clock.fromisoformat(sess['close_at']):
+        raise Refused(f'{market}: the session closed while computing; discard provisional orders')
     if r['last_day'] != sess['day']:
         raise RuntimeError(f"{market}: board ends {r['last_day']}, expected {sess['day']}")
     names = ds.names()
+    for trader in r['traders']:
+        for trade in trader['buys'] + trader['sells']:
+            quote = snap.get(trade['code'])
+            trade['snapshot_price'] = quote['close'] if quote else None
     affected = {x['code'] for t in r['traders'] for key in ('buys', 'sells', 'holdings') for x in t[key]} & set(rejected)
     if affected:
         raise Refused(f'{market}: invalid quotes affect positions or trades: {sorted(affected)}')
@@ -268,16 +304,20 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
                     b['limit_up'] = True
     r['provisional'] = dict(sess, rows=len(rows), actions=len(acts), stages=stages, system_seconds=seconds,
                             captured_at=captured_at, rejected_quotes=rejected, coverage=coverage,
+                            snapshot_hhmm=captured.strftime('%H%M'),
                             **chk, **timing)
     return r
 
 
 # ----- after the close: provisional vs official -----
 def keyed(r, key):
-    out = {}
+    out, counts = {}, {}
     for t in r['traders']:
         for x in t[key]:
-            out[(t['id'], x['code'], x.get('side', 1), x.get('setup') == '加码')] = dict(x, trader=t['name'])
+            event = (t['id'], x['code'], x.get('side', 1), x.get('setup') == '加码',
+                     x.get('why', '') if key == 'sells' else '', bool(x.get('full', False)))
+            counts[event] = counts.get(event, 0) + 1
+            out[event + (counts[event],)] = dict(x, trader=t['name'])
     return out
 
 
@@ -287,6 +327,9 @@ def diff(prov, official):
     limit count as not bought."""
     if prov['last_day'] != official['last_day'] or prov['market'] != official['market']:
         raise ValueError('different market or day')
+    versions = lambda r: {t['id']: t.get('version') for t in r['traders']}
+    if versions(prov) != versions(official):
+        raise ValueError('different trader sets or registered versions')
     out = {}
     for key in ('buys', 'sells'):
         a, b = keyed(prov, key), keyed(official, key)

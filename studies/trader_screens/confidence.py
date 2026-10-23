@@ -317,6 +317,7 @@ def decide_many(P, d, rows, market, L=L_TRUNC, systems=None):
                 ema = st.ema_inputs(A, pool, rules)
             del mask, pool
             px = st.px(A)
+            del A                              # prices and engine inputs retain only the arrays still needed
             if str(px['dates'][-1]) != day:
                 raise RuntimeError(f'{x.id}: ends {px["dates"][-1]}, expected {day}')
             out[names[0]][x.id] = _day(st, px, ema, rules, entries, codes, day)
@@ -325,18 +326,21 @@ def decide_many(P, d, rows, market, L=L_TRUNC, systems=None):
                     At = st.arrays(market, mode='live')
                     et, _, _, poolt = st.build(At, cfg)
                     emat = st.ema_inputs(At, poolt, rules)
+                updates = [(At[k][-1].copy(), px[k]) for k in ('open', 'high', 'low', 'close')] + \
+                          [(emat[k][-1].copy(), ema[k]) for k in ema]
+                today_entries = et[-1]
+                del At, et, poolt, emat
                 saved = []
                 try:
-                    for src, dst in [(At[k], px[k]) for k in ('open', 'high', 'low', 'close')] + \
-                                    [(emat[k], ema[k]) for k in ema]:
+                    for src, dst in updates:
                         saved.append((dst, dst[-1].copy() if np.ndim(dst) > 1 else dst[-1]))
-                        dst[-1] = src[-1]
-                    out[n][x.id] = _day(st, px, ema, rules, entries[:-1] + [et[-1]], codes, day)
+                        dst[-1] = src
+                    out[n][x.id] = _day(st, px, ema, rules, entries[:-1] + [today_entries], codes, day)
                 finally:
                     for dst, old in reversed(saved):
                         dst[-1] = old
-                del At, et, poolt, emat
-            del A, entries, ema, px
+                del updates, today_entries
+            del entries, ema, px
             gc.collect()
     return out
 

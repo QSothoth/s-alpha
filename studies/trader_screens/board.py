@@ -126,21 +126,22 @@ def orders(r):
     """The closing orders of a provisional run (scan run --provisional): every system's buys and sells of today."""
     p = r['provisional']
     lines = [f"**盘中临时**：{p['now'][11:16]} 的快照当作今天的收盘算出（{p['snapshot_names']} 只有报价），不是收盘后的正式结果；"
-             f"尾盘按收盘价执行，收盘前价格还会变，收盘后用 `scan diff` 对照。", '']
+             f"信号价沿用登记系统的模拟成交价，快照价是当前报价；收盘后用 `scan diff` 对照。", '']
     rows = []
     for t in r['traders']:
         for b in t['buys']:
             short = b.get('side', 1) < 0
             act = '卖空' if short else ('加码' if b['setup'] == '加码' else '买')
             note = '涨停，收盘买不到，跳过' if b.get('limit_up') else kind(b['setup'])
-            rows.append([t['name'], act, stock(b), px(b['price']),
+            rows.append([t['name'], act, stock(b), px(b['price']), px(b.get('snapshot_price')),
                          (('涨破 ' if short else '') + px(b['stop'])) if b['stop'] else '—',
                          pct(b['weight'], False), note])
         for s in t['sells']:
             short = s.get('side', 1) < 0
-            rows.append([t['name'], '回补' if short else '卖', stock(s), px(s['price']), '—',
+            rows.append([t['name'], '回补' if short else '卖', stock(s), px(s['price']), px(s.get('snapshot_price')), '—',
                          '全部' if s['full'] else '一部分', WHY.get(s['why'], s['why'])])
-    lines += table(['交易员', '操作', '股票', '快照价', '止损', '仓位', '说明'], rows, right=('快照价',)) or ['尾盘没有单子。']
+    lines += table(['交易员', '操作', '股票', '信号价', '快照价', '止损', '仓位', '说明'], rows,
+                   right=('信号价', '快照价')) or ['尾盘没有单子。']
     return lines + ['']
 
 

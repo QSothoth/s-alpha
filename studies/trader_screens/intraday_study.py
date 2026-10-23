@@ -105,12 +105,12 @@ def minute_for(market, D, cuts=None):
 def provisional_row(P, d, bars, cut, scale=1.0, cause=None):
     """D's row (field -> array over codes): every name with minute bars gets its bar at `cut` (open = the day's
     open, high / low include it, unadjusted prices on the day's adjustment, volume and turnover / scale); `cause`
-    puts the true close, high / low or volume / turnover back.  Names without minute bars keep the true bar."""
-    row = {k: P[k][d].astype(float).copy() for k in ('open', 'high', 'low', 'close', 'volume', 'turnover')}
+    puts the true close, high / low or volume / turnover back. Missing minute bars remain unavailable."""
+    row = {k: np.full(len(P['codes']), np.nan) for k in ('open', 'high', 'low', 'close', 'volume', 'turnover', 'raw_close')}
     covered = 0
     for j, c in enumerate(str(c) for c in P['codes']):
         parts = bars.get(c)
-        if parts is None or not np.isfinite(P['close'][d, j]) or cut not in parts or not parts['full'][4] > 0:
+        if parts is None or not np.isfinite(P['close'][d, j]) or cut not in parts or not parts[cut][4] > 0:
             continue
         _, h, l, cl, v, t = parts[cut]
         k = float(P['close'][d, j] / P['raw_close'][d, j])
@@ -123,6 +123,7 @@ def provisional_row(P, d, bars, cut, scale=1.0, cause=None):
         elif cause == 'volume':
             vol, to = float(P['volume'][d, j]), float(P['turnover'][d, j])
         row['open'][j], row['close'][j] = op, close
+        row['raw_close'][j] = close / k
         row['high'][j], row['low'][j] = max(hi, op, close), min(lo, op, close)
         row['volume'][j], row['turnover'][j] = vol, to
         covered += 1

@@ -18,7 +18,9 @@ from __future__ import annotations
 
 import csv
 import gzip
+import hashlib
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -36,9 +38,17 @@ def opend_k5(codes, log=print):
     try:
         for b in range(0, len(codes), batch_n):
             batch = list(codes[b:b + batch_n])
-            ret, err = q.subscribe(batch, [ft.SubType.K_5M], subscribe_push=False)
-            if ret != ft.RET_OK:
-                raise RuntimeError(f'subscribe: {err}')
+            while batch:
+                ret, err = q.subscribe(batch, [ft.SubType.K_5M], subscribe_push=False)
+                if ret == ft.RET_OK:
+                    break
+                bad = invalid_codes(batch, str(err))
+                if not bad:
+                    raise RuntimeError(f'subscribe: {err}')
+                log(f'  unavailable names (retained in coverage): {bad}: {err}')
+                batch = [c for c in batch if c not in bad]
+            if not batch:
+                continue
             t0 = time.time()
             time.sleep(5)
             try:
@@ -56,6 +66,14 @@ def opend_k5(codes, log=print):
             log(f'  {min(b + batch_n, len(codes))}/{len(codes)}')
     finally:
         q.close()
+
+
+def invalid_codes(codes, error):
+    """Only an explicit unknown-symbol error permits skipping names; quota/auth/network errors still stop."""
+    if not any(s in error.lower() for s in ('未知股票', 'unknown stock', 'invalid stock')):
+        return []
+    return [c for c in codes if re.search(r'(?<![A-Za-z0-9])' + re.escape(c.split('.')[-1]) +
+                                        r'(?![A-Za-z0-9])', error)]
 
 
 def sina_k5(codes, log=print):
@@ -123,13 +141,14 @@ def aggregate(rows, cuts):
     for code, day, hh, o, h, l, c, v, t in rows:
         s = out.get((code, day))
         if s is None:
-            s = out[(code, day)] = dict(first=hh, last=hh, last_v=v, cur=[o, h, l, c, v, t], parts={})
+            s = out[(code, day)] = dict(first=hh, last=hh, last_v=v, count=1, cur=[o, h, l, c, v, t], parts={})
         else:
             cur = s['cur']
             cur[1], cur[2], cur[3] = max(cur[1], h), min(cur[2], l), c
             cur[4] += v
             cur[5] += t
             s['last'], s['last_v'] = hh, v
+            s['count'] += 1
         for cut in cuts:
             if hh <= cut:
                 s['parts'][cut] = tuple(s['cur'])
@@ -144,8 +163,64 @@ def complete(s, market):
     return s['first'] <= '10:00' and s['last'] == LAST_BAR[market]
 
 
+def coverage(market, paths=None, ds=None, target=20):
+    """Coverage of every pool name, using one small slot bitset per stock-day; never load minute rows in bulk."""
+    from studies import trader_data as TD
+    from .confidence import SESSIONS, minutes
+    ds = ds or TD.dataset(market, 'live')
+    codes = {s['code'] for s in ds.stocks()}
+    paths = list(paths) if paths is not None else sorted(K5.glob(f'{market}_????-??-??.csv.gz'))
+    if not paths:
+        raise FileNotFoundError(f'no minute files for {market}')
+    slots = [f'{t // 60:02d}:{t % 60:02d}' for start, end in SESSIONS[market]
+             for t in range(minutes(start) + 5, minutes(end) + 1, 5)]
+    bits = {t: 1 << i for i, t in enumerate(slots)}
+    whole = (1 << len(slots)) - 1
+    seen, sources, outside = {}, [], 0
+    for path in paths:
+        h = hashlib.sha256()
+        with path.open('rb') as f:
+            for chunk in iter(lambda: f.read(1024 * 1024), b''):
+                h.update(chunk)
+        sources.append(dict(file=path.name, bytes=path.stat().st_size, sha256=h.hexdigest()))
+        for code, day, hh, *_ in stream(path, codes=codes):
+            if hh not in bits:
+                outside += 1
+                continue
+            key = (code, day)
+            seen[key] = seen.get(key, 0) | bits[hh]
+    days = sorted({d for c, d in seen})
+    active = {d: set() for d in days}
+    for code, day, values in ds.rows():
+        if day in active and code in codes and values[4] > 0 and values[3] > 0:
+            active[day].add(code)
+    by_day = {d: {} for d in days}
+    for (code, day), mask in seen.items():
+        by_day[day][code] = mask
+    daily = []
+    start_bits = sum(bit for hh, bit in bits.items() if hh <= '10:00')
+    for day, masks in by_day.items():
+        complete_codes = {c for c, mask in masks.items() if mask == whole}
+        endpoints = {c for c, mask in masks.items() if mask & start_bits and mask & bits[LAST_BAR[market]]}
+        expected = active[day]
+        missing = sorted(expected - complete_codes)
+        daily.append(dict(day=day, pool=len(codes), observed=len(masks), complete=len(complete_codes),
+                          endpoint_complete=len(endpoints), daily_active=len(expected),
+                          missing_active=missing, missing_pool=sorted(codes - complete_codes),
+                          all_active_complete=bool(expected) and not missing,
+                          all_pool_complete=len(complete_codes) == len(codes)))
+    usable = [d['day'] for d in daily if d['endpoint_complete'] >= .95 * len(codes) and d['daily_active']]
+    strict = [d['day'] for d in daily if d['all_active_complete']]
+    return dict(market=market, target=target, sources=sources, names=len(codes), expected_slots=len(slots),
+                outside_session_rows=outside, days=daily, days_95pct_endpoints=usable,
+                deficit_95pct_endpoints=max(0, target - len(usable)),
+                days_all_active_complete=strict, deficit_all_active=max(0, target - len(strict)))
+
+
 if __name__ == '__main__':
     if len(sys.argv) == 3 and sys.argv[1] == 'fetch':
         fetch(sys.argv[2])
+    elif len(sys.argv) == 3 and sys.argv[1] == 'coverage':
+        print(json.dumps(coverage(sys.argv[2]), indent=1, ensure_ascii=False))
     else:
         raise SystemExit(__doc__)

@@ -160,7 +160,7 @@ def show(r):
             stop = (f" 涨破 {px(b['stop'])} 回补（{(b['stop'] - b['price']) / b['price']:.1%}）" if short else
                     f" 止损 {px(b['stop'])}（{(b['price'] - b['stop']) / b['price']:.1%}）") if b['stop'] else ''
             print(f"    {b['code']} {b['name'][:10]} {b['setup']} {'卖空' if short else '买'} {px(b['price'])}{stop} "
-                  f"仓位 {b['weight']:.0%} {b['industry']}")
+                  f"仓位 {b['weight']:.0%} {b['industry']}" + ('｜涨停，收盘买不到，跳过' if b.get('limit_up') else ''))
         if t['wanted_n']:
             print(f"  另有 {t['wanted_n']} 个买点没做：" + '、'.join(x['code'] for x in t['wanted']))
         print(f"  {span}卖出：" + ('无' if not t['sells'] else ''))
@@ -199,6 +199,8 @@ def main(argv=None):
     parser.add_argument('--days', type=int, default=1, help='trades of the last N sessions (5 = the week)')
     parser.add_argument('--traders', help='comma-separated ids (default: every registered trader)')
     args = parser.parse_args(argv)
+    if args.provisional and (args.action != 'run' or args.mode != 'live' or args.days != 1):
+        parser.error('--provisional requires run, --mode live and --days 1')
     from studies import trader_data as TD
     if args.action == 'list':
         from studies.trader_replication import systems as SY

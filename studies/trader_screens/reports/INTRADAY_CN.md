@@ -1,4 +1,6 @@
-# 交易员看板盘中模式与临时 K 线信号差异（I1-lite、I2、I3）
+# 交易员看板盘中模式与临时 K 线信号差异（I1-lite、I2、I3、交付复核）
+
+2026-10-23 复核见第 5 节，分支 `feat/trader-screens-intraday-20261023`，基线 `29f173b`。第 1–4 节保留历史研究记录；旧 I1/I2 曾保留真实 `raw_close`、缺失分钟线股票也曾保留真实收盘，不能把旧一致率直接当成本轮修复后的验证。线上默认仍为 V0，不放大价格、成交量或成交额。
 
 日期 2026-10-22。代码在 main（盘中模式，f5279c7）与分支 `worktree-intraday-board`（I2、I3）。预登记：`notes/INTRADAY_PREREG_CN.md`（I1 / I1-lite）、`notes/INTRADAY_I2_PREREG_CN.md`（I2：20 个交易日、A 股、全天成交量估算）、`notes/INTRADAY_I3_PREREG_CN.md`（I3：任意时刻的统一置信度方案）。原始结果 `reports/intraday_summary.json`（I1-lite）、`reports/intraday_i2_summary.json`（I2）、`reports/intraday_i3_summary.json`（I3），核对 `reports/intraday_reconcile_{us,hk,cn}.json`。
 
@@ -452,6 +454,43 @@ Qullamaggie 这 12 天没有交易。成交量只影响 Flanders 和 Marios，�
   - 阈值在全名单日上定（例如本轮的选择段，或今后的新交易日）；
   - 卖出的“可能触发止损”只进观察；
   - 验证用 2026-10-22 之后的新交易日。要取分钟线，按 I1 的免费方式（`minute fetch`，不扣额度），先征得同意。
+
+## 5. 2026-10-23 交付复核
+
+预登记已提交为 `5785a44`：`notes/INTRADAY_RECHECK_PREREG_CN.md`。实现 `intraday_recheck.py`；本节的完整复测结果仍在计算，不用旧数字冒充本轮结果。
+
+### 已完成的工程复核
+
+- 盘中底座与缓存严格只读；冷缓存缺失时只在内存中重建。行业种子缓存也不会在只读扫描时落盘。
+- 快照采集完成时刻用于文件名和显示时间；拒绝未来报价，少量非当日报价隔离后重新检查覆盖；取快照或计算期间收盘时拒绝发布。只开下午盘的交易日按 13:00 开盘检查。
+- diff 保留同股同日分批和跟踪线等多次离场；交易员集合或登记版本不同时拒绝比较。
+- 盘中表区分“信号价”和“快照价”：前者是登记引擎的模拟成交价，后者是本次最新报价。登记系统还有触价空单、持仓止损与分批，不能把它们的历史触发价当成尾盘当前报价。登记系统和 `systems.py` 均未修改。
+- 修复 I1/I2 的 `raw_close` 与缺失股票处理。新复测只使用真实截点字段，未覆盖股票保留缺失，不填真实收盘；本地子集日不纳入全名单日。
+
+### 实际运行与数据范围
+
+本轮港股 2026-10-23 15:05 HKT 实盘只读运行：503/503 个当日有交易的股票通过覆盖、日期和昨收核对，7 个系统全部完成，8.54 秒（单次、暖缓存；读面板 0.12、日历 0.55、快照 2.62、接当天 0.05、系统 5.19 秒）。当时没有买卖，持仓回放正常完成。收盘后正式运行及 `diff hk 2026-10-23 --at 1505` 也跑通，两边买卖均为 0；这只验证真实工作流，不提供有交易样本的一致率。
+
+美股、A 股本轮尚未在真实盘中重新计时；第 1 节分别 51 秒、148 秒是旧实现的单次记录，不能称为本轮三市场重新实测。以这两次历史记录和本轮港股记录估计，合计约 208 秒，但不是同一批实测。日常建议仍先用美股 15:45 ET、港股 15:50 HKT、A 股 14:50 CST 留出计算与操作时间。
+
+免费补取后，全名单分钟线美股 13 日、港股 16 日；A 股已有 20 日以上的全名单分钟线，复用本地文件。美股仍缺 7 日、港股缺 4 日；本轮已向用户询问额度选择，未使用历史 K 线额度。未知代码 `US.ATII` 在接口明确报错后跳过，但仍列入覆盖分母和缺失清单。
+
+### 复算入口与口径
+
+```bash
+PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 /opt/futu-opend/venv/bin/python"
+$PY -m studies.trader_screens.minute coverage us
+$PY -m studies.trader_screens.intraday_recheck prepare us
+$PY -m studies.trader_screens.intraday_recheck reconcile us
+$PY -m studies.trader_screens.intraday_recheck run us selection
+# hk / cn 同样完成 selection 后，只锁定一次全市场合计选择
+$PY -m studies.trader_screens.intraday_recheck choose
+$PY -m studies.trader_screens.intraday_recheck run us validation
+# 三市场 validation 完整后汇总
+$PY -m studies.trader_screens.intraday_recheck summary
+```
+
+数据副本、SHA256 清单、逐日覆盖、日 K 核对与按日续跑记录在本地 `data/trader-screens/intraday-recheck/`，不进 git。已有计划或选择文件不会被覆盖，后续从 `run` 续跑。分钟线按日期分块，只保留一天的截点；回放保留完整历史，不用默认 300 日近似。每个市场按日期前后两半，前半只比较预登记 V0–V3，只有订单错误少至少 10% 才替换 V0；后半固定方案，只评测一次。已有研究日期的复测是描述性复测，不算全新盲测。
 
 ## 局限
 

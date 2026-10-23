@@ -116,7 +116,7 @@ def industries(codes, market, fetch=False):
                 time.sleep(3.5)                                  # 10 requests / 30 s
         finally:
             q.close()
-    if fetch or (have and not path.exists()):
+    if fetch:
         CACHE.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(have, ensure_ascii=False, indent=0), encoding='utf-8')
     return {c: have.get(c, '') for c in codes}

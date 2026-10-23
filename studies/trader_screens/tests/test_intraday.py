@@ -2,9 +2,14 @@
 snapshot reach the systems, nothing is stored, every refusal, the in-memory append equals a full rebuild, the
 A-share limit-up skip and the diff classes."""
 import tempfile
+import csv
+import gzip
+import contextlib
+import io
 import unittest
 from pathlib import Path
 from unittest import mock
+from types import SimpleNamespace
 
 import numpy as np
 
@@ -61,9 +66,42 @@ class Base(unittest.TestCase):
 
 
 class ProvisionalTests(Base):
+    def test_order_table_distinguishes_signal_fill_from_snapshot_quote(self):
+        from studies.trader_screens import board
+        result = self.run_at(ny(TODAY, 15, 50))
+        buy = result['traders'][0]['buys'][0]
+        self.assertEqual(buy['snapshot_price'], LAST['US.A'] + 1)
+        buy['price'] = 12.
+        text = '\n'.join(board.orders(result))
+        self.assertIn('信号价 | 快照价', text)
+        self.assertIn(f"12.00 | {buy['snapshot_price']:.2f}", text)
+
+    def test_scan_shares_one_snapshot_with_all_seven_registered_systems(self):
+        from studies.trader_replication import panels, runner, systems
+        from studies.trader_screens import scan
+        seen = []
+        def replay(system, market, mode, days):
+            p = panels.load(market, mode=mode)
+            seen.append((system.id, p['close'].copy()))
+            return dict(id=system.id, name=system.id, last_day=str(p['days'][-1]),
+                        buys=[], sells=[], holdings=[], wanted=[])
+        quotes = {c: quote(LAST[c] + 1, LAST[c]) for c in CODES}
+        provider = Fake(SESS, snap=quotes)
+        before = self.files()
+        with mock.patch.object(runner, 'run', side_effect=replay), mock.patch.object(scan.data, 'industries', return_value={}):
+            result = I.run('us', now=ny(TODAY, 15, 50), provider=provider, calendar=calendar(),
+                           board=scan.run, log=lambda *_: None)
+        self.assertEqual({sid for sid, _ in seen}, {s.id for s in systems.all_()})
+        self.assertEqual(len(result['traders']), 7)
+        self.assertEqual(provider.calls, ['snapshot'])
+        self.assertEqual(self.files(), before)
+        for _, values in seen:
+            np.testing.assert_array_equal(values, seen[0][1])
+
     def test_systems_see_the_stored_sessions_and_the_snapshot_only(self):
         before = self.files()
         r = self.run_at(ny(TODAY, 15, 50))
+        self.assertEqual(self.files(), before)                       # cold cache is read-only too
         p = self.seen[0]
         self.assertEqual([str(d) for d in p['days']], list(DAYS) + [TODAY])
         np.testing.assert_allclose(p['close'][-1], [LAST[c] + 1 for c in CODES])
@@ -83,7 +121,13 @@ class ProvisionalTests(Base):
     def test_refused_after_a_half_day_close(self):
         with self.assertRaises(I.Refused):
             self.run_at(ny(TODAY, 13, 30), cal=calendar({TODAY: 'MORNING'}))
-        self.run_at(ny(TODAY, 12, 50), cal=calendar({TODAY: 'MORNING'}))
+        self.run_at(ny(TODAY, 12, 50),
+                    quotes={c: quote(LAST[c] + 1, LAST[c], when=f'{TODAY} 12:49:30') for c in CODES},
+                    cal=calendar({TODAY: 'MORNING'}))
+
+    def test_afternoon_only_session_has_not_opened_in_the_morning(self):
+        with self.assertRaisesRegex(I.Refused, 'has not opened'):
+            I.session('hk', DAYS[-1], ny(TODAY, 0), calendar({'2026-10-19': 'AFTERNOON'}))
 
     def test_refused_when_the_stored_data_is_not_the_previous_session(self):
         with self.assertRaises(I.Refused):                         # 2026-10-19 missing: refresh first
@@ -99,12 +143,44 @@ class ProvisionalTests(Base):
         with self.assertRaises(I.Refused):
             self.run_at(ny(TODAY, 15, 50), bad)
 
+    def test_future_or_missing_opend_quote_times_are_refused(self):
+        for when in (f'{TODAY} 15:50:01', f'{TODAY} 23:00:00', '15:49:30', ''):
+            with self.subTest(time=when), self.assertRaises(I.Refused):
+                self.run_at(ny(TODAY, 15, 50), {c: quote(LAST[c] + 1, LAST[c], when=when) for c in CODES})
+
+    def test_snapshot_completion_and_system_completion_must_precede_close(self):
+        def clock_run(values):
+            with mock.patch.object(I, 'market_now', side_effect=values), self.assertRaises(I.Refused):
+                self.run_at(None)
+        clock_run([ny(TODAY, 15, 59), ny(TODAY, 16)])
+        clock_run([ny(TODAY, 15, 59), ny(TODAY, 15, 59), ny(TODAY, 15, 59), ny(TODAY, 16)])
+
+    def test_minor_wrong_day_quotes_are_quarantined(self):
+        codes = [f'US.T{i}' for i in range(20)]
+        quotes = {c: quote(10, 10) for c in codes}
+        quotes[codes[0]]['time'] = '2026-10-16 16:00:00'
+        check = I.check_time('us', quotes, TODAY, now=ny(TODAY, 15, 50))
+        self.assertEqual(check['rejected_times'], codes[:1])
+        self.assertEqual(check['quotes_on_day'], [19, 20])
+
+    def test_read_only_industry_lookup_does_not_write_seed_cache(self):
+        from studies.trader_screens import data
+        seed = self.root / 'data' / 'martin-luk-cache' / 'industry.json'
+        seed.parent.mkdir(parents=True)
+        seed.write_text('{"US.A": "Technology"}')
+        with mock.patch.object(data, 'ROOT', self.root), mock.patch.object(data, 'CACHE', self.root / 'industry-cache'):
+            self.assertEqual(data.industries(['US.A'], 'us'), {'US.A': 'Technology'})
+        self.assertFalse((self.root / 'industry-cache').exists())
+
     def test_sina_tick_time_must_be_recent(self):
         fresh = {'US.A': dict(trading=True, time='15:45:00')}
         I.check_time('cn', fresh, TODAY, now=ny(TODAY, 3, 50))     # 15:50 Shanghai
         with self.assertRaises(I.Refused):
             I.check_time('cn', {'US.A': dict(trading=True, time='11:30:00')}, TODAY, now=ny(TODAY, 2, 50))
         I.check_time('cn', {'US.A': dict(trading=True, time='11:30:00')}, TODAY, now=ny(TODAY, 0, 10))  # lunch
+        for when in ('15:50:01', '', 'bad'):
+            with self.subTest(time=when), self.assertRaises(I.Refused):
+                I.check_time('cn', {'SH.A': dict(trading=True, time=when)}, TODAY, now=ny(TODAY, 3, 50))
 
     def test_corporate_action_today_equals_a_full_rebuild(self):
         split = {c: quote(LAST[c] / 2 + .5, LAST[c] / 2 if c == 'US.B' else LAST[c]) for c in CODES}
@@ -133,6 +209,14 @@ class SharedTests(Base):
 
 
 class LimitTests(unittest.TestCase):
+    def test_provisional_cli_refuses_silently_ignored_modes(self):
+        from studies.trader_screens import scan
+        for argv in (['run', 'us', '--provisional', '--mode', 'frozen'],
+                     ['run', 'us', '--provisional', '--days', '5'], ['refresh', 'us', '--provisional']):
+            with self.subTest(argv=argv), contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as cm:
+                scan.main(argv)
+            self.assertEqual(cm.exception.code, 2)
+
     def test_bad_quote_is_quarantined_and_cannot_inflate_coverage(self):
         codes = [f'US.T{i}' for i in range(20)]
         base = dict(raw_close=np.ones((1, 20)), volume=np.ones((1, 20)))
@@ -157,6 +241,37 @@ class LimitTests(unittest.TestCase):
 
 
 class MinuteTests(unittest.TestCase):
+    def test_unknown_symbols_are_removed_only_for_explicit_symbol_errors(self):
+        from studies.trader_screens.minute import invalid_codes
+        codes = ['US.ATII', 'US.AT', 'US.TII']
+        self.assertEqual(invalid_codes(codes, '未知股票 ATII'), ['US.ATII'])
+        self.assertEqual(invalid_codes(codes, 'subscription quota exceeded: ATII'), [])
+
+    def test_coverage_counts_missing_slots_and_merges_files_without_duplicates(self):
+        from studies.trader_screens import minute as MN
+        times = [f'{t // 60:02d}:{t % 60:02d}' for t in range(9 * 60 + 35, 16 * 60 + 1, 5)]
+        codes = ('US.A', 'US.B')
+        ds = SimpleNamespace(stocks=lambda: [dict(code=c) for c in codes],
+                             rows=lambda: ((c, TODAY, [10, 10, 10, 10, 100, 1000]) for c in codes))
+        with tempfile.TemporaryDirectory() as tmp:
+            def write(name, rows):
+                path = Path(tmp) / name
+                with gzip.open(path, 'wt', newline='') as f:
+                    w = csv.writer(f)
+                    w.writerow(MN.HEADER)
+                    w.writerows((c, f'{TODAY} {t}:00', 10, 10, 10, 10, 1, 10) for c, t in rows)
+                return path
+            a = write('a.csv.gz', [(c, t) for c in codes for t in times if c == 'US.A' or t != '09:35'])
+            result = MN.coverage('us', [a, a], ds=ds, target=1)
+            self.assertEqual(result['expected_slots'], 78)
+            self.assertEqual(result['days'][0]['complete'], 1)
+            self.assertEqual(result['days'][0]['missing_active'], ['US.B'])
+            self.assertEqual(result['deficit_all_active'], 1)
+            b = write('b.csv.gz', [('US.B', '09:35')])
+            merged = MN.coverage('us', [a, b], ds=ds, target=1)
+            self.assertEqual(merged['days_all_active_complete'], [TODAY])
+            self.assertEqual(merged['deficit_all_active'], 0)
+
     def test_bar_known_at_each_cut_and_whole_sessions(self):
         from studies.trader_screens import minute as MN
         rows = [('US.A', TODAY, '15:45', 10, 11, 9, 10.5, 100, 1000), ('US.A', TODAY, '15:50', 10.5, 12, 10, 11, 50, 600),
@@ -176,6 +291,17 @@ class MinuteTests(unittest.TestCase):
 
 
 class DiffTests(unittest.TestCase):
+    def test_partial_and_trailing_exit_on_same_stock_are_both_kept(self):
+        def res(sells):
+            return dict(market='us', last_day=TODAY, traders=[dict(id='x', name='X', buys=[], sells=sells)])
+        trim = dict(code='US.A', side=1, why='按 R 分批', price=10., full=False)
+        trail = dict(code='US.A', side=1, why='收盘跌破跟踪线', price=9., full=True)
+        result = I.diff(res([trim, trail]), res([trail]))['sells']
+        self.assertEqual(len(result['same']), 1)
+        self.assertEqual(result['same'][0]['prov'], 9.)
+        self.assertEqual(len(result['gone']), 1)
+        self.assertEqual(result['gone'][0]['prov'], 10.)
+
     def test_classes_and_price_gap(self):
         def res(buys, sells):
             return dict(market='us', last_day=TODAY, traders=[dict(id='x', name='X', buys=buys, sells=sells)])
@@ -192,6 +318,8 @@ class DiffTests(unittest.TestCase):
         self.assertEqual([x['code'] for x in d['sells']['missed']], ['US.E'])
         with self.assertRaises(ValueError):
             I.diff(prov, dict(off, last_day='2026-10-20'))
+        with self.assertRaisesRegex(ValueError, 'different trader sets'):
+            I.diff(prov, dict(off, traders=[]))
 
 
 if __name__ == '__main__':
