@@ -23,6 +23,17 @@ registered system) shorts.LongShort calls the study's own build unchanged.  The 
     ep_slots   his EPs (kind 'ep', or the study's ep_mask) opened up to this many a day on their own count, not
                taking the daily cap of his other setups (engine max_new_by_kind; a build-capped study keeps the
                day's first max_new non-EP entries plus its first ep_slots EPs)
+    exec       {'mode': m}: a long confirmed at day t's close is bought on day t+1 instead (notes/EXEC_PREREG_X1.md),
+               the stop kept at its planned price P' = the planned stop; P = the planned fill (t's close):
+               'close' unchanged; 'open' at t+1's open; 'open_up' at the open only when it is above P; 'open_down'
+               at the open only when it is not above P; 'limit' a buy limit at P (the open when it opens at or
+               below P, else P when the day trades down to it); 'stop' a buy stop at P (the open when it opens at
+               or above P, else P when the day trades up to it); 'open_pct' at the open with the stop moved to
+               keep the planned width in percent (open x stop / P).  No fill at or below the stop; when t+1's low
+               reaches the stop the trade is stopped that day (exact, except 'stop' filled intraday: pessimistic).
+               A shares (always, every mode): no long whose day-t close is at the daily limit, and with a t+1 mode
+               none whose t+1 open is at the limit ('close' alone: the registered system without limit-up
+               buys).  The day's cap applies to the entries that filled
 
 Commands:
 
@@ -38,6 +49,8 @@ round      notes/common_rounds/<name>.json: each candidate on every registered s
     $PY -m studies.trader_replication.common funnel [system ...]
     $PY -m studies.trader_replication.common round C1 [system ...]
     $PY -m studies.trader_replication.common validate V1      # once: the validation segment (2026)
+    $PY -m studies.trader_replication.common measure X1W      # candidates added to each registered system, any
+                                                              # segment and markets (execution rounds X1*)
 """
 from __future__ import annotations
 
@@ -146,6 +159,73 @@ def stop_width(A, entries, spec, ep):
     return out
 
 
+LIMIT_WIDE = ('300', '301', '688', '689')          # ChiNext / STAR: 20%; Beijing (BJ., 8xx, 4xx, 920): 30%
+
+
+def limit_pct(codes):
+    """The A-share daily limit of each code (ST names at 5% are not marked in the data and get 10%)."""
+    out = []
+    for c in codes:
+        s = str(c)
+        num = s.split('.')[-1]
+        out.append(.3 if s.startswith('BJ.') or num[:1] in ('8', '4') or num.startswith('920')
+                   else .2 if num[:3] in LIMIT_WIDE else .1)
+    return np.array(out)
+
+
+def at_limit(A, price, d):
+    """Days x codes (row d of `price`, an adjusted price on day d): at or above the A-share limit price over day
+    d - 1's close, rounded to the cent on the unadjusted scale of day d."""
+    c, raw = A['close'], A['raw']
+    cap = limit_pct(A['codes'])
+    with np.errstate(invalid='ignore', divide='ignore'):
+        k = raw[d] / c[d]                                  # adjusted -> unadjusted on day d
+        lim = np.floor(c[d - 1] * k * (1 + cap) * 100 + 0.5) / 100
+        return price[d] * k >= lim - 1e-6
+
+
+def next_day(A, entries, spec):
+    """Long entries moved from the confirming close to the next day (module docstring, exec)."""
+    mode = spec['mode']
+    if mode not in ('close', 'open', 'open_up', 'open_down', 'limit', 'stop', 'open_pct'):
+        raise ValueError(mode)
+    o, h, l, c = A['open'], A['high'], A['low'], A['close']
+    cn = A.get('market') == 'cn'
+    n = len(entries)
+    out = [[] for _ in range(n)]
+    for d, lst in enumerate(entries):
+        for e in lst:
+            j = e[1]
+            if e[2] < 0:
+                out[d].append(e)
+                continue
+            if cn and d and at_limit(A, c, d)[j]:
+                continue
+            if mode == 'close':
+                out[d].append(e)
+                continue
+            if d + 1 >= n or (len(e) > 6 and e[6] is not None):
+                continue
+            P, stop = e[3], e[4]
+            od, hd, ld = o[d + 1, j], h[d + 1, j], l[d + 1, j]
+            if not (np.isfinite(od) and np.isfinite(ld)) or (cn and at_limit(A, o, d + 1)[j]):
+                continue
+            fill = None
+            if mode in ('open', 'open_pct') or (mode == 'open_up' and od > P) or (mode == 'open_down' and od <= P):
+                fill = od
+            if mode == 'open_pct':                     # the planned stop width carried to the fill
+                stop = float(od * stop / P)
+            elif mode == 'limit':
+                fill = od if od <= P else (P if ld <= P else None)
+            elif mode == 'stop':
+                fill = od if od >= P else (P if hd >= P else None)
+            if fill is None or not fill > stop:
+                continue
+            out[d + 1].append((e[0], j, e[2], float(fill), stop, e[5], float(stop) if ld <= stop else None)
+                              + tuple(e[7:]))
+    return out
+
+
 def build_long(base, A, cfg, trace=None):
     """The study's long build with cfg['common'] applied (see the module docstring)."""
     cm = cfg['common']
@@ -187,6 +267,10 @@ def build_long(base, A, cfg, trace=None):
         rules = replace(rules, add_signal='common_sig', add_signal_frac=a.get('frac', .5),
                         add_signal_max=a.get('max', 1), add_signal_stop=a.get('stop', 'fill'),
                         add_signal_profit=a.get('profit', True))
+    if cm.get('exec'):                             # bought the next day; A shares: no limit-up buys
+        entries = next_day(A, entries, cm['exec'])
+        if trace is not None:
+            trace['filtered'] = entries
     slots = cm.get('ep_slots')                     # his EPs get their own daily count, outside max_new
     if slots and precap:
         entries = [sorted([e for e in lst if not (e[2] > 0 and ep(d, e))], key=lambda e: e[0])[:cfg['max_new']]
@@ -549,6 +633,60 @@ def validate(name):
     return res
 
 
+def merged(cfg, ch):
+    """The registered configuration with a candidate's switches added to the ones it already carries."""
+    return dict(cfg, common={**(cfg.get('common') or {}), **ch})
+
+
+def measure(name, ids=()):
+    """notes/common_rounds/<name>.json {"segment": "select" | "validate" | "window", "markets": [...], "ref": key,
+    "candidates": {key: {"all": common dict, id: ... | null}}}: the registered system and every candidate (added to
+    his own switches) on each market over the segment; with "ref", the acceptance rule of the common rounds with that
+    candidate in the place of the registered system (US).  reports/common_<name>.json"""
+    from . import panels
+    spec = json.loads((ROUNDS / f'{name}.json').read_text(encoding='utf-8'))
+    seg = dict(select=SELECT, validate=VALIDATE, window=panels.WINDOW)[spec['segment']]
+    path = OUT / f'common_{name.lower()}.json'
+    res = json.loads(path.read_text(encoding='utf-8'))['systems'] if path.exists() else {}
+    keys, ref = list(spec['candidates']), spec.get('ref')
+    draws = spec.get('draws', 50)
+
+    def save():
+        out = dict(name=name, spec=spec, segment=seg, systems=res)
+        if ref:
+            us = {s: {'base': r['us'][ref], **{k: r['us'][k] for k in keys if k != ref}}
+                  for s, r in res.items() if 'us' in r}
+            out['accept'] = accept(us, [k for k in keys if k != ref])
+        path.write_text(json.dumps(out, indent=1, default=float), encoding='utf-8')
+        return out
+    for x in SY.all_():
+        if (ids and x.id not in ids) or (not ids and x.id in res):
+            continue
+        st, cfg = x.load()
+        r = {}
+        for m in spec['markets']:
+            A = st.arrays(m)
+            located = [t for t in st.located(A, st.trades()) if seg[0] <= t[0].entry_date <= seg[1]] \
+                if m == 'us' else []
+            r[m] = {'base': evaluate(st, A, cfg, located, draws, seg=seg)}
+            row(name, x.id, f'{m} base', r[m]['base'])
+            for k in keys:
+                ch = change_for(spec, k, x.id)
+                if m not in spec.get('markets_of', {}).get(k, [m]):
+                    ch = None
+                r[m][k] = dict(r[m]['base'], unchanged=True) if not ch else \
+                    dict(evaluate(st, A, merged(cfg, ch), located, draws, seg=seg), change=ch)
+                row(name, x.id, f'{m} {k}', r[m][k])
+            del A
+            gc.collect()
+        res[x.id] = r
+        save()
+    out = save()
+    for k, a in out.get('accept', {}).items():
+        print('ACCEPT', name, k, a['passed'], a['why'], 'better', a['better'], 'worse', a['worse'], flush=True)
+    return out
+
+
 def row(name, sid, k, r):
     p = r.get('placebo', {})
     print(name, sid, k, f"total {r['total']:+.3f} dd {r['maxdd']:.3f} years",
@@ -564,5 +702,7 @@ if __name__ == '__main__':
         round_(sys.argv[2], sys.argv[3:])
     elif sys.argv[1] == 'validate':
         validate(sys.argv[2])
+    elif sys.argv[1] == 'measure':
+        measure(sys.argv[2], sys.argv[3:])
     else:
         raise SystemExit(__doc__)
