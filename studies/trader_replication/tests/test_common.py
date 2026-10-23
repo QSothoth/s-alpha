@@ -188,6 +188,107 @@ class FloorTests(unittest.TestCase):
         self.assertEqual([x[8] if len(x) > 8 else None for x in sorted(e[2], key=lambda x: x[1])], [.1, None, .1])
 
 
+class ExecTests(unittest.TestCase):
+    """exec: a long confirmed at day 2's close (planned fill 10, stop 9.5) is bought on day 3 or not at all."""
+
+    def run_(self, mode, o, h=10.5, l=9.6, A=None, cfg=None):
+        A = A or arrays(5, 3)
+        A['open'][3, 0], A['high'][3, 0], A['low'][3, 0] = o, h, l
+        e = C.build_long(Fake(), A, dict(cfg or {}, common={'exec': {'mode': mode}}))[0]
+        self.assertEqual(e[2], [])                                     # never on the confirming day
+        x = [q for q in e[3] if q[1] == 0]
+        return x[0] if x else None
+
+    def fill(self, mode, o, h=10.5, l=9.6):
+        x = self.run_(mode, o, h, l)
+        return x and x[3]
+
+    def test_open_modes_read_only_the_next_open(self):
+        self.assertEqual(self.fill('open', 10.4), 10.4)
+        self.assertEqual(self.fill('open_up', 10.4), 10.4)
+        self.assertIsNone(self.fill('open_up', 10.0))
+        self.assertEqual(self.fill('open_down', 10.0), 10.0)
+        self.assertIsNone(self.fill('open_down', 10.4))
+
+    def test_limit_and_stop_orders_at_the_planned_fill(self):
+        self.assertEqual(self.fill('limit', 9.8), 9.8)                 # opens below: the open
+        self.assertEqual(self.fill('limit', 10.4, l=9.9), 10.0)        # trades down to it
+        self.assertIsNone(self.fill('limit', 10.4, l=10.1))
+        self.assertEqual(self.fill('stop', 10.4), 10.4)                # opens above: the open
+        self.assertEqual(self.fill('stop', 9.8, h=10.2), 10.0)         # trades up to it
+        self.assertIsNone(self.fill('stop', 9.8, h=9.9))
+
+    def test_stop_kept_no_fill_under_it_stopped_the_same_day(self):
+        x = self.run_('open', 10.4)
+        self.assertEqual((x[4], x[6]), (9.5, None))                    # the planned stop, not moved
+        self.assertIsNone(self.fill('open', 9.4, l=9.3))               # opens under the stop
+        x = self.run_('open', 10.4, l=9.4)
+        self.assertEqual(x[6], 9.5)
+        A = arrays(5, 3)
+        A['open'][3, 0], A['low'][3, 0] = 10.4, 9.4
+        e, rules, _, _ = C.build_long(Fake(), A, {'common': {'exec': {'mode': 'open'}}})
+        rules = replace(rules, max_new_long=1, risk=.01, max_position=.2, max_gross=10.0)
+        px = dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'])
+        _, _, tr = Y.simulate(px, {}, rules, e, A['days'][0], A['days'][-1], audit=True)
+        self.assertEqual((tr[0]['code'], tr[0]['entry'], tr[0]['exit'], tr[0]['fill']),
+                         ('US.S0', A['days'][3], A['days'][3], 10.4))
+
+    def test_open_pct_carries_the_planned_width(self):
+        x = self.run_('open_pct', 10.4, l=9.9)
+        self.assertAlmostEqual(x[4], 10.4 * .95)                       # 5% under the fill, like 9.5 under 10
+        self.assertIsNone(x[6])                                        # low 9.9 > 9.88: not stopped that day
+        x = self.run_('open_pct', 10.4, l=9.8)
+        self.assertAlmostEqual(x[6], 10.4 * .95)
+
+    def test_last_day_has_no_next_day(self):
+        A = arrays(3, 3)
+        e = C.build_long(Fake(), A, {'common': {'exec': {'mode': 'open'}}})[0]
+        self.assertEqual(sum(map(len, e)), 0)
+
+    def test_close_mode_is_unchanged_outside_a_shares(self):
+        A = arrays(5, 3)
+        self.assertEqual(C.build_long(Fake(), A, {'common': {'exec': {'mode': 'close'}}})[0], Fake().build(A, {})[0])
+
+    def test_build_cap_counts_only_filled_entries(self):
+        A = arrays(5, 3)
+        A['open'][3] = [9.9, 10.2, 10.2]
+        e = C.build_long(Fake('build'), A, {'max_new': 1, 'common': {'exec': {'mode': 'open_up'}}})[0]
+        self.assertEqual([x[1] for x in e[3]], [1])                    # 0 did not fill; 1 takes the slot
+
+    def cn(self, codes=('SZ.000001', 'SZ.300001', 'SH.600001')):
+        A = arrays(5, 3)
+        A.update(market='cn', codes=np.array(codes))
+        return A
+
+    def test_a_share_limit_up_close_or_open_is_not_bought(self):
+        A = self.cn()
+        A['close'][1] = 9.09                                           # day 2 closes at 10.00 = 9.09 x 1.1
+        A['raw'][1] = 9.09
+        e = C.build_long(Fake(), A, {'common': {'exec': {'mode': 'close'}}})[0]
+        self.assertEqual(sorted(x[1] for x in e[2]), [1])              # ChiNext's 20% limit: only 1 still bought
+        A = self.cn()
+        A['open'][3] = 11.0                                            # 10.00 -> 11.00: limit open on the main board
+        e = C.build_long(Fake(), A, {'common': {'exec': {'mode': 'open'}}})[0]
+        self.assertEqual(sorted(x[1] for x in e[3]), [1])
+        A = self.cn()
+        A['open'][3] = 10.95                                           # under the limit: bought
+        e = C.build_long(Fake(), A, {'common': {'exec': {'mode': 'open'}}})[0]
+        self.assertEqual(sorted(x[1] for x in e[3]), [0, 1, 2])
+
+    def test_limit_uses_the_unadjusted_cent(self):
+        A = self.cn(('SZ.000001',) * 3)
+        A['close'][1], A['close'][2] = 3.33, 3.66                      # 3.33 x 1.1 = 3.663 -> limit 3.66
+        A['raw'][1], A['raw'][2] = 3.33, 3.66
+        self.assertTrue(C.at_limit(A, A['close'], 2)[0])
+        A['close'][2] = A['raw'][2] = 3.65
+        self.assertFalse(C.at_limit(A, A['close'], 2)[0])
+        A['raw'][1], A['raw'][2] = 6.66, 7.33                          # adjusted 2:1: 6.66 x 1.1 = 7.326 -> 7.33
+        A['close'][2] = 3.665
+        self.assertTrue(C.at_limit(A, A['close'], 2)[0])
+        A['raw'][2], A['close'][2] = 7.32, 3.66                        # a cent under on the unadjusted scale
+        self.assertFalse(C.at_limit(A, A['close'], 2)[0])
+
+
 class PassThroughTests(unittest.TestCase):
     def test_without_common_the_wrapper_calls_the_study_build(self):
         A = arrays()

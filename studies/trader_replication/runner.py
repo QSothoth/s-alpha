@@ -30,6 +30,16 @@ WHY_SHORT = {'stop': '涨破止损回补', 'gap_stop': '跳空涨破止损回补
              'target': '到达目标线回补'}
 
 
+def bounded_history(days, values, until, window=60):
+    """At most window + 1 observed closes through until; incomplete histories stay unavailable."""
+    end = int(np.searchsorted(np.asarray(days, dtype=str), until, side='right'))
+    start = max(0, end - window - 1)
+    tail = np.asarray(values[start:end], dtype=float)
+    if not len(tail) or not np.all(np.isfinite(tail) & (tail > 0)):
+        return dict(days=[], values=[])
+    return dict(days=[str(d) for d in days[start:end]], values=tail.tolist())
+
+
 def years_until(curve, dates, until):
     """Calendar-year returns counting only days up to `until` (years the data covers up to then)."""
     out, prev = {}, 1.0
@@ -129,6 +139,7 @@ def run(system, market, mode=None, days=1, A=None):
     peak = np.maximum.accumulate(np.concatenate([[1.0], curve]))[1:]
     out = dict(id=system.id, name=system.name, version=system.version, status=system.status, label=system.label,
                market=market, data=A.get('digest'), last_day=str(dates[T]), days=days,
+               equity_history=bounded_history(cdates, curve, str(dates[T])),
                strategy=system.strategy, buys=buys, sells=sells, wanted=wanted, holdings=holdings,
                gate_today=None if gate is None else bool(gate[T]),
                account=dict(since=SY.START, ret=equity - 1, maxdd=float(np.max(1 - curve / peak)),

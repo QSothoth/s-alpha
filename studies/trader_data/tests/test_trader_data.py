@@ -113,6 +113,21 @@ class PanelTests(Base):
         self.assertEqual(p['close'].shape, (2, 3))
 
 
+class ProviderTests(unittest.TestCase):
+    def test_snapshot_recovers_from_a_transient_page_timeout(self):
+        from studies.trend_breakout import sources
+        payload = json.dumps([dict(symbol='sh600000', open='10', high='10.4', low='9.9', trade='10.2',
+                                   volume='1000', amount='10200', settlement='10')]).encode()
+        response = mock.Mock(read=mock.Mock(return_value=payload))
+        end = mock.Mock(read=mock.Mock(return_value=b'[]'))
+        with mock.patch.object(sources.urllib.request, 'urlopen', side_effect=[TimeoutError(), response, end]) as fetch, \
+                mock.patch.object(sources.time, 'sleep'):
+            snap = PV.SinaProvider().snapshot(['SH.600000'])
+        self.assertEqual(snap['SH.600000']['close'], 10.2)
+        self.assertTrue(snap['SH.600000']['trading'])
+        self.assertEqual(fetch.call_count, 3)
+
+
 class LiveTests(Base):
     def test_one_missing_session_comes_from_one_snapshot(self):
         last = {c: 10.0 + j + 3 for j, c in enumerate(CODES)}
@@ -120,6 +135,8 @@ class LiveTests(Base):
         ds = self.live(fake)
         r = ds.update(ny('2026-10-19', 17))
         self.assertEqual((r['method'], r['days'], r['rows'], r['actions']), ('snapshot', ['2026-10-19'], 3, 0))
+        self.assertEqual((r['expected_last_day'], r['last_day'], r['status']),
+                         ('2026-10-19', '2026-10-19', 'updated'))
         p = ds.panel()
         self.assertEqual(str(p['days'][-1]), '2026-10-19')
         self.assertAlmostEqual(float(p['close'][-1, 0]), 14.0)
@@ -179,6 +196,158 @@ class LiveTests(Base):
         ds = self.live(fake)
         self.assertEqual(ds.update(ny('2026-10-20', 11))['method'], 'history')    # a snapshot shows today now
         self.assertEqual(fake.calls, ['history'])
+
+    def test_missing_latest_session_is_rejected_before_any_cache_write(self):
+        hist = {c: [(c, '2026-10-19', 15, 15, 15, 15, 1000, 15000)] for c in CODES}
+        latest_only = {c: [(c, '2026-10-20', 15, 15, 15, 15, 1000, 15000)] for c in CODES}
+        for i, available in enumerate(({}, hist, latest_only)):
+            with self.subTest(case=i):
+                fake = Fake(SESS, hist=available)
+                base = write_folder(self.root / f'rel-{i}')
+                ds = TD.LiveDataset(base, self.root / f'live-{i}', provider=lambda: fake)
+                before = ds.digest()
+                with self.assertRaisesRegex(RuntimeError, 'no trading bars for completed sessions'):
+                    ds.update(ny('2026-10-20', 17))
+                self.assertEqual(ds.digest(), before)
+                self.assertFalse(ds.dir.exists())
+                self.assertEqual(ds.log(), [])
+
+    def test_empty_calendar_is_not_mistaken_for_a_holiday(self):
+        ds = self.live(Fake([]))
+        with self.assertRaisesRegex(RuntimeError, 'calendar omits stored session'):
+            ds.update(ny('2026-10-20', 17))
+        self.assertFalse(ds.dir.exists())
+
+    def test_weekends_and_calendar_holidays_keep_last_completed_session(self):
+        fake = Fake(['2026-10-16'])
+        ds = self.live(fake)
+        for day in ('2026-10-17', '2026-10-18', '2026-10-19'):
+            r = ds.update(ny(day, 17))
+            self.assertEqual((r['expected_last_day'], r['last_day'], r['status']),
+                             ('2026-10-16', '2026-10-16', 'current'))
+        self.assertEqual(fake.calls, [])
+        self.assertFalse(ds.dir.exists())
+
+    def test_severely_incomplete_history_cannot_mark_session_current(self):
+        hist = {'US.A': [('US.A', day, 15, 15, 15, 15, 1000, 15000)
+                         for day in ('2026-10-19', '2026-10-20')]}
+        ds = self.live(Fake(SESS, hist=hist))
+        with self.assertRaisesRegex(RuntimeError, 'insufficient trading-name coverage'):
+            ds.update(ny('2026-10-20', 17))
+        self.assertFalse(ds.dir.exists())
+
+    def test_coverage_allows_one_suspension_in_twenty_previous_trading_names(self):
+        codes = tuple(f'US.T{i}' for i in range(20))
+        hist = {c: [(c, day, 15, 15, 15, 15, 1000, 15000)
+                    for day in ('2026-10-19', '2026-10-20')] for c in codes[:19]}
+        with mock.patch(__name__ + '.CODES', codes):
+            ds = self.live(Fake(SESS, hist=hist))
+        report = ds.update(ny('2026-10-20', 17))
+        self.assertEqual(report['session_rows'], {'2026-10-19': 19, '2026-10-20': 19})
+        self.assertEqual(report['session_coverage'], {'2026-10-19': [19, 20], '2026-10-20': [19, 20]})
+        self.assertEqual(report['n_failed'], 1)
+
+    def test_coverage_rejects_two_missing_of_twenty_previous_trading_names(self):
+        codes = tuple(f'US.T{i}' for i in range(20))
+        hist = {c: [(c, day, 15, 15, 15, 15, 1000, 15000)
+                    for day in ('2026-10-19', '2026-10-20')] for c in codes[:18]}
+        with mock.patch(__name__ + '.CODES', codes):
+            ds = self.live(Fake(SESS, hist=hist))
+        with self.assertRaisesRegex(RuntimeError, 'insufficient trading-name coverage'):
+            ds.update(ny('2026-10-20', 17))
+        self.assertFalse(ds.dir.exists())
+
+    def test_duplicate_bars_cannot_inflate_coverage(self):
+        row = ('US.A', '2026-10-19', 15, 15, 15, 15, 1000, 15000)
+        ds = self.live(Fake(SESS, hist={'US.A': [row] * 100}))
+        with self.assertRaisesRegex(RuntimeError, 'duplicate provider bar'):
+            ds.update(ny('2026-10-20', 11))
+        self.assertFalse(ds.dir.exists())
+
+    def test_coverage_baseline_excludes_previously_nontrading_names(self):
+        codes = tuple(f'US.T{i}' for i in range(20))
+        active = set(codes[:10])
+        hist = {c: [(c, day, 15, 15, 15, 15, 1000, 15000)
+                    for day in ('2026-10-19', '2026-10-20')] for c in active}
+        with mock.patch(__name__ + '.CODES', codes):
+            ds = self.live(Fake(SESS, hist=hist))
+        previous = ds.panel()
+        for j, c in enumerate(previous['codes']):
+            if c not in active:
+                previous['volume'][-1, j] = 0
+        with mock.patch.object(ds, 'panel', return_value=previous):
+            report = ds.update(ny('2026-10-20', 17))
+        self.assertEqual(report['session_coverage'], {'2026-10-19': [10, 10], '2026-10-20': [10, 10]})
+
+    def test_invalid_latest_bar_cannot_advance_last_day(self):
+        ds = self.live(Fake(SESS, hist={'US.A': [('US.A', '2026-10-19', 15, 15, 15, float('nan'), 1, 15)]}))
+        with self.assertRaisesRegex(RuntimeError, 'no trading bars'):
+            ds.update(ny('2026-10-20', 11))
+        self.assertFalse(ds.dir.exists())
+
+    def test_invalid_snapshot_is_quarantined_without_price_or_action_fabrication(self):
+        codes = tuple(f'US.T{i}' for i in range(20))
+        cases = (dict(open=0., high=0., low=0.), dict(close=float('nan')),
+                 dict(volume=-1.), dict(turnover=float('inf')), dict(low=100.), dict(close=None),
+                 dict(prev_close=float('nan')), dict(prev_close=0.))
+        for i, invalid in enumerate(cases):
+            with self.subTest(invalid=invalid), mock.patch(__name__ + '.CODES', codes):
+                base = write_folder(self.root / f'rel-{i}')
+                snaps = {c: snap(14. + j, 13. + j) for j, c in enumerate(codes)}
+                snaps[codes[0]].update(prev_close=6.5)
+                snaps[codes[0]].update(invalid)
+                ds = TD.LiveDataset(base, self.root / f'live-{i}',
+                                    provider=lambda: Fake(SESS, snap=snaps))
+                report = ds.update(ny('2026-10-19', 17))
+                self.assertEqual(report['session_coverage'], {'2026-10-19': [19, 20]})
+                self.assertEqual((report['rows'], report['actions']), (19, 0))
+                rejected = report['rejected_bars']
+                self.assertEqual([(r['code'], r['day']) for r in rejected], [(codes[0], '2026-10-19')])
+                json.dumps(report, allow_nan=False)
+                panel = ds.panel()
+                self.assertTrue(np.isnan(panel['close'][-1, 0]))
+                self.assertFalse(ds.actions())
+                self.assertEqual(ds.update(ny('2026-10-19', 18))['rejected_bars'], rejected)
+
+    def test_invalid_history_is_quarantined_and_still_counts_against_coverage(self):
+        codes = tuple(f'US.T{i}' for i in range(20))
+        hist = {c: [(c, '2026-10-19', 15., 15., 15., 15., 1000., 15000.)] for c in codes}
+        hist[codes[0]] = [(codes[0], '2026-10-19', 0., 0., 0., 9.97, 6., 60.)]
+        with mock.patch(__name__ + '.CODES', codes):
+            ds = self.live(Fake(SESS, hist=hist))
+        report = ds.update(ny('2026-10-20', 11))
+        self.assertEqual(report['rows'], 19)
+        self.assertEqual(len(report['rejected_bars']), 1)
+        hist[codes[1]] = [(codes[1], '2026-10-19', 15., 15., 15., float('nan'), 1000., 15000.)]
+        with mock.patch(__name__ + '.CODES', codes):
+            base = write_folder(self.root / 'other')
+        ds = TD.LiveDataset(base, self.root / 'other-live', provider=lambda: Fake(SESS, hist=hist))
+        with self.assertRaisesRegex(RuntimeError, 'insufficient trading-name coverage'):
+            ds.update(ny('2026-10-20', 11))
+        self.assertFalse(ds.dir.exists())
+
+    def test_malformed_provider_numbers_remain_invalid(self):
+        for value in (None, '', 'bad'):
+            self.assertTrue(np.isnan(PV.number(value)))
+        self.assertEqual(PV.number('9.97'), 9.97)
+
+    def test_old_invalid_cache_is_quarantined_and_checked_without_rewriting_source(self):
+        codes = tuple(f'US.T{i}' for i in range(20))
+        with mock.patch(__name__ + '.CODES', codes):
+            ds = self.live(Fake(SESS))
+        ds.dir.mkdir(parents=True)
+        rows = [(c, '2026-10-19', 15., 15., 15., 15., 1000., 15000.) for c in codes]
+        rows[0] = (codes[0], '2026-10-19', 0., 0., 0., 9.97, 6., 60.)
+        LV.append(ds.dir / 'bars_raw.csv.gz', rows, LV.COLUMNS)
+        original = (ds.dir / 'bars_raw.csv.gz').read_bytes()
+        with self.assertRaisesRegex(RuntimeError, 'no completed update record'):
+            ds.update(ny('2026-10-19', 18))
+        (ds.dir / 'log.json').write_text(json.dumps([dict(days=['2026-10-19'])]))
+        report = ds.update(ny('2026-10-19', 18))
+        self.assertEqual(report['session_coverage'], {'2026-10-19': [19, 20]})
+        self.assertEqual(report['rejected_bars'][0]['code'], codes[0])
+        self.assertTrue(np.isnan(ds.panel()['close'][-1, 0]))
+        self.assertEqual((ds.dir / 'bars_raw.csv.gz').read_bytes(), original)
 
 
 class ApiTests(Base):

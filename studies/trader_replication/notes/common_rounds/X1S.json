@@ -1,0 +1,53 @@
+{
+ "stage": "exec: conditions on day t+1 against the unconditional open X1A, selection segment, US (notes/EXEC_PREREG_X1.md, part B)",
+ "segment": "select",
+ "markets": [
+  "us"
+ ],
+ "draws": 20,
+ "ref": "X1A",
+ "candidates": {
+  "X1A": {
+   "all": {
+    "exec": {
+     "mode": "open"
+    }
+   }
+  },
+  "X1B": {
+   "all": {
+    "exec": {
+     "mode": "open_up"
+    }
+   }
+  },
+  "X1C": {
+   "all": {
+    "exec": {
+     "mode": "open_down"
+    }
+   }
+  },
+  "X1D": {
+   "all": {
+    "exec": {
+     "mode": "limit"
+    }
+   }
+  },
+  "X1E": {
+   "all": {
+    "exec": {
+     "mode": "stop"
+    }
+   }
+  },
+  "X1F": {
+   "all": {
+    "exec": {
+     "mode": "open_pct"
+    }
+   }
+  }
+ }
+}

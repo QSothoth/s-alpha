@@ -38,14 +38,25 @@ from . import board, data, screens as S
 WANTED_N = 8
 
 
+def pool_index(F):
+    """The existing pool equal-weight index, computed one row at a time."""
+    def f():
+        pool = F.rank_pool
+        returns = np.zeros(len(F.c))
+        with np.errstate(invalid='ignore', divide='ignore'):
+            for t in range(1, len(F.c)):
+                prev = F.c[t - 1]
+                row = np.where(pool[t] & np.isfinite(prev), F.c[t] / prev - 1, np.nan)
+                if np.any(~np.isnan(row)):
+                    returns[t] = np.nanmean(row)
+        return np.cumprod(1 + np.nan_to_num(returns))
+    return F.get('pool_index', f)
+
+
 def index_above(F, n):
     """Pool equal-weight index closing above its EMA(n), as of each day's close."""
     def f():
-        pool = F.rank_pool
-        prev = S.lag(F.c)
-        with np.errstate(invalid='ignore', divide='ignore'):
-            r = np.where(pool & np.isfinite(prev), F.c / prev - 1, np.nan)
-            idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+        idx = pool_index(F)[:, None]
         return (idx > S.ema(idx, n))[:, 0]
     return F.get(('index_above', n), f)
 
@@ -82,6 +93,8 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
     F = S.Feat(p, market)
     state = {f'above_ema{n}': bool(index_above(F, n)[-1]) for n in (20, 50)}
     last, digest, codes = str(p['days'][-1]), p['digest'], [str(c) for c in p['codes']]
+    tail_days, tail_close = p['days'][-61:].copy(), p['close'][-61:].copy()
+    market_curve = runner.bounded_history(p['days'], pool_index(F), last)
     del p, F
     traders = []
     with intraday.shared(panel, market) if panel is not None else nullcontext():
@@ -99,12 +112,23 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
             traders.append(t)
     nm = ds.names()
     inds = data.industries(codes, market)
+    signal_codes = set()
     for t in traders:
         for key in ('buys', 'sells', 'holdings', 'wanted'):
             for y in t[key]:
                 y['name'], y['industry'] = nm.get(y['code'], ''), inds.get(y['code'], '')
+                signal_codes.add(y['code'])
+    columns = {code: j for j, code in enumerate(codes)}
+    stocks = {}
+    for code in sorted(signal_codes):
+        history = (runner.bounded_history(tail_days, tail_close[:, columns[code]], last)
+                   if code in columns else dict(days=[], values=[]))
+        name, industry = nm.get(code, ''), inds.get(code, '')
+        description = f'{name}，所属行业为{industry}。' if name and industry else ''
+        stocks[code] = dict(history, description=description)
     return dict(market=market, mode=mode, data=ds.id, digest=digest, last_day=last, days=days, names=len(codes),
-                state=state, traders=traders, common=overlaps(traders, inds))
+                state=state, traders=traders, common=overlaps(traders, inds),
+                presentation=dict(window=60, market_curve=market_curve, stocks=stocks))
 
 
 def pct(x):
@@ -202,8 +226,9 @@ def main(argv=None):
     if args.action == 'run' and args.provisional:
         provisional_cli(args.market, set(args.traders.split(',')) if args.traders else None)
         return
+    freshness = None
     if args.action == 'refresh' or (args.action == 'run' and args.mode == 'live'):
-        r = TD.dataset(args.market, 'live').update()
+        r = freshness = TD.dataset(args.market, 'live').update()
         print(f"== {data.NAMES[args.market]} 数据：原有最后一天 {r['last_before']}，补 {len(r['missing'])} 个交易日"
               f"{'（' + r['method'] + '）' if r['method'] else '（已是最新）'}，{r['rows']} 根日 K，{r['actions']} 个复权")
         if args.action == 'refresh':
@@ -215,6 +240,15 @@ def main(argv=None):
         return
     only = set(args.traders.split(',')) if args.traders else None
     r = run(args.market, args.mode, args.days, only)
+    if freshness is not None:
+        if r['last_day'] != freshness['expected_last_day']:
+            raise RuntimeError(f"{args.market}: replay ends {r['last_day']}, expected {freshness['expected_last_day']}")
+        r['freshness'] = freshness
+        rejected = {x['code'] for x in freshness.get('rejected_bars', [])}
+        affected = sorted({x['code'] for t in r.get('traders', [])
+                           for key in ('buys', 'sells', 'holdings') for x in t[key]} & rejected)
+        if affected:
+            raise RuntimeError(f'{args.market}: invalid prices affect positions or trades: {affected}')
     out = data.SCANS / 'out'
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"{args.market}_{r['last_day']}_{args.days}d.json"

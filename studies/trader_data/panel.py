@@ -7,6 +7,7 @@ that opens or closes outside its own high / low (some HK bars) gets its high / l
 from __future__ import annotations
 
 import hashlib
+from itertools import groupby
 import re
 from pathlib import Path
 
@@ -28,26 +29,18 @@ def assemble(ds):
     actions = ds.actions()
     codes = sorted({s['code'] for s in ds.stocks()})
     ci = {c: i for i, c in enumerate(codes)}
-    by_code, days = {}, set()
-    cur, dd, rows = None, [], []
-
-    def flush():
-        if cur in ci and rows:
-            by_code[cur] = (dd, rows)
-            days.update(dd)
-    for code, day, values in ds.rows():
-        if code != cur:
-            flush()
-            cur, dd, rows = code, [], []
-        if dd and day <= dd[-1]:
-            raise ValueError(f'{ds.id}: {code} bars out of order or repeated at {day}')
-        dd.append(day)
-        rows.append(values)
-    flush()
-    days = np.array(sorted(days))
+    days = np.array(sorted({day for code, day, _ in ds.rows() if code in ci}))
     di = {d: i for i, d in enumerate(days)}
     out = {k: np.full((len(days), len(codes)), np.nan, np.float32) for k in FIELDS}
-    for code, (dd, rows) in by_code.items():
+    for code, records in groupby(ds.rows(), key=lambda row: row[0]):
+        if code not in ci:
+            continue
+        dd, rows = [], []
+        for _, day, values in records:
+            if dd and day <= dd[-1]:
+                raise ValueError(f'{ds.id}: {code} bars out of order or repeated at {day}')
+            dd.append(day)
+            rows.append(values)
         r = np.array(rows, float)
         f = P.factors(r[:, 3], np.array(dd), actions.get(code, []))
         idx = [di[d] for d in dd]

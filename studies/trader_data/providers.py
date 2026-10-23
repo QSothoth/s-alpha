@@ -24,6 +24,13 @@ CLOSE = {'us': ('America/New_York', clock(16, 30)), 'hk': ('Asia/Hong_Kong', clo
          'cn': ('Asia/Shanghai', clock(15, 30))}           # a little after the close: the day's bar is final
 
 
+def number(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError, OverflowError):
+        return float('nan')
+
+
 class Provider(ABC):
     market = ''
 
@@ -77,10 +84,10 @@ class OpenDProvider(Provider):
             if ret != self.ft.RET_OK:
                 raise RuntimeError(f'get_market_snapshot: {df}')
             for r in df.itertuples():
-                out[r.code] = dict(open=float(r.open_price), high=float(r.high_price), low=float(r.low_price),
-                                   close=float(r.last_price), volume=float(r.volume), turnover=float(r.turnover),
-                                   prev_close=float(r.prev_close_price), time=str(getattr(r, 'update_time', '')),
-                                   trading=not bool(getattr(r, 'suspension', False)) and float(r.volume) > 0)
+                out[r.code] = dict(open=number(r.open_price), high=number(r.high_price), low=number(r.low_price),
+                                   close=number(r.last_price), volume=number(r.volume), turnover=number(r.turnover),
+                                   prev_close=number(r.prev_close_price), time=str(getattr(r, 'update_time', '')),
+                                   trading=not bool(getattr(r, 'suspension', False)) and number(r.volume) != 0)
             time.sleep(.6)                                  # 60 snapshot calls / 30 s
         return out
 
@@ -114,11 +121,11 @@ class SinaProvider(Provider):
             for r in part:
                 code = r['symbol'][:2].upper() + '.' + r['symbol'][2:]
                 if code in want:
-                    vol = float(r.get('volume') or 0)
-                    out[code] = dict(open=float(r['open']), high=float(r['high']), low=float(r['low']),
-                                     close=float(r['trade']), volume=vol, turnover=float(r.get('amount') or 0),
-                                     prev_close=float(r['settlement']), time=str(r.get('ticktime', '')),
-                                     trading=vol > 0 and float(r['open']) > 0)
+                    vol = number(r.get('volume', 0))
+                    out[code] = dict(open=number(r.get('open')), high=number(r.get('high')), low=number(r.get('low')),
+                                     close=number(r.get('trade')), volume=vol, turnover=number(r.get('amount', 0)),
+                                     prev_close=number(r.get('settlement')), time=str(r.get('ticktime', '')),
+                                     trading=vol != 0)
             page += 1
             time.sleep(1.0)
         return out

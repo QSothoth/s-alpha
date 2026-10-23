@@ -1,0 +1,31 @@
+{
+ "stage": "exec: the registered systems bought at day t+1's open instead of t's close; A shares without limit-up buys (notes/EXEC_PREREG_X1.md, part A)",
+ "segment": "window",
+ "markets": [
+  "us",
+  "hk",
+  "cn"
+ ],
+ "draws": 0,
+ "markets_of": {
+  "X0": [
+   "cn"
+  ]
+ },
+ "candidates": {
+  "X0": {
+   "all": {
+    "exec": {
+     "mode": "close"
+    }
+   }
+  },
+  "X1A": {
+   "all": {
+    "exec": {
+     "mode": "open"
+    }
+   }
+  }
+ }
+}
