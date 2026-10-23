@@ -235,9 +235,18 @@ class LimitTests(unittest.TestCase):
         self.assertFalse(I.at_limit_up('SH.600000', '浦发银行', 10.99, 10.0))
         self.assertFalse(I.at_limit_up('SZ.300750', '宁德时代', 11.0, 10.0))
         self.assertTrue(I.at_limit_up('SZ.300750', '宁德时代', 12.0, 10.0))
-        self.assertTrue(I.at_limit_up('SZ.000001', '*ST 某某', 10.5, 10.0))
+        self.assertTrue(I.at_limit_up('SZ.000001', '*ST 某某', 10.5, 10.0, '2026-07-03'))
+        self.assertFalse(I.at_limit_up('SZ.000001', '*ST 某某', 10.5, 10.0, '2026-07-06'))
+        self.assertTrue(I.at_limit_up('SZ.000001', '*ST 某某', 11., 10., '2026-07-06'))
+        self.assertFalse(I.at_limit_up('SZ.300001', '*ST 某某', 10.5, 10.0, '2026-07-03'))
+        self.assertTrue(I.at_limit_up('SZ.300001', '*ST 某某', 12., 10., '2026-07-03'))
+        self.assertFalse(I.at_limit_up('SH.600001', '', float('nan'), 10.))
         self.assertTrue(I.at_limit_up('SH.600001', '', 11.28, 10.25))   # 11.275 rounds to the cent: 11.28
         self.assertFalse(I.at_limit_up('SH.600001', '', 11.27, 10.25))
+        self.assertFalse(I.at_limit_up('SH.600001', '', 11.16, np.float32(10.15)))
+        self.assertTrue(I.at_limit_up('SH.600001', '', 11.17, np.float32(10.15)))
+        self.assertTrue(I.at_limit_up('SH.600001', '', np.float32(32.12), np.float32(29.20)))
+        self.assertFalse(I.at_limit_up('SH.600001', '', np.float32(32.11), np.float32(29.20)))
 
 
 class MinuteTests(unittest.TestCase):

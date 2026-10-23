@@ -93,6 +93,13 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
     F = S.Feat(p, market)
     state = {f'above_ema{n}': bool(index_above(F, n)[-1]) for n in (20, 50)}
     last, digest, codes = str(p['days'][-1]), p['digest'], [str(c) for c in p['codes']]
+    nm = ds.names()
+    capped = set()
+    if market == 'cn':
+        with np.errstate(invalid='ignore', divide='ignore'):
+            prev = p['close'][-2] * p['raw_close'][-1] / p['close'][-1]
+        capped = {code for j, code in enumerate(codes)
+                  if intraday.at_limit_up(code, nm.get(code, ''), p['raw_close'][-1, j], prev[j], last)}
     tail_days, tail_close = p['days'][-61:].copy(), p['close'][-61:].copy()
     market_curve = runner.bounded_history(p['days'], pool_index(F), last)
     del p, F
@@ -110,13 +117,14 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
             t['wanted_n'] = len(t['wanted'])
             t['wanted'] = t['wanted'][:WANTED_N]
             traders.append(t)
-    nm = ds.names()
     inds = data.industries(codes, market)
     signal_codes = set()
     for t in traders:
         for key in ('buys', 'sells', 'holdings', 'wanted'):
             for y in t[key]:
                 y['name'], y['industry'] = nm.get(y['code'], ''), inds.get(y['code'], '')
+                if key == 'buys' and y.get('day') == last and y.get('side', 1) > 0 and y['code'] in capped:
+                    y['limit_up'] = True
                 signal_codes.add(y['code'])
     columns = {code: j for j, code in enumerate(codes)}
     stocks = {}
@@ -293,7 +301,7 @@ def with_confidence(market, mode, days, only, panel=None, seconds=None):
             j = col.get(x['code'])
             if market == 'cn' and x['kind'] == 'buy' and x['side'] > 0 and j is not None:
                 x['limit_up'] = intraday.at_limit_up(x['code'], x['name'], float(panel['raw_close'][d, j]),
-                                                     float(panel['raw_close'][d - 1, j]))
+                                                     float(panel['raw_close'][d - 1, j]), r['last_day'])
     c['seconds'] = round(time.perf_counter() - t0, 2)
     r['confidence'] = c
     return r

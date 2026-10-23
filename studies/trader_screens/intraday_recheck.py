@@ -166,7 +166,7 @@ def skip_limits(decisions, P, d, row, names):
             j = col[buy[0]]
             k = P['close'][d, j] / P['raw_close'][d, j]
             prev = P['close'][d - 1, j] / k
-            if buy[1] > 0 and I.at_limit_up(buy[0], names.get(buy[0], ''), row['raw_close'][j], prev):
+            if buy[1] > 0 and I.at_limit_up(buy[0], names.get(buy[0], ''), row['raw_close'][j], prev, str(P['days'][d])):
                 continue
             keep.append(buy)
         result['buys'] = keep
@@ -335,9 +335,52 @@ def summary():
     print(path, flush=True)
 
 
+def partial():
+    """Summarize saved selection rows only, without loading bars or replaying any system."""
+    out = dict(status='stopped_at_user_request', validation_run=False, chosen=None, markets={})
+    for market in MARKETS:
+        rows = list(records(market, 'selection'))
+        if not rows:
+            continue
+        plan = read(WORK / f'{market}_plan.json')
+        target = out['markets'][market] = dict(days=[r['day'] for r in rows], cases={}, attribution={},
+            pool=plan['coverage']['names'], covered=[r['covered'] for r in rows],
+            reconcile=read(WORK / f'{market}_reconcile.json'),
+            sources=plan['coverage']['sources'],
+            include_in_conclusions=market != 'cn',
+            limitation='CN pilot used the earlier limit-up marker; not rerun after the user stopped the study.' if market == 'cn' else '')
+        for r in rows:
+            for case, systems in comparisons(r).items():
+                dst = target['cases'].setdefault(case, {})
+                for sid, stats in systems.items():
+                    t = dst.setdefault(sid, dict(sig=[0, 0, 0], buys=[0, 0, 0], sells=[0, 0, 0],
+                                                 setup={}, buy_setup={}, sell_reason={}, gaps=[]))
+                    for key in ('sig', 'buys', 'sells'):
+                        t[key] = [a + b for a, b in zip(t[key], stats[key])]
+                    for field in ('setup', 'buy_setup', 'sell_reason'):
+                        for kind, values in stats[field].items():
+                            t[field][kind] = [a + b for a, b in zip(t[field].get(kind, [0, 0, 0]), values)]
+                    t['gaps'].extend(stats['gaps'])
+            for key in ('sig', 'buys', 'sells'):
+                t = target['attribution'].setdefault(key, dict(total=0, close=0, range=0, volume=0, combined=0))
+                for sid, truth in r['systems']['true'].items():
+                    expected = IS.keys(truth, key)
+                    bad = IS.keys(r['systems'][f'{IS.MAIN[market]}/V0'][sid], key) ^ expected
+                    t['total'] += len(bad)
+                    resolved = set()
+                    for cause in ('close', 'range', 'volume'):
+                        fixed = bad - (IS.keys(r['systems'][f'{IS.MAIN[market]}/{cause}'][sid], key) ^ expected)
+                        t[cause] += len(fixed)
+                        resolved |= fixed
+                    t['combined'] += len(bad - resolved)
+    path = Path(__file__).with_name('reports') / 'intraday_recheck_partial.json'
+    write(path, out)
+    print(path)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=('prepare', 'reconcile', 'run', 'choose', 'summary'))
+    parser.add_argument('action', choices=('prepare', 'reconcile', 'run', 'choose', 'summary', 'partial'))
     parser.add_argument('market', nargs='?', choices=MARKETS)
     parser.add_argument('segment', nargs='?', choices=('selection', 'validation'))
     args = parser.parse_args()
@@ -351,6 +394,8 @@ def main():
         run(args.market, args.segment)
     elif args.action == 'choose':
         choose()
+    elif args.action == 'partial':
+        partial()
     else:
         summary()
 

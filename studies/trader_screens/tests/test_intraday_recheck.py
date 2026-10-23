@@ -1,5 +1,9 @@
 """Cutoff bars, missing data and the preregistered volume-only corrections."""
 import unittest
+import json
+import tempfile
+from pathlib import Path
+from unittest import mock
 
 import numpy as np
 
@@ -50,6 +54,28 @@ class CutoffTests(unittest.TestCase):
             expected = [40., 40., 60.] if scheme == 'V2' else [20., 40., 60.]
             np.testing.assert_array_equal(got['volume'], expected)
             np.testing.assert_array_equal(got['turnover'], row['turnover'] if scheme == 'V3' else expected)
+
+
+class PartialSummaryTests(unittest.TestCase):
+    def test_summarizing_completed_rows_never_loads_bars_or_replays_systems(self):
+        trader = dict(sig=[['US.A', 1, 'pb']], buys=[['US.A', 1, False, 10., 9., 'pb']], sells=[])
+        cases = {'true': {'toy': trader}}
+        cases.update({f'{cut}/V0': {'toy': trader} for cut in IS.CUTS['us']})
+        cases.update({f'15:50/{cause}': {'toy': trader} for cause in ('close', 'range', 'volume')})
+        row = dict(day='2026-10-06', covered=1, systems=cases)
+        def read(path):
+            return dict(coverage=dict(names=1, sources=[])) if path.name.endswith('_plan.json') else {}
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(R, '__file__', str(Path(tmp) / 'recheck.py')), \
+                mock.patch.object(R, 'MARKETS', ('us',)), mock.patch.object(R, 'read', side_effect=read), \
+                mock.patch.object(R, 'records', return_value=iter([row])), \
+                mock.patch.object(R.TP, 'build', side_effect=AssertionError('no bar loading')), \
+                mock.patch.object(R.CF, 'decide_many', side_effect=AssertionError('no replay')):
+            R.partial()
+            result = json.loads((Path(tmp) / 'reports/intraday_recheck_partial.json').read_text())
+        self.assertFalse(result['validation_run'])
+        self.assertIsNone(result['chosen'])
+        self.assertEqual(result['markets']['us']['cases']['15:50/V0']['toy']['buys'], [1, 0, 0])
 
 
 if __name__ == '__main__':

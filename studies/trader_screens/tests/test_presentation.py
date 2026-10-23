@@ -17,6 +17,27 @@ from studies.trader_screens import scan
 
 
 class PresentationTests(unittest.TestCase):
+    def test_official_cn_limit_up_is_also_skipped_in_intraday_diff(self):
+        from studies import trader_data
+        from studies.trader_replication import systems
+        from studies.trader_screens import intraday
+        p = panel()
+        p['codes'] = np.array(['SH.600001', 'SH.600002', 'SH.600003'])
+        p['close'][-2, 1], p['close'][-1, 1] = 10.15, 11.17
+        p.update(raw_close=p['close'].astype(np.float32), volume=np.full(p['close'].shape, 1e6),
+                 turnover=np.full(p['close'].shape, 1e8), digest='cn-source')
+        day = str(p['days'][-1])
+        trader = dict(id='toy', name='Toy', last_day=day, wanted=[], sells=[], holdings=[],
+                      buys=[dict(code='SH.600002', day=day, side=1, setup='brk', price=11.17, stop=10.15)])
+        ds = SimpleNamespace(id='cn-source', panel=lambda: p, names=lambda: {})
+        with mock.patch.object(trader_data, 'dataset', return_value=ds), \
+                mock.patch.object(systems, 'all_', return_value=[SimpleNamespace(id='toy')]), \
+                mock.patch.object(runner, 'run', return_value=trader), \
+                mock.patch.object(scan.data, 'industries', return_value={}):
+            official = scan.run('cn', 'frozen')
+        self.assertTrue(official['traders'][0]['buys'][0]['limit_up'])
+        self.assertEqual(intraday.diff(deepcopy(official), official)['buys']['missed'], [])
+
     def test_account_history_ends_at_reported_equity_and_day(self):
         p = panel()
         result = runner.run(system(p, str(p['days'][-1])), 'us')

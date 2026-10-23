@@ -205,18 +205,24 @@ def shared(p, market):
 LIMIT_WIDE = ('300', '301', '688', '689')          # ChiNext / STAR: 20%
 
 
-def limit_pct(code, name=''):
-    """The A-share daily limit (the rule of trader_replication common.limit_pct; ST names 5% by their name)."""
+def limit_pct(code, name='', day=None):
+    """Board limits; main-board ST changed 5% -> 10% on 2026-07-06. None uses the current rules."""
     num = str(code).split('.')[-1]
-    if 'ST' in (name or '').upper():
-        return .05
-    return .3 if num[:1] in ('8', '4') or num.startswith('920') else .2 if num[:3] in LIMIT_WIDE else .1
+    if num[:1] in ('8', '4') or num.startswith('920'):
+        return .3
+    if num[:3] in LIMIT_WIDE:
+        return .2
+    return .05 if 'ST' in (name or '').upper() and day is not None and day < '2026-07-06' else .1
 
 
-def at_limit_up(code, name, price, prev_close):
+def at_limit_up(code, name, price, prev_close, day=None):
     """price at or above the A-share limit-up price (prev_close x (1 + limit), rounded to the cent)."""
-    lim = np.floor(prev_close * (1 + limit_pct(code, name)) * 100 + .5) / 100
-    return bool(price >= lim - 1e-6)
+    if not np.isfinite(price) or not np.isfinite(prev_close) or min(price, prev_close) <= 0:
+        return False
+    prior_cents, price_cents = round(float(prev_close) * 100), round(float(price) * 100)
+    pct = round(limit_pct(code, name, day) * 100)
+    limit_cents = (prior_cents * (100 + pct) + 50) // 100
+    return price_cents >= limit_cents
 
 
 def run(market, now=None, provider=None, calendar=None, board=None, only=None, log=print):
@@ -300,7 +306,7 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
             for b in t['buys']:
                 s = snap.get(b['code'])
                 if b.get('side', 1) > 0 and s and at_limit_up(b['code'], names.get(b['code'], ''), s['close'],
-                                                                s['prev_close']):
+                                                                s['prev_close'], sess['day']):
                     b['limit_up'] = True
     r['provisional'] = dict(sess, rows=len(rows), actions=len(acts), stages=stages, system_seconds=seconds,
                             captured_at=captured_at, rejected_quotes=rejected, coverage=coverage,
