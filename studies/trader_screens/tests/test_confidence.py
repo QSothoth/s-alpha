@@ -255,6 +255,37 @@ class LiveTests(unittest.TestCase):
         self.assertIn('q10', rows['US.A']['distance'])            # gone at q10 volume
         self.assertAlmostEqual(c['t'], CF.tau('us', '11:00'))
 
+    def test_early_board_keeps_only_orders_standing_in_every_scenario(self):
+        from unittest import mock
+        P = panel()
+        P['volume'][-1] = 5e4
+        seen = {}
+
+        def board(market, mode, days, only, panel=None):
+            seen['close'] = float(panel['close'][-1, 0])
+            buy = lambda c: dict(code=c, side=1, setup='brk', price=10.0, stop=9.0, weight=.1)
+            return dict(market=market, last_day=str(panel['days'][-1]), traders=[dict(
+                id='x', name='X', buys=[buy('US.A'), buy('US.B')], sells=[dict(code='US.C', side=1, why='跌破止损')])])
+
+        def fake(p, d, rows, market, systems=None):
+            seen['rows'] = sorted(rows)
+            out = {}
+            for n in rows:
+                buys = [['US.A', 1, False, 10.0, 9.0, 'brk']] + ([['US.B', 1, False, 10.0, 9.0, 'brk']] if n == 'M' else [])
+                out[n] = {'x': dict(sig=[], buys=buys, sells=[['US.C', 1, 9.0, '跌破止损']])}
+            return out
+        with mock.patch.object(CF, 'decide_many', fake):
+            r = CF.robust_board(P, 'us', '10:30', board, model=LiveTests.model(self))
+            with self.assertRaises(ValueError):
+                CF.robust_board(P, 'us', '09:50', board, model=LiveTests.model(self))
+        self.assertEqual(seen['rows'], sorted(CF.SCEN))
+        self.assertAlmostEqual(seen['close'], float(P['close'][-1, 0]), places=4)    # scenario M: today's price
+        t = r['traders'][0]
+        self.assertEqual([b['code'] for b in t['buys']], ['US.A'])                     # B only in M: not listed
+        self.assertEqual([s['code'] for s in t['sells']], ['US.C'])
+        self.assertEqual([(x['code'], x['kind']) for x in r['early']['dropped']], [('US.B', 'buy')])
+        self.assertEqual(r['early']['kept'], 2)
+
     def test_board_shows_both_columns(self):
         from studies.trader_screens import board
         rows = [dict(trader='x', kind='buy', code='US.A', name='A', side=1, add=False, setup='ep', price=10.0, p=.91,

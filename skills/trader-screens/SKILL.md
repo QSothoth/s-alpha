@@ -64,7 +64,7 @@ $PY -m studies.trader_screens.scan diff us 2026-10-21        # 收盘后：盘�
   - 原因是阈值在本地子集日上定得太低（0.20），以及“可能触发的止损”被放进了“下单”；要用新数据另做一轮。
   - 早盘想看“离触发还差多少”，只能离线调用 `confidence.live`，当作观察排序，不当下单依据。
 - `board` 只合成正式的日看板，不收盘中临时结果。
-用户已授权的 A 股、港股尾盘单图定时发布，使用独立的盘中工作树；时间、入口、回执与故障处理见 [尾盘发布](references/PRECLOSE_CN.md)。
+用户已授权的盘中单图定时发布（QQ 频道）：A 股、港股收盘前 15 分钟的尾盘信号，美股开盘后 1 小时的“开盘精选”（只列 5 种收盘情形下都成立的单子，少而精；只做美股）。使用独立的盘中工作树；时间、规则、入口、回执与故障处理见 [盘中发布](references/PRECLOSE_CN.md)。
 
 **数据**（统一接口 `studies/trader_data`，见 [TRADER_PROTOCOL_CN](../../docs/TRADER_PROTOCOL_CN.md) 第 4 节）
 - 看板默认 live：冻结的 Release `trader-data-v1` 加本地增量缓存 `data/trader-live/trader-data-v1/<市场>/`，和复刻研究用同一份底座、同一个面板构建、同一份名单（美股 3433、港股 505、A 股 1697 只）。
