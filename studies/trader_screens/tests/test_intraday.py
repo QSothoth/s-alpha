@@ -162,6 +162,8 @@ class ProvisionalTests(Base):
         check = I.check_time('us', quotes, TODAY, now=ny(TODAY, 15, 50))
         self.assertEqual(check['rejected_times'], codes[:1])
         self.assertEqual(check['quotes_on_day'], [19, 20])
+        quotes['US.HALT'] = dict(quote(10, 10), trading=False, time='2026-10-16 16:00:00')  # suspended: not a bad quote
+        self.assertEqual(I.check_time('us', quotes, TODAY, now=ny(TODAY, 15, 50))['rejected_times'], codes[:1])
 
     def test_read_only_industry_lookup_does_not_write_seed_cache(self):
         from studies.trader_screens import data

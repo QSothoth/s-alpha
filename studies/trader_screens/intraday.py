@@ -99,7 +99,8 @@ def check_time(market, snap, day, now=None):
         if any(t > mnow for t in parsed):
             raise Refused(f'{market}: quote time is after snapshot capture {mnow.isoformat()}')
         return dict(quotes_on_day=[on_day, len(times)], newest=max(dated),
-                    rejected_times=[c for c, s in snap.items() if (s.get('time') or '')[:10] != day])
+                    rejected_times=[c for c, s in snap.items()
+                                    if s['trading'] and (s.get('time') or '')[:10] != day])
     if market != 'cn':
         raise Refused(f'{market}: quotes have no session date')
     newest = max(times)
