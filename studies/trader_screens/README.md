@@ -15,6 +15,8 @@
 | `screens.py` | 共用日 K 特征（只用当天及以前）和按原话写的买点定义（研究模块引用），以及档案里的账户规则记录 `book` |
 | `data.py` | OpenD 行业名缓存；旧的按目录取数与面板函数（委托给 `studies/trader_data`） |
 
+日报 JSON 同时提供图表输入。每位交易员的 `equity_history` 是同一次账户回放的日净值；`presentation.market_curve` 是与市况判断相同的股票池等权指数；`presentation.stocks` 按代码提供相关标的的收盘价和现有名称、行业简介。曲线只保留截至日报日期的最近 61 个收盘点，用于计算近 60 个交易日变化；窗口内缺价时返回空曲线。展示程序直接消费这些字段，无需另行回放账户或维护标的名单。
+
 ```bash
 nice -n 19 env OPENBLAS_NUM_THREADS=1 /opt/futu-opend/venv/bin/python -m unittest discover -s studies/trader_screens/tests -t .
 ```
