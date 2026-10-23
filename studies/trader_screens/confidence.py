@@ -527,17 +527,9 @@ def daily_inputs(P, d, j):
     return out
 
 
-def live(p, market, hhmm, model=None, last30=None, systems=None):
-    """The confidence columns of a provisional panel p (today = its last row, from a snapshot at hhmm market time):
-    dict(t, hhmm, thresholds, rows = every order candidate with p, its columns ('order' / 'watch' / None) and the
-    distance words), or dict(skipped=reason).  last30: volume of the last 30 trading minutes per code (only a model
-    that reads the trend needs it)."""
-    vm, pm, fms, th, meta = model or load_model()
-    first, last = CUTS[market][0], CUTS[market][-1]
-    t = tau(market, hhmm)
-    if t < tau(market, first):
-        return dict(skipped=f'开盘后 {elapsed(market, first)} 分钟内不估计（模型从 {first} 起）', hhmm=hhmm)
-    t = min(t, tau(market, last))
+def scenario_inputs(p, market, t, vm, fms, last30=None):
+    """(d, prov, yq, daily inputs, ok) of a provisional panel p (today = its last row) at time fraction t: the
+    names with a bar today, their provisional bar and the q10 / q50 / q90 of y = log(full day / so far)."""
     d = len(p['days']) - 1
     j = np.flatnonzero(np.isfinite(p['close'][d]) & (p['volume'][d] > 0))
     codes = [str(c) for c in np.asarray(p['codes'])[j]]
@@ -558,6 +550,62 @@ def live(p, market, hhmm, model=None, last30=None, systems=None):
     k = j[ok]
     prov = dict(j=k, high=hi[ok], low=lo[ok], close=cl[ok], volume=v[ok],
                 turnover=p['turnover'][d, k].astype(float), adr=di['adr'][ok], k=di['fac'][ok])
+    return d, prov, yq, di, ok
+
+
+def order_keys(dec):
+    """{('buy', sid, code, side, add) | ('sell', sid, code, side)} of one run's decisions."""
+    return {k for k in keys_of(dec) if k[0] in ('buy', 'sell')}
+
+
+def robust_board(p, market, hhmm, run_board, only=None, systems=None, model=None):
+    """Early in the session (the US board an hour after the open): the board on scenario M (today's price, the q50
+    full-day volume), keeping only the buys and sells that stand in every scenario (M, price +-STEP u, volume q10 /
+    q90): fewer orders, chosen by one rule for every trader.  run_board: scan.run.  The rest is listed in
+    r['early']['dropped'] (not orders)."""
+    vm, pm, fms, th, meta = model or load_model()
+    first = CUTS[market][0]
+    t = tau(market, hhmm)
+    if t < tau(market, first):
+        raise ValueError(f'{market}: before {first} the early board is not computed')
+    t = min(t, tau(market, CUTS[market][-1]))
+    d, prov, yq, di, ok = scenario_inputs(p, market, t, vm, fms)
+    rows = scenario_rows(p, d, prov, yq, t, SCEN)
+    q = {k: (v.copy() if isinstance(v, np.ndarray) and k in rows['M'] else v) for k, v in p.items()}
+    for k, v in rows['M'].items():
+        q[k][d] = v
+    r = run_board(market, 'live', 1, only, panel=q)
+    by = decide_many(p, d, rows, market, systems=systems)
+    stand = set.intersection(*(order_keys(by[n]) for n in SCEN))
+    kept, dropped = 0, []
+    for tr in r['traders']:
+        buys, sells = [], []
+        for b in tr['buys']:
+            key = ('buy', tr['id'], b['code'], int(b.get('side', 1)), b['setup'] == '加码')
+            (buys if key in stand else dropped).append(b if key in stand else dict(b, trader=tr['id'], kind='buy'))
+        for s in tr['sells']:
+            key = ('sell', tr['id'], s['code'], int(s.get('side', 1)))
+            (sells if key in stand else dropped).append(s if key in stand else dict(s, trader=tr['id'], kind='sell'))
+        kept += len(buys) + len(sells)
+        tr['buys'], tr['sells'] = buys, sells
+    r['early'] = dict(hhmm=hhmm, t=t, rule='every scenario', step=STEP, scenarios=list(SCEN), kept=kept,
+                      dropped=dropped, volume_model=meta.get('volume'))
+    return r
+
+
+def live(p, market, hhmm, model=None, last30=None, systems=None):
+    """The confidence columns of a provisional panel p (today = its last row, from a snapshot at hhmm market time):
+    dict(t, hhmm, thresholds, rows = every order candidate with p, its columns ('order' / 'watch' / None) and the
+    distance words), or dict(skipped=reason).  last30: volume of the last 30 trading minutes per code (only a model
+    that reads the trend needs it)."""
+    vm, pm, fms, th, meta = model or load_model()
+    first, last = CUTS[market][0], CUTS[market][-1]
+    t = tau(market, hhmm)
+    if t < tau(market, first):
+        return dict(skipped=f'开盘后 {elapsed(market, first)} 分钟内不估计（模型从 {first} 起）', hhmm=hhmm)
+    t = min(t, tau(market, last))
+    d, prov, yq, di, ok = scenario_inputs(p, market, t, vm, fms, last30)
+    k = prov['j']
     rows = scenario_rows(p, d, prov, yq, t, SCEN)
     by = decide_many(p, d, rows, market, systems=systems)
     cand = [r for r in candidates(by, t, set(np.asarray(p['codes'])[k].astype(str))) if r['key'][0] != 'sig']
