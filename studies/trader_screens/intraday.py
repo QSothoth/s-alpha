@@ -138,6 +138,29 @@ def with_today(p, day, rows, acts):
     return out
 
 
+def valid_snapshot(snap, codes, base):
+    """Quarantine unusable quotes; missing/invalid quotes still count against coverage."""
+    from studies.trader_data.live import SNAP_MATCH
+    clean, rejected = {}, []
+    for code in codes:
+        s = snap.get(code)
+        if not s or not s.get('trading'):
+            continue
+        values = [s.get(k) for k in ('open', 'high', 'low', 'close', 'volume', 'turnover', 'prev_close')]
+        if (not all(isinstance(v, (int, float)) and np.isfinite(v) for v in values)
+                or min(values[:4]) <= 0 or values[1] < values[2] or values[4] <= 0
+                or values[5] < 0 or values[6] <= 0):
+            rejected.append(code)
+        else:
+            clean[code] = s
+    prior = {c for j, c in enumerate(codes) if np.isfinite(base['raw_close'][-1, j])
+             and base['raw_close'][-1, j] > 0 and base['volume'][-1, j] > 0}
+    covered = len(prior & clean.keys())
+    if not prior or covered / len(prior) < SNAP_MATCH:
+        raise Refused(f'insufficient snapshot coverage: {covered}/{len(prior)}, invalid {len(rejected)}')
+    return clean, rejected, [covered, len(prior)]
+
+
 @contextmanager
 def shared(p, market):
     """Every study's panels.load(market, ...) returns a copy of p (cut at upto) while inside: one snapshot, every
@@ -212,6 +235,8 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
         if provider is None:
             prov.close()
     stage('snapshot')
+    captured_at = market_now(market, now).isoformat(timespec='seconds')
+    snap, rejected, coverage = valid_snapshot(snap, codes, base)
     timing = check_time(market, snap, sess['day'], now)
 
     class Once:                                     # from_snapshot reads the snapshot already taken
@@ -231,6 +256,9 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
     if r['last_day'] != sess['day']:
         raise RuntimeError(f"{market}: board ends {r['last_day']}, expected {sess['day']}")
     names = ds.names()
+    affected = {x['code'] for t in r['traders'] for key in ('buys', 'sells', 'holdings') for x in t[key]} & set(rejected)
+    if affected:
+        raise Refused(f'{market}: invalid quotes affect positions or trades: {sorted(affected)}')
     if market == 'cn':
         for t in r['traders']:
             for b in t['buys']:
@@ -239,6 +267,7 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
                                                                 s['prev_close']):
                     b['limit_up'] = True
     r['provisional'] = dict(sess, rows=len(rows), actions=len(acts), stages=stages, system_seconds=seconds,
+                            captured_at=captured_at, rejected_quotes=rejected, coverage=coverage,
                             **chk, **timing)
     return r
 

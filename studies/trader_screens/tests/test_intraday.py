@@ -133,6 +133,19 @@ class SharedTests(Base):
 
 
 class LimitTests(unittest.TestCase):
+    def test_bad_quote_is_quarantined_and_cannot_inflate_coverage(self):
+        codes = [f'US.T{i}' for i in range(20)]
+        base = dict(raw_close=np.ones((1, 20)), volume=np.ones((1, 20)))
+        quotes = {c: quote(10., 10.) for c in codes}
+        quotes[codes[0]]['open'] = 0.
+        clean, rejected, coverage = I.valid_snapshot(quotes, codes, base)
+        self.assertNotIn(codes[0], clean)
+        self.assertEqual(rejected, codes[:1])
+        self.assertEqual(coverage, [19, 20])
+        quotes[codes[1]]['volume'] = float('nan')
+        with self.assertRaisesRegex(I.Refused, 'insufficient snapshot coverage'):
+            I.valid_snapshot(quotes, codes, base)
+
     def test_limit_up(self):
         self.assertTrue(I.at_limit_up('SH.600000', '浦发银行', 11.0, 10.0))
         self.assertFalse(I.at_limit_up('SH.600000', '浦发银行', 10.99, 10.0))
