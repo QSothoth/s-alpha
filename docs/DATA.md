@@ -4,7 +4,7 @@
 
 ## 1. Release 是什么
 
-- 数据只通过 GitHub 仓库 `QSothoth/s-alpha` 的 **Release** 发布：一个 git tag + 一个 zip 附件（附 SHA256）。
+- 数据只通过 GitHub 仓库 `QSothoth/s-alpha` 的 **Release** 发布：一个 git tag + 一个或多个 zip 附件（附 SHA256）。Custody 当前 canonical 为 umbrella tag `custody-pack-20261025`（多附件、角色分册，训练与验证不混装）。
 - Release **不可变**：发布后不改文件、不换附件。数据有任何变化都发新 tag。
 - 代码不走 Release；代码只在 git 分支里。
 - 解压后的 Release 目录就是一个**数据集**，评测直接读取它。
@@ -72,76 +72,90 @@ python3 -m custody check --dataset <训练目录> --validation <验证目录>
 
 ## 3. 可用数据集
 
-| 名称 | 角色 | 用途 |
+**当前 canonical**：umbrella Release [`custody-pack-20261025`](https://github.com/QSothoth/s-alpha/releases/tag/custody-pack-20261025)（2026-10-25）。一个 tag、多份角色分册 zip；**训练与验证不在同一 zip**。旧离散 custody tag **保留不删**，仅 superseded。
+
+| 附件（pack 内） | 解压目录 / 数据集名 | 角色 | 用途 |
+|---|---|---|---|
+| `train-custody-0dte-v6-work.zip` | `custody-0dte-v6-work` | `train/custody` | **当前唯一训练**（496 case / 40 日，至 2026-10-22） |
+| `validation-custody-eval-2026-09-18-v2.zip` | `custody-eval-2026-09-18-v2` | `validation/custody` | **正式留出验证**，只评测绝不调参 |
+| `validation-custody-eval-holdout-20261023.zip` | `custody-eval-holdout-20261023` | `validation/custody` | Reserved Friday holdout（10-02 / 10-09 / 10-23）；不取代 09-18 |
+| `stress-custody-stress-v1.zip` | `custody-stress-v1` | `diagnostic/stress` | 压力诊断；禁止调参、不作正式门槛 |
+| `slices-custody-eval-crwd-20261023.zip` | `custody-eval-crwd-20261023` | `validation/custody` | CRWD 切片；不取代 09-18、不进训练 |
+
+只使用此处登记的数据集。发布前：`python3 -m custody check --dataset <train> --validation <09-18|holdout|crwd>` 须通过（无重叠交易日或会话）。本 pack 发布前已全部通过。
+
+### Pack 附件哈希（`PACK_CHECKSUMS.sha256`）
+
+| 文件 | SHA256 | 字节 |
 |---|---|---|
-| `custody-0dte-v6.1`（V6.1） | `train/custody` | 当前唯一训练数据 |
-| `custody-eval-2026-09-18-v2` | `validation/custody` | 当前唯一留出验证，只评测，绝不调参 |
+| `train-custody-0dte-v6-work.zip` | `072cdc470530a3d494d0f728ad8e7e256ead75717f7f8ab073e2bedd535462f9` | 3,663,466 |
+| `validation-custody-eval-2026-09-18-v2.zip` | `8bf9eb37d7372dce30c4ca37188e11c45a5fddb744ef0c5de120a61f3d139253` | 210,014 |
+| `validation-custody-eval-holdout-20261023.zip` | `1e8a49d7a70442e10e9788fb3bafa95e3febab12b2360350cfa761edb824f0db` | 574,630 |
+| `stress-custody-stress-v1.zip` | `1b59427186381b380fa1f690babaa306a879da77a956c3d264aa13e07616a525` | 26,421 |
+| `slices-custody-eval-crwd-20261023.zip` | `51718299cab57e0046a710ed31c43f6d61eceeec6d3c0a280652d1290d58af9f` | 13,695 |
+| `README_CN.md` | `3856673389b19121de6a3eb3a72d85d8452980e2b98a8770f520e8ab81154417` | 3,020 |
+| `PACK_MANIFEST.json` | `7a0653eed3219adf88f832204dc3144a01cadb1bafb911eb0c94f484a7d7bf5c` | 3,108 |
 
-只使用此处登记的数据集。新数据按下文流程冻结并发布，训练集 tag 从 `custody-0dte-v6` 起递增。`custody check --dataset data/custody-0dte-v6.1 --validation data/custody-eval-2026-09-18-v2` 通过（无重叠交易日或会话）。
+（09-18-v2 / stress-v1 / CRWD 三份 zip 字节级复用历史离散 Release，SHA256 与旧登记一致。）
 
-### V6.1 详情
+### 训练 custody-0dte-v6-work（pack 内）
 
-- zip SHA256 `49032a1b9f8cc5fef3c9a7d7fee9fef99e220e06e12c7f89d849ce70fddc04c1`
-- `CHECKSUMS.sha256` 的 SHA256 `38b2d5d8b852deae9bc1aa599b41fb57410274c283834ea86367177960656206`
-- 21 个交易日（2026-08-18 → 2026-09-16），146 个 case，73 组 CALL / PUT 两边齐全：SPY 40、QQQ 14、META 12、MSFT 12、AAPL 10、IWM 10、AMD 8、NVDA 8、TSLA 8、MU 6、AMZN 6、AVGO 6、GOOGL 4、INTC 2
-- 与 V5 的区别：吸收了原验证集 `custody-eval-2026-09-16-v2` 的 2026-09-16（20 个 case），并给每个 case 加了事后标签
-- 事后标签（`cases.json` 的 `labels` 与 `case_labels.json`，`ex_post: true`）：`path_scenario`、`market_shape`/`gap`、`range_bucket`、`orb15`、日内分段、成交量占比。**只用于统计和报告，禁止传给策略**
-- 场景分布：顺势单边 51、逆势单边 51、震荡 20、先逆后顺 12、先顺后逆 12
-- `custody check` 通过；`manifest.json` 的 `window.end`（2026-09-15）和 `underlyings`（缺 INTC）没有随吸收的 09-16 更新，以 `sessions` 和 `cases.json` 为准
-- 取代 `custody-0dte-v6`（同样 146 个 case，无标签）
+- 40 个交易日（2026-08-18 → 2026-10-22），496 个 case，248 组 CALL/PUT 双边；15 标的
+- 来源：本地冻结真值（审计 2026-10-23），**不是** 旧离散 `custody-0dte-v6.1`（146 case / 至 09-16）
+- 不含 2026-09-18，也不含 reserved Friday 2026-10-02 / 10-09 / 10-23
+- `custody check` 通过；与 pack 内各验证附件隔离通过
 
-2026-09-25研究审计补充：V6.1追加的09-16共20个case缺`selection=both_sides_atm_at_open`及显式`session_close`，仅有旧near-ATM选择说明。现有`custody check`允许这些字段缺省，双边/行情/哈希检查通过不等于验证了开盘最近ATM；OR1更严格的研究准入因此拒绝该日，改用V5＋09-18作旧数据诊断。未修改Release、默认数据或策略注册状态，详见 [运行前更正](../studies/archive/README.md)。
-
-### 验证集 custody-eval-2026-09-18-v2
+### 验证 custody-eval-2026-09-18-v2（pack 内，正式留出）
 
 - zip SHA256 `8bf9eb37d7372dce30c4ca37188e11c45a5fddb744ef0c5de120a61f3d139253`
-- `CHECKSUMS.sha256` 的 SHA256 `fba36ab960189e6fe80660629455774627915d1b8982361a324ec203892fc2c0`
-- 2026-09-18 一个交易日，14 个标的各一组 CALL / PUT（共 28 个 case）：AAPL、AMD、AMZN、GOOGL、INTC、IWM、META、MSFT、MU、NVDA、QQQ、SNDK、SPY、TSLA；`custody check` 通过，与 V6.1 没有重叠交易日或会话
-- 场景分布：顺势单边 8、逆势单边 8、震荡 4、先逆后顺 4、先顺后逆 4；一个交易日无法判定 G8 / G9，场景样本也不足，结论最高 PROVISIONAL
-- 带与 V6.1 同样的事后标签（`ex_post`，不得进入策略）
-- 取代 `custody-eval-2026-09-18`（同样 28 个 case，无标签）
+- 2026-09-18，14 标的双边共 28 case；带事后标签（`ex_post`，不得进入策略）
+- 只评测，绝不调参；一个交易日结论最高 PROVISIONAL
 
-### 附加切片 custody-eval-crwd-20261023
+### Holdout custody-eval-holdout-20261023（pack 内）
 
-- Release：[custody-eval-crwd-20261023](https://github.com/QSothoth/s-alpha/releases/tag/custody-eval-crwd-20261023)
-- 角色 `validation/custody`；**不**取代上表唯一留出验证 `custody-eval-2026-09-18-v2`，也不并入训练 V6.1
-- zip SHA256 `51718299cab57e0046a710ed31c43f6d61eceeec6d3c0a280652d1290d58af9f`（13,695 字节）
-- `CHECKSUMS.sha256` 的 SHA256 `98cccc850e8a0a130f8f7b3568a82eac8bfe0cbd6a00ff2633cf131807fb1bce`
-- 2026-10-23 一个交易日，US.CRWD 开盘 ATM 双边各 1 个 case（CALL/PUT @ 240，共 2）；`custody check` 通过
-- 独立 tag + 独立 zip；未与近期其他 custody Release 合并
+- zip SHA256 `1e8a49d7a70442e10e9788fb3bafa95e3febab12b2360350cfa761edb824f0db`
+- 2026-10-02（30）、2026-10-09（30）、2026-10-23（18）共 78 case / 39 双边会话
+- 角色 `validation/custody`；**不**取代 09-18 正式留出，**不**进训练
 
-### 已被取代的数据集
+### 诊断 custody-stress-v1（pack 内）
 
-- `custody-0dte-v5`（train，126 case / 20 日）和 `custody-eval-2026-09-16-v2`（validation，20 case）：2026-09-20 起分别由 V6.1 和 `custody-eval-2026-09-18-v2` 取代。09-16 这一天已并入训练集，不再是留出验证；两个 Release 本身仍然有效，只是不再是登记的训练 / 验证数据。
-- `custody-0dte-v6` 和 `custody-eval-2026-09-18`：内容与 v6.1 / -v2 的行情相同，只差事后标签，不再单独登记。
+- zip SHA256 `1b59427186381b380fa1f690babaa306a879da77a956c3d264aa13e07616a525`
+- 2026-09-18，SNDK + SKHY 共 4 case；禁止调参
+
+### 切片 custody-eval-crwd-20261023（pack 内）
+
+- zip SHA256 `51718299cab57e0046a710ed31c43f6d61eceeec6d3c0a280652d1290d58af9f`
+- 2026-10-23，US.CRWD ATM 双边 2 case；不取代 09-18、不进训练
+- 原独立 tag 仍保留：[custody-eval-crwd-20261023](https://github.com/QSothoth/s-alpha/releases/tag/custody-eval-crwd-20261023)
+
+### 已被取代的数据集（tag 保留）
+
+- **离散训练** `custody-0dte-v6.1`（146 case / 至 09-16）：由本 pack 的 `custody-0dte-v6-work` 取代为当前训练登记
+- **离散验证 / 诊断 / 切片** `custody-eval-2026-09-18-v2`、`custody-stress-v1`、`custody-eval-crwd-20261023`：内容已作为本 pack 附件收录；优先从 umbrella 下载
+- `custody-0dte-v5` 与 `custody-eval-2026-09-16-v2`：2026-09-20 起由 V6.1 / 09-18-v2 取代；09-16 已在训练侧
+- `custody-0dte-v6` 与 `custody-eval-2026-09-18`：同行情缺标签版本，不再单独登记
 
 ### 已停用的数据集
 
 旧 tag `custody-train-0dte`（V4，单边 36 个 case）和 `custody-eval-2026-09-16`（单边 10 个 CALL）的附件在 2026-09-17 被原地替换，与原登记的哈希（`65398673…`、`58f0af99…`）不再一致，已停用；原内容与结论查 Git 历史。今后不得原地替换附件，数据变化一律发新 tag，也不以本地目录代替 Release。
 
-### 下载并校验
-
-以下 Bash 步骤遇错即停止；使用尚未下载、解压的目标目录，已有 Release 不覆盖。
-
-训练集：
+### 下载并校验（umbrella）
 
 ```bash
 set -euo pipefail
-test ! -e data/custody-0dte-v6.1
 mkdir -p data
-gh release download custody-0dte-v6.1 --repo QSothoth/s-alpha --pattern 'custody-0dte-v6.1.zip' --dir data
-echo "49032a1b9f8cc5fef3c9a7d7fee9fef99e220e06e12c7f89d849ce70fddc04c1  data/custody-0dte-v6.1.zip" | sha256sum -c
-python3 -m zipfile -e data/custody-0dte-v6.1.zip data      # -> data/custody-0dte-v6.1/
+gh release download custody-pack-20261025 --repo QSothoth/s-alpha --dir data/custody-pack-20261025
+cd data/custody-pack-20261025
+sha256sum -c PACK_CHECKSUMS.sha256
+python3 -m zipfile -e train-custody-0dte-v6-work.zip .
+python3 -m zipfile -e validation-custody-eval-2026-09-18-v2.zip .
+python3 -m zipfile -e validation-custody-eval-holdout-20261023.zip .
+# 可选：stress / CRWD
+python3 -m custody check --dataset custody-0dte-v6-work --validation custody-eval-2026-09-18-v2
+python3 -m custody check --dataset custody-0dte-v6-work --validation custody-eval-holdout-20261023
 ```
 
-验证集：
-
-```bash
-set -euo pipefail
-test ! -e data/custody-eval-2026-09-18-v2
-mkdir -p data
-gh release download custody-eval-2026-09-18-v2 --repo QSothoth/s-alpha --pattern 'custody-eval-2026-09-18-v2.zip' --dir data
-echo "8bf9eb37d7372dce30c4ca37188e11c45a5fddb744ef0c5de120a61f3d139253  data/custody-eval-2026-09-18-v2.zip" | sha256sum -c
+sha256sum -c
 python3 -m zipfile -e data/custody-eval-2026-09-18-v2.zip data
 ```
 
