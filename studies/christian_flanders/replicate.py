@@ -69,6 +69,8 @@ class Flanders(study.Study):
         F = A['F']
         if name == 'sig_all':
             return A['sig_all']
+        if name == 'adr':                                # ADR percent (rules.unit_adr: trims in ADRs)
+            return F.adr
         if name.startswith('sma'):
             return F.sma(int(name[3:]))
         if name.startswith('ema'):
@@ -162,6 +164,27 @@ class Flanders(study.Study):
                 m = pool & lag(ready) & (F.h > pivot)
                 out['vcp'] = (m, np.fmax(F.o, pivot), F.l)
         return out
+
+    def kind_pools(self, A, cfg, kinds):
+        """kind -> the names that setup can come from, as of the day before (its own floors, not the day's pattern):
+        the placebo draws each entry's random name from its kind's pool.  hi52 runs the board's screen, whose floors
+        are fixed there (20M, ADR >= 3%, above the 50-day); an EP comes from ep_pool; the rest use the pool."""
+        F = A['F']
+        base = lag(self.pool(A, cfg))
+        out = {}
+        with np.errstate(invalid='ignore'):
+            for k in kinds:
+                if k == 'hi52':
+                    out[k] = lag(F.liquid(20e6) & (F.adr >= 3) & (F.c > F.sma(50)))
+                elif k == 'ep':
+                    out[k] = lag(self.ep_pool(A, cfg))
+                else:
+                    out[k] = base
+        return out
+
+    def intraday_kinds(self, cfg, kinds):
+        """Kinds whose fill is at a level or the open (entry modes other than 'close')."""
+        return tuple(k for k in kinds if cfg.get('entry_by_kind', {}).get(k, cfg.get('entry', 'level')) != 'close')
 
     @staticmethod
     def low52(F):
@@ -273,9 +296,15 @@ class Flanders(study.Study):
         ro = {k: tuple(v) if isinstance(v, list) else v for k, v in cfg.get('rule_opts', {}).items()}
         kw = {'buy_cost': costs[0], 'sell_cost': costs[1], **ro}    # rule_opts may override the costs (robust)
         rules = replace(Y.Rules(), max_new_long=cfg.get('max_new', 0), **kw)
-        # placebo names: his pool (plus, with EPs, the names an EP may come from) as of the day before, the same
-        # information time as Martin Luk's pool (docs/TRADER_PROTOCOL_CN.md); never the day's own signals
+        rules = replace(rules, intraday_kinds=tuple(rules.intraday_kinds) + self.intraday_kinds(cfg, list(masks)))
+        # placebo names: each entry's random name comes from its own kind's pool (kind_pools) as of the day before,
+        # the same information time as Martin Luk's pool (docs/TRADER_PROTOCOL_CN.md); never the day's own signals.
+        # The returned pool is his pool with every kind's pool added (it holds every name a setup can take).
+        kinds = self.kind_pools(A, cfg, list(masks))
+        A['kind_pools'] = kinds
         placebo_pool = lag(pool | (self.ep_pool(A, cfg) if 'ep' in masks else False))
+        for m in kinds.values():
+            placebo_pool = placebo_pool | m
         return entries, rules, mask, placebo_pool
 
     def short_setups(self, A, sc):
@@ -313,11 +342,15 @@ class Flanders(study.Study):
         return out, pool
 
     def his_entry(self, A, d, j, cfg):
-        """His ticker on his day with our execution: the close, stop at the day's low (at least stop_min)."""
+        """His ticker on his day with our execution: the close, stop at the day's low (at least stop_min, at most
+        stop_cap below the fill: the same stop rule as entries)."""
         c, l = A['close'][d, j], A['low'][d, j]
         if not (np.isfinite(c) and np.isfinite(l) and c > 0):
             return None
-        return (0.0, j, 1, c, min(l, c * (1 - cfg.get('stop_min', .01))), 'his')
+        s = min(l, c * (1 - cfg.get('stop_min', .01)))
+        if cfg.get('stop_cap', 0.0):
+            s = max(s, c * (1 - cfg['stop_cap']))
+        return (0.0, j, 1, c, s, 'his')
 
 
 STUDY = Flanders()

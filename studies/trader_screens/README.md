@@ -2,6 +2,8 @@
 
 使用说明见 [skills/trader-screens](../../skills/trader-screens/SKILL.md)。只读，不接 custody。看板上每位交易员就是 [`studies/trader_replication/systems.py`](../trader_replication/systems.py) 登记的系统，由 [`runner.py`](../trader_replication/runner.py) 运行，和横向比对表是同一份实现；数据经 [`studies/trader_data`](../trader_data/README.md)（默认 live）。
 
+当前七套策略的方法论、执行及证据审查见 [2026-10-25 审查报告](reports/STRATEGY_REVIEW_20261025_CN.md)，附可复跑的微型用例与冻结美股候选核查；报告记录问题，不代表已修复。
+
 | 文件 | 内容 |
 |---|---|
 | `scan.py` | 命令行 `list` / `refresh` / `run` / `board` / `industry` / `diff`：每个登记系统在一个市场上今天的买卖、持仓与离场线，交集与行业；结果写 `data/trader-screens/out/`；`run --provisional` 是盘中模式 |

@@ -62,16 +62,30 @@ def index_above(F, n):
 
 
 def overlaps(traders, inds):
-    """Names several traders bought (held) the same day, longs and shorts apart."""
+    """Names several traders bought (held) inside the window, longs and shorts apart.  A row keeps each trader's
+    days and same_day: the traders that bought it on one same day (one-day windows: all of them)."""
     def multi(key, side=1):
-        who = defaultdict(list)
+        who, days = defaultdict(list), defaultdict(dict)
         for t in traders:
             for x in t[key]:
                 if (x.get('side', 1) > 0) != (side > 0):
                     continue
                 if t['name'] not in who[x['code']]:
                     who[x['code']].append(t['name'])
-        rows = [dict(code=c, traders=v, industry=inds.get(c, '')) for c, v in who.items() if len(v) >= 2]
+                d = x.get('day') or x.get('entry_day')
+                days[x['code']].setdefault(t['name'], [])
+                if d and d not in days[x['code']][t['name']]:
+                    days[x['code']][t['name']].append(d)
+        rows = []
+        for c, v in who.items():
+            if len(v) < 2:
+                continue
+            by_day = defaultdict(list)
+            for name, ds in days[c].items():
+                for d in ds:
+                    by_day[d].append(name)
+            same = max((n for n in by_day.values() if len(n) >= 2), key=len, default=[])
+            rows.append(dict(code=c, traders=v, industry=inds.get(c, ''), days=days[c], same_day=same))
         return sorted(rows, key=lambda x: (-len(x['traders']), x['code']))
     held = Counter(inds.get(h['code'], '') or '未知' for t in traders for h in t['holdings'])
     return dict(bought=multi('buys'), held=multi('holdings'), shorted=multi('buys', -1),
@@ -157,8 +171,9 @@ def show(r):
         gate = '' if t['gate_today'] is None else ('；今天市况允许开新仓' if t['gate_today'] else '；今天市况不许开新仓')
         print(f"\n[{t['name']}｜{t['label']}] 仓位 {a['exposure']:.0%}{gate}；账户自 {a['since']} 起 {pct(a['ret'])}，"
               f"回撤 {a['maxdd']:.0%}，{a['trades']} 笔平仓" + (f"、胜率 {a['win']:.0%}" if a['win'] is not None else ''))
-        if 'check' in t:
-            print(f"  回放核对（到冻结日 {t['freeze']}）：{'一致' if t['check']['ok'] else '不一致'}")
+        status = (t.get('check') or {}).get('status', 'missing')
+        print(f"  回放核对（到冻结日 {t['freeze']}）："
+              f"{dict(passed='一致', failed='不一致').get(status, '没有同配置、同代码的参考，未核对')}")
         f = t['forward']
         if f['days']:
             print(f"  冻结日之后 {f['days']} 个交易日：{pct(f['ret'])}，回撤 {f['maxdd']:.0%}，新开 {f['trades']} 笔")
@@ -187,7 +202,9 @@ def show(r):
         rows = c.get(key, [])
         print(f"{title}：" + ('无' if not rows else ''))
         for x in rows[:15]:
-            print(f"  {x['code']} {x['industry']}：{'、'.join(x['traders'])}")
+            when = '' if r['days'] == 1 or key.startswith('held') else \
+                '（' + '；'.join(f"{n} {'、'.join(d[5:] for d in ds)}" for n, ds in x.get('days', {}).items()) + '）'
+            print(f"  {x['code']} {x['industry']}：{'、'.join(x['traders'])}{when}")
     print('持仓行业：' + '、'.join(f'{k}({v})' for k, v in c['industries_held']))
     if c['in_cash']:
         print('空仓的：' + '、'.join(c['in_cash']))

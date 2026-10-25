@@ -85,6 +85,20 @@ class Kell(CF.Flanders):
                 out['ur'] = (m, e20, F.l)
         return out
 
+    def kind_pools(self, A, cfg, kinds):
+        """pop / cross run the board's screens.OliverKell, whose floors are fixed there (20M, ADR >= 3%), not the
+        configured pool's 100M."""
+        out = super().kind_pools(A, cfg, kinds)
+        F = A['F']
+        with np.errstate(invalid='ignore'):
+            for k in ('pop', 'cross'):
+                if k in kinds:
+                    out[k] = lag(F.liquid(20e6) & (F.adr >= 3))
+        return out
+
+    def intraday_kinds(self, cfg, kinds):
+        return tuple(k for k in super().intraday_kinds(cfg, kinds) if k != 'pop')     # the pop fills at the close
+
     def entries(self, A, cfg, masks):
         """The pop is a close signal: its draft fill is the close (the level is only the line it reclaimed)."""
         out = super().entries(A, cfg, masks)

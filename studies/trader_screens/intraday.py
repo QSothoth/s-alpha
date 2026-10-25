@@ -78,8 +78,9 @@ def session(market, last, now=None, calendar=opend_calendar):
 
 
 def check_time(market, snap, day, now=None):
-    """The snapshot shows today: OpenD update times on `day` for >= SNAP_MATCH of the trading names; Sina (time only)
-    the newest tick within QUOTE_AGE of now, or the lunch break."""
+    """The snapshot shows today: OpenD update times on `day` for >= SNAP_MATCH of the trading names; the newest tick
+    (OpenD's dated or Sina's time-only) within QUOTE_AGE of now (of the regular close once it has passed), or the
+    lunch break.  Single names may be quiet; the newest quote of all of them may not."""
     from studies.trader_data.live import SNAP_MATCH
     mnow = market_now(market, now)
     times = [s.get('time') or '' for s in snap.values() if s['trading']]
@@ -98,6 +99,10 @@ def check_time(market, snap, day, now=None):
             raise Refused(f'{market}: malformed quote time') from e
         if any(t > mnow for t in parsed):
             raise Refused(f'{market}: quote time is after snapshot capture {mnow.isoformat()}')
+        ref = min(mnow, datetime.combine(mnow.date(), CLOSE_AT[market], mnow.tzinfo))
+        lunch = market in ('hk', 'cn') and HALF_CLOSE[market] <= mnow.time() < clock(13, 0)
+        if parsed and not lunch and ref - max(parsed) > QUOTE_AGE:
+            raise Refused(f'{market}: newest quote {max(dated)} is older than {QUOTE_AGE} at {mnow:%H:%M:%S}')
         return dict(quotes_on_day=[on_day, len(times)], newest=max(dated),
                     rejected_times=[c for c, s in snap.items()
                                     if s['trading'] and (s.get('time') or '')[:10] != day])

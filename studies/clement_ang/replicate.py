@@ -86,6 +86,16 @@ class Clement(CF.Flanders):
             out = {k: (v[0] & ok if k in ('fine', 'pb') else v[0], v[1], v[2]) for k, v in out.items()}
         return out
 
+    def kind_pools(self, A, cfg, kinds):
+        """fine: the wide screen's floors (above the 50- and 200-day, the pool's turnover and ADR)."""
+        out = super().kind_pools(A, cfg, kinds)
+        if 'fine' in kinds:
+            F, p = A['F'], cfg.get('pool', {}) if cfg.get('fine') else {}
+            with np.errstate(invalid='ignore'):
+                out['fine'] = lag((F.c > F.sma(50)) & (F.c > F.sma(200)) & F.liquid(p.get('turnover', 50e6))
+                                  & (F.adr >= p.get('adr', 3.0)))
+        return out
+
     def short_setups(self, A, sc):
         """His short side, "100% Gil Morales" (RULES ⑧; zw96qkUn9_g@00:57:46): late-stage failed bases on former
         leaders ("when the market turns negative, the former big stocks", @01:24) -- "watching a stock violate that

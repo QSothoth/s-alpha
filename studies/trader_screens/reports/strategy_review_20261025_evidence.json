@@ -1,0 +1,785 @@
+{
+  "reviewed_commit": "7f943e7c67c73d305bd5d3ba03f65fc71291fd95",
+  "review_date": "2026-10-25",
+  "scope": "Review only; no strategy changes or new market data. Synthetic fixtures characterize current defects, not desired behavior.",
+  "frozen_us_signal_audits": [
+    {
+      "commit": "7f943e7c67c73d305bd5d3ba03f65fc71291fd95",
+      "code_digest": "22502bb9bc031a866d11ee64ae8bdfc4849eec88f57c8f59c2e4f261e2c1e26e",
+      "config_digest": "f3aa54776c9556c8236a995ed165a4c3bd1dae244da88d24c335cfe90f2c5c36",
+      "dataset": "trader-data-v1",
+      "data_digest": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158",
+      "numpy": "2.4.6",
+      "window": [
+        "2024-01-02",
+        "2026-10-16"
+      ],
+      "system": "marios_stamatoudis",
+      "config": {
+        "setups": [
+          "brk",
+          "ep"
+        ],
+        "entry": "close",
+        "stop_min": 0.01,
+        "stop_cap": 0.0,
+        "priority": "strength",
+        "max_new": 3,
+        "strength": "",
+        "filter": "",
+        "stop_adr": {
+          "brk": 1.0,
+          "ep": 3.0
+        },
+        "pool": {
+          "turnover": 20000000.0,
+          "adr": 4.0,
+          "above50": false
+        },
+        "ep": {
+          "min_gap": 0.05,
+          "heavy": 3.0,
+          "liquid": 2000000.0,
+          "escape": 0,
+          "price": 1.0
+        },
+        "rule_opts": {
+          "risk": 0.003,
+          "max_position": 0.25,
+          "max_gross": 1.0,
+          "max_open": 15,
+          "trail": "sma10",
+          "arm_trail_on_entry": true,
+          "trims": [
+            3
+          ],
+          "trim_frac": 0.25,
+          "breakeven_r": 3.0,
+          "trim_day": 0
+        },
+        "brk": {
+          "turnover": 2000000.0,
+          "price": 1.0,
+          "adr": 4.0,
+          "top": 0.02
+        },
+        "common": {
+          "ep_slots": 2
+        },
+        "short": {
+          "setups": [
+            "para"
+          ],
+          "trigger": "red",
+          "max_days": 5,
+          "max_new": 1,
+          "gate": "below50"
+        }
+      },
+      "offered_long_entries": 6535,
+      "outside": 3549,
+      "examples": [
+        {
+          "day": "2024-01-03",
+          "code": "US.COLL",
+          "kind": "ep",
+          "turnover_prev": 13099038.85,
+          "raw_prev": 31.229999542236328,
+          "adr_prev": 3.0172156455677257,
+          "price": 33.86000061035156
+        },
+        {
+          "day": "2024-01-03",
+          "code": "US.DYN",
+          "kind": "ep",
+          "turnover_prev": 9138991.1,
+          "raw_prev": 13.0600004196167,
+          "adr_prev": 6.735116405694548,
+          "price": 14.770000457763672
+        },
+        {
+          "day": "2024-01-03",
+          "code": "US.LAES",
+          "kind": "ep",
+          "turnover_prev": 5288409.9,
+          "raw_prev": 1.1699999570846558,
+          "adr_prev": 15.854779416650224,
+          "price": 1.4199999570846558
+        },
+        {
+          "day": "2024-01-03",
+          "code": "US.SIDU",
+          "kind": "ep",
+          "turnover_prev": 12533656.9,
+          "raw_prev": 6.96999979019165,
+          "adr_prev": 31.089771344222505,
+          "price": 11.640000343322754
+        },
+        {
+          "day": "2024-01-04",
+          "code": "US.KROS",
+          "kind": "ep",
+          "turnover_prev": 15979035.0,
+          "raw_prev": 41.2599983215332,
+          "adr_prev": 7.766336118889567,
+          "price": 48.880001068115234
+        }
+      ],
+      "peak_rss_mib": 969
+    },
+    {
+      "commit": "7f943e7c67c73d305bd5d3ba03f65fc71291fd95",
+      "code_digest": "22502bb9bc031a866d11ee64ae8bdfc4849eec88f57c8f59c2e4f261e2c1e26e",
+      "config_digest": "ec7294815730abf7ae523745c6eae92833a24eef22a7f5d5f563b82d795905d9",
+      "dataset": "trader-data-v1",
+      "data_digest": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158",
+      "numpy": "2.4.6",
+      "window": [
+        "2024-01-02",
+        "2026-10-16"
+      ],
+      "system": "oliver_kell",
+      "config": {
+        "setups": [
+          "pop",
+          "cross",
+          "pb",
+          "vcp",
+          "brk52",
+          "ib2",
+          "ur"
+        ],
+        "entry": "close",
+        "stop_min": 0.01,
+        "stop_cap": 0.0,
+        "priority": "turnover",
+        "max_new": 4,
+        "strength": "rs90",
+        "filter": "IDX20",
+        "pool": {
+          "turnover": 100000000.0,
+          "adr": 3.0,
+          "above50": false
+        },
+        "rule_opts": {
+          "risk": 0.005,
+          "max_position": 0.09,
+          "max_gross": 1.5,
+          "max_open": 12,
+          "trail": "ema20",
+          "arm_trail_on_entry": true,
+          "trims": [],
+          "risk_scale": "",
+          "trim_signal": "ext10_30",
+          "trim_signal_frac": 0.3333
+        },
+        "close_any": [
+          "pb",
+          "ib2",
+          "cross",
+          "vcp",
+          "brk52"
+        ],
+        "short": {
+          "setups": [
+            "lim20",
+            "lim10"
+          ],
+          "gate": "below50",
+          "max_new": 2,
+          "stop_w": "cap",
+          "trail": "ema10",
+          "trims": [],
+          "max_days": 10
+        }
+      },
+      "offered_long_entries": 15109,
+      "outside": 683,
+      "examples": [
+        {
+          "day": "2024-01-05",
+          "code": "US.ACAD",
+          "kind": "pop",
+          "turnover_prev": 69128296.6,
+          "raw_prev": 29.950000762939453,
+          "adr_prev": 5.644524603177494,
+          "price": 30.329999923706055
+        },
+        {
+          "day": "2024-01-08",
+          "code": "US.IRON",
+          "kind": "pop",
+          "turnover_prev": 21598084.4,
+          "raw_prev": 57.91999816894531,
+          "adr_prev": 5.808559450962214,
+          "price": 61.97999954223633
+        },
+        {
+          "day": "2024-01-08",
+          "code": "US.VKTX",
+          "kind": "pop",
+          "turnover_prev": 50458718.2,
+          "raw_prev": 18.190000534057617,
+          "adr_prev": 6.620518414497383,
+          "price": 19.479999542236328
+        },
+        {
+          "day": "2024-01-09",
+          "code": "US.UEC",
+          "kind": "pop",
+          "turnover_prev": 52412936.4,
+          "raw_prev": 6.449999809265137,
+          "adr_prev": 5.2652676155293765,
+          "price": 6.760000228881836
+        },
+        {
+          "day": "2024-01-09",
+          "code": "US.APLD",
+          "kind": "cross",
+          "turnover_prev": 23753627.95,
+          "raw_prev": 7.590000152587891,
+          "adr_prev": 8.331533438102916,
+          "price": 8.520000457763672
+        }
+      ],
+      "peak_rss_mib": 1144
+    },
+    {
+      "commit": "7f943e7c67c73d305bd5d3ba03f65fc71291fd95",
+      "code_digest": "22502bb9bc031a866d11ee64ae8bdfc4849eec88f57c8f59c2e4f261e2c1e26e",
+      "config_digest": "d92c849031495fb83248feaff177b5bcc0f89d335ca3911dd92885030be54082",
+      "dataset": "trader-data-v1",
+      "data_digest": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158",
+      "numpy": "2.4.6",
+      "window": [
+        "2024-01-02",
+        "2026-10-16"
+      ],
+      "system": "christian_flanders",
+      "config": {
+        "setups": [
+          "hi52",
+          "ep"
+        ],
+        "entry": "close",
+        "stop_min": 0.01,
+        "stop_cap": 0.06,
+        "priority": "rs",
+        "max_new": 2,
+        "strength": "",
+        "filter": "",
+        "rule_opts": {
+          "risk": 0.005,
+          "max_position": 0.3,
+          "max_gross": 1.0,
+          "max_open": 8,
+          "trail": "sma10",
+          "arm_trail_on_entry": true,
+          "trims": [],
+          "trim_day": 3,
+          "trim_day_frac": 0.5
+        },
+        "ep_pool": {
+          "turnover": 5000000.0,
+          "price": 2.0
+        },
+        "ep": {
+          "near": null,
+          "far_low": 0.5,
+          "rvol": 3.0
+        },
+        "pool": {
+          "adr": 2.0
+        },
+        "common": {
+          "rank": "ep_own"
+        },
+        "short": {
+          "setups": [
+            "r200"
+          ],
+          "r200_rej": 1,
+          "gate": "below50",
+          "max_new": 1,
+          "stop_w": "cap",
+          "trail": "",
+          "trims": [],
+          "trim_day": 1,
+          "trim_day_frac": 1.0,
+          "max_days": 3
+        }
+      },
+      "offered_long_entries": 4171,
+      "outside": 0,
+      "examples": [],
+      "adr_2_vs_999_masks_equal": true,
+      "hi52_signal_count_all_input_dates": 3801,
+      "peak_rss_mib": 914
+    }
+  ],
+  "synthetic_unit_log": "{\"commit\": \"7f943e7c67c73d305bd5d3ba03f65fc71291fd95\", \"fixture\": \"synthetic unit cases\", \"numpy\": \"2.4.6\"}\ntest_active_extension_trim_repeats_until_position_is_gone (__main__.ReviewRepros.test_active_extension_trim_repeats_until_position_is_gone) ... ok\ntest_limit_up_skipped_label_keeps_simulated_holding (__main__.ReviewRepros.test_limit_up_skipped_label_keeps_simulated_holding) ... ok\ntest_open_short_size_reads_later_close_of_existing_position (__main__.ReviewRepros.test_open_short_size_reads_later_close_of_existing_position) ... ok\ntest_open_short_uses_slot_released_at_close (__main__.ReviewRepros.test_open_short_uses_slot_released_at_close) ... ok\ntest_same_name_placebo_changes_short_fill_time (__main__.ReviewRepros.test_same_name_placebo_changes_short_fill_time) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.043s\n\nOK\nclement_ang consecutive extension closes: [('2025-01-01', 'entry'), ('2025-01-02', 'trim'), ('2025-01-02', 'signal_trim'), ('2025-01-03', 'signal_trim'), ('2025-01-04', 'signal_trim')]\noliver_kell consecutive extension closes: [('2025-01-01', 'entry'), ('2025-01-02', 'signal_trim'), ('2025-01-03', 'signal_trim'), ('2025-01-04', 'signal_trim'), ('2025-01-05', 'signal_trim')]\nLimit-up marked skipped but remains held: SH.600000 0.2750378176999347\nOpening short shares with identical information at open: [0.1, 0.12000000000000002]\nOpening short admitted before the existing long exits at close: 2025-01-03\nSame name, same signal, actual opening short versus placebo close: 1.01 1.0\n",
+  "synthetic_boundary_cases": {
+    "breakeven_after_open_already_above_trigger": {
+      "code": "US.A",
+      "side": 1,
+      "kind": "case",
+      "entry": "2024-01-02",
+      "exit": "2024-01-03",
+      "days": 1,
+      "fill": 10,
+      "stop": 9,
+      "risk_pct": 0.1,
+      "pnl": -0.0010000000000000009,
+      "r": -0.2000000000000002,
+      "ret": -0.02000000000000002,
+      "ret_invested": -0.020000000000000018,
+      "why": "end",
+      "add_tries": 0,
+      "executions": [
+        {
+          "time": "2024-01-02",
+          "action": "entry",
+          "price": 10.0,
+          "shares": 0.004999999999999999
+        },
+        {
+          "time": "2024-01-03",
+          "action": "end",
+          "price": 9.8,
+          "shares": 0.004999999999999999
+        }
+      ],
+      "state": {
+        "stop": 10.0,
+        "shares": 0.004999999999999999,
+        "shares0": 0.004999999999999999,
+        "trims": 0,
+        "armed": false,
+        "trail": "",
+        "next_trim": null,
+        "trim_frac": 0.15,
+        "next_add": null,
+        "day_trim_pending": false,
+        "trim_day": 0,
+        "trim_day_frac": 0.0,
+        "trim_day_profit": true,
+        "sig2_done": false,
+        "next_target": null,
+        "target_name": ""
+      }
+    },
+    "short_inheritance": {
+      "clement_ang": {
+        "base_trims": [
+          2
+        ],
+        "short_trims": null,
+        "breakeven_r": 2.0
+      },
+      "qullamaggie": {
+        "base_trims": [],
+        "short_trims": [],
+        "breakeven_r": 2.0
+      },
+      "marios_stamatoudis": {
+        "base_trims": [
+          3
+        ],
+        "short_trims": null,
+        "breakeven_r": 3.0
+      }
+    },
+    "clement_short_trim_observed": [
+      {
+        "time": "2024-01-02",
+        "action": "entry",
+        "price": 10.0,
+        "shares": 0.004999999999999999
+      },
+      {
+        "time": "2024-01-03",
+        "action": "trim",
+        "price": 8.0,
+        "shares": 0.0016664999999999996
+      },
+      {
+        "time": "2024-01-03",
+        "action": "end",
+        "price": 8.0,
+        "shares": 0.0033334999999999997
+      }
+    ],
+    "missing_latest_holding": {
+      "holding": {
+        "code": "US.A",
+        "entry_day": "2024-01-02",
+        "setup": "toy",
+        "side": 1,
+        "fill": 10,
+        "close": "nan",
+        "ret": "nan",
+        "r_now": "nan",
+        "stop": 9.0,
+        "trail": null,
+        "trail_name": "",
+        "next_trim": null,
+        "trim_frac": 0.15,
+        "next_add": null,
+        "day_trim_pending": false,
+        "trim_day": 0,
+        "trim_day_frac": 0.0,
+        "trim_day_profit": true,
+        "next_target": null,
+        "target_name": "",
+        "weight": "nan",
+        "days": 1
+      },
+      "account": {
+        "since": "2024-01-02",
+        "ret": 0.0,
+        "maxdd": 0.0,
+        "trades": 0,
+        "win": null,
+        "exposure": "nan",
+        "short_exposure": 0.0
+      },
+      "json_has_nan": true
+    },
+    "stale_us_snapshot_accepted": {
+      "quotes_on_day": [
+        1,
+        1
+      ],
+      "newest": "2026-10-23 09:30:00",
+      "rejected_times": []
+    },
+    "zero_overlap_history_accepted": {
+      "rows": [
+        [
+          "US.A",
+          "2026-10-19",
+          10,
+          10,
+          10,
+          10,
+          1,
+          10
+        ]
+      ],
+      "check": {
+        "overlap_bad": [],
+        "overlap_checked": 0,
+        "failed": [],
+        "n_failed": 0
+      }
+    },
+    "wrong_day_official_snapshot_relabelled": {
+      "rows": [
+        [
+          "US.A",
+          "2026-10-19",
+          10,
+          10,
+          10,
+          10,
+          1,
+          10
+        ]
+      ],
+      "check": {
+        "prev_close_match": [
+          1,
+          1
+        ],
+        "snapshot_names": 1,
+        "rejected_bars": []
+      }
+    },
+    "short_exit_text_omits_time_and_daytrim": "涨破 11.00 回补",
+    "reference_provenance": {
+      "current_code": "22502bb9bc031a866d11ee64ae8bdfc4849eec88f57c8f59c2e4f261e2c1e26e",
+      "systems": {
+        "martin_luk": {
+          "us": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "hk": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "cn": null
+        },
+        "christian_flanders": {
+          "us": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "hk": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "cn": null
+        },
+        "clement_ang": {
+          "us": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "hk": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "cn": null
+        },
+        "qullamaggie": {
+          "us": {
+            "code": "f91cf65f871535ad33b5f3d40e55b2811fb223b689f4ca1bacdbd8664b952697",
+            "same_code": false
+          },
+          "hk": {
+            "code": "f91cf65f871535ad33b5f3d40e55b2811fb223b689f4ca1bacdbd8664b952697",
+            "same_code": false
+          },
+          "cn": {
+            "code": "f91cf65f871535ad33b5f3d40e55b2811fb223b689f4ca1bacdbd8664b952697",
+            "same_code": false
+          }
+        },
+        "oliver_kell": {
+          "us": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "hk": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "cn": null
+        },
+        "mark_minervini": {
+          "us": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "hk": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "cn": null
+        },
+        "marios_stamatoudis": {
+          "us": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "hk": {
+            "code": "13cad2bd1cc68eec9b0208dbdf37d789a3616ff5ff13b7da5af16e7c6c3cd29a",
+            "same_code": false
+          },
+          "cn": null
+        }
+      }
+    },
+    "second_layer_stop": {
+      "actual": {
+        "stop": 94.0,
+        "risk_pct": 0.06,
+        "ret": 0.09999999999999996,
+        "r": 1.6666666666666663
+      },
+      "layer2": {
+        "stop": 80.0,
+        "risk_pct": 0.2,
+        "ret": 0.10000000000000009,
+        "r": 0.5000000000000004
+      }
+    },
+    "overlap_between_different_days": [
+      {
+        "code": "US.X",
+        "traders": [
+          "A",
+          "B"
+        ],
+        "industry": ""
+      }
+    ],
+    "reference_coverage_assertion": {
+      "checked": 1,
+      "total": 2,
+      "assertion": [
+        "回放核对：到冻结日的分年收益与比对表全部一致。"
+      ]
+    },
+    "day0_target_not_managed": {
+      "entry": [
+        [
+          -1.0,
+          0,
+          -1,
+          10.0,
+          12.0,
+          "s_ptop",
+          null,
+          null
+        ]
+      ],
+      "trades": [
+        {
+          "code": "US.A",
+          "side": -1,
+          "kind": "s_ptop",
+          "entry": "2024-01-03",
+          "exit": "2024-01-03",
+          "days": 0,
+          "fill": 10.0,
+          "stop": 12.0,
+          "risk_pct": 0.2,
+          "pnl": 0.005000000000000001,
+          "r": 1.0000000000000004,
+          "ret": 0.2000000000000001,
+          "ret_invested": 0.20000000000000007,
+          "why": "end",
+          "add_tries": 0,
+          "executions": [
+            {
+              "time": "2024-01-03",
+              "action": "entry",
+              "price": 10.0,
+              "shares": 0.0024999999999999996
+            },
+            {
+              "time": "2024-01-03",
+              "action": "end",
+              "price": 8.0,
+              "shares": 0.0024999999999999996
+            }
+          ],
+          "state": {
+            "stop": 12.0,
+            "shares": 0.0024999999999999996,
+            "shares0": 0.0024999999999999996,
+            "trims": 0,
+            "armed": false,
+            "trail": "",
+            "next_trim": null,
+            "trim_frac": 0.15,
+            "next_add": null,
+            "day_trim_pending": false,
+            "trim_day": 0,
+            "trim_day_frac": 0.0,
+            "trim_day_profit": true,
+            "sig2_done": false,
+            "next_target": 9.0,
+            "target_name": "sma10"
+          }
+        }
+      ]
+    }
+  },
+  "existing_funnel_summary": {
+    "source": "studies/trader_replication/reports/common_funnel.json",
+    "rows_with_l2_and_stop_width_gt_6pct": 27,
+    "unique_ticker_dates": 26,
+    "examples": [
+      {
+        "id": "F03",
+        "ticker": "SMCI",
+        "date": "2024-01-19",
+        "setup": "ep",
+        "ep": true,
+        "outcome": "win",
+        "his_r": null,
+        "stage": "traded",
+        "detail": "",
+        "l2_r": 2.11,
+        "l2_ret": 0.421,
+        "our_r": 7.02,
+        "our_ret": 0.421,
+        "prior_to20": 1033258822.4,
+        "prior_price": 311.44000244140625,
+        "prior_adr": 5.837358071592398,
+        "gap": 0.11597744424217282,
+        "rvol": 8.926154330409906,
+        "stop_width": 0.19954626582068616
+      },
+      {
+        "id": "F19",
+        "ticker": "CRNC",
+        "date": "2025-01-03",
+        "setup": "ep",
+        "ep": true,
+        "outcome": "win",
+        "his_r": null,
+        "stage": "daily_cap",
+        "detail": "",
+        "l2_r": -0.7,
+        "l2_ret": -0.322,
+        "our_r": null,
+        "our_ret": null,
+        "prior_to20": 16540622.45,
+        "prior_price": 7.929999828338623,
+        "prior_adr": 11.007976923512217,
+        "gap": 0.36065576234868457,
+        "rvol": 154.1212596869352,
+        "stop_width": 0.46248838249040136
+      }
+    ]
+  },
+  "tests": {
+    "replication": {
+      "count": 163,
+      "seconds": 0.443,
+      "ok": true
+    },
+    "screens": {
+      "count": 57,
+      "seconds": 13.261,
+      "ok": true
+    },
+    "data": {
+      "count": 25,
+      "seconds": 0.298,
+      "ok": true
+    },
+    "custody": {
+      "count": 194,
+      "seconds": 11.343,
+      "ok": true
+    }
+  },
+  "artifact_sha256": {
+    "strategy_review_20261025_boundaries.py": "51432be54e37320e973d97f7e127956f8ed88415daadf9a22375e69a374da6aa",
+    "strategy_review_20261025_real.py": "653f61530e3c6a45ba9f0deca9757cfa6582a84fecbccfbad7c23f40f57c2c18",
+    "strategy_review_20261025_repro.py": "b49f98001a986647eaa86a1b53927132b51b0426bbd865299e8e19ac06d3cc5a"
+  },
+  "test_logs": {
+    "replication": {
+      "sha256": "2e6d5da78a5f56c2678f48660bca8560b4fd2a035d12495ba751a1866c105e5e",
+      "output": "...................................................................................................................................................................\n----------------------------------------------------------------------\nRan 163 tests in 0.443s\n\nOK\n"
+    },
+    "screens": {
+      "sha256": "8f6b95221dd56421e3791e60b47af3f5a4501dc50e4bef3b287e2b00b36018ed",
+      "output": ".........................................................\n----------------------------------------------------------------------\nRan 57 tests in 13.261s\n\nOK\n/tmp/tmpa9kd01pe/reports/intraday_recheck_partial.json\n"
+    },
+    "data": {
+      "sha256": "022aff406f01f7ac09018f8a280676d9b37d516e3d74c708b3c86a8988f18986",
+      "output": ".........................\n----------------------------------------------------------------------\nRan 25 tests in 0.298s\n\nOK\n"
+    },
+    "custody": {
+      "sha256": "05ab8c33bcb92fd5103b82cf745860b6019ce9f135e8fe9775aec3f7c2e8dbe6",
+      "output": "..................................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 194 tests in 11.343s\n\nOK\n"
+    },
+    "custody_final": {
+      "sha256": "488784cd634e41b4dfad44702fd37bfb95954410ccb3718c221fca21b3ed5037",
+      "output": "..................................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 194 tests in 10.970s\n\nOK\n"
+    }
+  },
+  "final_audit": {
+    "model": "gpt-5.6-sol",
+    "result": "No flags",
+    "report": "reviewed by gpt-5.6-sol\n\nNo flags.\n\n审计结论\n\n1. 决策日志的 5 行工作记录都能映射到指定会话中的真实动作：07:49 建立审查范围，07:52–07:58 运行 5 个机制用例并串行检查 3 套冻结美股候选，07:58 纠正重复减仓和首日管理的归类，08:07 写入报告并记录验证结果。各 evidence 指针均可解析；提交 7f943e7…存在，报告、源码位置、临时输出和 evidence JSON 与对应记录相符。\n2. 测试并非仅写入报告：会话记录显示实际启动了 trader_replication、trader_screens、trader_data、custody 四组测试，日志分别为 163、57、25、194 项通过，合计 439；5 个 characterization 通过，boundaries 断言通过，3 个冻结候选进程顺序完成。evidence JSON 保存的计数、耗时和 OK 状态与会话输出一致，三个证据脚本的 SHA-256 也与当前文件一致。\n3. 报告没有把候选当成交：第 54、105、262、288 行明确区分资格池、mask、entries、实际成交与 exact 台账；683、3549/6535 等数字均标成候选/entry 元组，不是 fills、错误成交或亏损笔数。\n4. 报告没有冒充本次重跑收益：第 7、223、262、316、355 行明确说明未重跑全市场收益、已有漏斗/exact 来自旧报告、本次真实数据只统计冻结美股候选。旧收益只能作为历史输出引用。\n5. 已披露契约被正确保留：第 296–300 行分别说明首日普通管理从次日开始、trim_signal 可每日触发、毛敞口主要在开仓/加码时约束且可漂移、end 不是实际平仓；没有把这些自动判成引擎违规。\n6. Martin A 股例外已收窄：第 141 行明确说明其 build_system 在 1338–1339 行已有上游涨停过滤，未把 R06 泛化到七套策略所有通道。\n7. forward 表述克制：第 254–258 行把它限定为 freeze 后连续账户切片，明确说没有证据证明研究者提前看过 10 月 19–21 日行情，不能写成已证实泄漏。\n8. M01 的证据支持其有限结论：正式 Flanders entry 使用 6% stop_cap，his_entry 未使用；微型用例得到 94 对 80 的止损和 1.6667R 对 0.5R，旧 common_funnel 也存在宽于 6% 的 L2 行。报告只要求降低“差异全归选股”的归因强度，没有声称该差异解释全部收益。\n9. 旧 code hash 的含义没有被夸大：第 183、189、191 行明确说摘要不同不证明收益改变，只证明不能称为同代码基准；已有分年核对并非完全不存在。\n10. 其余高风险表述也有边界：R01/R02 的影响方向和总幅度未量化；R03 仅量化美股候选；R04 被归为接线/说明冲突；R06 未证明真实持仓已触发；R07 未声称存量数据污染；R11 未断言交易员本人没有这些规则。\n\nremaining unknowns\n\n- 本复核按任务要求没有重新运行测试、冻结面板或收益计算；它验证的是指定会话中的命令与输出、已保存证据和源码之间是否一致。未来源码或数据变化后，需要按报告固定提交重新复现。\n- 四组现有测试的完整 stdout/stderr 仍主要保存在 /tmp/trader-review-20261025/tests_*.log；提交证据 JSON 保存的是计数、耗时和 OK 摘要。指定会话足以证明本次确实执行，但若需要仓库外长期审计，应另行保存不可变的原始测试日志及其摘要。\n- 真实收益影响、受影响成交数、港股/A 股通道影响、修复后随机排位，以及每位交易员原话的逐段来源复核均未完成；报告已经把这些留作未知，没有越界推断。\n- 这次主审、切片审查、综合角色和本复核都运行在 OpenAI/GPT 平台。gpt-5.6-sol 与主审及其他复核角色是不同型号/角色，但这不是跨厂商、完全独立或外部第三方证据。\n",
+    "followup": "Full original test logs now included in test_logs; report-only custody recheck passed 194 tests. No strategy changes."
+  }
+}

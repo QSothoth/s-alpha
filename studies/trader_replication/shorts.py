@@ -239,13 +239,25 @@ class LongShort:
         return getattr(self.base, k)
 
     def build(self, A, cfg, trace=None):
+        """The study's build (shorts added); A['kind_pools'] receives the placebo pool of each entry kind."""
+        A['kind_pools'] = {}
+        entries, rules, mask, pool = self._build(A, cfg, trace)
+        if A.get('market') == 'cn':                # an A-share close at the limit up cannot be bought: by the
+            lu = limit_up_closes(A)                # system, nor by its placebo (long close kinds' pools)
+            entries = limit_up_skip(A, entries, rules, trace, lu)
+            kinds = A['kind_pools']
+            for k in {e[5] for lst in entries for e in lst if e[2] > 0 and e[5] not in rules.intraday_kinds}:
+                kinds[k] = kinds.get(k, pool) & ~lu
+        return entries, rules, mask, pool
+
+    def _build(self, A, cfg, trace=None):
         h = cfg.get('human')
         if h is not None:                          # human-sized trading (human.py), off unless the config has it
             from . import human
             cfg = {k: v for k, v in cfg.items() if k != 'human'}
             n = cfg.get('max_new', 0)
             engine_cap = h.get('engine_cap') and getattr(self.base, 'daily_cap', 'engine') == 'build' and n
-            entries, rules, mask, pool = self.build(A, dict(cfg, max_new=0) if engine_cap else cfg, trace)
+            entries, rules, mask, pool = self._build(A, dict(cfg, max_new=0) if engine_cap else cfg, trace)
             if engine_cap:                         # the engine counts his max_new successful new longs
                 rules = replace(rules, max_new_long=n)
             entries, rules = human.apply(self, A, cfg, h, entries, rules)
@@ -271,6 +283,9 @@ class LongShort:
             trace['short_pool'] = spool
         kinds = [f's_{k}' for k in masks]
         rules = short_rules(rules, sc, kinds)
+        level = tuple(f's_{k}' for k, m in masks.items() if isinstance(m, dict) and m.get('stop') is None)
+        rules = replace(rules, intraday_kinds=tuple(rules.intraday_kinds) + level)   # sold at the open or a level
+        A['kind_pools'] = {**A.get('kind_pools', {}), **{k: spool for k in kinds}}   # each short's own pool
         if sc.get('max_open'):                     # open shorts of each short setup
             rules = replace(rules, max_open_by_kind={**rules.max_open_by_kind, **{k: sc['max_open'] for k in kinds}})
         return combine(entries, se, sc.get('short_last', True)), rules, mask, pool | spool
@@ -281,6 +296,49 @@ class LongShort:
         entries, rules, mask, pool = self.build(A, cfg, trace)
         only = [[e for e in lst if e[2] < 0] for lst in entries]
         return only, rules, trace.get('short_pool', np.zeros_like(mask))
+
+
+def limit_up_closes(A):
+    """(days x codes) A-share closes at the limit up: the board's rule (studies.trader_screens.intraday.at_limit_up:
+    board limits, ST 5% before 2026-07-06, cents rounding), the prior close in today's raw price."""
+    from studies.trader_screens.intraday import limit_pct
+    from studies import trader_data as TD
+    try:
+        names = TD.dataset(A['market']).names()
+    except Exception:                              # synthetic arrays: no ST names
+        names = {}
+    codes = [str(x) for x in A['codes']]
+    days = np.array([str(d) for d in A['days']])
+    late = np.array([round(limit_pct(c, names.get(c, ''), '9999') * 100) for c in codes], float)
+    early = np.array([round(limit_pct(c, names.get(c, ''), '0000') * 100) for c in codes], float)
+    pct = np.where((days < '2026-07-06')[:, None], early[None, :], late[None, :])
+    raw, c = A['raw'], A['close']
+    with np.errstate(invalid='ignore', divide='ignore'):
+        prev = np.vstack([np.full((1, c.shape[1]), np.nan), c[:-1] * raw[1:] / c[1:]])
+        ok = np.isfinite(prev) & np.isfinite(raw) & (prev > 0) & (raw > 0)
+        limit = (np.round(np.where(ok, prev, 0) * 100) * (100 + pct) + 50) // 100
+        return ok & (np.round(np.where(ok, raw, 0) * 100) >= limit)
+
+
+def limit_up_skip(A, entries, rules, trace=None, mask=None):
+    """Long close entries on an A-share close at the limit up (limit_up_closes) are taken out before the account;
+    trace['limit_up'] lists them per day."""
+    lu = limit_up_closes(A) if mask is None else mask
+    c = A['close']
+    out, skipped = [], []
+    for d, lst in enumerate(entries):
+        keep, gone = [], []
+        for e in lst:
+            j = e[1]
+            if e[2] > 0 and e[5] not in rules.intraday_kinds and e[3] == c[d, j] and lu[d, j]:
+                gone.append(e)
+            else:
+                keep.append(e)
+        out.append(keep)
+        skipped.append(gone)
+    if trace is not None:
+        trace['limit_up'] = skipped
+    return out
 
 
 def wrap(st):

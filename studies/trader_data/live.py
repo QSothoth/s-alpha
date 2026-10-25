@@ -253,11 +253,19 @@ class LiveDataset(Dataset):
 
     @staticmethod
     def from_snapshot(prov, codes, day, last_raw):
+        """day's bars from a snapshot taken after its close; a quote dated another session (OpenD gives the date) is
+        rejected, never relabelled as day's bar."""
         snap = prov.snapshot(codes)
         rows, acts, rejected, match, seen = [], [], [], 0, 0
         for c in codes:
             s = snap.get(c)
             if not s or not s['trading']:
+                continue
+            t = str(s.get('time') or '')
+            if len(t) >= 10 and t[4] == '-' and t[:10] != day:
+                rejected.append(dict(rejected_bar(c, day, [s[k] for k in
+                                     ('open', 'high', 'low', 'close', 'volume', 'turnover')]),
+                                     reason=f'quote dated {t[:10]}'))
                 continue
             if not math.isfinite(s['prev_close']) or s['prev_close'] <= 0:
                 rejected.append(dict(rejected_bar(c, day, [s[k] for k in
@@ -292,9 +300,13 @@ class LiveDataset(Dataset):
                 elif r[1] in want:
                     rows.append(tuple(r))
             acts += [a for a in actions if last < a[1] <= complete[-1]]
+        expect = sum(np.isfinite(close_last.get(c, np.nan)) for c in codes)
+        if expect and rows and not checked:        # new bars with nothing to compare are not an agreement
+            raise RuntimeError(f'history returned no bar on {last} to check against the stored one')
         if checked and len(bad) / checked > OVERLAP_BAD:
             raise RuntimeError(f'history disagrees with stored bars on {last} for {len(bad)}/{checked} names')
-        return rows, acts, dict(overlap_bad=bad[:20], overlap_checked=checked, failed=failed[:50],
+        return rows, acts, dict(overlap_bad=bad[:20], overlap_checked=checked, overlap_expected=int(expect),
+                                failed=failed[:50],
                                 n_failed=len(failed))
 
 

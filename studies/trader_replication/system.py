@@ -8,7 +8,14 @@ size_risk (a fraction of the fill) sizes the trade when it is wider than the sto
 max_position caps that trade below rules.max_position (small caps); risk_mult multiplies its risk (a sizing tier).
 The placebo keeps all three.
 Same-day ordering is conservative: when a day reaches both the stop and a partial level, the stop comes first
-unless the open is already beyond the partial level.
+unless the open is already beyond the partial level; an open already beyond the breakeven level moves the stop to
+the fill before the day's stop check.
+Fill time: an entry of a kind in rules.intraday_kinds, or whose fill is not that day's close, was filled during the
+day (at the open or a level).  Such entries are opened after the open's gap stops and before anything else of the
+day, sized on the equity and gross valued at the open, with the open slots as of then (positions exited later that
+day still count); close entries come after the day's management, on the equity at the close.  The placebo keeps each entry's fill time: an intraday
+entry's random name is bought or sold at its open (stopped that day when its range reaches the stop), a close
+entry's at its close.
 """
 from __future__ import annotations
 
@@ -55,6 +62,10 @@ class Rules:
     trim_signal: str = ''           # boolean (days x codes) array in `ema`: longs sell trim_frac of the original size
                                     # at that close (at most once a day)
     trim_signal_frac: float = 0.0   # fraction for signal trims (0 = trim_frac)
+    trim_signal_max: int = 0        # > 0: at most this many signal trims a position (0 = every day the array is true)
+    unit_adr: str = ''              # (days x codes) ADR-percent array in `ema`: the trims' and breakeven's unit is
+                                    # this many percent of the fill as of the session before entry instead of the
+                                    # initial stop distance R (his "2 ADR"); stops and sizing still use R
     trim_signal2: str = ''          # a second boolean array in `ema`: a long sells trim_signal2_frac of its original
     trim_signal2_frac: float = 0.0  # size at the first close it is true, once per position (Kell: half off at the 10 EMA)
     add_r: float = 0.0              # > 0: once a long closes at least this R above its fill, buy add_frac of the original
@@ -96,6 +107,7 @@ class Rules:
     no_rebuy_day: bool = False      # a name sold or stopped (any exit, partial or whole) is not opened again that session
     gross_cost: bool = False        # the gross room of an entry or add includes its buying cost (no margin is drawn)
     cap_adds_entry: bool = False    # adds stay inside the entry's own max_position (the tuple's), not only the policy's
+    intraday_kinds: tuple = ()      # entry kinds filled during the day (open, limit or stop level), never at the close
     gross_close: bool = False       # at each close a gross above max_gross (shorts that rose, fees) is brought back to it:
                                     # shorts covered first (largest first), then longs sold, at that close ('gross')
 
@@ -116,6 +128,7 @@ class Pos:
     sig_adds: int = 0
     day_trimmed: bool = False
     sig2_trimmed: bool = False
+    sig_trimmed: int = 0            # signal trims taken (Rules.trim_signal_max)
     targets: int = 0
     armed: bool = False
     cash: float = 0.0               # signed cash flow of the trade so far
@@ -135,7 +148,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
 
     px: dict of (days x codes) 'open', 'high', 'low', 'close' and 'dates', 'codes';  ema: dict name -> array;
     entries: list over days of entry tuples;  placebo: numpy Generator -> each real entry becomes a random
-    pool[d] name of the same side, filled at its close with the same stop distance in percent.
+    pool[d] name of the same side, with the same stop distance in percent and the same fill time (see the module
+    docstring); px['kind_pools'] (optional, kind -> days x codes) replaces pool for entries of that kind.
     Optional px['session'] numbers trading days and px['daily_close'] marks their final bars. Stops/trims
     run every bar; daily management and financing retain their daily clocks. px['mark'] may contain
     forward-filled, already observed closes for valuation only; never use it as tradable OHLC.
@@ -157,6 +171,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     alt_days = ema[rules.trail_alt_days] if rules.trail_alt_days else None
     sig_add = ema[rules.add_signal] if rules.add_signal else None
     targets = [ema[k] for k in rules.short_targets]
+    unit_adr = ema[rules.unit_adr] if rules.unit_adr else None
+    kind_pools = px.get('kind_pools') or {}
     if rules.add_signal_stop not in ('keep', 'fill', 'low'):
         raise ValueError('add_signal_stop')
     peak = 1.0
@@ -188,24 +204,50 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     def gross(d):
         return sum(q.size * last(q.j, d) for q in pos.values())
 
+    def at_open(j, d):                              # what a held name is worth at day d's open
+        x = o[d, j]
+        return x if np.isfinite(x) else last(j, d - 1)
+
+    def gross_open(d):
+        return sum(q.size * at_open(q.j, d) for q in pos.values())
+
+    def unit(q):
+        """The trims' and breakeven's unit: R, or (unit_adr) the ADR percent of the fill as of the session before
+        entry."""
+        if unit_adr is not None and q.d0 > 0 and np.isfinite(unit_adr[q.d0 - 1, q.j]):
+            return q.fill * unit_adr[q.d0 - 1, q.j] / 100
+        return abs(q.fill - q.stop0)
+
+    def intraday(e, d):
+        """Filled before the close: a kind declared intraday, or a fill that is not that day's close."""
+        return e[5] in rules.intraday_kinds or not e[3] == c[d, e[1]]
+
     def close_part(q, size, price, d, why):
         nonlocal cash
         size = min(size, q.size)
         if size <= 0:
             return
         if audit and why == 'end':                  # a position still open: its state for the next session
-            R = abs(q.fill - q.stop0)
+            R, U = abs(q.fill - q.stop0), unit(q)
             pol = q.management
             levels = pol.trims if q.side > 0 or rules.short_trims is None else rules.short_trims
             adds = pol.add_levels or ((pol.add_r,) if pol.add_r else ())
             q.state = dict(stop=float(q.stop), shares=float(q.size), shares0=float(q.size0), trims=q.trims,
                            armed=bool(q.armed), trail=pol.trail,
-                           next_trim=float(q.fill + q.side * levels[q.trims] * R) if q.trims < len(levels) else None,
+                           next_trim=float(q.fill + q.side * levels[q.trims] * U) if q.trims < len(levels) else None,
                            trim_frac=pol.trim_frac,
                            next_add=float(q.fill + adds[q.adds] * R) if q.side > 0 and q.adds < len(adds) else None,
                            day_trim_pending=bool(rules.trim_day and not q.day_trimmed), trim_day=rules.trim_day,
                            trim_day_frac=rules.trim_day_frac, trim_day_profit=rules.trim_day_profit,
                            sig2_done=q.sig2_trimmed,
+                           max_days=rules.max_days if q.side > 0 else (rules.short_max_days or rules.max_days),
+                           short_trim_day_pending=bool(q.side < 0 and rules.short_trim_day and not q.day_trimmed),
+                           short_trim_day=rules.short_trim_day, short_trim_day_frac=rules.short_trim_day_frac,
+                           trim_signal=rules.trim_signal if q.side > 0 and rules.trim_signal
+                           and (not rules.trim_signal_max or q.sig_trimmed < rules.trim_signal_max) else '',
+                           trim_signal_frac=rules.trim_signal_frac or rules.trim_frac,
+                           breakeven=float(q.fill + q.side * rules.breakeven_r * U)
+                           if rules.breakeven_r and (q.stop - q.fill) * q.side < 0 else None,
                            next_target=float(targets[q.targets][d, q.j]) if q.side < 0 and q.targets < len(targets)
                            else None, target_name=rules.short_targets[q.targets]
                            if q.side < 0 and q.targets < len(targets) else '')
@@ -237,7 +279,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 if why == 'end':
                     trades[-1]['state'] = q.state
 
-    def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None, mult=None, add_mult=None):
+    def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None, mult=None, add_mult=None,
+                 early=False):
         nonlocal cash
         if j in pos or not np.isfinite(fill) or fill <= 0:
             return
@@ -269,7 +312,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         policy = management.get(kind, rules)
         cap = policy.max_position if max_pos is None else min(policy.max_position, max_pos)
         width = risk if size_risk is None else max(risk, size_risk)
-        room = rules.max_gross * equity - gross(d)
+        room = rules.max_gross * equity - (gross_open(d) if early else gross(d))
         if rules.gross_cost:
             room /= 1 + rules.buy_cost
         val = min(frac * equity / width, cap * equity, room)
@@ -334,6 +377,63 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             close_part(q, q.size if last_ else rules.short_target_frac * q.size0, min(o[d, j], lv), d, 'target')
             q.targets = len(targets) if last_ else q.targets + 1
 
+
+    def swap(tagged, d):
+        """The placebo: every (intraday, entry) for a random name of its kind's pool, with its stop distance and
+        fill time."""
+        out = []
+        for early_, e in tagged:
+            pr, j, side, fill, stop, kind = e[:6]
+            base = kind_pools.get(kind, pool)
+            ok = base[d] & np.isfinite(c[d])
+            if early_:
+                ok = ok & np.isfinite(o[d])
+            cand = np.flatnonzero(ok)
+            if not len(cand):
+                continue
+            k = int(placebo.choice(cand))
+            pct = abs(fill - stop) / fill
+            kind_ = kind if kind in management or kind in rules.max_open_by_kind \
+                or kind in rules.max_new_by_kind else 'placebo'
+            if early_:                              # bought / sold at its open: stopped that day if reached
+                f = float(o[d, k])
+                st = f * (1 - side * pct)
+                hit = (l[d, k] <= st) if side > 0 else (h[d, k] >= st)
+                out.append((True, (pr, k, side, f, st, kind_, st if hit else None) + tuple(e[7:10])))
+            else:
+                out.append((False, (pr, k, side, c[d, k], c[d, k] * (1 - side * pct), kind_, None) + tuple(e[7:10])))
+        return out
+
+    def take(lst, d, eq_now, early):
+        """Open the day's entries of one fill time, in priority order, under the day's caps."""
+        nonlocal new_all, year_new, new_longs
+        for e in sorted(lst, key=lambda x: x[0]):
+            pr, j, side, fill, stop, kind = e[:6]
+            if month_blocked:
+                break
+            own = side > 0 and kind in rules.max_new_by_kind
+            if own and new_by_kind.get(kind, 0) >= rules.max_new_by_kind[kind]:
+                continue
+            if side > 0 and not own and rules.max_new_long and new_longs >= rules.max_new_long:
+                continue
+            if rules.max_new_all and new_all >= rules.max_new_all:
+                continue
+            if rules.max_new_year and year_new >= rules.max_new_year:
+                continue
+            had = j in pos
+            opened = open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,
+                              e[8] if len(e) > 8 else None, e[9] if len(e) > 9 else None,
+                              e[10] if len(e) > 10 else None, early=early)
+            if opened:
+                new_all += 1
+                year_new += 1
+            if opened and own:
+                new_by_kind[kind] = new_by_kind.get(kind, 0) + 1
+            elif opened and side > 0:
+                new_longs += 1
+            if len(e) > 6 and e[6] is not None and j in pos and not had:     # intraday entry stopped the same day
+                close_part(pos[j], pos[j].size, e[6], d, 'stop_day0')
+
     month_open, month_losses, month_cap, month_blocked = 1.0, 0, rules.month_loss_cap, False
     if rules.month_cap_basis not in ('equity', 'opened'):
         raise ValueError('month_cap_basis')
@@ -382,17 +482,27 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                         fee = rules.borrow_rate / 252 * q.size * last(q.j, d - 1)
                         cash -= fee
                         q.cash -= fee
+        for q in list(pos.values()):                # the open: a gap through the stop covers there
+            if np.isfinite(o[d, q.j]) and (o[d, q.j] - q.stop) * q.side <= 0:
+                close_part(q, q.size, o[d, q.j], d, 'gap_stop')
+        tagged = [(intraday(e, d), e) for e in (entries[d] if d < len(entries) else [])]
+        if placebo is not None:
+            tagged = swap(tagged, d)
+        early = [e for f, e in tagged if f]
+        late = [e for f, e in tagged if not f]
+        if early:                                   # filled during the day: the account as of the open
+            take(early, d, cash + sum(q.side * q.size * at_open(q.j, d) for q in pos.values()), True)
         for q in list(pos.values()):
             j, s = q.j, q.side
+            if q.d0 == d or np.isnan(o[d, j]):      # opened today: managed from the next session
+                continue
             policy = q.management
-            if np.isnan(o[d, j]):
-                continue
             R = abs(q.fill - q.stop0)
-            if (o[d, j] - q.stop) * s <= 0:                       # gap through the stop
-                close_part(q, q.size, o[d, j], d, 'gap_stop')
-                continue
+            U = unit(q)
+            if rules.breakeven_r and (o[d, j] - (q.fill + s * rules.breakeven_r * U)) * s >= 0:
+                q.stop = max(q.stop, q.fill) if s > 0 else min(q.stop, q.fill)    # already beyond at the open
             trims = policy.trims if s > 0 or rules.short_trims is None else rules.short_trims
-            levels = [q.fill + s * k * R for k in trims[q.trims:]]
+            levels = [q.fill + s * k * U for k in trims[q.trims:]]
             worst, best = (l[d, j], h[d, j]) if s > 0 else (h[d, j], l[d, j])
             if (worst - q.stop) * s <= 0:
                 while levels and (o[d, j] - levels[0]) * s >= 0:
@@ -413,7 +523,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 cover_targets(q, d, l[d, j])
             if j not in pos:
                 continue
-            if rules.breakeven_r and (best - (q.fill + s * rules.breakeven_r * R)) * s >= 0:
+            if rules.breakeven_r and (best - (q.fill + s * rules.breakeven_r * U)) * s >= 0:
                 q.stop = max(q.stop, q.fill) if s > 0 else min(q.stop, q.fill)
             if daily_close is not None and not daily_close[d]:
                 continue
@@ -427,7 +537,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 if q.armed and rules.stop_ema_buffer >= 0:
                     level = tr_[d, j] * (1 - s * rules.stop_ema_buffer)
                     q.stop = max(q.stop, level) if s > 0 else min(q.stop, level)
-            if sig_trim is not None and s > 0 and sig_trim[d, j]:
+            if sig_trim is not None and s > 0 and sig_trim[d, j] \
+                    and (not rules.trim_signal_max or q.sig_trimmed < rules.trim_signal_max):
+                q.sig_trimmed += 1
                 close_part(q, (rules.trim_signal_frac or rules.trim_frac) * q.size0, c[d, j], d, 'signal_trim')
                 if j not in pos:
                     continue
@@ -466,47 +578,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             hold = rules.max_days if s > 0 else (rules.short_max_days or rules.max_days)
             if hold and session[d] - session[q.d0] >= hold:
                 close_part(q, q.size, c[d, j], d, 'time')
-        eq_now = cash + value(d)
-        todays = entries[d] if d < len(entries) else []
-        if placebo is not None:
-            swapped = []
-            cand = np.flatnonzero(pool[d] & np.isfinite(c[d]))
-            for e in todays:
-                pr, j, side, fill, stop, kind = e[:6]
-                if not len(cand):
-                    continue
-                k = int(placebo.choice(cand))
-                pct = abs(fill - stop) / fill
-                kind_ = kind if kind in management or kind in rules.max_open_by_kind \
-                    or kind in rules.max_new_by_kind else 'placebo'
-                swapped.append((pr, k, side, c[d, k], c[d, k] * (1 - side * pct), kind_, None) + tuple(e[7:10]))
-            todays = swapped
-        for e in sorted(todays, key=lambda x: x[0]):
-            pr, j, side, fill, stop, kind = e[:6]
-            if month_blocked:
-                break
-            own = side > 0 and kind in rules.max_new_by_kind
-            if own and new_by_kind.get(kind, 0) >= rules.max_new_by_kind[kind]:
-                continue
-            if side > 0 and not own and rules.max_new_long and new_longs >= rules.max_new_long:
-                continue
-            if rules.max_new_all and new_all >= rules.max_new_all:
-                continue
-            if rules.max_new_year and year_new >= rules.max_new_year:
-                continue
-            had = j in pos
-            opened = open_pos(j, side, fill, stop, kind, d, eq_now, e[7] if len(e) > 7 else None,
-                              e[8] if len(e) > 8 else None, e[9] if len(e) > 9 else None,
-                              e[10] if len(e) > 10 else None)
-            if opened:
-                new_all += 1
-                year_new += 1
-            if opened and own:
-                new_by_kind[kind] = new_by_kind.get(kind, 0) + 1
-            elif opened and side > 0:
-                new_longs += 1
-            if len(e) > 6 and e[6] is not None and j in pos and not had:     # intraday entry stopped the same day
-                close_part(pos[j], pos[j].size, e[6], d, 'stop_day0')
+        if late:
+            take(late, d, cash + value(d), False)
         if rules.gross_close and (daily_close is None or daily_close[d]):
             for side_ in (-1, 1):
                 for q in sorted([q for q in pos.values() if q.side == side_ and np.isfinite(c[d, q.j])],
