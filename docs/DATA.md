@@ -101,6 +101,15 @@ python3 -m custody check --dataset <训练目录> --validation <验证目录>
 - 带与 V6.1 同样的事后标签（`ex_post`，不得进入策略）
 - 取代 `custody-eval-2026-09-18`（同样 28 个 case，无标签）
 
+### 附加切片 custody-eval-crwd-20261023
+
+- Release：[custody-eval-crwd-20261023](https://github.com/QSothoth/s-alpha/releases/tag/custody-eval-crwd-20261023)
+- 角色 `validation/custody`；**不**取代上表唯一留出验证 `custody-eval-2026-09-18-v2`，也不并入训练 V6.1
+- zip SHA256 `51718299cab57e0046a710ed31c43f6d61eceeec6d3c0a280652d1290d58af9f`（13,695 字节）
+- `CHECKSUMS.sha256` 的 SHA256 `98cccc850e8a0a130f8f7b3568a82eac8bfe0cbd6a00ff2633cf131807fb1bce`
+- 2026-10-23 一个交易日，US.CRWD 开盘 ATM 双边各 1 个 case（CALL/PUT @ 240，共 2）；`custody check` 通过
+- 独立 tag + 独立 zip；未与近期其他 custody Release 合并
+
 ### 已被取代的数据集
 
 - `custody-0dte-v5`（train，126 case / 20 日）和 `custody-eval-2026-09-16-v2`（validation，20 case）：2026-09-20 起分别由 V6.1 和 `custody-eval-2026-09-18-v2` 取代。09-16 这一天已并入训练集，不再是留出验证；两个 Release 本身仍然有效，只是不再是登记的训练 / 验证数据。
