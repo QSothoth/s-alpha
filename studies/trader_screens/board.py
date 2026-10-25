@@ -220,6 +220,9 @@ def market(r):
     st = r['state']
     state = '、'.join(f"{'站上' if st[f'above_ema{n}'] else '跌破'} {n} EMA" for n in (20, 50))
     lines = [f"## {NAMES[r['market']]} · {r['last_day']}", '', f'股票池等权指数{state}。', '']
+    if r['market'] == 'cn':
+        lines += ['> A 股仅供观察：收盘涨停买不到之后，七个系统在 A 股都不成立（研究区间全段为负或低于同池随机入场，'
+                  '`studies/trader_screens/reports/STRATEGY_REVIEW_20261025_FIXES_CN.md`），不作下单依据。', '']
     if r.get('provisional'):
         lines = lines[:1] + [''] + orders(r) + confidence(r) + lines[1:]
     lines += table(['交易员', '版本', '仓位', '市况', '账户', '冻结后', '今天' if days == 1 else f'近 {days} 天'], [

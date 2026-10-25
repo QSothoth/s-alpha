@@ -92,12 +92,16 @@ def _study(module, report, short=None, common=None, fix=None):
     return load
 
 
-def _carried(module, report, key):
-    """A whole configuration carried out of a later round (studies/<id>/reports/<report>, key), short side included."""
+def _carried(module, report, key, fix=None):
+    """A whole configuration carried out of a later round (studies/<id>/reports/<report>, key), short side included;
+    fix: rule_opts overrides of a later round (as _study)."""
     def load():
         import importlib
         st = importlib.import_module(f'studies.{module}.replicate').STUDY
-        return st, json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
+        cfg = json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
+        if fix:
+            cfg = dict(cfg, rule_opts={**cfg.get('rule_opts', {}), **fix})
+        return st, cfg
     return load
 
 
@@ -109,14 +113,19 @@ def all_():
                    _study('christian_flanders', 'r15.json', ('s4.json', 'F4A'), {'rank': 'ep_own'}),
                    registered='2026-10-20'),
             # RV1 (2026-10-25 review R04): the extension trim is taken once a position, as the rule card says ("sell a
-            # third, trail the rest"); before, every close the extension held sold another third
-            System('clement_ang', 'R15 AA3 + C4A + S5 + RV1', 'frozen',
-                   _study('clement_ang', 'r15.json', ('s5.json', 'C5A'), {'ep_slots': 1}, {'trim_signal_max': 1}),
-                   registered='2026-10-25'),
+            # third, trail the rest"); before, every close the extension held sold another third.  ADR (review M02,
+            # user approved 2026-10-25): his "2 ADR" partial and breakeven in ADRs of the session before entry, not R
+            # (chosen on the same window, no independent validation: trader_screens/reports/
+            # STRATEGY_REVIEW_20261025_FIXES_CN.md)
+            System('clement_ang', 'R15 AA3 + C4A + S5 + RV1 + ADR', 'frozen',
+                   _study('clement_ang', 'r15.json', ('s5.json', 'C5A'), {'ep_slots': 1},
+                          {'trim_signal_max': 1, 'unit_adr': 'adr'}), registered='2026-10-25'),
             # 2026-10-21: + his risk per trade, half size after losses and in a weak market, kept because his
             # published win rate came closer (user approved; trader_replication/notes/SHARED_ROUNDS_CN.md, P1)
-            System('qullamaggie', 'R11 N3 + S7 + P1B', 'frozen', _carried('qullamaggie', 'p1.json', 'P1B'),
-                   registered='2026-10-21'),
+            # RB1 (2026-10-25, user approved; qullamaggie/notes/PREREG_RB1.md): on the fixed engine the third-day half
+            # sale keeps the initial stop (no breakeven move), B2; same window, not a new validation
+            System('qullamaggie', 'R11 N3 + S7 + P1B + RB1', 'frozen',
+                   _carried('qullamaggie', 'p1.json', 'P1B', {'breakeven_r': 0.0}), registered='2026-10-25'),
             System('oliver_kell', 'R6 A5 + S5 + RV1', 'frozen',
                    _study('oliver_kell', 'r6.json', ('s5.json', 'K5B'), fix={'trim_signal_max': 1}),
                    registered='2026-10-25'),
@@ -145,18 +154,18 @@ STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, �
                            '第 3 天卖一半，余下收盘跌破 10 日线',
                            '每笔风险 0.5%，单只 ≤ 30%，总敞口 ≤ 100%，最多 8 只，每天 ≤ 2 笔，当天 EP 先买（C1C）；无市况过滤。'
                            '空头 S4：前一日收在下行 200 日线下方、该线 60 天内压回过反抽，次日反抽到它限价卖空，止损 min(5%, 半个 ADR)；指数 < 50 EMA 才开、每天 1 笔；第 1 天盈利全部回补，最多 3 天'),
-    'clement_ang': ('R15 AA3 + C4A + S5 + RV1（已冻结）',
+    'clement_ang': ('R15 AA3 + C4A + S5 + RV1 + ADR（已冻结）',
                     '精选清单（ADR ≥ 4%、离 52 周高 25% 内、高出 50 日线不到 4 ATR、5 日窄幅）越过昨高；清单内的 10 / 20 EMA 回踩；EP。池：成交额 ≥ 5000 万、ADR ≥ 3%、50 日线上方，按成交额排序',
                     '收盘买，当日低点止损（≥ 1%，不封顶）',
-                    '+2R 卖 1/3 并保本（R 是入场到止损的距离，不是他说的 2 ADR），高出 50 日线 8 ATR 再卖 1/3（每笔一次，RV1），余下收盘跌破 20 EMA',
+                    '浮盈到 2 倍 ADR（入场前一日的 ADR）卖 1/3 并保本，高出 50 日线 8 ATR 再卖 1/3（每笔一次，RV1），余下收盘跌破 20 EMA',
                     '每笔风险 0.5%，单只 ≤ 30%，总敞口 ≤ 200%，最多 30 只，每天 ≤ 10 笔（EP 另计，每天 ≤ 1 笔，C4A）；池等权指数在 20 EMA 上方才开新仓。'
-                    '空头 S5：晚期失败底部——大型前领涨股（成交额 ≥ 5 亿、3 个月高点 ≥ 52 周低点 2 倍）收破 20 EMA 后缩量反抽，次日到 20 EMA 限价卖空；指数连续 5 个收盘 < 50 EMA 才开、每天 1 笔；沿用多头的 +2R 回补 1/3 与 +2R 移到成本，站上 10 EMA 回补，最多 5 天'),
-    'qullamaggie': ('R11 N3 + S7 + P1B（已冻结）',
+                    '空头 S5：晚期失败底部——大型前领涨股（成交额 ≥ 5 亿、3 个月高点 ≥ 52 周低点 2 倍）收破 20 EMA 后缩量反抽，次日到 20 EMA 限价卖空；指数连续 5 个收盘 < 50 EMA 才开、每天 1 笔；沿用多头的 2 ADR 回补 1/3 与 2 ADR 移到成本，站上 10 EMA 回补，最多 5 天'),
+    'qullamaggie': ('R11 N3 + S7 + P1B + RB1（已冻结）',
                     'EP 优先；10 天收紧底部的突破（1 / 3 / 6 月强度前 2%）。池：成交额 ≥ 2000 万、ADR ≥ 4%',
                     '收盘买，当日低点止损；突破单止损宽于 1 ADR 就不做',
-                    '第 3 天赚钱时卖一半，最好价到 +2R 才把止损移到成本（R11，偏离“卖后立刻保本”），余下收盘跌破 20 EMA',
+                    '第 3 天赚钱时卖一半，止损不移到成本（RB1，偏离“卖后立刻保本”：原话版胜率超过门禁 35%），余下收盘跌破 20 EMA',
                     '每笔风险 0.5%（最近 5 笔合计亏时 0.25%；池等权指数在 20 日线下方时再减半，P1B），单只 ≤ 30%，总敞口 ≤ 100%，最多 15 只，每天 ≤ 5 笔；池等权指数 10 日线在 20 日线上方且都向上（他的“绿灯”）。'
-                    '空头 S7：小盘抛物线（20 日涨 ≥ 300%、连涨 ≥ 3 天）收红后，次日开盘或反弹到 VWAP 近似价卖空，止损在顶部上方且 ≤ 1.5 ADR；沿用多头的 +2R 移到成本（无 R 分批），10 日线回补，最多 10 天'),
+                    '空头 S7：小盘抛物线（20 日涨 ≥ 300%、连涨 ≥ 3 天）收红后，次日开盘或反弹到 VWAP 近似价卖空，止损在顶部上方且 ≤ 1.5 ADR；10 日线回补，最多 10 天'),
     'oliver_kell': ('R6 A5 + S5 + RV1（已冻结）',
                     'Wedge Pop、EMA Crossback、10 / 20 EMA 回踩、VCP、52 周突破、两根内包、跌破又收回 20 EMA；只做相对强度前 10%。池：成交额 ≥ 1 亿、ADR ≥ 3%（Wedge Pop / EMA Crossback 用看板筛选写死的 2000 万、ADR ≥ 3%），按成交额排序',
                     '收盘买，当日低点止损（≥ 1%，不封顶）',

@@ -117,11 +117,14 @@ class Management(unittest.TestCase):
         """R04: trim_signal_max=1 (Clement / Kell RV1): one third off, the rest trails."""
         p = px([(100, 101, 99, 100), (140, 141, 139, 140), (141, 142, 140, 141),
                 (142, 143, 141, 142), (143, 144, 142, 143)])
+        self.assertEqual(systems.get('clement_ang').config['rule_opts']['unit_adr'], 'adr')
+        self.assertEqual(systems.get('qullamaggie').config['rule_opts']['breakeven_r'], 0.0)
         for sid in ('clement_ang', 'oliver_kell'):
             opts = {k: tuple(v) if isinstance(v, list) else v for k, v in systems.get(sid).config['rule_opts'].items()}
             self.assertEqual(opts['trim_signal_max'], 1)
             r = replace(Y.Rules(), **opts, **NOCOST)
-            ema = {r.trail: np.full((5, 1), 90.), r.trim_signal: np.array([[False], [True], [True], [True], [True]])}
+            ema = {r.trail: np.full((5, 1), 90.), r.trim_signal: np.array([[False], [True], [True], [True], [True]]),
+                   'adr': np.full((5, 1), 50.)}                       # Clement's ADR unit: no partial in reach
             _, _, tr = Y.simulate(p, ema, r, one(5, 0, 1, 100., 99.), p['dates'][0], p['dates'][-1], audit=True)
             actions = [x['action'] for x in tr[0]['executions']]
             self.assertEqual(actions.count('signal_trim'), 1, sid)
