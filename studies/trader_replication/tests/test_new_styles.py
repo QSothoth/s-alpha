@@ -250,3 +250,109 @@ class GoalTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class EmanuelaHourlyTimingTests(unittest.TestCase):
+    """studies/emanuela_elias/hourly.py: what each decision may read (notes/PREREG_H1.md)."""
+
+    def setUp(self):
+        from studies.emanuela_elias import hourly as EH
+        self.EH = EH
+
+    def fake(self, lows, closes, highs=None, opens=None):
+        EH = self.EH
+        n = len(closes)
+        D = type('D', (), {})()
+        D.codes = ['US.X']
+        D.times = np.array([f'2024-01-{2 + i // 7:02d} {10 + i % 7:02d}:30:00' for i in range(n)])
+        D.c = np.array(closes, float)[:, None]
+        D.l = np.array(lows, float)[:, None]
+        D.h = (np.array(highs, float) if highs is not None else np.maximum(D.c[:, 0], D.l[:, 0]) + .5)[:, None]
+        D.o = (np.array(opens, float) if opens is not None else D.c[:, 0])[:, None]
+        D.bar_day = np.arange(n) // 7
+        D.d_low = D.d_high = D.d_close = np.full((n // 7 + 1, 1), 10.0)
+        D.listed = lambda top, mp: np.ones((n // 7 + 1, 1), bool)
+        return D
+
+    def test_pivot_is_known_k_bars_later(self):
+        lo = np.array([10, 9, 8, 7, 8, 9, 10, 11, 12], float)
+        piv = self.EH.pivots(lo, lo + 1, 2)
+        low = [p for p in piv if p[2] == 'low']
+        self.assertEqual(low[0][3], 3)                 # the pivot bar
+        self.assertEqual(low[0][0], 5)                 # confirmed two bars later
+        lv = self.EH.Levels(piv, 'low', 70)
+        self.assertEqual(lv.at(4), [])
+        self.assertEqual(lv.at(5), [7.0])
+
+    def test_entry_at_the_retest_close_after_the_reclaim(self):
+        EH = self.EH
+        # support 100 (pivot low at bar 3, confirmed at bar 5); break at 8, reclaim close at 9, retest at 11
+        lows =   [104, 103, 102, 100, 102, 103, 104, 103, 99, 100.5, 101.5, 100.3, 101, 102, 103, 104, 105, 106]
+        closes = [105, 104, 103, 101, 103, 104, 105, 104, 99.5, 101, 102, 100.8, 102, 103, 104, 105, 106, 107]
+        D = self.fake(lows, closes)
+        cfg = dict(EH.BASE, k=2, sides=['long'], target='2r', hold=5)
+        tr = EH.trades(D, cfg, ('2024-01-01', '2024-12-31'))
+        self.assertEqual(len(tr), 1)
+        self.assertEqual(tr[0]['t'], 11)
+        self.assertAlmostEqual(tr[0]['entry'], 100.8)
+        self.assertAlmostEqual(tr[0]['level'], 100.0)
+
+    def test_stop_first_and_gaps(self):
+        EH = self.EH
+        o = np.array([100, 100, 100.0]); h = np.array([100, 103, 101.0]); l = np.array([100, 97, 99.0])
+        c = np.array([100, 100, 100.0])
+        self.assertEqual(EH.simulate_exit(o, h, l, c, 0, 1, 100.0, 98.0, 102.0, 5, 0)[2], 'stop')   # both: stop
+        o2 = np.array([100, 95, 100.0])
+        t, px, why, r = EH.simulate_exit(o2, h, l, c, 0, 1, 100.0, 98.0, 102.0, 5, 0)
+        self.assertEqual((why, px), ('stop', 95.0))                                                  # gap: the open
+
+
+class SamStopAtrTests(unittest.TestCase):
+    """studies/sam_miesse/replicate.py R11: the ATR stop reads the prior close's ATR only."""
+
+    def test_stop_atr_uses_the_prior_day(self):
+        from studies.sam_miesse.replicate import STUDY as SM
+        n = 30
+        c = np.full((n, 1), 10.0); o = c.copy(); h = c * 1.02; l = c * .98
+        o[25] = 13.0; h[25] = 13.0 * 1.10; c[25] = 12.0; l[25] = 11.5       # a 30% gap that runs 10% higher
+        h[24] = 10.2
+        F = type('F', (), {})()
+        F.o, F.h, F.l, F.c, F.raw = o, h, l, c, c
+        F.to20 = np.full((n, 1), 1e6)
+        F.atr14 = np.full((n, 1), .4)                                        # 4% of the prior close
+        F.atr14[25] = 5.0                                                    # today's ATR must not be read
+        F.ret = lambda k: np.zeros((n, 1))
+        A = {'F': F}
+        cfg = dict(SM.base, gap=.25, spike=.05, stop_atr=3.0, rule_opts=dict(SM.base['rule_opts']))
+        entries, rules, m, pool = SM.build(A, cfg)
+        (pr, j, side, f, st, kind, ex), = entries[25]
+        self.assertAlmostEqual(f, 13.0 * 1.05)
+        self.assertAlmostEqual(st, f * 1.12)                                 # 3 x 4% = 12% (above the 10% floor)
+        self.assertAlmostEqual(ex, float(c[25, 0]))                          # high 14.3 < stop 15.29: out at the close
+
+
+class HolguinRollTests(unittest.TestCase):
+    """studies/alfredo_holguin/replicate.py R9: an in-the-money put at expiry settles, then next week's put."""
+
+    def test_roll_settles_then_sells_next_week(self):
+        from studies.alfredo_holguin import replicate as R
+        days = np.array(['2025-01-0%d' % d for d in (6, 7, 8, 9)] + ['2025-01-10'] +
+                        ['2025-01-1%d' % d for d in (3, 4, 5, 6, 7)])
+        n = len(days)
+        F = type('F', (), {})()
+        F.o = np.full((n, 1), 100.0); F.c = F.o.copy(); F.h = F.o * 1.01; F.l = F.o * .99
+        F.c[4] = 90.0                                                        # expiry Friday: 10 under the strike
+        F.atr14 = np.full((n, 1), 5.0); F.raw = F.c; F.to20 = np.full((n, 1), 1e10)
+        A = dict(F=F, days=days, iv=np.full((n, 1), .4), optvol20=np.full((n, 1), 1e6), earn={}, earn_idx={},
+                 expiry=R.week_expiries(days), codes_s=['US.X'], trend=np.full((n, 1), 9.0), close=F.c)
+        S = R.Holguin.__new__(R.Holguin)
+        S._A = A
+        S.hv = lambda A_, k: np.full((n, 1), .4)
+        cfg = dict(R.DRAFT, v2=True, k=.05, margin='regt', roll=1, max_new=1, cushion=0.0, trend=0.0, iv_min=0.0,
+                   turnover=0.0, optvol=0, price=0.0, min_dte=2)
+        curve, dd, tr = S.simulate(cfg, '2025-01-06', '2025-01-17')
+        why = [t['why'] for t in tr]
+        self.assertIn('rolled', why)
+        rolled = next(t for t in tr if t['why'] == 'rolled')
+        self.assertEqual(rolled['exit'], '2025-01-10')
+        self.assertAlmostEqual(rolled['pay'], 100.0 - 90.0)

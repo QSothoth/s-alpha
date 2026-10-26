@@ -47,3 +47,8 @@
 | R10 | risk per trade vs his worst day | R6 | `{"rule_opts": {"risk": 0.06, "max_position": 0.45}}` | r9.json:chosen | G25S5 | objective below G25S5；全区间 +95%（带入 +77%） | open |
 | R10 | risk per trade vs his worst day | R6G3 | `{"rule_opts": {"risk": 0.06, "max_position": 0.45, "max_gross": 1.5}}` | r9.json:chosen | G25S5 | objective below G25S5；全区间 +95%（带入 +77%） | open |
 | R10 | risk per trade vs his worst day | R6S20 | `{"stop": 0.2, "rule_opts": {"risk": 0.06, "max_position": 0.45}}` | r9.json:chosen | G25S5 | gates: years；全区间 -20%（带入 +77%） | open |
+| R11 | his stop and his names, at his worst-day risk | ATR2 | `{"stop_atr": 2.0}` | r9.json:chosen | G25S5R4 | gates: placebo, years；全区间 -53%（带入 +82%） | open |
+| R11 | his stop and his names, at his worst-day risk | ATR3 | `{"stop_atr": 3.0}` | r9.json:chosen | G25S5R4 | gates: years；全区间 -25%（带入 +82%） | open |
+| R11 | his stop and his names, at his worst-day risk | ATR3TO20 | `{"stop_atr": 3.0, "turnover_max": 20000000.0}` | r9.json:chosen | G25S5R4 | gates: years；全区间 -2%（带入 +82%） | open |
+| R11 | his stop and his names, at his worst-day risk | MX3 | `{"max_new": 3}` | r9.json:chosen | G25S5R4 | gates: years；全区间 +83%（带入 +82%） | open |
+| R11 | his stop and his names, at his worst-day risk | TO20 | `{"turnover_max": 20000000.0}` | r9.json:chosen | G25S5R4 | gates: years；全区间 +99%（带入 +82%） | open |

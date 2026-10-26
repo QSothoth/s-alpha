@@ -106,9 +106,16 @@ class Sam(GoalMixin, study.Study):
             with np.errstate(invalid='ignore'):
                 lvl = lag(c) * (1 + ext)
                 m = m & (h >= lvl)
+        if cfg.get('stop_atr'):                     # R11: "the data should tell you where that is": the stop this
+            with np.errstate(invalid='ignore', divide='ignore'):            # many 14-day ATRs (as a share of the
+                atrp = lag(F.atr14 / c)                                       # prior close) above, at least 10%
         for d, j in zip(*np.nonzero(m)):
             f = max(float(o[d, j]), float(lvl[d, j])) if ext else float(o[d, j]) * (1 + spike)
-            st = f * (1 + stop)
+            if cfg.get('stop_atr'):
+                a_ = float(atrp[d, j])
+                st = f * (1 + max(cfg['stop_atr'] * a_ if np.isfinite(a_) else stop, .10))
+            else:
+                st = f * (1 + stop)
             ex = st if h[d, j] >= st else float(c[d, j])
             pr = -float(gap[d, j]) if pri == 'gap' else float(gap[d, j])
             entries[d].append((pr, int(j), -1, f, st, 'gap', ex))

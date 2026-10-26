@@ -223,6 +223,23 @@ class Holguin:
                 if d >= p['e']:
                     pay = max(p['K'] - S_, 0.0)
                     cash -= p['n'] * pay
+                    if (pay > 0 and cfg.get('v2') and p.get('rolls', 0) < cfg.get('roll', 0)
+                            and d + 1 < len(days)):          # R9: his rolls -- 97 of his 116 losers were followed
+                        e2 = exp[d + 1]                      # by a new put on the name that day, strike ~97.3%: the
+                        g = grid(S_)                         # loss settles, next week's put at roll_k x the strike
+                        K2 = math.floor(p['K'] * cfg.get('roll_k', .975) / g) * g
+                        T2 = P.years(days[d], days[e2])
+                        q = self.v2_put(A, j, d, S_, K2, T2, e2, cfg)
+                        if K2 > 0 and np.isfinite(q) and q > .01:
+                            prem2 = q * (1 - P.half_spread(q) * cfg.get('spread_x', 1)) - P.COMMISSION / 100
+                            m2 = (max(.20 * S_ - max(S_ - K2, 0.0) + prem2, .10 * K2 + prem2)
+                                  if cfg.get('margin') == 'regt' else K2)
+                            cash += p['n'] * prem2
+                            trades.append(self.trade(A, p, d, pay, 'rolled'))
+                            keep.append(dict(p, K=K2, e=e2, prem=prem2, d0=d, S0=S_, m=m2, ev=0.0,
+                                             rolls=p.get('rolls', 0) + 1))
+                            liab += p['n'] * q
+                            continue
                     trades.append(self.trade(A, p, d, pay, 'expiry'))
                     continue
                 T = P.years(days[d], days[p['e']])
