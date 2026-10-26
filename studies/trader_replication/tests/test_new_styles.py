@@ -393,3 +393,15 @@ class EmanuelaSwingTimingTests(unittest.TestCase):
         B = self.panel(tail=1.0)                         # a crash after day 306 changes nothing up to 306
         e2, _, m2, _ = STUDY.build(B, cfg)
         np.testing.assert_array_equal(m[:307], m2[:307])
+
+    def test_bounce_trigger_reads_nothing_later(self):
+        from studies.emanuela_elias.swing import STUDY, SWING
+        cfg = dict(SWING, setups=['pullback'], trend=dict(sma_long=250, sma_daily=None),
+                   pullback=dict(SWING['pullback'], tight=10.0, need_high=False, trigger='bounce'))
+        A, B = self.panel(), self.panel(tail=1.0)
+        _, _, m, _ = STUDY.build(A, cfg)
+        _, _, m2, _ = STUDY.build(B, cfg)
+        np.testing.assert_array_equal(m[:307], m2[:307])
+        F = A['F']
+        for d in np.flatnonzero(m[:, 0]):
+            self.assertTrue(F.c[d, 0] > F.ema(10)[d, 0])
