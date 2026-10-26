@@ -42,3 +42,8 @@
 | R9 | count on v2 (gap <= 300% hygiene) | G25S5R6 | `{"gap": 0.25, "rule_opts": {"risk": 0.06, "max_position": 0.45}}` | r8.json:chosen | G25S5 | objective below G25S5；全区间 +95%（带入 +77%） | open |
 | R9 | count on v2 (gap <= 300% hygiene) | G30S0 | `{"spike": 0.0}` | r8.json:chosen | G25S5 | gates: years；全区间 +287%（带入 +77%） | open |
 | R9 | count on v2 (gap <= 300% hygiene) | G30S3 | `{"spike": 0.03}` | r8.json:chosen | G25S5 | gates: years；全区间 +412%（带入 +77%） | open |
+| R10 | risk per trade vs his worst day | R4 | `{"rule_opts": {"risk": 0.04, "max_position": 0.3}}` | r9.json:chosen | G25S5 | gates: years；全区间 +82%（带入 +77%） | open |
+| R10 | risk per trade vs his worst day | R4MX3 | `{"max_new": 3, "rule_opts": {"risk": 0.04, "max_position": 0.3}}` | r9.json:chosen | G25S5 | gates: years；全区间 +83%（带入 +77%） | open |
+| R10 | risk per trade vs his worst day | R6 | `{"rule_opts": {"risk": 0.06, "max_position": 0.45}}` | r9.json:chosen | G25S5 | objective below G25S5；全区间 +95%（带入 +77%） | open |
+| R10 | risk per trade vs his worst day | R6G3 | `{"rule_opts": {"risk": 0.06, "max_position": 0.45, "max_gross": 1.5}}` | r9.json:chosen | G25S5 | objective below G25S5；全区间 +95%（带入 +77%） | open |
+| R10 | risk per trade vs his worst day | R6S20 | `{"stop": 0.2, "rule_opts": {"risk": 0.06, "max_position": 0.45}}` | r9.json:chosen | G25S5 | gates: years；全区间 -20%（带入 +77%） | open |

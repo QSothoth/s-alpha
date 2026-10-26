@@ -226,12 +226,31 @@ class Karl:
                 keep.append(p)
             pos = keep
             # --- new positions at the close ---
-            cand = [e for e in by_day.get(d, []) if ok[d, e[1]] and np.isfinite(iv[d, e[1]]) and np.isfinite(raw[d, e[1]])]
-            if placebo is not None:
+            elig = [e for e in by_day.get(d, []) if ok[d, e[1]] and np.isfinite(iv[d, e[1]]) and np.isfinite(raw[d, e[1]])]
+
+            def ratio_(e):                                    # the report priced cheap: the move the day's IV implies
+                b = self.base_vol(A, e[1], e[0], d)           # over the base vol, against the name's median move
+                a = float(iv[d, e[1]])
+                if not (np.isfinite(b) and np.isfinite(a)) or e[5] <= 0:
+                    return 9.0
+                return math.sqrt(max(a * a - b * b, 0.0) * 30 / 365) / e[5]
+
+            def select(es):
+                es = sorted(es, key=lambda e: -A['optvol20'][d - 1, e[1]])
+                if cfg.get('cheap'):
+                    es = [e for e in es if ratio_(e) <= cfg['cheap']]
+                    if cfg.get('rank_cheap'):
+                        es.sort(key=ratio_)
+                return es
+            if placebo is not None and cfg.get('placebo_events'):    # R5 on: as many of the day's genuine,
+                n_ = len(select(elig))                              # eligible earnings events, drawn at random
+                cand = [elig[k] for k in placebo.permutation(len(elig))][:n_]
+            elif placebo is not None:                 # the first rounds' placebo: a random name carrying this event
                 pool = np.flatnonzero(ok[d] & np.isfinite(iv[d]) & np.isfinite(raw[d]))
-                cand = [(e[0], int(placebo.choice(pool)), e[2], e[3], e[4], e[5]) for e in cand] if len(pool) else []
+                cand = [(e[0], int(placebo.choice(pool)), e[2], e[3], e[4], e[5]) for e in select(elig)] \
+                    if len(pool) else []
             else:
-                cand.sort(key=lambda e: -A['optvol20'][d - 1, e[1]])
+                cand = select(elig)
             eq = cash + mark
             for r, j, dd, ne, fe, e in cand:
                 if len(pos) >= cfg['max_open'] or any(p['j'] == j for p in pos):
@@ -524,11 +543,11 @@ class Karl:
         print(name, 'chosen', best, flush=True)
         return out
 
-    def validate(self, report, key='chosen'):
+    def validate(self, report, key='chosen', draws=50):
         cfg = self.config(report, key)
         out = {'report': report, 'config': cfg}
         for nm, seg in (('select', SELECT), ('validate', VALIDATE), ('window', WINDOW)):
-            st, tr = self.evaluate(cfg, seg, draws=50)
+            st, tr = self.evaluate(cfg, seg, draws=draws)
             out[nm] = st
             show('VALIDATE', nm, st)
         (self.reports / f'validate_{report.replace(".json", "")}_{key}.json').write_text(
@@ -570,4 +589,4 @@ if __name__ == '__main__':
     elif a == 'round':
         STUDY.round(sys.argv[2])
     elif a == 'validate':
-        STUDY.validate(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else 'chosen')
+        STUDY.validate(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else 'chosen', int(sys.argv[4]) if len(sys.argv) > 4 else 50)

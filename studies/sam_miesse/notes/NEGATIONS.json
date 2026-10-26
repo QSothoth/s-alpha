@@ -2731,5 +2731,383 @@
    "data": "trader-data-v2",
    "gap_max": 3.0
   }
+ },
+ {
+  "round": "R10",
+  "stage": "risk per trade vs his worst day",
+  "candidate": "R4",
+  "change": {
+   "rule_opts": {
+    "risk": 0.04,
+    "max_position": 0.3
+   }
+  },
+  "base": [
+   "r9.json",
+   "chosen"
+  ],
+  "chosen": "G25S5",
+  "reason": "gates: years",
+  "objective": "goal",
+  "evidence": {
+   "total": 0.822234475201786,
+   "by_year": {
+    "2024": 0.4120920613685879,
+    "2025": 0.2904501944693971
+   },
+   "win": 0.5547445255474452,
+   "per_year": 343.8645418326693,
+   "behaviour_gap": 0.15121674102606264,
+   "year_gap": 0.3480748443447368,
+   "placebo_median": -0.43029621561981085,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.7739286095373785
+  },
+  "base_config": {
+   "gap": 0.25,
+   "price": [
+    1.0,
+    20.0
+   ],
+   "turnover_max": 50000000.0,
+   "run": 0.0,
+   "stop": 0.3,
+   "priority": "gap",
+   "max_new": 5,
+   "locate": 0.005,
+   "rule_opts": {
+    "risk": 0.08,
+    "max_position": 0.6,
+    "max_gross": 2.0,
+    "max_open": 10,
+    "trail": "",
+    "trims": []
+   },
+   "spike": 0.05,
+   "data": "trader-data-v2",
+   "gap_max": 3.0
+  }
+ },
+ {
+  "round": "R10",
+  "stage": "risk per trade vs his worst day",
+  "candidate": "R4MX3",
+  "change": {
+   "max_new": 3,
+   "rule_opts": {
+    "risk": 0.04,
+    "max_position": 0.3
+   }
+  },
+  "base": [
+   "r9.json",
+   "chosen"
+  ],
+  "chosen": "G25S5",
+  "reason": "gates: years",
+  "objective": "goal",
+  "evidence": {
+   "total": 0.8304356474232932,
+   "by_year": {
+    "2024": 0.3530358180550215,
+    "2025": 0.35283606169017045
+   },
+   "win": 0.5553822152886115,
+   "per_year": 321.7768924302789,
+   "behaviour_gap": 0.2176061223676178,
+   "year_gap": 0.39079635865812135,
+   "placebo_median": -0.43029621561981085,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.7739286095373785
+  },
+  "base_config": {
+   "gap": 0.25,
+   "price": [
+    1.0,
+    20.0
+   ],
+   "turnover_max": 50000000.0,
+   "run": 0.0,
+   "stop": 0.3,
+   "priority": "gap",
+   "max_new": 5,
+   "locate": 0.005,
+   "rule_opts": {
+    "risk": 0.08,
+    "max_position": 0.6,
+    "max_gross": 2.0,
+    "max_open": 10,
+    "trail": "",
+    "trims": []
+   },
+   "spike": 0.05,
+   "data": "trader-data-v2",
+   "gap_max": 3.0
+  }
+ },
+ {
+  "round": "R10",
+  "stage": "risk per trade vs his worst day",
+  "candidate": "R6",
+  "change": {
+   "rule_opts": {
+    "risk": 0.06,
+    "max_position": 0.45
+   }
+  },
+  "base": [
+   "r9.json",
+   "chosen"
+  ],
+  "chosen": "G25S5",
+  "reason": "objective below G25S5",
+  "objective": "goal",
+  "evidence": {
+   "total": 0.9462141529405164,
+   "by_year": {
+    "2024": 0.5237112450543608,
+    "2025": 0.27728541694334097
+   },
+   "win": 0.5547445255474452,
+   "per_year": 343.8645418326693,
+   "behaviour_gap": 0.15121674102606264,
+   "year_gap": 0.27199821299663735,
+   "placebo_median": -0.612513916285709,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.7739286095373785
+  },
+  "base_config": {
+   "gap": 0.25,
+   "price": [
+    1.0,
+    20.0
+   ],
+   "turnover_max": 50000000.0,
+   "run": 0.0,
+   "stop": 0.3,
+   "priority": "gap",
+   "max_new": 5,
+   "locate": 0.005,
+   "rule_opts": {
+    "risk": 0.08,
+    "max_position": 0.6,
+    "max_gross": 2.0,
+    "max_open": 10,
+    "trail": "",
+    "trims": []
+   },
+   "spike": 0.05,
+   "data": "trader-data-v2",
+   "gap_max": 3.0
+  }
+ },
+ {
+  "round": "R10",
+  "stage": "risk per trade vs his worst day",
+  "candidate": "R6G3",
+  "change": {
+   "rule_opts": {
+    "risk": 0.06,
+    "max_position": 0.45,
+    "max_gross": 1.5
+   }
+  },
+  "base": [
+   "r9.json",
+   "chosen"
+  ],
+  "chosen": "G25S5",
+  "reason": "objective below G25S5",
+  "objective": "goal",
+  "evidence": {
+   "total": 0.9462141529405164,
+   "by_year": {
+    "2024": 0.5237112450543608,
+    "2025": 0.27728541694334097
+   },
+   "win": 0.5547445255474452,
+   "per_year": 343.8645418326693,
+   "behaviour_gap": 0.15121674102606264,
+   "year_gap": 0.27199821299663735,
+   "placebo_median": -0.5450370200915178,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.7739286095373785
+  },
+  "base_config": {
+   "gap": 0.25,
+   "price": [
+    1.0,
+    20.0
+   ],
+   "turnover_max": 50000000.0,
+   "run": 0.0,
+   "stop": 0.3,
+   "priority": "gap",
+   "max_new": 5,
+   "locate": 0.005,
+   "rule_opts": {
+    "risk": 0.08,
+    "max_position": 0.6,
+    "max_gross": 2.0,
+    "max_open": 10,
+    "trail": "",
+    "trims": []
+   },
+   "spike": 0.05,
+   "data": "trader-data-v2",
+   "gap_max": 3.0
+  }
+ },
+ {
+  "round": "R10",
+  "stage": "risk per trade vs his worst day",
+  "candidate": "R6S20",
+  "change": {
+   "stop": 0.2,
+   "rule_opts": {
+    "risk": 0.06,
+    "max_position": 0.45
+   }
+  },
+  "base": [
+   "r9.json",
+   "chosen"
+  ],
+  "chosen": "G25S5",
+  "reason": "gates: years",
+  "objective": "goal",
+  "evidence": {
+   "total": -0.19826377355154423,
+   "by_year": {
+    "2024": -0.5981507386182627,
+    "2025": 0.9951168348343571
+   },
+   "win": 0.491970802919708,
+   "per_year": 343.8645418326693,
+   "behaviour_gap": 0.15121674102606264,
+   "year_gap": 1.6048254129297441,
+   "placebo_median": -0.6191734459912729,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.7739286095373785
+  },
+  "base_config": {
+   "gap": 0.25,
+   "price": [
+    1.0,
+    20.0
+   ],
+   "turnover_max": 50000000.0,
+   "run": 0.0,
+   "stop": 0.3,
+   "priority": "gap",
+   "max_new": 5,
+   "locate": 0.005,
+   "rule_opts": {
+    "risk": 0.08,
+    "max_position": 0.6,
+    "max_gross": 2.0,
+    "max_open": 10,
+    "trail": "",
+    "trims": []
+   },
+   "spike": 0.05,
+   "data": "trader-data-v2",
+   "gap_max": 3.0
+  }
  }
 ]

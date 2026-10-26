@@ -108,6 +108,106 @@ class EvanBandTests(unittest.TestCase):
         self.assertEqual(self.build([35, 35, 34.9, 50]), [3])
 
 
+class _Bars:
+    """Daily bars with their own open / high / low / close (one name)."""
+    def __init__(self, o, h, l, c):
+        col = lambda x: np.asarray(x, float)[:, None]
+        self.o, self.h, self.l, self.c = col(o), col(h), col(l), col(c)
+        self.raw = self.c
+        self.to20 = np.full_like(self.c, 1e6)
+
+    def get(self, key, f):
+        return f()
+
+    def ret(self, n):
+        return np.zeros_like(self.c)
+
+    def lo(self, n):
+        return np.array([[self.l[max(0, t - n + 1):t + 1].min()] for t in range(len(self.l))])
+
+    def hi(self, n):
+        return np.array([[self.h[max(0, t - n + 1):t + 1].max()] for t in range(len(self.h))])
+
+
+class SamExtensionTests(unittest.TestCase):
+    """R7 on: the short is sold when the day's high reaches prior close x (1 + ext) (at the open when it opens
+    above), covered at that close unless the stop above the fill is reached first."""
+
+    def entries(self, o, h, l, c):
+        from studies.sam_miesse.replicate import Sam
+        A = {'F': _Bars(o, h, l, c)}
+        cfg = dict(gap=.25, ext=.5, spike=0.0, stop=.3, price=(1.0, 20.0), turnover_max=50e6, max_new=5,
+                   locate=0.0, rule_opts=dict(trims=()))
+        entries, *_ = Sam().build(A, cfg)
+        return [(d, e[3], e[6]) for d, es in enumerate(entries) for e in es]
+
+    def test_sold_at_the_level_covered_at_the_close(self):
+        self.assertEqual(self.entries([10, 13], [10, 16], [10, 12], [10, 12.5]), [(1, 15.0, 12.5)])
+
+    def test_opens_above_the_level_sold_at_the_open(self):
+        self.assertEqual(self.entries([10, 16], [10, 17], [10, 14], [10, 14.5]), [(1, 16.0, 14.5)])
+
+    def test_stop_first_when_the_high_reaches_it(self):
+        (d, f, ex), = self.entries([10, 13], [10, 20], [10, 12], [10, 12.5])
+        self.assertAlmostEqual(ex, 19.5)                       # 15 x 1.3
+
+    def test_level_not_reached_no_trade(self):
+        self.assertEqual(self.entries([10, 13], [10, 14.9], [10, 12], [10, 12.5]), [])
+
+
+class EmanuelaReclaimTests(unittest.TestCase):
+    """R7: with at_reclaim the long is entered at the close of the reclaim session itself."""
+
+    def test_entry_on_the_reclaim_close(self):
+        from studies.emanuela_elias.replicate import Emanuela
+        c = [10, 10, 10, 10, 9.6, 10.2, 10.3]
+        l = [9.9, 9.9, 9.9, 9.9, 9.5, 9.7, 10.1]
+        h = [10.1] * 4 + [9.8, 10.3, 10.4]
+        F = _Bars(c, h, l, c)
+
+        class E(Emanuela):
+            def listed(self, A, cfg):
+                return np.ones(F.c.shape, bool)
+        cfg = dict(level=3, reclaim=5, window=10, band=.01)
+        m, lv = E().setups({'F': F}, dict(cfg, at_reclaim=True), 1)
+        self.assertEqual(list(np.flatnonzero(m[:, 0])), [5])  # broke 9.9 on day 4, closed back above on day 5
+        self.assertAlmostEqual(lv[5, 0], 9.9)
+        m2, _ = E().setups({'F': F}, cfg, 1)
+        self.assertFalse(m2[5, 0])                            # the retest version waits
+
+
+class KarlStatementTests(unittest.TestCase):
+    def test_settlement_date_and_amount_check(self):
+        from studies.karl_domm.replicate import Karl
+        text = ('08/05 Sale Short Sale HD 08/15/2025 CALL HOME DEPOT INC $400 (7.0000) 0.6000 4.65 415.35\n'
+                'Purchase Cover Short BIDU 02/14/2025 CALL BAIDU INC $104 EXP 42.0000 0.1900 7.93 (235.93) 224.10\n')
+        a, b = Karl.parse_statement(text)
+        self.assertEqual((a['date'], a['settle'], a['action'], a['qty']), ('2025-08-04', '2025-08-05', 'open_short', -7.0))
+        self.assertEqual((b['action'], b['qty'], b['strike']), ('cover', 12.0, 104.0))   # OCR's 42 is 12 by the amount
+
+    def test_positions_return_on_debit(self):
+        from studies.karl_domm.replicate import Karl
+        rows = [dict(date='2025-08-04', sym='X', action='open_short', cp='CALL', strike=110.0, exp='', qty=-1, px=1.0),
+                dict(date='2025-08-04', sym='X', action='buy', cp='CALL', strike=110.0, exp='', qty=2, px=2.0),
+                dict(date='2025-08-06', sym='X', action='sell', cp='CALL', strike=110.0, exp='', qty=-2, px=3.0),
+                dict(date='2025-08-06', sym='X', action='cover', cp='CALL', strike=110.0, exp='', qty=1, px=0.5)]
+        (p,), open_ = Karl.positions(rows)
+        self.assertEqual((p['debit'], p['proceeds'], open_), (300.0, 550.0, []))
+        self.assertAlmostEqual(p['ret'], 550 / 300 - 1)
+
+
+class HolguinVolTests(unittest.TestCase):
+    def test_short_vol_reads_the_prior_close(self):
+        from studies.alfredo_holguin.replicate import Holguin
+        c = np.array([100, 101, 99, 102, 98, 100, 150.0])[:, None]     # the jump is on the last day
+        A = {'close': c, 'iv': np.full(c.shape, .2)}
+        H = Holguin()
+        v_before = H.model_vol(A, 0, 6, {'vol': 'max5'})               # opening on day 6: closes through day 5
+        self.assertGreater(v_before, .2)                                # the 5-day HV of days 1-5 is above 20%
+        self.assertLess(v_before, 1.0)                                  # ... and does not see day 6's +50%
+        self.assertEqual(H.model_vol(A, 0, 6, {'vol': 'iv'}), .2)
+
+
 class GoalTests(unittest.TestCase):
     def test_part_year_period(self):
         from studies.trader_options import goal as G
