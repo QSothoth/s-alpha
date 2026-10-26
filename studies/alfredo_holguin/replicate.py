@@ -330,6 +330,7 @@ class Holguin:
         weeks, rows = {}, []
         trades = self.his_trades()
         week_keys = sorted(self.his_weeks())
+        iso_key = {dt.date.fromisoformat(h).isocalendar()[:2]: h for h in week_keys}
         parts = {}                                 # one position closed in parts appears once per part, each row
         for t in trades:                            # with the position's full size: split the size across them
             k = (t['symbol'].upper(), t['date_entered'], t['OCC_option_symbol'])
@@ -374,18 +375,47 @@ class Holguin:
                     Ss = raw(ic, F.o) if not noon(t['date_closed']) else raw(ic, F.c)
                     pay = K - Ss                                      # below zero when the shares recovered
                     how = 'assigned'
-            m = K if pc.get('margin', 'cash') == 'cash' else max(.20 * S0 - max(S0 - K, 0.0) + prem, .10 * K + prem)
+            mg = pc.get('margin', 'cash')
+            if mg == 'cash':
+                m = K
+            elif mg.startswith('pm'):               # portfolio margin: the loss if the stock fell pm% (15 default),
+                mv = int(mg[2:] or 15) / 100        # at least 2.5% of the strike
+                m = max(K - (1 - mv) * S0, .025 * K)
+            else:
+                m = max(.20 * S0 - max(S0 - K, 0.0) + prem, .10 * K + prem)
             size = abs(float(t['risk_per_trade']))
             if pc.get('parts', True):
                 size /= parts[(t['symbol'].upper(), t['date_entered'], t['OCC_option_symbol'])]
-            pnl = size * (prem - pay) / m
+            if pc.get('oracle') and (prem - pay > 0) != (t['Trade_Success'] == '1'):
+                pay = prem - pc['oracle'] * prem * (1 if t['Trade_Success'] == '1' else -1)  # diagnostic only: his
+            pnl = size * (prem - pay) / m                                                   # label overrides ours
             wk = t['weekly_expiration'][:10]
             if pc.get('by_close'):                                  # booked in the week it was closed (assigned
                 iso = dt.date.fromisoformat(dc).isocalendar()[:2]   # shares sold the next Monday land there)
                 wk = next((h for h in week_keys if dt.date.fromisoformat(h).isocalendar()[:2] == iso), wk)
             if pc.get('roll') and prem - pay < 0 and (t['symbol'].upper(), dc) in rolls:
                 wk = max(rolls[(t['symbol'].upper(), dc)], wk)       # the loss rides with the rolled put
-            weeks[wk] = weeks.get(wk, 0.0) + pnl
+            if pc.get('mtm'):                       # the account marked at each week's last close: a put opened in
+                xi = ie if how == 'expiry' else ic  # an earlier week books its premium decay there, an assigned put
+                last, owed = None, prem             # the Friday intrinsic in the expiry week, the sale the next
+                for k in range(i0, xi):
+                    if A['expiry'][k] != k:
+                        continue
+                    Sk = raw(k, F.c)
+                    if k < ie:
+                        Tk = P.years(days[k], ex)
+                        vk = self.model_vol(A, j, min(k + 1, len(days) - 1), pc)
+                        Vk = P.bs(Sk, K, Tk, P.vol_for(Sk, K, Tk, vk if np.isfinite(vk) and vk > 0 else v0, True, skew), True)
+                    else:
+                        Vk = max(K - Sk, 0.0) if how == 'expiry' else K - Sk
+                    key = iso_key.get(dt.date.fromisoformat(days[k]).isocalendar()[:2])
+                    if key:
+                        weeks[key] = weeks.get(key, 0.0) + size * (owed - Vk) / m * (1 if last is None else 1)
+                    owed, last = Vk, k
+                key = iso_key.get(dt.date.fromisoformat(days[xi]).isocalendar()[:2], wk)
+                weeks[key] = weeks.get(key, 0.0) + size * (owed - pay) / m
+            else:
+                weeks[wk] = weeks.get(wk, 0.0) + pnl
             rows.append(dict(t=t, ok=True, prem=prem, pay=pay, pnl=pnl, how=how, win=prem - pay > 0,
                              his_win=t['Trade_Success'] == '1', K=K, S0=S0))
         his = self.his_weeks()

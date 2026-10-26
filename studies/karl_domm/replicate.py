@@ -140,7 +140,8 @@ class Karl:
             atm = base if base is not None and np.isfinite(base) else .4
         if base is None or not np.isfinite(base) or cfg.get('e_mode', 'implied') == 'hist':
             ev_left = (e * cfg.get('e_mult', 1.0)) ** 2 if i < r else 0.0
-            b = math.sqrt(max(atm * atm - ev_left / (30 / 365), (.5 * atm) ** 2)) if ev_left else atm
+            sv = (e * cfg.get('strip_mult', cfg.get('e_mult', 1.0))) ** 2 if i < r else 0.0   # R11: what the 30-day
+            b = math.sqrt(max(atm * atm - sv / (30 / 365), (.5 * atm) ** 2)) if sv else atm   # IV loses to the report
         else:
             et = self.implied_e(cfg, atm, base, e) if i < r else 0.0
             ev_left, b = et * et, base
