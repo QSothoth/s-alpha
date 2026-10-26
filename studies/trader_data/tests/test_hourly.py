@@ -78,6 +78,7 @@ class HourlyTests(unittest.TestCase):
         self.assertAlmostEqual(float(d['close'][0, 0]), 11.0, places=4)
         self.assertAlmostEqual(float(d['high'][1, 0]), 13.0 * 1.01, places=3)
         self.assertAlmostEqual(float(d['volume'][1, 0]), 200.0)
+        self.assertAlmostEqual(float(d['raw_close'][0, 0]), 11.0, places=4)
 
     def test_invalid_bar_is_left_out(self):
         p = write_folder(self.root / 'f', bad=('US.B', TIMES[1])).panel()

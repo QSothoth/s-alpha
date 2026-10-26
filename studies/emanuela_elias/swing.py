@@ -98,6 +98,22 @@ class Swing(Emanuela):
         A['_ext'] = cfg.get('ext', 2.5)
         return entries, rules, mask, pool
 
+    def hourly_arrays(self):
+        """E3 validation: daily bars rebuilt from the hourly release trader-hourly-v1 (81 names, 2020-2026, through
+        the data interface), in the shape panels.arrays gives; QQQ and SPY left out of the list."""
+        from studies import trader_data as TD
+        from studies.trader_data import hourly as H
+        from studies.trader_screens import screens as S
+        d = H.daily(TD.load_hourly('us', mode='frozen'))
+        keep = [j for j, c in enumerate(d['codes']) if str(c) not in ('US.QQQ', 'US.SPY')]
+        p = {k: (v[:, keep] if isinstance(v, np.ndarray) and v.ndim == 2 else v) for k, v in d.items()}
+        p['codes'] = np.array([str(d['codes'][j]) for j in keep])
+        F = S.Feat(p, 'us')
+        A = dict(days=p['days'], codes=p['codes'], market='us', F=F, open=F.o, high=F.h, low=F.l, close=F.c,
+                 turnover=F.turnover, raw=F.raw, volume=F.v)
+        A['to20'], A['adr'], A['has'], A['digest'] = F.to20, F.adr, np.isfinite(F.c), 'trader-hourly-v1 daily'
+        return A
+
     @staticmethod
     def _add(entries, mask, m, F, stop, kind):
         mask |= m

@@ -294,11 +294,12 @@ def build(ds, upto=None, cache=True):
 
 
 def daily(p):
-    """Daily bars rebuilt from an hourly panel: (days, open, high, low, close, volume, turnover), days x codes."""
+    """Daily bars rebuilt from an hourly panel: (days, open, high, low, close, volume, turnover, raw_close), days x
+    codes; raw_close is the day's last unadjusted close (price filters must not read the adjusted one)."""
     days, first = np.unique(p['days'], return_index=True)
     last = np.append(first[1:], len(p['days'])) - 1
     o = np.full((len(days), p['close'].shape[1]), np.nan)
-    h, l, c, v, t = (o.copy() for _ in range(5))
+    h, l, c, v, t, rc = (o.copy() for _ in range(6))
     for k, (a, b) in enumerate(zip(first, last)):
         seg = slice(a, b + 1)
         with np.errstate(invalid='ignore'), __import__('warnings').catch_warnings():
@@ -308,6 +309,7 @@ def daily(p):
             lc = len(cc) - 1 - np.argmax(np.isfinite(cc[::-1]), axis=0)
             o[k] = oo[fo, np.arange(oo.shape[1])]
             c[k] = cc[lc, np.arange(cc.shape[1])]
+            rc[k] = p['raw_close'][seg][lc, np.arange(cc.shape[1])]
             h[k] = np.nanmax(p['high'][seg], axis=0)
             l[k] = np.nanmin(p['low'][seg], axis=0)
             v[k] = np.nansum(p['volume'][seg], axis=0)
@@ -315,7 +317,7 @@ def daily(p):
     gone = ~np.isfinite(c)
     v[gone] = np.nan
     t[gone] = np.nan
-    return dict(days=days, codes=p['codes'], open=o, high=h, low=l, close=c, volume=v, turnover=t)
+    return dict(days=days, codes=p['codes'], open=o, high=h, low=l, close=c, volume=v, turnover=t, raw_close=rc)
 
 
 # ----- the source -----

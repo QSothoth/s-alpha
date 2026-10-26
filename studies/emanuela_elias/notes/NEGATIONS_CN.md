@@ -13,6 +13,11 @@
 | R1 | short gate / stop / hold | SG50 | `{"short_gate": 50}` | :base | SL1 | gates: placebo；全区间 +5%（带入 -22%） | open |
 | R1 | short gate / stop / hold | SG50SL1 | `{"short_gate": 50, "stop_level": 0.01}` | :base | SL1 | objective below SL1；全区间 +13%（带入 -22%） | open |
 | R1 | short gate / stop / hold | TOP10 | `{"top": 10}` | :base | SL1 | gates: placebo；全区间 -16%（带入 -22%） | open |
+| E2 | fidelity to her ledger: the conditions that blocked her trades | BNC | `{"pullback": {"breakout": 50, "within": 20, "touch": 0.01, "tight": 0.85, "trigger": "bounce"}}` | e1.json:chosen | REF | gates: placebo, years；全区间 -50%（带入 -55%） | open |
+| E2 | fidelity to her ledger: the conditions that blocked her trades | N200 | `{"trend": {"sma_long": 250, "sma_daily": null}}` | e1.json:chosen | REF | gates: placebo；全区间 -41%（带入 -55%） | open |
+| E2 | fidelity to her ledger: the conditions that blocked her trades | NH | `{"pullback": {"breakout": 50, "within": 20, "touch": 0.01, "tight": 0.85, "need_high": false}}` | e1.json:chosen | REF | gates: placebo, years；全区间 -69%（带入 -55%） | open |
+| E2 | fidelity to her ledger: the conditions that blocked her trades | NHBNC | `{"pullback": {"breakout": 50, "within": 20, "touch": 0.01, "tight": 0.85, "need_high": false, "trigger": "bounce"}}` | e1.json:chosen | REF | gates: placebo；全区间 +43%（带入 -55%） | open |
+| E2 | fidelity to her ledger: the conditions that blocked her trades | NHN200 | `{"pullback": {"breakout": 50, "within": 20, "touch": 0.01, "tight": 0.85, "need_high": false}, "trend": {"sma_long": 250, "sma_daily": null}}` | e1.json:chosen | REF | gates: placebo, years；全区间 -60%（带入 -55%） | open |
 | R2 | level / hold / list | B2 | `{"band": 0.02}` | r1.json:chosen | H10 | objective below H10；全区间 +6%（带入 +29%） | open |
 | R2 | level / hold / list | LV50 | `{"level": 50}` | r1.json:chosen | H10 | objective below H10；全区间 +21%（带入 +29%） | open |
 | R2 | level / hold / list | LV50H10 | `{"level": 50, "rule_opts": {"max_days": 10, "short_max_days": 10}}` | r1.json:chosen | H10 | objective below H10；全区间 +25%（带入 +29%） | open |
