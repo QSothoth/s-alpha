@@ -293,6 +293,17 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 - `data/martin-luk-benchmarks-v1`：2026-10-18前台重取已占用额度的QQQ/IWM前复权日线，各1202根，2022-01-03→2026-10-16；用于核查用股票池等权指数代替本人指数观察的输入差距。前后历史额度218/82不变；metadata.json登记文件SHA256。未发布，不进Git。
 - `data/martin-luk-cache/r77/verify`：五只已占用股票的异常日期日线/5分钟/1分钟原始响应，用于R77数据核验，前后额度218/82不变；不作为新增独立验证段。
 
+### 交易员小时线 trader-hourly-v1
+
+看小时线的交易员系统（首个使用者：Emanuela 小时线关键价位）只通过统一数据接口读取：`TD.load_hourly('us')`，规范见 [TRADER_PROTOCOL_CN](TRADER_PROTOCOL_CN.md) 第 6 节。2026-10-26 用户同意取数并发布为 [trader-hourly-v1](https://github.com/QSothoth/s-alpha/releases/tag/trader-hourly-v1)：ZIP SHA256 `f87a038c15874226bf680cc3045349e207b6d4cd8fb0b39125fb2319a9f0cfe1`，`CHECKSUMS.sha256` 的 SHA256 `b4b3f7c6e0d82a1ca45d24370d5fac61bbf3c4a56a0d45d282e47d7e39c05816`，已从 GitHub 回下载核对。
+
+- 内容：美股 81 只（trader-data-v1 中 2023-01-03 → 2026-10-16 任一交易日进过 20 日均成交额前 20、价格 ≥ 5 的股票，加 QQQ、SPY）常规时段 60 分钟 K，2020-01-02 → 2026-10-23，每天 7 根；不复权 `bars_raw.csv.gz`、OpenD 前复权 `bars_qfq.csv.gz`（只作核对）、`actions.csv.gz`（get_rehab）、`universe.json`。48 MB。
+- 来源与额度：OpenD `request_history_kline(K_60M)`（`python -m studies.trader_data.hourly fetch`），扣历史 K 线额度 61（36 / 264 → 97 / 203）；其余 20 只为 30 天内已扣费标的。
+- 核对：小时线重建的日收盘与 trader-data-v1 重叠期 70,723 对全部在 0.5% 内；与 OpenD 前复权的差异集中在 BX、TSM、ASML（现金分红的复权口径不同，2020 年最大约 2.4%，沿用日线约定）；成交量为 0 的 2,088 根（BMNR 2,012 根，含一根合股前旧报价）在面板中视为无成交跳过。
+- 用途：2024–2025 选择、**2020–2023 验证**（用户同意）、2026 已用过；期权定价只能从 2023-06 起。
+- 名单偏差：2020–2022 的“当日前 N”只能在这 81 只里取，会漏掉当时大、后来变小的股票。
+- live：`data/trader-live-hourly/trader-hourly-v1/`（订阅接口只追加，未发布）。
+
 ### 交易员统一数据层 trader-data-v1
 
 所有交易员复刻研究、横向比对和看板冻结回放共用的日 K，规范见 [TRADER_PROTOCOL_CN](TRADER_PROTOCOL_CN.md)。2026-10-19 发布为 [trader-data-v1](https://github.com/QSothoth/s-alpha/releases/tag/trader-data-v1)：ZIP SHA256 `109799cbaa64e73efe1634e953dd381159d19c5b5b4197df2b9bbecdf4f068ce`，`CHECKSUMS.sha256` 的 SHA256 `812054a6f67600b4df2dde3d093c1a8062ae9632d1c9f34e7f8189aaf301d9ca`，已从 GitHub 回下载核对；解压到 `data/` 即可。面板摘要固定在 `studies/trader_replication/DATA_PIN.json`。目录 `data/trader-data-v1/{us,hk,cn}`，格式同 `trend_breakout.fetch`（不复权日 K、源前复权日 K、公司行动、名单、进度），面板由统一数据接口 `studies/trader_data` 构建；本地 live 增量在 `data/trader-live/trader-data-v1/`（未发布）。
