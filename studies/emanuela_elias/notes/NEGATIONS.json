@@ -2709,5 +2709,379 @@
     "spread": 0.01
    }
   }
+ },
+ {
+  "round": "R9",
+  "stage": "v2 pricing: position size, market direction, contract",
+  "candidate": "F5D30",
+  "change": {
+   "opt": {
+    "dte": 30,
+    "mny": 0.0,
+    "frac": 0.05,
+    "spread": 0.01,
+    "v2": true,
+    "k": 0.05
+   }
+  },
+  "base": [
+   "r8.json",
+   "chosen"
+  ],
+  "chosen": "F5",
+  "reason": "objective below F5",
+  "objective": "goal",
+  "evidence": {
+   "total": 1.4949455814118595,
+   "by_year": {
+    "2024": 0.6723395333292728,
+    "2025": 0.4918893751467759
+   },
+   "win": 0.523972602739726,
+   "per_year": 146.5816733067729,
+   "behaviour_gap": null,
+   "year_gap": 1.0441558824762,
+   "placebo_median": 0.07090867071583407,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 4.687517172613306
+  },
+  "base_config": {
+   "top": 15,
+   "level": 10,
+   "reclaim": 5,
+   "band": 0.02,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [
+     2
+    ],
+    "max_days": 3,
+    "short_max_days": 3,
+    "borrow_rate": 0.03,
+    "trim_frac": 1.0
+   },
+   "max_new": 3,
+   "short_gate": 50,
+   "stop_level": 0.01,
+   "opt": {
+    "dte": 10,
+    "mny": 0.0,
+    "frac": 0.15,
+    "spread": 0.01,
+    "v2": true,
+    "k": 0.05
+   }
+  }
+ },
+ {
+  "round": "R9",
+  "stage": "v2 pricing: position size, market direction, contract",
+  "candidate": "F5D30G20",
+  "change": {
+   "opt": {
+    "dte": 30,
+    "mny": 0.0,
+    "frac": 0.05,
+    "spread": 0.01,
+    "v2": true,
+    "k": 0.05
+   },
+   "long_gate": 20,
+   "short_gate": 20
+  },
+  "base": [
+   "r8.json",
+   "chosen"
+  ],
+  "chosen": "F5",
+  "reason": "objective below F5",
+  "objective": "goal",
+  "evidence": {
+   "total": 1.0633648234479143,
+   "by_year": {
+    "2024": 0.6266221822051614,
+    "2025": 0.2684966712126564
+   },
+   "win": 0.5155555555555555,
+   "per_year": 112.94820717131473,
+   "behaviour_gap": null,
+   "year_gap": 1.1988932100478233,
+   "placebo_median": 0.09457375212743369,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 4.687517172613306
+  },
+  "base_config": {
+   "top": 15,
+   "level": 10,
+   "reclaim": 5,
+   "band": 0.02,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [
+     2
+    ],
+    "max_days": 3,
+    "short_max_days": 3,
+    "borrow_rate": 0.03,
+    "trim_frac": 1.0
+   },
+   "max_new": 3,
+   "short_gate": 50,
+   "stop_level": 0.01,
+   "opt": {
+    "dte": 10,
+    "mny": 0.0,
+    "frac": 0.15,
+    "spread": 0.01,
+    "v2": true,
+    "k": 0.05
+   }
+  }
+ },
+ {
+  "round": "R9",
+  "stage": "v2 pricing: position size, market direction, contract",
+  "candidate": "F5G20",
+  "change": {
+   "opt": {
+    "dte": 10,
+    "mny": 0.0,
+    "frac": 0.05,
+    "spread": 0.01,
+    "v2": true,
+    "k": 0.05
+   },
+   "long_gate": 20,
+   "short_gate": 20
+  },
+  "base": [
+   "r8.json",
+   "chosen"
+  ],
+  "chosen": "F5",
+  "reason": "objective below F5",
+  "objective": "goal",
+  "evidence": {
+   "total": 2.4652634654268266,
+   "by_year": {
+    "2024": 1.0671325062141346,
+    "2025": 0.6763625239357827
+   },
+   "win": 0.5155555555555555,
+   "per_year": 112.94820717131473,
+   "behaviour_gap": null,
+   "year_gap": 1.1988932100478233,
+   "placebo_median": 0.28080239036201493,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 4.687517172613306
+  },
+  "base_config": {
+   "top": 15,
+   "level": 10,
+   "reclaim": 5,
+   "band": 0.02,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [
+     2
+    ],
+    "max_days": 3,
+    "short_max_days": 3,
+    "borrow_rate": 0.03,
+    "trim_frac": 1.0
+   },
+   "max_new": 3,
+   "short_gate": 50,
+   "stop_level": 0.01,
+   "opt": {
+    "dte": 10,
+    "mny": 0.0,
+    "frac": 0.15,
+    "spread": 0.01,
+    "v2": true,
+    "k": 0.05
+   }
+  }
+ },
+ {
+  "round": "R9",
+  "stage": "v2 pricing: position size, market direction, contract",
+  "candidate": "F5G50",
+  "change": {
+   "opt": {
+    "dte": 10,
+    "mny": 0.0,
+    "frac": 0.05,
+    "spread": 0.01,
+    "v2": true,
+    "k": 0.05
+   },
+   "long_gate": 50,
+   "short_gate": 50
+  },
+  "base": [
+   "r8.json",
+   "chosen"
+  ],
+  "chosen": "F5",
+  "reason": "objective below F5",
+  "objective": "goal",
+  "evidence": {
+   "total": 4.105023204648163,
+   "by_year": {
+    "2024": 1.2606493674926802,
+    "2025": 1.2582109716157444
+   },
+   "win": 0.5321888412017167,
+   "per_year": 116.96414342629483,
+   "behaviour_gap": null,
+   "year_gap": 1.1148878310838488,
+   "placebo_median": 0.9423729342078228,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 4.687517172613306
+  },
+  "base_config": {
+   "top": 15,
+   "level": 10,
+   "reclaim": 5,
+   "band": 0.02,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [
+     2
+    ],
+    "max_days": 3,
+    "short_max_days": 3,
+    "borrow_rate": 0.03,
+    "trim_frac": 1.0
+   },
+   "max_new": 3,
+   "short_gate": 50,
+   "stop_level": 0.01,
+   "opt": {
+    "dte": 10,
+    "mny": 0.0,
+    "frac": 0.15,
+    "spread": 0.01,
+    "v2": true,
+    "k": 0.05
+   }
+  }
  }
 ]

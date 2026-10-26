@@ -37,3 +37,7 @@
 | R8 | re-score under exit-price option pricing | B25 | `{"band": 0.025}` | r6.json:chosen | B2 | objective below B2；全区间 +326%（带入 +328%） | open |
 | R8 | re-score under exit-price option pricing | B2F12 | `{"band": 0.02, "opt": {"frac": 0.12}}` | r6.json:chosen | B2 | objective below B2；全区间 +466%（带入 +328%） | open |
 | R8 | re-score under exit-price option pricing | MX5 | `{"max_new": 5}` | r6.json:chosen | B2 | objective below B2；全区间 +529%（带入 +328%） | open |
+| R9 | v2 pricing: position size, market direction, contract | F5D30 | `{"opt": {"dte": 30, "mny": 0.0, "frac": 0.05, "spread": 0.01, "v2": true, "k": 0.05}}` | r8.json:chosen | F5 | objective below F5；全区间 +149%（带入 +469%） | open |
+| R9 | v2 pricing: position size, market direction, contract | F5D30G20 | `{"opt": {"dte": 30, "mny": 0.0, "frac": 0.05, "spread": 0.01, "v2": true, "k": 0.05}, "long_gate": 20, "short_gate": 20}` | r8.json:chosen | F5 | objective below F5；全区间 +106%（带入 +469%） | open |
+| R9 | v2 pricing: position size, market direction, contract | F5G20 | `{"opt": {"dte": 10, "mny": 0.0, "frac": 0.05, "spread": 0.01, "v2": true, "k": 0.05}, "long_gate": 20, "short_gate": 20}` | r8.json:chosen | F5 | objective below F5；全区间 +247%（带入 +469%） | open |
+| R9 | v2 pricing: position size, market direction, contract | F5G50 | `{"opt": {"dte": 10, "mny": 0.0, "frac": 0.05, "spread": 0.01, "v2": true, "k": 0.05}, "long_gate": 50, "short_gate": 50}` | r8.json:chosen | F5 | objective below F5；全区间 +411%（带入 +469%） | open |
