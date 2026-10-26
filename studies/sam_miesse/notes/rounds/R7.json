@@ -1,0 +1,10 @@
+{"stage": "data layer + extension entry", "data": "trader-data-v2", "base": ["r5.json", "chosen"],
+ "base_change": {"data": "trader-data-v2"}, "ref": "R8S30", "objective": "goal",
+ "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "G20E50": {"gap": 0.20, "spike": 0.0, "ext": 0.50},
+  "G20E50R4": {"gap": 0.20, "spike": 0.0, "ext": 0.50, "rule_opts": {"risk": 0.04, "max_position": 0.30}},
+  "G20E75": {"gap": 0.20, "spike": 0.0, "ext": 0.75},
+  "G10E50": {"gap": 0.10, "spike": 0.0, "ext": 0.50},
+  "G20E30": {"gap": 0.20, "spike": 0.0, "ext": 0.30}
+ }}

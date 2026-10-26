@@ -24,3 +24,21 @@
 | R5 | size x stop | R6S30 | `{"rule_opts": {"risk": 0.06, "max_position": 0.5}}` | r4.json:chosen | R8S30 | objective below R8S30；全区间 +35%（带入 +38%） | open |
 | R5 | size x stop | R6S30G40 | `{"gap": 0.4, "rule_opts": {"risk": 0.06, "max_position": 0.5}}` | r4.json:chosen | R8S30 | objective below R8S30；全区间 +28%（带入 +38%） | open |
 | R5 | size x stop | R8S20 | `{"stop": 0.2, "rule_opts": {"risk": 0.08, "max_position": 0.6}}` | r4.json:chosen | R8S30 | objective below R8S30；全区间 +90%（带入 +38%） | open |
+| R6 | upstream: gap definition | G20 | `{"gap": 0.2, "spike": 0.0}` | r5.json:chosen | R8S30 | gates: placebo, years；全区间 -91%（带入 +38%） | open |
+| R6 | upstream: gap definition | G20SP | `{"gap": 0.2}` | r5.json:chosen | R8S30 | gates: years；全区间 -50%（带入 +38%） | open |
+| R6 | upstream: gap definition | G20SPP50 | `{"gap": 0.2, "price": [1.0, 50.0]}` | r5.json:chosen | R8S30 | gates: placebo, years；全区间 -63%（带入 +38%） | open |
+| R6 | upstream: gap definition | G20SPR4 | `{"gap": 0.2, "rule_opts": {"risk": 0.04, "max_position": 0.3}}` | r5.json:chosen | R8S30 | gates: years；全区间 -18%（带入 +38%） | open |
+| R6 | upstream: gap definition | G30SP | `{"gap": 0.3}` | r5.json:chosen | R8S30 | gates: years；全区间 -6%（带入 +38%） | open |
+| R7 | data layer + extension entry | G10E50 | `{"gap": 0.1, "spike": 0.0, "ext": 0.5}` | r5.json:chosen | R8S30 | gates: years；全区间 -8%（带入 +77%） | open |
+| R7 | data layer + extension entry | G20E30 | `{"gap": 0.2, "spike": 0.0, "ext": 0.3}` | r5.json:chosen | R8S30 | gates: years；全区间 -31%（带入 +77%） | open |
+| R7 | data layer + extension entry | G20E50 | `{"gap": 0.2, "spike": 0.0, "ext": 0.5}` | r5.json:chosen | R8S30 | gates: years；全区间 +17%（带入 +77%） | open |
+| R7 | data layer + extension entry | G20E50R4 | `{"gap": 0.2, "spike": 0.0, "ext": 0.5, "rule_opts": {"risk": 0.04, "max_position": 0.3}}` | r5.json:chosen | R8S30 | gates: years；全区间 +60%（带入 +77%） | open |
+| R7 | data layer + extension entry | G20E75 | `{"gap": 0.2, "spike": 0.0, "ext": 0.75}` | r5.json:chosen | R8S30 | gates: years；全区间 +33%（带入 +77%） | open |
+| R8 | count on v2 | G30SP | `{"gap": 0.3}` | r7.json:chosen | G30S5 | objective below G30S5；全区间 +75%（带入 +247%） | open |
+| R8 | count on v2 | G30SPR6 | `{"gap": 0.3, "rule_opts": {"risk": 0.06, "max_position": 0.45}}` | r7.json:chosen | G30S5 | gates: years；全区间 +80%（带入 +247%） | open |
+| R8 | count on v2 | G40SP | `{"gap": 0.4}` | r7.json:chosen | G30S5 | objective below G30S5；全区间 +58%（带入 +247%） | open |
+| R8 | count on v2 | G50S5 | `{"spike": 0.05}` | r7.json:chosen | G30S5 | gates: years；全区间 +585%（带入 +247%） | open |
+| R9 | count on v2 (gap <= 300% hygiene) | G20S5 | `{"gap": 0.2}` | r8.json:chosen | G25S5 | gates: years；全区间 -41%（带入 +77%） | open |
+| R9 | count on v2 (gap <= 300% hygiene) | G25S5R6 | `{"gap": 0.25, "rule_opts": {"risk": 0.06, "max_position": 0.45}}` | r8.json:chosen | G25S5 | objective below G25S5；全区间 +95%（带入 +77%） | open |
+| R9 | count on v2 (gap <= 300% hygiene) | G30S0 | `{"spike": 0.0}` | r8.json:chosen | G25S5 | gates: years；全区间 +287%（带入 +77%） | open |
+| R9 | count on v2 (gap <= 300% hygiene) | G30S3 | `{"spike": 0.03}` | r8.json:chosen | G25S5 | gates: years；全区间 +412%（带入 +77%） | open |

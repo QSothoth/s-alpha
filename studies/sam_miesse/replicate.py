@@ -15,6 +15,7 @@ not used (notes/PREREG_R1.md).  Locates are not in the data: each short pays `lo
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -22,6 +23,7 @@ import numpy as np
 
 from studies.trader_replication import panels, study, system as Y
 from studies.trader_screens import screens as S
+from studies.trader_options.goal import GoalMixin
 
 ROOT = Path(__file__).resolve().parents[2]
 lag = S.lag
@@ -43,7 +45,7 @@ DRAFT = dict(
 )
 
 
-class Sam(study.Study):
+class Sam(GoalMixin, study.Study):
     id, name = 'sam_miesse', 'Sam Miesse'
     root = ROOT / 'studies' / 'sam_miesse'
     ledger = None
@@ -52,10 +54,21 @@ class Sam(study.Study):
     his = {'2024': dict(ret=1.0)}
     his_behaviour = dict(per_year=400)
     base = DRAFT
+    periods = {'2024': ('2024-01-02', '2024-12-31', 1.0), '2025': ('2025-01-02', '2025-12-31', None),
+               '2023 (behaviour only)': ('2023-01-03', '2023-12-29', 0.0), '2026 (used)': ('2026-01-02', '2026-10-16', None)}
+    goal_behaviour = dict(per_year=400)
     starts = ('2024-01-02', '2024-02-01', '2024-03-01', '2024-04-01', '2024-07-01', '2025-01-02')
 
+    data_tag = 'trader-data-v1'        # a round's "data" key (and a config's) switches the frozen dataset
+
     def arrays(self, market, upto=None, mode=None):
+        os.environ['TRADER_DATA_TAG'] = self.data_tag
         return panels.arrays(market, upto, mode)
+
+    def round(self, name):
+        spec = json.loads((self.rounds / f'{name}.json').read_text(encoding='utf-8'))
+        self.data_tag = spec.get('data', 'trader-data-v1')
+        return super().round(name)
 
     def ledger_sets(self, A):
         return [], []
@@ -88,8 +101,13 @@ class Sam(study.Study):
         spike = cfg.get('spike', 0.0)               # > 0: sell into the morning push, a limit this far above the
         if spike:                                   # open (his fixed entry minute is not public)
             m = m & (h >= o * (1 + spike))
+        ext = cfg.get('ext', 0.0)                   # > 0: sell the hyperextension, a limit at prior close x (1 + ext)
+        if ext:                                     # (at the open when it opens above), whenever the day reaches it
+            with np.errstate(invalid='ignore'):
+                lvl = lag(c) * (1 + ext)
+                m = m & (h >= lvl)
         for d, j in zip(*np.nonzero(m)):
-            f = float(o[d, j]) * (1 + spike)
+            f = max(float(o[d, j]), float(lvl[d, j])) if ext else float(o[d, j]) * (1 + spike)
             st = f * (1 + stop)
             ex = st if h[d, j] >= st else float(c[d, j])
             pr = -float(gap[d, j]) if pri == 'gap' else float(gap[d, j])
@@ -103,6 +121,7 @@ class Sam(study.Study):
 
     def validate(self, report, key='chosen'):
         cfg = self.config(report, key)
+        self.data_tag = cfg.get('data', 'trader-data-v1')
         A = self.arrays('us')
         entries, rules, mask, pool = self.build(A, cfg)
         out = {'report': report, 'config': cfg}
