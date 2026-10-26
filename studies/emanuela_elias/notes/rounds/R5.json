@@ -1,0 +1,9 @@
+{"stage": "option size / tenor", "base": ["r4.json", "chosen"], "ref": "T3R2F25L10", "objective": "goal",
+ "gates": ["placebo", "years"], "draws": 30,
+ "candidates": {
+  "F15": {"opt": {"frac": 0.15}},
+  "F15C15": {"opt": {"frac": 0.15, "cap": 1.5}},
+  "F20C15": {"opt": {"frac": 0.20, "cap": 1.5}},
+  "F15D14": {"opt": {"frac": 0.15, "dte": 14}},
+  "F15T2": {"opt": {"frac": 0.15}, "rule_opts": {"max_days": 2, "short_max_days": 2}}
+ }}
