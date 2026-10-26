@@ -55,6 +55,23 @@ def vol_for(S, K, T, atm, put, skew=.10, call_skew=0.0, earn_var=0.0, base_atm=N
     return v * (1 + (skew if put else call_skew) * m)
 
 
+def leverage(S, K, T, vol, put):
+    """The option's leverage at entry: |delta| x S / price (how many times the stock's percentage move)."""
+    p = bs(S, K, T, vol, put)
+    if p <= 0 or T <= 1e-6 or vol <= 0:
+        return float('nan')
+    d1 = (math.log(S / K) + (R + .5 * vol * vol) * T) / (vol * math.sqrt(T))
+    return abs(_ncdf(d1) - (1 if put else 0)) * S / p
+
+
+def lever_return(stock_ret, lev, T0, T1, spread=0.0):
+    """Estimated return on premium of a bought option: leverage x the stock's move in the option's direction
+    (stock_ret already signed), less the time value an at-the-money option loses from T0 to T1 years to expiry
+    (value ~ sqrt(T)) and the spread both ways; at most a total loss."""
+    decay = 1 - math.sqrt(max(T1, 0.0) / T0) if T0 > 0 else 0.0
+    return max(-1.0, lev * stock_ret - decay - 2 * spread)
+
+
 def years(d0, d1):
     """Trading-day fraction of a year between ISO dates, counted as calendar days / 365 (options decay on calendar
     time); at least one hour."""

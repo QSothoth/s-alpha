@@ -50,6 +50,13 @@ class PricingTests(unittest.TestCase):
         c, p = P.bs(S, K, T, v, False), P.bs(S, K, T, v, True)
         self.assertAlmostEqual(c - p, S - K * np.exp(-P.R * T), places=6)
 
+    def test_leverage_estimate(self):
+        lev = P.leverage(100, 100, 30 / 365, .3, False)       # ATM 30-day call: about 0.5 x 100 / 3.5
+        self.assertTrue(12 < lev < 16)
+        self.assertAlmostEqual(P.lever_return(.01, 10, .1, .1), .1)            # no time passed: 10 x 1%
+        self.assertAlmostEqual(P.lever_return(0, 10, .1, .025), -.5)           # a quarter of the life left
+        self.assertEqual(P.lever_return(-.5, 10, .1, .1), -1.0)                # at most a total loss
+
     def test_expired_is_intrinsic(self):
         self.assertEqual(P.bs(90, 100, 0, .5, True), 10)
         self.assertEqual(P.bs(90, 100, 0, .5, False), 0)

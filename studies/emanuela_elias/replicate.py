@@ -256,6 +256,10 @@ class Emanuela(GoalMixin, study.Study):
         K = S0 * (1 - o.get('mny', 0.0)) if put else S0 * (1 + o.get('mny', 0.0))
         T0 = o.get('dte', 30) / 365
         T1 = max(T0 - P.years(days[i0], days[i1]), 0.0)
+        if o.get('lever'):                                    # the estimate: leverage x the stock's move ('entry':
+            lev = o['lever'] if not isinstance(o['lever'], str) else \
+                P.leverage(S0, K, T0, P.vol_for(S0, K, T0, v0, put), put)   # the day's, a number: one average)
+            return P.lever_return(side * (S1 / S0 - 1), lev, T0, T1, o.get('spread', .03)) if np.isfinite(lev) else None
         p0 = P.bs(S0, K, T0, P.vol_for(S0, K, T0, v0, put), put) * (1 + o.get('spread', .03))
         p1 = P.bs(S1, K, T1, P.vol_for(S1, K, max(T1, 1e-6), v1, put), put) * (1 - o.get('spread', .03))
         if p0 <= 0:
