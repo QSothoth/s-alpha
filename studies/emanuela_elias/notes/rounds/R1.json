@@ -1,0 +1,9 @@
+{"stage": "short gate / stop / hold", "base": ["", "base"], "ref": "base", "objective": "min_2024_2025",
+ "gates": ["placebo"], "draws": 50,
+ "candidates": {
+  "SG50": {"short_gate": 50},
+  "SL1": {"stop_level": 0.01},
+  "H10": {"rule_opts": {"max_days": 10, "short_max_days": 10}},
+  "TOP10": {"top": 10},
+  "SG50SL1": {"short_gate": 50, "stop_level": 0.01}
+ }}

@@ -1,0 +1,9 @@
+{"stage": "exit / size", "base": ["r4.json", "chosen"], "ref": "HV3050", "objective": "goal",
+ "gates": ["placebo"], "draws": 50,
+ "candidates": {
+  "T5": {"rule_opts": {"max_days": 5, "short_max_days": 5}},
+  "P15": {"rule_opts": {"max_position": 0.15}},
+  "B2550": {"long": {"hv": 25}, "short": {"hv": 25}},
+  "T5P15": {"rule_opts": {"max_days": 5, "short_max_days": 5, "max_position": 0.15}},
+  "B2550T5P15": {"long": {"hv": 25}, "short": {"hv": 25}, "rule_opts": {"max_days": 5, "short_max_days": 5, "max_position": 0.15}}
+ }}

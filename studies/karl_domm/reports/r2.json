@@ -1,0 +1,302 @@
+{
+ "name": "R2",
+ "base": [
+  "r1.json",
+  "chosen"
+ ],
+ "configs": {
+  "TI": {
+   "lead": 12,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 2,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.02,
+   "e_mode": "implied",
+   "take_intraday": true
+  },
+  "TI15": {
+   "lead": 12,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.15,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 2,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.02,
+   "e_mode": "implied",
+   "take_intraday": true
+  },
+  "TI8": {
+   "lead": 8,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 2,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.02,
+   "e_mode": "implied",
+   "take_intraday": true
+  },
+  "TIONE": {
+   "lead": 12,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 1,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.02,
+   "e_mode": "implied",
+   "take_intraday": true
+  },
+  "TI40": {
+   "lead": 12,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.4,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 2,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.02,
+   "e_mode": "implied",
+   "take_intraday": true
+  },
+  "L8": {
+   "lead": 8,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 2,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.02,
+   "e_mode": "implied"
+  }
+ },
+ "full": {
+  "TI": {
+   "total": -0.8767036228058688,
+   "maxdd": 0.9011437839893031,
+   "by_year": {
+    "2024": -0.4877189116378543,
+    "2025": -0.7593188973882838
+   },
+   "trades": 97,
+   "win": 0.6494845360824743,
+   "avg_ret": -0.06076956276242961,
+   "hold": 5.061855670103093,
+   "why": {
+    "take": 60,
+    "stop": 0,
+    "time": 37
+   },
+   "placebo": {
+    "median": -0.9747180061175775,
+    "rank": 0.95,
+    "draws": 20
+   },
+   "his_hit": {
+    "positions": 6,
+    "same_name_within_5d": 2,
+    "names": 5
+   }
+  },
+  "TI15": {
+   "total": -0.92886036132305,
+   "maxdd": 0.9349445999493844,
+   "by_year": {
+    "2024": -0.7128582810188044,
+    "2025": -0.7522490325357117
+   },
+   "trades": 106,
+   "win": 0.6886792452830188,
+   "avg_ret": -0.0825668231723004,
+   "hold": 4.537735849056604,
+   "why": {
+    "take": 74,
+    "stop": 0,
+    "time": 32
+   },
+   "placebo": {
+    "median": -0.9845900841535696,
+    "rank": 0.95,
+    "draws": 20
+   },
+   "his_hit": {
+    "positions": 6,
+    "same_name_within_5d": 1,
+    "names": 5
+   }
+  },
+  "TI8": {
+   "total": -0.8445662552837024,
+   "maxdd": 0.8530678309516126,
+   "by_year": {
+    "2024": -0.339697812641349,
+    "2025": -0.7646021053813776
+   },
+   "trades": 134,
+   "win": 0.5149253731343284,
+   "avg_ret": -0.04801888306512608,
+   "hold": 3.0,
+   "why": {
+    "take": 62,
+    "stop": 0,
+    "time": 72
+   },
+   "placebo": {
+    "median": -0.9889137673063999,
+    "rank": 1.0,
+    "draws": 20
+   },
+   "his_hit": {
+    "positions": 6,
+    "same_name_within_5d": 2,
+    "names": 5
+   }
+  },
+  "TIONE": {
+   "total": -0.3382257359930272,
+   "maxdd": 0.5501244066070196,
+   "by_year": {
+    "2024": -0.14954239570545735,
+    "2025": -0.22186095971719044
+   },
+   "trades": 59,
+   "win": 0.711864406779661,
+   "avg_ret": -0.0107545930780765,
+   "hold": 4.762711864406779,
+   "why": {
+    "take": 41,
+    "stop": 0,
+    "time": 18
+   },
+   "placebo": {
+    "median": -0.8688948617609749,
+    "rank": 1.0,
+    "draws": 20
+   },
+   "his_hit": {
+    "positions": 6,
+    "same_name_within_5d": 2,
+    "names": 5
+   }
+  },
+  "TI40": {
+   "total": -0.7058546837555313,
+   "maxdd": 0.8879975272657435,
+   "by_year": {
+    "2024": 0.09123583791561507,
+    "2025": -0.7304475292835693
+   },
+   "trades": 93,
+   "win": 0.5913978494623656,
+   "avg_ret": -0.01784347870220241,
+   "hold": 5.516129032258065,
+   "why": {
+    "take": 49,
+    "stop": 0,
+    "time": 44
+   },
+   "placebo": {
+    "median": -0.944049279618108,
+    "rank": 1.0,
+    "draws": 20
+   },
+   "his_hit": {
+    "positions": 6,
+    "same_name_within_5d": 1,
+    "names": 5
+   }
+  },
+  "L8": {
+   "total": -0.4516520965064922,
+   "maxdd": 0.6660341589527232,
+   "by_year": {
+    "2024": -0.46735789267359873,
+    "2025": 0.02948658386386649
+   },
+   "trades": 125,
+   "win": 0.432,
+   "avg_ret": 0.003818627631917778,
+   "hold": 3.304,
+   "why": {
+    "take": 40,
+    "stop": 0,
+    "time": 85
+   },
+   "placebo": {
+    "median": -0.929563078358133,
+    "rank": 0.9,
+    "draws": 20
+   },
+   "his_hit": {
+    "positions": 6,
+    "same_name_within_5d": 2,
+    "names": 5
+   }
+  }
+ },
+ "chosen": "L8",
+ "chosen_config": {
+  "lead": 8,
+  "width": 1.0,
+  "ratio": 2.0,
+  "take": 0.25,
+  "stop": 0.0,
+  "exit_lead": 1,
+  "turnover": 1000000000.0,
+  "optvol": 50000,
+  "price": 50.0,
+  "debit": 0.25,
+  "max_open": 2,
+  "skew": 0.0,
+  "call_skew": 0.0,
+  "spread": 0.02,
+  "e_mode": "implied"
+ },
+ "gates": [
+  "placebo"
+ ],
+ "objective": "2025 closest to 3.2138"
+}

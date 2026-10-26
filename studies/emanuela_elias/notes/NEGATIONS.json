@@ -1,0 +1,594 @@
+[
+ {
+  "round": "R1",
+  "stage": "short gate / stop / hold",
+  "candidate": "H10",
+  "change": {
+   "rule_opts": {
+    "max_days": 10,
+    "short_max_days": 10
+   }
+  },
+  "base": [
+   "",
+   "base"
+  ],
+  "chosen": "SL1",
+  "reason": "objective below SL1",
+  "objective": "min_2024_2025",
+  "evidence": {
+   "total": -0.05919594309662235,
+   "by_year": {
+    "2024": 0.07919346816618278,
+    "2025": -0.12823410754881892
+   },
+   "win": 0.23636363636363636,
+   "per_year": 165.65737051792829,
+   "behaviour_gap": null,
+   "year_gap": 1.4178903921747539,
+   "placebo_median": -0.1864505953009994,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": -0.2186145086712139
+  },
+  "base_config": {
+   "top": 15,
+   "level": 20,
+   "reclaim": 5,
+   "band": 0.01,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "borrow_rate": 0.03
+   },
+   "max_new": 3
+  }
+ },
+ {
+  "round": "R1",
+  "stage": "short gate / stop / hold",
+  "candidate": "SG50",
+  "change": {
+   "short_gate": 50
+  },
+  "base": [
+   "",
+   "base"
+  ],
+  "chosen": "SL1",
+  "reason": "gates: placebo",
+  "objective": "min_2024_2025",
+  "evidence": {
+   "total": 0.047717493275654776,
+   "by_year": {
+    "2024": -0.02177328230369724,
+    "2025": 0.07103749501240464
+   },
+   "win": 0.33125,
+   "per_year": 80.3187250996016,
+   "behaviour_gap": null,
+   "year_gap": 1.2120282288954445,
+   "placebo_median": 0.08384586308788622,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": -0.2186145086712139
+  },
+  "base_config": {
+   "top": 15,
+   "level": 20,
+   "reclaim": 5,
+   "band": 0.01,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "borrow_rate": 0.03
+   },
+   "max_new": 3
+  }
+ },
+ {
+  "round": "R1",
+  "stage": "short gate / stop / hold",
+  "candidate": "SG50SL1",
+  "change": {
+   "short_gate": 50,
+   "stop_level": 0.01
+  },
+  "base": [
+   "",
+   "base"
+  ],
+  "chosen": "SL1",
+  "reason": "objective below SL1",
+  "objective": "min_2024_2025",
+  "evidence": {
+   "total": 0.12600820266526447,
+   "by_year": {
+    "2024": -0.027990726353044337,
+    "2025": 0.15843360057719247
+   },
+   "win": 0.38461538461538464,
+   "per_year": 78.31075697211155,
+   "behaviour_gap": null,
+   "year_gap": 1.1335872808451164,
+   "placebo_median": 0.051227370772905734,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": -0.2186145086712139
+  },
+  "base_config": {
+   "top": 15,
+   "level": 20,
+   "reclaim": 5,
+   "band": 0.01,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "borrow_rate": 0.03
+   },
+   "max_new": 3
+  }
+ },
+ {
+  "round": "R1",
+  "stage": "short gate / stop / hold",
+  "candidate": "TOP10",
+  "change": {
+   "top": 10
+  },
+  "base": [
+   "",
+   "base"
+  ],
+  "chosen": "SL1",
+  "reason": "gates: placebo",
+  "objective": "min_2024_2025",
+  "evidence": {
+   "total": -0.16391903976247146,
+   "by_year": {
+    "2024": -0.09993466931708128,
+    "2025": -0.07108858464400847
+   },
+   "win": 0.2773109243697479,
+   "per_year": 119.47410358565737,
+   "behaviour_gap": null,
+   "year_gap": 1.3543979286492225,
+   "placebo_median": -0.005660866120582253,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": -0.2186145086712139
+  },
+  "base_config": {
+   "top": 15,
+   "level": 20,
+   "reclaim": 5,
+   "band": 0.01,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "borrow_rate": 0.03
+   },
+   "max_new": 3
+  }
+ },
+ {
+  "round": "R2",
+  "stage": "level / hold / list",
+  "candidate": "B2",
+  "change": {
+   "band": 0.02
+  },
+  "base": [
+   "r1.json",
+   "chosen"
+  ],
+  "chosen": "H10",
+  "reason": "objective below H10",
+  "objective": "min_year",
+  "evidence": {
+   "total": 0.05783652514991422,
+   "by_year": {
+    "2024": -0.012579987598562714,
+    "2025": 0.0713136374228649
+   },
+   "win": 0.4117647058823529,
+   "per_year": 93.87250996015936,
+   "behaviour_gap": null,
+   "year_gap": 1.2117704351026262,
+   "placebo_median": 0.040588156650898655,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.2924312197270036
+  },
+  "base_config": {
+   "top": 15,
+   "level": 20,
+   "reclaim": 5,
+   "band": 0.01,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "borrow_rate": 0.03
+   },
+   "max_new": 3,
+   "short_gate": 50,
+   "stop_level": 0.01
+  }
+ },
+ {
+  "round": "R2",
+  "stage": "level / hold / list",
+  "candidate": "LV50",
+  "change": {
+   "level": 50
+  },
+  "base": [
+   "r1.json",
+   "chosen"
+  ],
+  "chosen": "H10",
+  "reason": "objective below H10",
+  "objective": "min_year",
+  "evidence": {
+   "total": 0.20969560904989226,
+   "by_year": {
+    "2024": 0.041417649653600286,
+    "2025": 0.16158546905006377
+   },
+   "win": 0.3977272727272727,
+   "per_year": 44.17529880478087,
+   "behaviour_gap": null,
+   "year_gap": 1.1308701735133406,
+   "placebo_median": -0.058552210789597936,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.2924312197270036
+  },
+  "base_config": {
+   "top": 15,
+   "level": 20,
+   "reclaim": 5,
+   "band": 0.01,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "borrow_rate": 0.03
+   },
+   "max_new": 3,
+   "short_gate": 50,
+   "stop_level": 0.01
+  }
+ },
+ {
+  "round": "R2",
+  "stage": "level / hold / list",
+  "candidate": "LV50H10",
+  "change": {
+   "level": 50,
+   "rule_opts": {
+    "max_days": 10,
+    "short_max_days": 10
+   }
+  },
+  "base": [
+   "r1.json",
+   "chosen"
+  ],
+  "chosen": "H10",
+  "reason": "objective below H10",
+  "objective": "min_year",
+  "evidence": {
+   "total": 0.2514135442284191,
+   "by_year": {
+    "2024": 0.10568669212049753,
+    "2025": 0.13179759975987881
+   },
+   "win": 0.32941176470588235,
+   "per_year": 42.669322709163346,
+   "behaviour_gap": null,
+   "year_gap": 1.156848864101007,
+   "placebo_median": -0.03231938847714777,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.2924312197270036
+  },
+  "base_config": {
+   "top": 15,
+   "level": 20,
+   "reclaim": 5,
+   "band": 0.01,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "borrow_rate": 0.03
+   },
+   "max_new": 3,
+   "short_gate": 50,
+   "stop_level": 0.01
+  }
+ },
+ {
+  "round": "R2",
+  "stage": "level / hold / list",
+  "candidate": "TOP20",
+  "change": {
+   "top": 20
+  },
+  "base": [
+   "r1.json",
+   "chosen"
+  ],
+  "chosen": "H10",
+  "reason": "objective below H10",
+  "objective": "min_year",
+  "evidence": {
+   "total": 0.04775962015788959,
+   "by_year": {
+    "2024": -0.11745836834625312,
+    "2025": 0.1872070195652411
+   },
+   "win": 0.355,
+   "per_year": 100.39840637450199,
+   "behaviour_gap": null,
+   "year_gap": 1.1090525229768238,
+   "placebo_median": 0.04698112872297766,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.2924312197270036
+  },
+  "base_config": {
+   "top": 15,
+   "level": 20,
+   "reclaim": 5,
+   "band": 0.01,
+   "window": 10,
+   "sides": [
+    "long",
+    "short"
+   ],
+   "target": "hi20",
+   "rule_opts": {
+    "risk": 0.02,
+    "max_position": 0.3,
+    "max_gross": 1.5,
+    "max_open": 6,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "borrow_rate": 0.03
+   },
+   "max_new": 3,
+   "short_gate": 50,
+   "stop_level": 0.01
+  }
+ }
+]

@@ -1,0 +1,9 @@
+{"stage": "pool / entry / exit", "base": ["", "base"], "ref": "base", "objective": "his_years",
+ "gates": ["placebo", "behaviour+0.15"], "draws": 50,
+ "candidates": {
+  "L5": {"long": {"limit": 0.05}, "short": {"limit": 0.05}},
+  "MID": {"pool": {"turnover": 50000000.0}},
+  "X5": {"exit_long": "xsma5", "exit_short": "xsma5s"},
+  "DROP": {"long": {"rsi": null, "drop": 0.10}},
+  "MIDL5": {"pool": {"turnover": 50000000.0}, "long": {"limit": 0.05}, "short": {"limit": 0.05}}
+ }}

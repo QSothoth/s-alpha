@@ -1,0 +1,9 @@
+{"stage": "short / exit / size", "base": ["r2.json", "chosen"], "ref": "EITHER", "objective": "his_years",
+ "gates": ["placebo", "behaviour+0.15"], "draws": 50,
+ "candidates": {
+  "SNT": {"short": {"trend": false}},
+  "X70": {"exit_long": "xrsi70", "exit_short": "xrsis70"},
+  "G100": {"rule_opts": {"max_open": 10, "max_gross": 1.0}},
+  "SNTX70": {"short": {"trend": false}, "exit_long": "xrsi70", "exit_short": "xrsis70"},
+  "L4": {"long": {"limit": 0.04}, "short": {"limit": 0.04}}
+ }}

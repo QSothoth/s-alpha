@@ -1,0 +1,10 @@
+{"stage": "pool / volatility", "base": ["r3.json", "chosen"], "ref": "SNT", "objective": "goal",
+ "gates": ["placebo"], "draws": 50,
+ "candidates": {
+  "HV3050": {"long": {"hv": 30, "hv_max": 50}, "short": {"hv": 30, "hv_max": 50}},
+  "HV4060": {"long": {"hv": 40, "hv_max": 60}, "short": {"hv": 40, "hv_max": 60}},
+  "LC": {"pool": {"turnover": 100000000.0, "price": 20.0}, "long": {"hv": 25}, "short": {"hv": 25}},
+  "LC15": {"pool": {"turnover": 100000000.0, "price": 20.0}, "long": {"hv": 25}, "short": {"hv": 25},
+           "rule_opts": {"max_position": 0.15}},
+  "LCL2": {"pool": {"turnover": 100000000.0, "price": 20.0}, "long": {"hv": 25, "limit": 0.02}, "short": {"hv": 25, "limit": 0.02}}
+ }}

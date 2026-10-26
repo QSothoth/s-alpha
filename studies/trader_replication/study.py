@@ -252,7 +252,8 @@ class Study:
 
     def ema_inputs(self, A, pool, rules):
         """Every array the rules read by name, built on demand through named()."""
-        names = {rules.trail, rules.trail_after_trim, rules.trail_alt, rules.exit_signal, rules.trim_signal, rules.trim_signal2,
+        names = {rules.trail, rules.trail_after_trim, rules.trail_alt, rules.exit_signal, rules.short_exit_signal,
+                 rules.trim_signal, rules.trim_signal2,
                  rules.risk_scale, rules.trail_alt_days, rules.unit_adr}
         names |= {o.get('trail', '') for o in rules.management_by_kind.values()}
         names |= set(rules.short_targets)

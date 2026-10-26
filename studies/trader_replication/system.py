@@ -57,6 +57,7 @@ class Rules:
     max_new_by_kind: dict = field(default_factory=dict)     # entry kind -> its own limit of successful new longs a
                                                             # session, not counted in max_new_long
     exit_signal: str = ''           # name of a boolean (days x codes) array in `ema`: longs exit at that close
+    short_exit_signal: str = ''     # the same for shorts: they cover at that close ('' = none)
     trail_after_trim: str = ''      # EMA name the close trail switches to after the first partial ('' = keep)
     breakeven_r: float = 0.0        # > 0: once the day's best price reaches this R multiple, the stop moves to the fill
     trim_signal: str = ''           # boolean (days x codes) array in `ema`: longs sell trim_frac of the original size
@@ -163,6 +164,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     d0, d1 = int(np.searchsorted(dates, start)), int(np.searchsorted(dates, end, side='right'))
     trail = ema.get(rules.trail) if rules.trail else None
     sig_exit = ema[rules.exit_signal] if rules.exit_signal else None
+    sig_exit_s = ema[rules.short_exit_signal] if rules.short_exit_signal else None
     trail2 = ema.get(rules.trail_after_trim) if rules.trail_after_trim else None
     sig_trim = ema[rules.trim_signal] if rules.trim_signal else None
     sig_trim2 = ema[rules.trim_signal2] if rules.trim_signal2 else None
@@ -570,6 +572,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     and (not rules.add_signal_profit or c[d, j] > q.fill):
                 add_pos(q, c[d, j], d, rules.add_signal_frac or rules.add_frac, signal=True)
             if sig_exit is not None and s > 0 and sig_exit[d, j]:
+                close_part(q, q.size, c[d, j], d, 'signal')
+                continue
+            if sig_exit_s is not None and s < 0 and sig_exit_s[d, j]:
                 close_part(q, q.size, c[d, j], d, 'signal')
                 continue
             if rules.nft_days and session[d] - session[q.d0] == rules.nft_days and (c[d, j] - q.fill) * s < 0:
