@@ -18,6 +18,7 @@ import csv
 import datetime as dt
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -126,7 +127,7 @@ class Karl:
         """The report's one-day move implied by the day's 30-day IV over the base vol (OpenD's IV is a 30-day
         number): e^2 = (IV^2 - base^2) x 30/365; at least half the historical median move."""
         if cfg.get('e_mode', 'implied') == 'hist' or not np.isfinite(base):
-            return e_hist
+            return e_hist * cfg.get('e_mult', 1.0)          # the market's event move over the median one
         e2 = max(atm * atm - base * base, 0.0) * 30 / 365
         return max(math.sqrt(e2), .5 * e_hist)
 
@@ -138,7 +139,7 @@ class Karl:
         if not np.isfinite(atm):
             atm = base if base is not None and np.isfinite(base) else .4
         if base is None or not np.isfinite(base) or cfg.get('e_mode', 'implied') == 'hist':
-            ev_left = e * e if i < r else 0.0
+            ev_left = (e * cfg.get('e_mult', 1.0)) ** 2 if i < r else 0.0
             b = math.sqrt(max(atm * atm - ev_left / (30 / 365), (.5 * atm) ** 2)) if ev_left else atm
         else:
             et = self.implied_e(cfg, atm, base, e) if i < r else 0.0
@@ -269,6 +270,151 @@ class Karl:
         return np.array(curve), days[d0:d1], trades
 
     # ----- his statements -----
+    LINE = re.compile(r'^\s*(?:(\d{1,2})[/.](\d{2}))?\s*(Sale|Purchase)\s+(Short Sale|Cover Short)?\s*([A-Z]{1,5})\s+'
+                      r'(?:(\d{2})/(\d{2})/(\d{4}))?\s*(CALL|PUT)\s*(.*?)\s*\(?(\d+\.\d{4})\)?\s+'
+                      r'(\d+\.\d{2,4})\s+(\d+\.\d{2})\s+\(?([\d,]+\.\d{2})\)?')
+    PENDING = re.compile(r'^\s*(Sale|Purchase)\s+(Short Sale|Cover Short)?\s*([A-Z]{1,5})\s+(CALL|PUT)\s+[A-Z][A-Z .&]*?\s+'
+                         r'([\d.,]+)\s+([\d.,]+)\s+(\d{2})/(\d{2})\s+([\d.,]+)')
+
+    @staticmethod
+    def _num(s):
+        return float(s.replace(',', ''))
+
+    @classmethod
+    def parse_statement(cls, text, year=2025):
+        """Option transactions of one Schwab statement's text (pdftotext or OCR): [{date, sym, action, cp, strike,
+        exp ('' when the line has none), qty (signed contracts), px}].  A line without a date takes the previous
+        line's.  The contract count is checked against the dollar amount and fee (an OCR misread such as 42 for 12
+        is replaced by the count the amount implies).  The statement's dates are settlement dates ("Date column
+        represents the Settlement/Process date"); options settle T+1, so `date` is the trading day before and
+        `settle` keeps the printed one.  Month-end trades pending settlement are not read here: they reappear in the
+        next statement's transactions."""
+        out, last = [], None
+        hol = ['2025-01-01', '2025-01-09', '2025-01-20', '2025-02-17', '2025-04-18', '2025-05-26', '2025-06-19',
+               '2025-07-04', '2025-09-01', '2025-11-27', '2025-12-25', '2026-01-01']
+        trade_day = lambda s: str(np.busday_offset(np.datetime64(s), -1, roll='backward', holidays=hol))
+        acts = {('Sale', 'Short Sale'): 'open_short', ('Purchase', 'Cover Short'): 'cover',
+                ('Purchase', None): 'buy', ('Sale', None): 'sell'}
+        for line in text.splitlines():
+            line = line.replace('—', '-')
+            m = cls.LINE.match(line)
+            if m:
+                mo, dd, kind, tag, sym, em, ed, ey, cp, desc, q, px, fee, amt = m.groups()
+                ks = re.search(r'\$\s?([\d.,]+)', desc)
+                k = ks.group(1) if ks else '0'                       # an OCR line can lose the strike
+                if mo:
+                    last = f'{year}-{int(mo):02d}-{dd}'
+                if last is None:
+                    continue
+                qty, p_, f_, a_ = cls._num(q), cls._num(px), cls._num(fee), cls._num(amt)
+                if p_ > 0:
+                    implied = (a_ + f_) / (p_ * 100) if kind == 'Sale' else (a_ - f_) / (p_ * 100)
+                    if abs(implied - qty) > .5 and abs(implied - round(implied)) < .1:
+                        qty = float(round(implied))
+                action = acts[(kind, tag)]
+                out.append(dict(date=trade_day(last), settle=last, sym=sym, action=action, cp=cp, strike=cls._num(k),
+                                exp=f'{ey}-{em}-{ed}' if ey else '', qty=qty if action in ('buy', 'cover') else -qty,
+                                px=p_))
+        return out
+
+    @staticmethod
+    def positions(rows):
+        """His ratio calendars from ledger rows: grouped by name and strikes, opened by the short near legs (or the
+        first row), closed when every leg is flat.  Each: open / close day, net debit and proceeds in dollars,
+        return on the debit."""
+        out, book = [], {}
+        rows = [dict(r) for r in rows]
+        for r in rows:                              # a strike lost by OCR: the same leg's strike on another row of
+            if not float(r['strike']):              # the position, else flagged for replay to infer
+                same = [x for x in rows if x['sym'] == r['sym'] and x['cp'] == r['cp'] and float(x['strike'])
+                        and abs((dt.date.fromisoformat(x['date']) - dt.date.fromisoformat(r['date'])).days) <= 25]
+                if same:
+                    r['strike'] = same[0]['strike']
+                else:
+                    r['strike_missing'] = True
+        for r in sorted(rows, key=lambda x: x['date']):
+            key = (r['sym'], tuple(sorted({float(x['strike']) for x in rows if x['sym'] == r['sym']
+                                           and abs((dt.date.fromisoformat(x['date']) -
+                                                    dt.date.fromisoformat(r['date'])).days) <= 25})))
+            p = book.setdefault(key, dict(sym=r['sym'], open=r['date'], legs={}, debit=0.0, proceeds=0.0, rows=[]))
+            cash = -float(r['qty']) * float(r['px']) * 100
+            leg = (r['cp'], float(r['strike']), 'near' if r['action'] in ('open_short', 'cover') else 'far')
+            p['legs'][leg] = p['legs'].get(leg, 0.0) + float(r['qty'])
+            if r['action'] in ('open_short', 'buy'):
+                p['debit'] -= cash
+            else:
+                p['proceeds'] += cash
+            p['rows'].append(r)
+            if all(abs(v) < 1e-9 for v in p['legs'].values()):
+                p['close'] = r['date']
+                p['ret'] = p['proceeds'] / p['debit'] - 1 if p['debit'] > 0 else None
+                out.append(p)
+                del book[key]
+        return out, list(book.values())
+
+    def his_replay(self, cfg, positions):
+        """Layer 2: each of his positions priced by our model -- debit at his open day's close, value at his close
+        day's close ('close') and at the better of that day's high / low ('best', a resting take-profit's bound),
+        spread paid both ways.  Strikes and expiries are his; the report is the first earnings reaction after the
+        open."""
+        A = self.data()
+        days = A['days'].astype(str)
+        ci = {c[3:]: i for i, c in enumerate(A['codes_s'])}
+        F, spr, ratio = A['F'], cfg['spread'], cfg['ratio']
+        out = []
+        for p in positions:
+            j = ci.get(p['sym'])
+            i0, i1 = int(np.searchsorted(days, p['open'])), int(np.searchsorted(days, p['close']))
+            calls = sorted({k for (cp, k, _) in p['legs'] if cp == 'CALL' and k > 0})
+            puts = sorted({k for (cp, k, _) in p['legs'] if cp == 'PUT' and k > 0})
+            exps = {r['exp'] for r in p['rows'] if r['exp']}
+            inferred = False
+            if j is not None and days[i0] == p['open'] and (calls or puts) and not (calls and puts):
+                S0_ = float(F.raw[i0, j])                     # a strike OCR lost: the other leg mirrored in logs
+                calls, puts = calls or [round(S0_ * S0_ / puts[0], 1)], puts or [round(S0_ * S0_ / calls[0], 1)]
+                inferred = True
+            if j is None or not calls or not puts or days[i0] != p['open']:
+                out.append(dict(sym=p['sym'], open=p['open'], his=p.get('ret'), ours=None))
+                continue
+            evs = [P.reaction_day(A['days'], d, pb) for d, pb in A['earn'].get('US.' + p['sym'], [])]
+            r = next((x for x in sorted(e for e in evs if e is not None) if x > i0), None)
+            r_inferred = r is None or r - i0 > 15             # a report the calendar misses (AMAT, HD in 2025-08):
+            if r_inferred:                                    # his reports come 10-13 sessions after his entries
+                r = min(i0 + 11, len(days) - 1)
+            if len(exps) >= 2:
+                ne, fe = (int(np.searchsorted(days, x, side='right')) - 1 for x in sorted(exps)[:2])
+            else:
+                fe = week_expiry_on_or_after(A['days'], r)
+                ne = week_expiry_on_or_after(A['days'], max(fe - 5, i0))
+                if ne >= r or ne == fe:
+                    ne = week_expiry_on_or_after(A['days'], max(fe - 7, i0))
+            moves = P.earnings_moves(A['days'], A['close'], j, A['earn'].get('US.' + p['sym'], []))
+            past = [m for k, m in moves if k < i0]
+            e = float(np.median(past)) if len(past) >= 2 else .06
+            base = self.base_vol(A, j, r, i0)
+            Kc, Kp = calls[0], puts[0]
+            nc, npt, fc, fp = self.price_legs(A, cfg, j, i0, Kc, Kp, ne, fe, e, r, base=base)
+            paid = ratio * (fc + fp) * (1 + spr) - (nc + npt) * (1 - spr)
+            vals = {}
+            for nm, Sx in (('close', None), ('high', F.h[i1, j] * A['fac'][i1, j]), ('low', F.l[i1, j] * A['fac'][i1, j])):
+                lg = self.price_legs(A, cfg, j, i1, Kc, Kp, ne, fe, e, r, S_=None if Sx is None else float(Sx), base=base)
+                vals[nm] = ratio * (lg[2] + lg[3]) * (1 - spr) - (lg[0] + lg[1]) * (1 + spr)
+            path = None                                       # his window under a resting take-profit at `take`
+            for i in range(i0 + 1, i1 + 1):
+                for Sx in (F.h[i, j] * A['fac'][i, j], F.l[i, j] * A['fac'][i, j]):
+                    lg = self.price_legs(A, cfg, j, i, Kc, Kp, ne, fe, e, r, S_=float(Sx), base=base)
+                    if ratio * (lg[2] + lg[3]) * (1 - spr) - (lg[0] + lg[1]) * (1 + spr) >= (1 + cfg['take']) * paid:
+                        path = cfg['take']
+                        break
+                if path is not None:
+                    break
+            out.append(dict(sym=p['sym'], open=p['open'], close=p['close'], his=p.get('ret'),
+                            ours=vals['close'] / paid - 1, best=max(vals['high'], vals['low']) / paid - 1,
+                            path=vals['close'] / paid - 1 if path is None else path, tp_hit=path is not None,
+                            inferred=inferred or r_inferred, paid=paid, Kc=Kc, Kp=Kp, near=days[ne], far=days[fe],
+                            report=days[r]))
+        return out
+
     @staticmethod
     def his_trades():
         with (HERE / 'notes' / 'trades_karl.csv').open(encoding='utf-8') as f:
@@ -332,23 +478,47 @@ class Karl:
         res = json.loads((self.reports / report).read_text(encoding='utf-8'))
         return res['chosen_config'] if key == 'chosen' else res['configs'][key]
 
+    HIS_2025 = dict(ret=3.2138, per_year=25, win=.84, hold=3.8)   # his statements: 25 closed positions in 2025
+
+    def goal(self, st):
+        """2025 log gap to his statements' +321.4%, and positions a year / win rate / days held within +-30% of his
+        25 positions; goal = -max(year gap / 0.3, worst behaviour deviation / 0.3)."""
+        h = self.HIS_2025
+        y = abs(math.log(max(1 + st['by_year'].get('2025', -1), 1e-6) / (1 + h['ret']))) / .3
+        ours = dict(per_year=st['trades'] / 2, win=st['win'], hold=st['hold'])
+        dv = {k: (abs(ours[k] / h[k] - 1) if ours[k] else 1.0) for k in ('per_year', 'win', 'hold')}
+        b = max(dv.values()) / .3
+        return dict(goal=-max(y, b), goal_years=y, goal_behav=b, goal_parts=dict(year=y * .3, behaviour=dv),
+                    meets=bool(max(y, b) <= 1 and st['total'] > st.get('placebo', {}).get('median', 9)))
+
     def round(self, name):
         spec = json.loads((self.rounds / f'{name}.json').read_text(encoding='utf-8'))
         report, key = spec['base']
-        base = self.config(report, key)
+        base = dict(self.config(report, key), **spec.get('base_change', {}))   # a declared correction of the base
         cfgs = {k: dict(base, **v) for k, v in spec['candidates'].items()}
         ref = spec['ref']
         cfgs[ref] = base
         res = {}
         for k, cfg in cfgs.items():
             st, _ = self.evaluate(cfg, SELECT, draws=spec.get('draws', 20))
+            if spec.get('objective') == 'goal':
+                st.update(self.goal(st))
             res[k] = st
             show(name, k, st)
         target = spec.get('target', 3.2138)          # his 2025 statements
-        ok = [k for k in cfgs if k == ref or res[k]['total'] > res[k]['placebo']['median']]
-        best = min(ok, key=lambda k: abs(math.log(max(1 + res[k]['by_year'].get('2025', -1), 1e-6) / (1 + target))))
+        if spec.get('objective') == 'goal':           # docs/prompts/new_styles_return_goal.md (R3 on)
+            r = res[ref]
+            ok = [k for k in cfgs if k == ref or (res[k]['total'] > res[k]['placebo']['median']
+                  and res[k]['goal_years'] <= max(r['goal_years'], 1.0) + 1e-9
+                  and res[k]['goal_behav'] <= max(r['goal_behav'], 1.0) + 1e-9)]
+            best = max(ok, key=lambda k: res[k]['goal'])
+            gates, objective = ['placebo', 'years', 'behav'], 'goal'
+        else:
+            ok = [k for k in cfgs if k == ref or res[k]['total'] > res[k]['placebo']['median']]
+            best = min(ok, key=lambda k: abs(math.log(max(1 + res[k]['by_year'].get('2025', -1), 1e-6) / (1 + target))))
+            gates, objective = ['placebo'], f'2025 closest to {target}'
         out = dict(name=name, base=spec['base'], configs=cfgs, full=res, chosen=best, chosen_config=cfgs[best],
-                   gates=['placebo'], objective=f'2025 closest to {target}')
+                   gates=gates, objective=objective)
         self.reports.mkdir(parents=True, exist_ok=True)
         (self.reports / f'{name.lower()}.json').write_text(json.dumps(out, indent=1, default=float), encoding='utf-8')
         print(name, 'chosen', best, flush=True)

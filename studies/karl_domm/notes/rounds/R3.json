@@ -1,0 +1,10 @@
+{"stage": "pricing correction + his sizing / timing", "base": ["r2.json", "chosen"],
+ "base_change": {"e_mode": "hist", "e_mult": 2.0, "spread": 0.01, "take_intraday": true, "take": 0.20, "lead": 12},
+ "ref": "L8", "objective": "goal", "draws": 10,
+ "candidates": {
+  "ONE45": {"max_open": 1, "debit": 0.45},
+  "ONE": {"max_open": 1},
+  "LEAD10": {"lead": 10},
+  "W08": {"width": 0.8},
+  "TK15": {"take": 0.15}
+ }}
