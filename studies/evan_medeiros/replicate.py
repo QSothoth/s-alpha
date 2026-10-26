@@ -15,6 +15,7 @@ reversion wins most trades: the engineering gate's 35% win-rate ceiling is a mom
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -97,8 +98,20 @@ class Evan(GoalMixin, study.Study):
     goal_behaviour = dict(per_year=328, win=.6376, avg_win=.0229, avg_loss=-.0229 / .81, days=4)
     starts = ('2024-01-02', '2024-02-01', '2024-03-01', '2024-04-01', '2024-07-01', '2025-01-02')
 
+    data_tag = 'trader-data-v1'        # R9: a round's "data" key (and a config's) switches the frozen dataset
+
     def arrays(self, market, upto=None, mode=None):
+        os.environ['TRADER_DATA_TAG'] = self.data_tag
         return panels.arrays(market, upto, mode)
+
+    def round(self, name):
+        spec = json.loads((self.rounds / f'{name}.json').read_text(encoding='utf-8'))
+        self.data_tag = spec.get('data', 'trader-data-v1')
+        return super().round(name)
+
+    def robust(self, report, key='chosen'):
+        self.data_tag = self.config(report, key).get('data', 'trader-data-v1')
+        return super().robust(report, key)
 
     def ledger_sets(self, A):
         return [], []
@@ -256,6 +269,7 @@ class Evan(GoalMixin, study.Study):
 
     def validate(self, report, key='chosen'):
         cfg = self.config(report, key)
+        self.data_tag = cfg.get('data', 'trader-data-v1')
         A = self.arrays('us')
         entries, rules, mask, pool = self.build(A, cfg)
         out = {'report': report, 'config': cfg}

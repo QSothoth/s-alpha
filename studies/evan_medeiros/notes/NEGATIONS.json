@@ -3170,5 +3170,413 @@
    },
    "stop": 0.2
   }
+ },
+ {
+  "round": "R9",
+  "stage": "data layer: his low price / low liquidity on trader-data-v2",
+  "candidate": "B2040",
+  "change": {
+   "long": {
+    "hv": 20,
+    "hv_max": 40
+   },
+   "short": {
+    "hv": 20,
+    "hv_max": 40
+   }
+  },
+  "base": [
+   "r8.json",
+   "chosen"
+  ],
+  "chosen": "P3",
+  "reason": "gates: behav",
+  "objective": "goal",
+  "evidence": {
+   "total": 0.013173528091333875,
+   "by_year": {
+    "2024": 0.016469750014524998,
+    "2025": -0.003242813593954952
+   },
+   "win": 0.6116666666666667,
+   "per_year": 301.195219123506,
+   "behaviour_gap": 0.20759762249909444,
+   "year_gap": 0.16972894839192354,
+   "placebo_median": -0.12643331575460004,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.35382570782986855
+  },
+  "base_config": {
+   "sides": [
+    "long",
+    "short"
+   ],
+   "long": {
+    "rsi": 5,
+    "down": 3,
+    "hv": 15,
+    "trend": true,
+    "limit": 0.02,
+    "drop": 0.1,
+    "either": true,
+    "hv_max": 35
+   },
+   "short": {
+    "rsi": 99,
+    "up": 3,
+    "hv": 15,
+    "trend": false,
+    "limit": 0.02,
+    "run": 0.1,
+    "hv_max": 35
+   },
+   "pool": {
+    "turnover": 5000000.0,
+    "price": 5.0
+   },
+   "regime": "sma200",
+   "exit_long": "xhi",
+   "exit_short": "xlo",
+   "priority": "hv",
+   "rule_opts": {
+    "risk": 1.0,
+    "max_position": 0.15,
+    "max_gross": 1.5,
+    "max_open": 15,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "buy_cost": 0.0005,
+    "sell_cost": 0.0005,
+    "borrow_rate": 0.03
+   },
+   "stop": 0.2,
+   "data": "trader-data-v2"
+  }
+ },
+ {
+  "round": "R9",
+  "stage": "data layer: his low price / low liquidity on trader-data-v2",
+  "candidate": "TO1",
+  "change": {
+   "pool": {
+    "turnover": 1000000.0,
+    "price": 5.0
+   }
+  },
+  "base": [
+   "r8.json",
+   "chosen"
+  ],
+  "chosen": "P3",
+  "reason": "objective below P3",
+  "objective": "goal",
+  "evidence": {
+   "total": 0.09037482367271865,
+   "by_year": {
+    "2024": 0.05178165995905859,
+    "2025": 0.03669313240845273
+   },
+   "win": 0.6057347670250897,
+   "per_year": 280.1115537848606,
+   "behaviour_gap": 0.1773826459143941,
+   "year_gap": 0.13557899786568253,
+   "placebo_median": -0.20172162839124474,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.35382570782986855
+  },
+  "base_config": {
+   "sides": [
+    "long",
+    "short"
+   ],
+   "long": {
+    "rsi": 5,
+    "down": 3,
+    "hv": 15,
+    "trend": true,
+    "limit": 0.02,
+    "drop": 0.1,
+    "either": true,
+    "hv_max": 35
+   },
+   "short": {
+    "rsi": 99,
+    "up": 3,
+    "hv": 15,
+    "trend": false,
+    "limit": 0.02,
+    "run": 0.1,
+    "hv_max": 35
+   },
+   "pool": {
+    "turnover": 5000000.0,
+    "price": 5.0
+   },
+   "regime": "sma200",
+   "exit_long": "xhi",
+   "exit_short": "xlo",
+   "priority": "hv",
+   "rule_opts": {
+    "risk": 1.0,
+    "max_position": 0.15,
+    "max_gross": 1.5,
+    "max_open": 15,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "buy_cost": 0.0005,
+    "sell_cost": 0.0005,
+    "borrow_rate": 0.03
+   },
+   "stop": 0.2,
+   "data": "trader-data-v2"
+  }
+ },
+ {
+  "round": "R9",
+  "stage": "data layer: his low price / low liquidity on trader-data-v2",
+  "candidate": "TO1B2040",
+  "change": {
+   "pool": {
+    "turnover": 1000000.0,
+    "price": 5.0
+   },
+   "long": {
+    "hv": 20,
+    "hv_max": 40
+   },
+   "short": {
+    "hv": 20,
+    "hv_max": 40
+   }
+  },
+  "base": [
+   "r8.json",
+   "chosen"
+  ],
+  "chosen": "P3",
+  "reason": "gates: behav",
+  "objective": "goal",
+  "evidence": {
+   "total": -0.14669480546411795,
+   "by_year": {
+    "2024": -0.07457714604141907,
+    "2025": -0.07792941260766251
+   },
+   "win": 0.5804953560371517,
+   "per_year": 324.28685258964146,
+   "behaviour_gap": 0.23034785224217622,
+   "year_gap": 0.26356904958420807,
+   "placebo_median": -0.1597935278610227,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.35382570782986855
+  },
+  "base_config": {
+   "sides": [
+    "long",
+    "short"
+   ],
+   "long": {
+    "rsi": 5,
+    "down": 3,
+    "hv": 15,
+    "trend": true,
+    "limit": 0.02,
+    "drop": 0.1,
+    "either": true,
+    "hv_max": 35
+   },
+   "short": {
+    "rsi": 99,
+    "up": 3,
+    "hv": 15,
+    "trend": false,
+    "limit": 0.02,
+    "run": 0.1,
+    "hv_max": 35
+   },
+   "pool": {
+    "turnover": 5000000.0,
+    "price": 5.0
+   },
+   "regime": "sma200",
+   "exit_long": "xhi",
+   "exit_short": "xlo",
+   "priority": "hv",
+   "rule_opts": {
+    "risk": 1.0,
+    "max_position": 0.15,
+    "max_gross": 1.5,
+    "max_open": 15,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "buy_cost": 0.0005,
+    "sell_cost": 0.0005,
+    "borrow_rate": 0.03
+   },
+   "stop": 0.2,
+   "data": "trader-data-v2"
+  }
+ },
+ {
+  "round": "R9",
+  "stage": "data layer: his low price / low liquidity on trader-data-v2",
+  "candidate": "TO1P3",
+  "change": {
+   "pool": {
+    "turnover": 1000000.0,
+    "price": 3.0
+   }
+  },
+  "base": [
+   "r8.json",
+   "chosen"
+  ],
+  "chosen": "P3",
+  "reason": "objective below P3",
+  "objective": "goal",
+  "evidence": {
+   "total": 0.08262173104897919,
+   "by_year": {
+    "2024": 0.06697279893680297,
+    "2025": 0.014666664537062113
+   },
+   "win": 0.604982206405694,
+   "per_year": 282.1195219123506,
+   "behaviour_gap": 0.1806998165649585,
+   "year_gap": 0.12123906410830071,
+   "placebo_median": -0.18340385678890087,
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "best_total": 0.35382570782986855
+  },
+  "base_config": {
+   "sides": [
+    "long",
+    "short"
+   ],
+   "long": {
+    "rsi": 5,
+    "down": 3,
+    "hv": 15,
+    "trend": true,
+    "limit": 0.02,
+    "drop": 0.1,
+    "either": true,
+    "hv_max": 35
+   },
+   "short": {
+    "rsi": 99,
+    "up": 3,
+    "hv": 15,
+    "trend": false,
+    "limit": 0.02,
+    "run": 0.1,
+    "hv_max": 35
+   },
+   "pool": {
+    "turnover": 5000000.0,
+    "price": 5.0
+   },
+   "regime": "sma200",
+   "exit_long": "xhi",
+   "exit_short": "xlo",
+   "priority": "hv",
+   "rule_opts": {
+    "risk": 1.0,
+    "max_position": 0.15,
+    "max_gross": 1.5,
+    "max_open": 15,
+    "trail": "",
+    "trims": [],
+    "max_days": 5,
+    "short_max_days": 5,
+    "buy_cost": 0.0005,
+    "sell_cost": 0.0005,
+    "borrow_rate": 0.03
+   },
+   "stop": 0.2,
+   "data": "trader-data-v2"
+  }
  }
 ]

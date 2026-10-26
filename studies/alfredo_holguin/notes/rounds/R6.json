@@ -1,0 +1,11 @@
+{"stage": "selection under pricing v2: his names' IV and tenor", "base": ["r4.json", "chosen"],
+ "base_change": {"v2": true, "k": 0.05},
+ "ref": "RTOE2", "objective": "goal", "draws": 10,
+ "select": ["2024-01-02", "2025-12-31"],
+ "candidates": {
+  "IV40": {"iv_min": 0.40},
+  "RIV": {"priority": "iv30"},
+  "D4": {"min_dte": 4},
+  "IV40D4": {"iv_min": 0.40, "min_dte": 4},
+  "IV40TO2": {"iv_min": 0.40, "turnover": 200000000.0}
+ }}

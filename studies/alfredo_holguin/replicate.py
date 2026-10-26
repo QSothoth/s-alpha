@@ -135,6 +135,8 @@ class Holguin:
                  & np.isfinite(A['iv']) & (A['iv'] > 0) & (A['trend'] >= cfg['trend']) & np.isfinite(F.atr14))
             if cfg.get('trend_max') is not None:
                 m &= A['trend'] <= cfg['trend_max']
+            if cfg.get('iv_min'):                                    # R6: his names' IV (median 0.54, 25% 0.41)
+                m &= A['iv'] >= cfg['iv_min']
         return lag(m)                                                # as of the prior close
 
     def simulate(self, cfg, start, end, placebo=None, audit=False):
@@ -186,6 +188,8 @@ class Holguin:
                     iv0 = float(iv[d - 1, j])                 # vol the price itself uses
                     pr = -P.bs(S0, K, T, P.vol_for(S0, K, T, iv0, True, cfg['skew'], earn_var=ev,
                                                    base_atm=min(base, iv0)), True) / K
+                elif cfg['priority'] == 'iv30':               # R6: OpenD's 30-day IV, highest first
+                    pr = -float(iv[d - 1, j])
                 elif cfg['priority'] == 'turnover':           # the biggest names first (his median cap 193B)
                     pr = -float(F.to20[d - 1, j])
                 else:
@@ -448,6 +452,7 @@ class Holguin:
                 weeks[wk] = weeks.get(wk, 0.0) + pnl
             rows.append(dict(t=t, ok=True, prem=prem, pay=pay, pnl=pnl, how=how, win=prem - pay > 0,
                              his_win=t['Trade_Success'] == '1', K=K, S0=S0))
+        self.last_rows = rows                      # per-trade detail of the last replay
         his = self.his_weeks()
         pairs = [(weeks.get(w, 0.0), his[w]) for w in sorted(his) if seg[0] <= w <= seg[1]]
         a, b = np.array(pairs).T

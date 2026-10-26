@@ -36,3 +36,7 @@
 | R8 | count / holding | L2T10 | `{"long": {"limit": 0.02}, "short": {"limit": 0.02}, "rule_opts": {"max_days": 10, "short_max_days": 10}}` | r7.json:chosen | L2 | objective below L2；全区间 +25%（带入 +38%） | open |
 | R8 | count / holding | O10 | `{"rule_opts": {"max_open": 10}}` | r7.json:chosen | L2 | objective below L2；全区间 +23%（带入 +38%） | open |
 | R8 | count / holding | T10 | `{"rule_opts": {"max_days": 10, "short_max_days": 10}}` | r7.json:chosen | L2 | objective below L2；全区间 +17%（带入 +38%） | open |
+| R9 | data layer: his low price / low liquidity on trader-data-v2 | B2040 | `{"long": {"hv": 20, "hv_max": 40}, "short": {"hv": 20, "hv_max": 40}}` | r8.json:chosen | P3 | gates: behav；全区间 +1%（带入 +35%） | open |
+| R9 | data layer: his low price / low liquidity on trader-data-v2 | TO1 | `{"pool": {"turnover": 1000000.0, "price": 5.0}}` | r8.json:chosen | P3 | objective below P3；全区间 +9%（带入 +35%） | open |
+| R9 | data layer: his low price / low liquidity on trader-data-v2 | TO1B2040 | `{"pool": {"turnover": 1000000.0, "price": 5.0}, "long": {"hv": 20, "hv_max": 40}, "short": {"hv": 20, "hv_max": 40}}` | r8.json:chosen | P3 | gates: behav；全区间 -15%（带入 +35%） | open |
+| R9 | data layer: his low price / low liquidity on trader-data-v2 | TO1P3 | `{"pool": {"turnover": 1000000.0, "price": 3.0}}` | r8.json:chosen | P3 | objective below P3；全区间 +8%（带入 +35%） | open |
