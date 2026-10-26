@@ -4,6 +4,11 @@
 
 | 轮次 | 环节 | 候选 | 改了什么 | 当时的配置 | 带入 | 否定依据 | 状态 |
 |---|---|---|---|---|---|---|---|
+| E1 | her own daily swing method (swing.py) | BB | `{"setups": ["base"]}` | :chosen | REF | gates: placebo, years；全区间 -88%（带入 -55%） | open |
+| E1 | her own daily swing method (swing.py) | EXT2 | `{"ext": 2.0}` | :chosen | REF | gates: placebo；全区间 -49%（带入 -55%） | open |
+| E1 | her own daily swing method (swing.py) | PB | `{"setups": ["pullback"]}` | :chosen | REF | gates: placebo, years；全区间 -54%（带入 -55%） | open |
+| E1 | her own daily swing method (swing.py) | PBEXT2 | `{"setups": ["pullback"], "ext": 2.0}` | :chosen | REF | gates: placebo, years；全区间 -60%（带入 -55%） | open |
+| E1 | her own daily swing method (swing.py) | TO5 | `{"pool": {"price": 10.0, "turnover": 500000000.0}}` | :chosen | REF | gates: placebo, years；全区间 -66%（带入 -55%） | open |
 | R1 | short gate / stop / hold | H10 | `{"rule_opts": {"max_days": 10, "short_max_days": 10}}` | :base | SL1 | objective below SL1；全区间 -6%（带入 -22%） | open |
 | R1 | short gate / stop / hold | SG50 | `{"short_gate": 50}` | :base | SL1 | gates: placebo；全区间 +5%（带入 -22%） | open |
 | R1 | short gate / stop / hold | SG50SL1 | `{"short_gate": 50, "stop_level": 0.01}` | :base | SL1 | objective below SL1；全区间 +13%（带入 -22%） | open |

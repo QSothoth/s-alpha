@@ -54,7 +54,9 @@ class Swing(Emanuela):
         atr = F.atr14
         tr = cfg['trend']
         with np.errstate(invalid='ignore', divide='ignore'):
-            trend = (c > F.sma(tr['sma_long'])) & (c > F.sma(tr['sma_daily']))
+            trend = c > F.sma(tr['sma_long'])
+            if tr.get('sma_daily'):                               # E2: None drops the daily 200 SMA filter
+                trend = trend & (c > F.sma(tr['sma_daily']))
             pool = lag(self.pool(A, cfg))
             entries = [[] for _ in range(len(c))]
             mask = np.zeros(c.shape, bool)
@@ -71,6 +73,10 @@ class Swing(Emanuela):
                 atr5 = self._atr(A, 5)
                 tight = atr5 <= pb['tight'] * self._atr(A, 20)
                 reclaim = (c > e10) & (lag(c) <= lag(e10))         # the daily close back above the 10 EMA
+                if pb.get('trigger') == 'bounce':                 # E2: or the day's low on the 10 EMA, the close
+                    reclaim = reclaim | ((l <= e10) & (c > e10))   # above it (her hourly entry off the daily EMA)
+                if not pb.get('need_high', True):                 # E2: no recent breakout required
+                    made_high = np.ones(c.shape, bool)
                 m = pool & trend & made_high & near & tight & reclaim
                 stop = np.fmin(F.lo(cfg['stop_floor']), c * (1 - cfg['min_stop']))
                 self._add(entries, mask, m, F, stop, 'pb')
@@ -115,6 +121,25 @@ class Swing(Emanuela):
 
     def pool_dependent(self, name):
         return name == 'x_ext'
+
+    def ledger_check_cfg(self, A, cfg, mask, pool, pad=3):
+        """(id, ticker, side, outcome) for her trades against an already built mask."""
+        from studies.trader_replication import ledger as L
+        days = A['days'].astype(str)
+        ci = {str(c)[3:]: j for j, c in enumerate(A['codes'])}
+        out = []
+        for t in L.load(self.root / 'notes' / 'trades.csv'):
+            j = ci.get(t.ticker)
+            if j is None:
+                out.append((t.id, t.ticker, t.side, 'not in data'))
+                continue
+            lo = max(int(np.searchsorted(days, t.window_lo)) - pad, 0)
+            hi = min(int(np.searchsorted(days, t.window_hi, side='right')) + pad, len(days))
+            sig = [days[d] for d in range(lo, hi) if mask[d, j]] if t.side == 'long' else []
+            inpool = bool(pool[lo:hi, j].any())
+            out.append((t.id, t.ticker, t.side, 'signal ' + ','.join(sig) if sig else
+                        ('pool, no signal' if inpool else 'not in pool')))
+        return out
 
     def ledger_check(self, report, key='chosen', pad=3):
         """Her dated trades: was there one of our long signals on the name inside her window (+- pad sessions)?"""
