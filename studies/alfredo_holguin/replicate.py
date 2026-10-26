@@ -114,6 +114,20 @@ class Holguin:
         e = float(np.median(past)) if len(past) >= 2 else .06
         return e * e, True
 
+    def v2_put(self, A, j, ivd, S, K, T, ie, pc):
+        """v2 price of a put (studies/trader_options/notes/SIM_V2_PREREG_CN.md) on the IV of session ivd: the next
+        report's variance read off the name's past IV drops, a smile k, expiring at session ie."""
+        iv = float(A['iv'][ivd, j])
+        if not (np.isfinite(iv) and iv > 0):
+            return float('nan')
+        rx = A['earn_idx'].get(j, [])
+        c = A['close']
+        past = [abs(c[i, j] / c[i - 1, j] - 1) for i in rx if 1 <= i <= ivd and np.isfinite(c[i, j])
+                and np.isfinite(c[i - 1, j])]
+        E = P.implied_event_var(A['iv'], j, rx, ivd + 1, float(np.median(past)) ** 2 if len(past) >= 2 else .06 ** 2)
+        _, near, spans = P.event_context(A['days'], rx, ivd, ie)
+        return P.bs(S, K, T, P.vol_v2(S, K, T, iv, True, E, near, spans, pc.get('k', .05)), True)
+
     def eligible(self, A, cfg):
         F = A['F']
         with np.errstate(invalid='ignore'):
@@ -161,7 +175,10 @@ class Holguin:
                 base = math.sqrt(max(atm * atm - ev / (30 / 365), (.5 * atm) ** 2)) if has_e else atm
                 v = P.vol_for(S0, K, T, atm, True, cfg['skew'], earn_var=ev, base_atm=base)
                 prem = P.bs(S0, K, T, v, True) * (1 - cfg['spread']) - P.COMMISSION / 100
-                if prem <= .01:
+                if cfg.get('v2'):                                    # v2 pricing (SIM_V2_PREREG_CN.md)
+                    q = self.v2_put(A, j, d - 1, S0, K, T, e_, cfg)
+                    prem = q * (1 - P.half_spread(q) * cfg.get('spread_x', 1)) - P.COMMISSION / 100
+                if not prem > .01:                                   # also a missing v2 IV
                     continue
                 if cfg['priority'] == 'yield':
                     pr = -prem / K
@@ -209,8 +226,13 @@ class Holguin:
                 atm = self.model_vol(A, j, d + 1, cfg) if np.isfinite(iv[d, j]) else p['base']
                 v = P.vol_for(S_, p['K'], T, atm, True, cfg['skew'], earn_var=ev, base_atm=atm if not ev else p['base'])
                 val = P.bs(S_, p['K'], T, v, True)
-                if cfg.get('take') and val * (1 + cfg['spread']) + P.COMMISSION / 100 <= cfg['take'] * p['prem']:
-                    pay = val * (1 + cfg['spread']) + P.COMMISSION / 100
+                sp = cfg['spread']
+                if cfg.get('v2'):
+                    v2v = self.v2_put(A, j, d if np.isfinite(iv[d, j]) else d - 1, S_, p['K'], T, p['e'], cfg)
+                    val = v2v if np.isfinite(v2v) else val
+                    sp = P.half_spread(val) * cfg.get('spread_x', 1)
+                if cfg.get('take') and val * (1 + sp) + P.COMMISSION / 100 <= cfg['take'] * p['prem']:
+                    pay = val * (1 + sp) + P.COMMISSION / 100
                     cash -= p['n'] * pay
                     trades.append(self.trade(A, p, d, pay, 'take'))
                     continue
@@ -357,7 +379,11 @@ class Holguin:
             S0 = (F.o[i0, j] if not noon(t['date_entered']) else F.c[i0, j]) * F.raw[i0, j] / F.c[i0, j]
             T0 = P.years(days[i0], ex)
             v0 = self.model_vol(A, j, i0, pc)
-            prem = P.bs(S0, K, T0, P.vol_for(S0, K, T0, v0, True, skew), True) * (1 - spread) - P.COMMISSION / 100
+            if pc.get('v2'):                                     # v2: as of the prior close, tick-floored spread
+                q = self.v2_put(A, j, i0 - 1, S0, K, T0, ie, pc)
+                prem = q * (1 - P.half_spread(q) * pc.get('spread_x', 1)) - P.COMMISSION / 100
+            else:
+                prem = P.bs(S0, K, T0, P.vol_for(S0, K, T0, v0, True, skew), True) * (1 - spread) - P.COMMISSION / 100
             raw = lambda i, px: px[i, j] * F.raw[i, j] / F.c[i, j]
             am = pc.get('intraday') and not noon(t['date_closed'])
             if dc < ex or (dc == ex and am):                        # bought back early: at that day's close, or
@@ -365,7 +391,11 @@ class Holguin:
                 T1 = P.years(dc, ex) + (5.5 / (365 * 24) if am else 0.0)
                 v1 = self.model_vol(A, j, min(ic + 1, len(days) - 1), pc)     # as of that close
                 v1 = v1 if np.isfinite(v1) and v1 > 0 else v0
-                pay = P.bs(S1, K, T1, P.vol_for(S1, K, T1, v1, True, skew), True) * (1 + spread) + P.COMMISSION / 100
+                if pc.get('v2'):
+                    q = self.v2_put(A, j, ic, S1, K, T1, ie, pc)
+                    pay = q * (1 + P.half_spread(q) * pc.get('spread_x', 1)) + P.COMMISSION / 100
+                else:
+                    pay = P.bs(S1, K, T1, P.vol_for(S1, K, T1, v1, True, skew), True) * (1 + spread) + P.COMMISSION / 100
                 how = 'early'
             else:
                 Se = raw(ie, F.c)

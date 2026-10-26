@@ -72,6 +72,54 @@ def lever_return(stock_ret, lev, T0, T1, spread=0.0):
     return max(-1.0, lev * stock_ret - decay - 2 * spread)
 
 
+# ----- v2 (notes/SIM_V2_PREREG_CN.md): the earnings premium read off the market, a smile, a tick-floored spread -----
+
+def reactions(days, events):
+    """Sorted session indexes of the earnings reactions of `events` [(date, pub)]."""
+    return sorted({r for r in (reaction_day(days, d, pb) for d, pb in events) if r is not None})
+
+
+def implied_event_var(iv, j, rx, d, fallback=None):
+    """The variance the market gives one earnings report of name j, as of session d: the median over its reports
+    before d of (IV the day before - IV of the reaction day)^2-difference x 30/365 (OpenD's IV is a 30-day number),
+    at least 0; `fallback` (e.g. the historical move squared) with fewer than two."""
+    out = []
+    for r in rx:
+        if r >= d or r < 1:
+            continue
+        a, b = iv[r - 1, j], iv[r, j]
+        if np.isfinite(a) and np.isfinite(b):
+            out.append(max(a * a - b * b, 0.0) * 30 / 365)
+    return float(np.median(out)) if len(out) >= 2 else fallback
+
+
+def event_context(days, rx, d, expiry):
+    """(next report's reaction index or None, it is within 30 calendar days of d, it falls inside the option's
+    life to `expiry` (an index))."""
+    import datetime as dt
+    r = next((x for x in rx if x > d), None)
+    if r is None or r >= len(days):
+        return None, False, False
+    near = (dt.date.fromisoformat(str(days[r])[:10]) - dt.date.fromisoformat(str(days[d])[:10])).days <= 30
+    return r, near, r <= expiry
+
+
+def vol_v2(S, K, T, iv30, put, E=0.0, near=False, spans=False, k=.1):
+    """v2 vol of one option: the base (the 30-day IV without the next report's variance E when that report is within
+    30 days), plus E spread over the option's life when the report falls inside it, times a smile
+    min(1 + k x m^2, 3), m = |ln K/S| in the option's sds.  Calls and puts alike."""
+    T = max(T, 1e-6)
+    base2 = max(iv30 * iv30 - E / (30 / 365), (.5 * iv30) ** 2) if (near and E) else iv30 * iv30
+    v = math.sqrt(base2 + (E / T if spans else 0.0))
+    m = abs(math.log(K / S)) / max(v * math.sqrt(T), 1e-6)
+    return v * min(1 + k * m * m, 3.0)
+
+
+def half_spread(price, pct=.01, tick=.02):
+    """v2 half spread as a fraction of the option's price: at least `tick` dollars, at most 50%."""
+    return min(max(pct, tick / price if price > 0 else .5), .5)
+
+
 def years(d0, d1):
     """Trading-day fraction of a year between ISO dates, counted as calendar days / 365 (options decay on calendar
     time); at least one hour."""

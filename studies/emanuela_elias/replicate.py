@@ -260,11 +260,37 @@ class Emanuela(GoalMixin, study.Study):
             lev = o['lever'] if not isinstance(o['lever'], str) else \
                 P.leverage(S0, K, T0, P.vol_for(S0, K, T0, v0, put), put)   # the day's, a number: one average)
             return P.lever_return(side * (S1 / S0 - 1), lev, T0, T1, o.get('spread', .03)) if np.isfinite(lev) else None
+        if o.get('v2'):                                       # v2 (trader_options/notes/SIM_V2_PREREG_CN.md)
+            return self.v2_return(A, side, i0, i1, j, o, S0, S1, K, T0, T1, v0, v1)
         p0 = P.bs(S0, K, T0, P.vol_for(S0, K, T0, v0, put), put) * (1 + o.get('spread', .03))
         p1 = P.bs(S1, K, T1, P.vol_for(S1, K, max(T1, 1e-6), v1, put), put) * (1 - o.get('spread', .03))
         if p0 <= 0:
             return None
         return p1 / p0 - 1
+
+    def v2_return(self, A, side, i0, i1, j, o, S0, S1, K, T0, T1, v0, v1):
+        """v2: the next report's variance read off the name's past IV drops, a smile, a tick-floored spread."""
+        import datetime as dt
+        from studies.trader_options import pricing as P
+        days, iv, put = A['days'], self.iv(A), side < 0
+        if 'earn_rx' not in A:
+            ev = P.earnings({str(c) for c in A['codes']})
+            A['earn_rx'] = {j_: P.reactions(days, ev.get(str(c), [])) for j_, c in enumerate(A['codes'])}
+        rx = A['earn_rx'].get(j, [])
+        ie = int(np.searchsorted(days.astype(str), str(np.datetime64(str(days[i0])[:10]) +
+                                                       np.timedelta64(int(round(T0 * 365)), 'D')), side='right')) - 1
+
+        def px(i, S, T, v):
+            if T <= 1e-6:
+                return max(K - S, 0.0) if put else max(S - K, 0.0)
+            E = P.implied_event_var(iv, j, rx, i + 1, None) or 0.0
+            _, near, spans = P.event_context(days, rx, i, ie)
+            return P.bs(S, K, T, P.vol_v2(S, K, T, v, put, E, near, spans, o.get('k', .05)), put)
+        q0, q1 = px(i0, S0, T0, v0), px(i1, S1, T1, v1)
+        sx = o.get('spread_x', 1)
+        p0 = q0 * (1 + P.half_spread(q0, o.get('spread', .01)) * sx)
+        p1 = q1 * (1 - P.half_spread(q1, o.get('spread', .01)) * sx) if q1 > 0 else 0.0
+        return p1 / p0 - 1 if p0 > 0 else None
 
     def option_account(self, A, legs, seg, o):
         """Realised option account over seg: each leg (side, i0, i1, j) buys `frac` of the realised equity in

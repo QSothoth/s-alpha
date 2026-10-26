@@ -136,6 +136,8 @@ class Karl:
         days = A['days']
         S_ = S_ if S_ is not None else float(A['F'].raw[i, j])
         atm = atm if atm is not None else float(A['iv'][i, j])
+        if cfg.get('v2'):
+            return self.v2_legs(A, cfg, j, i, Kc, Kp, ne, fe, e, r, S_, atm, base)
         if not np.isfinite(atm):
             atm = base if base is not None and np.isfinite(base) else .4
         if base is None or not np.isfinite(base) or cfg.get('e_mode', 'implied') == 'hist':
@@ -156,6 +158,40 @@ class Karl:
             v = P.vol_for(S_, K, T, b, put, cfg['skew'], cfg['call_skew'], earn_var=ev, base_atm=b)
             out.append(P.bs(S_, K, T, v, put))
         return out
+
+    def v2_legs(self, A, cfg, j, i, Kc, Kp, ne, fe, e, r, S_, atm, base):
+        """v2 (studies/trader_options/notes/SIM_V2_PREREG_CN.md): the report's variance read off the name's past
+        IV drops (the historical move squared with fewer than two), the 30-day IV without it as the base, a smile."""
+        import datetime as dt_
+        days = A['days']
+        if not np.isfinite(atm):
+            atm = base if base is not None and np.isfinite(base) else .4
+        rx = A.setdefault('_rx', {}).get(j)
+        if rx is None:
+            rx = A['_rx'][j] = P.reactions(days, A['earn'].get(A['codes_s'][j], []))
+        E = P.implied_event_var(A['iv'], j, rx, i, e * e)
+        near = i < r and (dt_.date.fromisoformat(str(days[r])[:10]) - dt_.date.fromisoformat(str(days[i])[:10])).days <= 30
+        out = []
+        for k, (K, put) in enumerate(((Kc, False), (Kp, True), (Kc, False), (Kp, True))):
+            exp = ne if k < 2 else fe
+            if i >= exp:
+                out.append(max(K - S_, 0.0) if put else max(S_ - K, 0.0))
+                continue
+            T = P.years(days[i], days[exp])
+            v = P.vol_v2(S_, K, T, atm, put, E, near, i < r <= exp, cfg.get('k', .05))
+            out.append(P.bs(S_, K, T, v, put))
+        return out
+
+    def leg_spread(self, cfg, legs):
+        """The position's half spread: cfg['spread'], or under v2 each leg's tick-floored one weighted by its value."""
+        if not cfg.get('v2'):
+            return cfg['spread']
+        w = [cfg['ratio'], cfg['ratio'], 1.0, 1.0]
+        q = [legs[2], legs[3], legs[0], legs[1]]
+        tot = sum(a * b for a, b in zip(w, q))
+        if tot <= 0:
+            return cfg['spread']
+        return sum(a * b * P.half_spread(b, cfg['spread']) for a, b in zip(w, q)) / tot * cfg.get('spread_x', 1)
 
     def value(self, legs, ratio):
         nc, npt, fc, fp = legs
@@ -199,7 +235,7 @@ class Karl:
                     if hit is not None:
                         nc, npt, fc, fp = hit
                         gross = cfg['ratio'] * (fc + fp) + (nc + npt)
-                        got = (1 + cfg['take']) * p['debit'] - spr * gross \
+                        got = (1 + cfg['take']) * p['debit'] - p.get('spr', spr) * gross \
                             - 6 * P.COMMISSION / 100 * (cfg['ratio'] + 1) / 3
                         cash += p['n'] * got
                         trades.append(dict(code=A['codes_s'][j], entry=str(days[p['d']]), exit=str(days[d]),
@@ -215,7 +251,8 @@ class Karl:
                     exit_ = 'time'
                 if exit_:
                     nc, npt, fc, fp = legs
-                    got = cfg['ratio'] * (fc + fp) * (1 - spr) - (nc + npt) * (1 + spr) \
+                    sp_ = p.get('spr', spr)
+                    got = cfg['ratio'] * (fc + fp) * (1 - sp_) - (nc + npt) * (1 + sp_) \
                         - 6 * P.COMMISSION / 100 * (cfg['ratio'] + 1) / 3
                     cash += p['n'] * got
                     trades.append(dict(code=A['codes_s'][j], entry=str(days[p['d']]), exit=str(days[d]),
@@ -270,7 +307,8 @@ class Karl:
                     continue
                 legs = self.price_legs(A, cfg, j, d, Kc, Kp, ne, fe, e, r, base=base)
                 nc, npt, fc, fp = legs
-                paid = cfg['ratio'] * (fc + fp) * (1 + spr) - (nc + npt) * (1 - spr) \
+                sp_ = self.leg_spread(cfg, legs)
+                paid = cfg['ratio'] * (fc + fp) * (1 + sp_) - (nc + npt) * (1 - sp_) \
                     + 6 * P.COMMISSION / 100 * (cfg['ratio'] + 1) / 3
                 if paid <= 0:
                     continue
@@ -282,7 +320,7 @@ class Karl:
                 cash -= n * paid
                 v = self.value(legs, cfg['ratio'])
                 mark += n * v
-                pos.append(dict(j=j, d=d, r=r, ne=ne, fe=fe, e=e, Kc=Kc, Kp=Kp, n=n, debit=v, debit_paid=paid, S0=S0, base=base))
+                pos.append(dict(j=j, d=d, r=r, ne=ne, fe=fe, e=e, Kc=Kc, Kp=Kp, n=n, debit=v, debit_paid=paid, S0=S0, base=base, spr=sp_))
             curve.append(cash + mark)
         for p in pos:
             trades.append(dict(code=A['codes_s'][p['j']], entry=str(days[p['d']]), exit='open', why='open',

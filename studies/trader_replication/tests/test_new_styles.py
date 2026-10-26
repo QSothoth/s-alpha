@@ -57,6 +57,21 @@ class PricingTests(unittest.TestCase):
         self.assertAlmostEqual(P.lever_return(0, 10, .1, .025), -.5)           # a quarter of the life left
         self.assertEqual(P.lever_return(-.5, 10, .1, .1), -1.0)                # at most a total loss
 
+    def test_v2_pricing(self):
+        iv = np.full((6, 1), .5); iv[2, 0] = .3; iv[4, 0] = .3            # IV drops after reports at 2 and 4
+        E = P.implied_event_var(iv, 0, [2, 4], 5)
+        self.assertAlmostEqual(E, (.25 - .09) * 30 / 365)
+        self.assertIsNone(P.implied_event_var(iv, 0, [2, 4], 3))           # one known report: the fallback
+        self.assertAlmostEqual(P.implied_event_var(iv, 0, [2], 5, .01), .01)
+        T = 10 / 365
+        flat = P.vol_v2(100, 100, T, .5, False, E, near=True, spans=False, k=0)
+        self.assertLess(flat, .5)                                          # the report's variance taken out
+        self.assertGreater(P.vol_v2(100, 100, T, .5, False, E, True, True, 0), .5)
+        self.assertGreater(P.vol_v2(100, 90, T, .5, True, k=.05), P.vol_v2(100, 100, T, .5, True, k=.05))
+        self.assertAlmostEqual(P.half_spread(10.0), .01)
+        self.assertAlmostEqual(P.half_spread(.5), .04)                     # two cents of a 50-cent option
+        self.assertEqual(P.half_spread(.01), .5)
+
     def test_expired_is_intrinsic(self):
         self.assertEqual(P.bs(90, 100, 0, .5, True), 10)
         self.assertEqual(P.bs(90, 100, 0, .5, False), 0)
