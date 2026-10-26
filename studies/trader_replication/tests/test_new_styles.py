@@ -356,3 +356,40 @@ class HolguinRollTests(unittest.TestCase):
         rolled = next(t for t in tr if t['why'] == 'rolled')
         self.assertEqual(rolled['exit'], '2025-01-10')
         self.assertAlmostEqual(rolled['pay'], 100.0 - 90.0)
+
+
+class EmanuelaSwingTimingTests(unittest.TestCase):
+    """studies/emanuela_elias/swing.py: the pullback entry is the close that reclaims the daily 10 EMA, read from
+    nothing after that close."""
+
+    def panel(self, n=330, tail=None):
+        from studies.trader_screens import screens as S
+        rng = np.random.default_rng(3)
+        c = 50 * np.cumprod(1 + .004 + .01 * rng.standard_normal(n))
+        c[300:306] = c[299] * np.array([.99, .98, .975, .97, .968, .966])     # a tight pullback
+        c[306] = c[305] * 1.03                                                 # the reclaim close
+        if tail is not None:
+            c[307:] = tail
+        h, l = c * 1.01, c * .99
+        h[300:306], l[300:306] = c[300:306] * 1.003, c[300:306] * .997
+        p = dict(days=np.array([str(np.datetime64('2023-01-02') + i) for i in range(n)]), codes=np.array(['US.X']),
+                 open=c[:, None], high=h[:, None], low=l[:, None], close=c[:, None], volume=np.full((n, 1), 1e7),
+                 turnover=np.full((n, 1), 5e8), raw_close=c[:, None])
+        return {'F': S.Feat(p, 'us')}
+
+    def test_entry_on_the_reclaim_close_and_no_lookahead(self):
+        from studies.emanuela_elias.swing import STUDY, SWING
+        cfg = dict(SWING, setups=['pullback'], pullback=dict(SWING['pullback'], tight=10.0))
+        A = self.panel()
+        e, rules, m, pool = STUDY.build(A, cfg)
+        days = np.flatnonzero(m[:, 0])
+        F = A['F']
+        for d in days:                                   # each signal is a close crossing above the 10 EMA
+            self.assertTrue(F.c[d, 0] > F.ema(10)[d, 0] and F.c[d - 1, 0] <= F.ema(10)[d - 1, 0])
+            (pr, j, side, f, st, kind), = e[d]
+            self.assertEqual(f, F.c[d, 0])
+            self.assertLess(st, f)
+        self.assertIn(306, days)
+        B = self.panel(tail=1.0)                         # a crash after day 306 changes nothing up to 306
+        e2, _, m2, _ = STUDY.build(B, cfg)
+        np.testing.assert_array_equal(m[:307], m2[:307])
