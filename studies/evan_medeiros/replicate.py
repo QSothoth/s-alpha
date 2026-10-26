@@ -239,6 +239,21 @@ class Evan(GoalMixin, study.Study):
                 return F.c < lag(F.c)
         raise KeyError(name)
 
+    def robust_variants(self, cfg):
+        """The account nudges plus one step either side of the knobs R4-R8 moved (HV band, limit, time stop)."""
+        v = super().robust_variants(cfg)
+        lo, hi = cfg['long']['hv'], cfg['long'].get('hv_max')
+        both = lambda **k: {'long': k, 'short': k}
+        v.update({'hv lo -5': both(hv=lo - 5), 'hv lo +5': both(hv=lo + 5),
+                  'limit -0.5%': both(limit=cfg['long']['limit'] - .005), 'limit +0.5%': both(limit=cfg['long']['limit'] + .005),
+                  'time stop -1': {'rule_opts': {'max_days': cfg['rule_opts']['max_days'] - 1,
+                                                 'short_max_days': cfg['rule_opts']['max_days'] - 1}},
+                  'time stop +1': {'rule_opts': {'max_days': cfg['rule_opts']['max_days'] + 1,
+                                                 'short_max_days': cfg['rule_opts']['max_days'] + 1}}})
+        if hi:
+            v.update({'hv hi -5': both(hv_max=hi - 5), 'hv hi +5': both(hv_max=hi + 5)})
+        return v
+
     def validate(self, report, key='chosen'):
         cfg = self.config(report, key)
         A = self.arrays('us')

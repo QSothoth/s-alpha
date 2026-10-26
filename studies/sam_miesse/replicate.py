@@ -119,6 +119,18 @@ class Sam(GoalMixin, study.Study):
         A['kind_pools'] = None
         return entries, rules, m, pool
 
+    def robust_variants(self, cfg):
+        """The account nudges plus one step either side of the knobs R6-R9 moved (gap floor, push, stop)."""
+        v = super().robust_variants(cfg)
+        v.update({'gap -5%': {'gap': cfg['gap'] - .05}, 'gap +5%': {'gap': cfg['gap'] + .05},
+                  'spike -2%': {'spike': max(cfg.get('spike', 0) - .02, 0.0)}, 'spike +2%': {'spike': cfg.get('spike', 0) + .02},
+                  'stop 25%': {'stop': .25}, 'stop 35%': {'stop': .35}})
+        return v
+
+    def robust(self, report, key='chosen'):
+        self.data_tag = self.config(report, key).get('data', 'trader-data-v1')
+        return super().robust(report, key)
+
     def validate(self, report, key='chosen'):
         cfg = self.config(report, key)
         self.data_tag = cfg.get('data', 'trader-data-v1')

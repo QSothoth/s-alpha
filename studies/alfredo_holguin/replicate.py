@@ -424,7 +424,7 @@ class Holguin:
         cfgs[ref] = base
         res = {}
         for k, cfg in cfgs.items():
-            st, _ = self.evaluate(cfg, SELECT, draws=spec.get('draws', 20))
+            st, _ = self.evaluate(cfg, tuple(spec.get('select', SELECT)), draws=spec.get('draws', 20))   # R5: 2024-25
             if spec.get('objective') == 'goal':
                 st.update(self.goal(st))
             res[k] = st
