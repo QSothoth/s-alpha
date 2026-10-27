@@ -31,7 +31,7 @@ class PresentationTests(unittest.TestCase):
                       buys=[dict(code='SH.600002', day=day, side=1, setup='brk', price=11.17, stop=10.15)])
         ds = SimpleNamespace(id='cn-source', panel=lambda: p, names=lambda: {})
         with mock.patch.object(trader_data, 'dataset', return_value=ds), \
-                mock.patch.object(systems, 'all_', return_value=[SimpleNamespace(id='toy')]), \
+                mock.patch.object(systems, 'board', return_value=[SimpleNamespace(id='toy')]), \
                 mock.patch.object(runner, 'run', return_value=trader), \
                 mock.patch.object(scan.data, 'industries', return_value={}):
             official = scan.run('cn', 'frozen')
@@ -86,7 +86,7 @@ class PresentationTests(unittest.TestCase):
                              names=mock.Mock(return_value={'US.T1': 'Source company'}))
         with tempfile.TemporaryDirectory() as tmp, \
                 mock.patch.object(trader_data, 'dataset', return_value=ds), \
-                mock.patch.object(systems, 'all_', return_value=[trader]), \
+                mock.patch.object(systems, 'board', return_value=[trader]), \
                 mock.patch.object(runner, 'run', return_value=deepcopy(report)), \
                 mock.patch.object(scan.data, 'industries', return_value={'US.T1': 'Source industry'}), \
                 mock.patch.object(scan.data, 'SCANS', Path(tmp)), \

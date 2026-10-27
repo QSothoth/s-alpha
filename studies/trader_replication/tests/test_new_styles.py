@@ -342,6 +342,16 @@ class SamStopAtrTests(unittest.TestCase):
         self.assertAlmostEqual(ex, float(c[25, 0]))                          # high 14.3 < stop 15.29: out at the close
 
 
+class HolguinExpiryTests(unittest.TestCase):
+    def test_a_running_week_expires_on_its_friday_not_on_the_newest_day(self):
+        from studies.alfredo_holguin import replicate as R
+        days = np.array(['2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22', '2026-10-23', '2026-10-26'])
+        ed = R.expiry_dates(days, R.week_expiries(days))
+        self.assertEqual(ed[:5], ['2026-10-23'] * 5)
+        self.assertEqual(ed[5], '2026-10-30')                  # Monday of a running week: its Friday, not today
+        self.assertEqual(R.expiry_dates(days[:5], R.week_expiries(days[:5])), ['2026-10-23'] * 5)
+
+
 class HolguinRollTests(unittest.TestCase):
     """studies/alfredo_holguin/replicate.py R9: an in-the-money put at expiry settles, then next week's put."""
 
@@ -356,6 +366,7 @@ class HolguinRollTests(unittest.TestCase):
         F.atr14 = np.full((n, 1), 5.0); F.raw = F.c; F.to20 = np.full((n, 1), 1e10)
         A = dict(F=F, days=days, iv=np.full((n, 1), .4), optvol20=np.full((n, 1), 1e6), earn={}, earn_idx={},
                  expiry=R.week_expiries(days), codes_s=['US.X'], trend=np.full((n, 1), 9.0), close=F.c)
+        A['exp_date'] = R.expiry_dates(days, A['expiry'])
         S = R.Holguin.__new__(R.Holguin)
         S._A = A
         S.hv = lambda A_, k: np.full((n, 1), .4)

@@ -91,8 +91,9 @@ class ProvisionalTests(Base):
         with mock.patch.object(runner, 'run', side_effect=replay), mock.patch.object(scan.data, 'industries', return_value={}):
             result = I.run('us', now=ny(TODAY, 15, 50), provider=provider, calendar=calendar(),
                            board=scan.run, log=lambda *_: None)
-        self.assertEqual({sid for sid, _ in seen}, {s.id for s in systems.all_()})
-        self.assertEqual(len(result['traders']), 7)
+        stock = {s.id for s in systems.board('us') if not s.board_run}     # Holguin sells at the open: not provisional
+        self.assertEqual({sid for sid, _ in seen}, stock)
+        self.assertEqual(len(result['traders']), len(stock))
         self.assertEqual(provider.calls, ['snapshot'])
         self.assertEqual(self.files(), before)
         for _, values in seen:

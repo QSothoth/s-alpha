@@ -60,10 +60,28 @@ def when(n, days):
     return '明天' if left == 1 else f'{left}天后' if left > 1 else '已到'
 
 
+def option_buy(b):
+    """A short put sold today: strike, its distance under the price, expiry, premium as a share of the strike."""
+    o = b['option']
+    return (f"卖 Put{stage(b)} {stock(b)}：执行价 {px(o['strike'])}（低于现价 {1 - o['strike'] / o['spot']:.0%}），"
+            f"{o['expiry'][5:]} 到期，权利金 {px(o['premium'])}（执行价的 {o['premium'] / o['strike']:.1%}），"
+            f"占用 {pct(b['weight'], False)}")
+
+
+def option_sell(s):
+    o = s['option']
+    end = '作废，权利金全收' if s['why'] == '到期作废' else f"收在执行价 {px(o['strike'])} 下方，按差价赔付"
+    return f"到期 {stock(s)}：{end}，{pct(s['ret'])}（相对执行价）"
+
+
 def exit_text(h):
     """Next session's exit plan, short: stop · trail · next partial · breakeven · day partial · signal partial ·
     holding limit · add, every rule the engine manages the position with.  A short covers above its stop ("涨破 X
     回补") and on a close above its trail line.  Line values are today's: tomorrow's close line moves with tomorrow."""
+    if h.get('option'):                         # a short put: held to its expiry
+        o = h['option']
+        return (f"执行价 {px(o['strike'])}，{o['expiry'][5:]} 到期；现价 {px(h['close'])}"
+                f"（高出执行价 {h['close'] / o['strike'] - 1:.0%}），到期收在执行价下方会被行权")
     if h.get('side', 1) < 0:
         parts = [f"涨破 {px(h['stop'])} 回补"]
         if h.get('trail_name') and h.get('trail') is not None:
@@ -107,6 +125,10 @@ def gate_text(t):
 
 
 def today_text(t):
+    puts = [ticker(x['code']) for x in t['buys'] if x.get('option')]
+    if puts or any(x.get('option') for x in t['holdings']):
+        ends = [ticker(x['code']) for x in t['sells'] if x.get('option')]
+        return '；'.join(([f"卖 Put {'、'.join(puts)}"] if puts else []) + ([f"到期 {'、'.join(ends)}"] if ends else [])) or '—'
     out = []
     for word, key, side in (('买', 'buys', 1), ('卖', 'sells', 1), ('卖空', 'buys', -1), ('回补', 'sells', -1)):
         names = [ticker(x['code']) for x in t[key] if (x.get('side', 1) > 0) == (side > 0)]
@@ -131,11 +153,17 @@ def table(head, rows, right=()):
 def trader(t, days):
     lines = [f"**{t['name']}**" + ('' if days == 1 else f'（近 {days} 个交易日）')]
     for b in t['buys']:
+        if b.get('option'):
+            lines.append('- ' + option_buy(b) + (f"（{b['day']}）" if days > 1 else ''))
+            continue
         short = b.get('side', 1) < 0
         stop = (f"，涨破 {px(b['stop'])} 回补" if short else f"，止损 {px(b['stop'])}") if b['stop'] else ''
         lines.append(f"- {'卖空' if short else '买'}{stage(b)} {stock(b)}：{kind(b['setup'])}，{px(b['price'])}{stop}，"
                      f"仓位 {pct(b['weight'], False)}" + (f"（{b['day']}）" if days > 1 else ''))
     for s in t['sells']:
+        if s.get('option'):
+            lines.append('- ' + option_sell(s) + (f"（{s['day']}）" if days > 1 else ''))
+            continue
         short = s.get('side', 1) < 0
         lines.append(f"- {'回补' if short else '卖'}{stage(s)} {stock(s)}：{WHY.get(s['why'], s['why'])}"
                      f"{'' if s['full'] else '一部分'}，{px(s['price'])}，{pct(s['ret'])}"
@@ -146,7 +174,8 @@ def trader(t, days):
                      + ('等' if t['wanted_n'] > 5 else ''))
     if t['holdings']:
         lines += [''] + table(['持仓', '方向', '开仓日', '盈亏', '仓位', '明天的离场线'], [
-            [stock(h), '空' if h.get('side', 1) < 0 else '多', h['entry_day'][5:], pct(h['ret']),
+            [stock(h), 'Put' if h.get('option') else '空' if h.get('side', 1) < 0 else '多', h['entry_day'][5:],
+             pct(h['ret']),
              pct(h['weight'], False), exit_text(h)]
             for h in sorted(t['holdings'], key=lambda h: -h['weight'])], right=('盈亏', '仓位'))
     return lines + ['']
@@ -225,8 +254,8 @@ def market(r):
                   '`studies/trader_screens/reports/STRATEGY_REVIEW_20261025_FIXES_CN.md`），不作下单依据。', '']
     if r.get('provisional'):
         lines = lines[:1] + [''] + orders(r) + confidence(r) + lines[1:]
-    lines += table(['交易员', '版本', '仓位', '市况', '账户', '冻结后', '今天' if days == 1 else f'近 {days} 天'], [
-        [t['name'], f"{t['version']}（{STATUS[t['status']]}）", pct(t['account']['exposure'], False), gate_text(t),
+    lines += table(['交易员', '流派', '版本', '仓位', '市况', '账户', '冻结后', '今天' if days == 1 else f'近 {days} 天'], [
+        [t['name'], t.get('style') or '—', f"{t['version']}（{STATUS[t['status']]}）", pct(t['account']['exposure'], False), gate_text(t),
          f"{pct(t['account']['ret'])} / 回撤 {pct(t['account']['maxdd'], False)}",
          pct(t['forward']['ret']) if t['forward']['days'] else '—', today_text(t)] for t in r['traders']],
         right=('仓位',))
@@ -263,7 +292,10 @@ def render(results):
              '> 各交易员按研究里登记的系统（与横向比对表同一版本）从 2024-01-02 回放到最新收盘。多头买入和跟踪线离场按收盘价；'
              '卖空（开盘或反抽到价位）、跳空止损、盘中止损和按 R 分批发生在盘中，表里标了（开盘）（盘中）。'
              '离场线是下一交易日的计划：盘中破止损即卖，收盘破跟踪线即卖；均线值是今天的，明天收盘时的线会变。'
-             '冻结日 2026-10-16 之前全是样本内。不是投资建议或订单。', '']
+             '冻结日 2026-10-16 之前全是样本内。不是投资建议或订单。'
+             + ('卖 Put 在开盘按模型估价成交、持有到周五到期，权利金是估算值。'
+                if any(h.get('option') for r in results for t in r['traders'] for h in t['buys'] + t['holdings'])
+                else ''), '']
     for r in results:
         lines += market(r)
     status = [((t.get('check') or {}).get('status') or 'missing', t['name'], r['market']) for r in results

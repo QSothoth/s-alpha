@@ -26,6 +26,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / 'data' / 'trader-options-v1' / 'us'
+LIVE = ROOT / 'data' / 'trader-options-live' / 'us'    # days after the release, refreshed on demand (live.py)
 R = .04
 COMMISSION = .65
 
@@ -136,32 +137,36 @@ def load_panel(sub, col, days, codes, scale=1.0):
     out = np.full((len(days), len(codes)), np.nan)
     di = {str(d): i for i, d in enumerate(days)}
     for j, code in enumerate(codes):
-        p = DATA / sub / f'{code}.csv'
-        if not p.exists():
-            continue
-        with p.open(encoding='utf-8') as f:
-            rd = csv.DictReader(f)
-            if not rd.fieldnames or col not in rd.fieldnames:
+        for base in (DATA, LIVE):                       # the live overlay only adds days after the release
+            p = base / sub / f'{code}.csv'
+            if not p.exists():
                 continue
-            for r in rd:
-                i = di.get(r['time'][:10])
-                if i is not None and r[col] not in ('', None):
-                    try:
-                        out[i, j] = float(r[col]) * scale
-                    except ValueError:
-                        pass
+            with p.open(encoding='utf-8') as f:
+                rd = csv.DictReader(f)
+                if not rd.fieldnames or col not in rd.fieldnames:
+                    continue
+                for r in rd:
+                    i = di.get(r['time'][:10])
+                    if i is not None and r[col] not in ('', None) and (base is DATA or not np.isfinite(out[i, j])):
+                        try:
+                            out[i, j] = float(r[col]) * scale
+                        except ValueError:
+                            pass
     return out
 
 
 def earnings(codes=None):
     """{code: sorted [(date, 'BEFORE' | 'AFTER' | ...)]} from the earnings calendar."""
     out = {}
-    with (DATA / 'earnings.csv').open(encoding='utf-8') as f:
-        for r in csv.DictReader(f):
-            c = r['security']
-            if codes is not None and c not in codes:
-                continue
-            out.setdefault(c, set()).add((r['earnings_date'][:10], r['pub_type']))
+    for path in (DATA / 'earnings.csv', LIVE / 'earnings.csv'):     # the live calendar adds dates after the release
+        if not path.exists():
+            continue
+        with path.open(encoding='utf-8') as f:
+            for r in csv.DictReader(f):
+                c = r['security']
+                if codes is not None and c not in codes:
+                    continue
+                out.setdefault(c, set()).add((r['earnings_date'][:10], r['pub_type']))
     return {c: sorted(v) for c, v in out.items()}
 
 

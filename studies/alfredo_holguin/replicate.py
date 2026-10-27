@@ -67,6 +67,18 @@ def week_expiries(days):
     return out
 
 
+def expiry_dates(days, expiry):
+    """Each session's weekly expiry as an ISO day: its week's last session, except the newest week while it is still
+    running (live data ending before Friday), whose expiry is that week's Friday -- not yet reached, so nothing
+    settles on the newest day.  Frozen data end on a Friday: the same days as week_expiries."""
+    out = [str(days[e]) for e in expiry]
+    last = dt.date.fromisoformat(str(days[-1]))
+    if last.weekday() < 4:
+        fri = (last + dt.timedelta(days=4 - last.weekday())).isoformat()
+        out = [fri if e == len(days) - 1 else x for x, e in zip(out, expiry)]
+    return out
+
+
 def grid(S_):
     return .5 if S_ < 25 else 1.0 if S_ < 100 else 2.5 if S_ < 250 else 5.0
 
@@ -78,10 +90,13 @@ class Holguin:
 
     def __init__(self):
         self._A = None
+        self.mode = None            # trader_data mode (frozen / live; None: TRADER_DATA_MODE); the board sets 'live'
 
     def data(self):
-        if self._A is None:
-            A = panels.arrays('us')
+        mode = getattr(self, 'mode', None)
+        if self._A is None or self._A.get('mode') != mode:
+            A = panels.arrays('us', mode=mode)
+            A['mode'] = mode
             F = A['F']
             codes = [str(c) for c in A['codes']]
             A['iv'] = P.load_panel('iv', 'iv', A['days'], codes, .01)
@@ -89,6 +104,7 @@ class Holguin:
             A['optvol20'] = S.rolling(np.where(np.isfinite(ov), ov, np.nan), 20, 'mean')
             A['earn'] = P.earnings(set(codes))
             A['expiry'] = week_expiries(A['days'])
+            A['exp_date'] = expiry_dates(A['days'], A['expiry'])
             A['codes_s'] = codes
             ev = {}                                                  # session indexes of earnings reactions
             for j, c in enumerate(codes):
@@ -185,11 +201,11 @@ class Holguin:
             for j in np.flatnonzero(elig[d]):
                 if held[j] >= cfg.get('per_name', 1) or j in today or not np.isfinite(o[d, j]):
                     continue
-                e_ = exp[d]
-                if (dt.date.fromisoformat(str(days[e_])) - dt.date.fromisoformat(str(days[d]))).days < cfg['min_dte']:
+                e_, ed = exp[d], A['exp_date'][d]
+                if (dt.date.fromisoformat(ed) - dt.date.fromisoformat(str(days[d]))).days < cfg['min_dte']:
                     if e_ + 1 >= len(days):
                         continue
-                    e_ = exp[e_ + 1]
+                    e_, ed = exp[e_ + 1], A['exp_date'][e_ + 1]
                 ev, has_e = self.earn_var(A, j, d, e_)
                 if has_e and not cfg.get('earnings'):
                     continue
@@ -198,7 +214,7 @@ class Holguin:
                 K = math.floor((S0 - cfg['cushion'] * atr[d - 1, j]) / g) * g
                 if K <= 0:
                     continue
-                T = P.years(days[d], days[e_])
+                T = P.years(days[d], ed)
                 atm = self.model_vol(A, j, d, cfg)                   # as of the prior close
                 base = math.sqrt(max(atm * atm - ev / (30 / 365), (.5 * atm) ** 2)) if has_e else atm
                 v = P.vol_for(S0, K, T, atm, True, cfg['skew'], earn_var=ev, base_atm=base)
@@ -220,14 +236,14 @@ class Holguin:
                     pr = -float(F.to20[d - 1, j])
                 else:
                     pr = -atm
-                cand.append((pr, j, K, e_, prem, base, ev, S0))
+                cand.append((pr, j, K, e_, prem, base, ev, S0, ed))
             if placebo is not None and cand:
                 pick = placebo.permutation(len(cand))
                 cand = [cand[k] for k in pick]
             else:
                 cand.sort()
             new = 0
-            for pr, j, K, e_, prem, base, ev, S0 in cand:
+            for pr, j, K, e_, prem, base, ev, S0, ed in cand:
                 if new >= cfg['max_new']:
                     break
                 if cfg.get('margin') == 'regt':   # his "risk per trade" read as the Reg-T naked-put margin share:
@@ -239,14 +255,14 @@ class Holguin:
                     break
                 cash += n * prem
                 coll += m_ * n
-                pos.append(dict(j=j, K=K, n=n, e=e_, prem=prem, base=base, ev=ev, d0=d, S0=S0, m=m_))
+                pos.append(dict(j=j, K=K, n=n, e=e_, ed=ed, prem=prem, base=base, ev=ev, d0=d, S0=S0, m=m_))
                 new += 1
             # --- the close: expiries settle at intrinsic, take-profits, marks ---
             keep, liab = [], 0.0
             for p in pos:
                 j = p['j']
                 S_ = float(c[d, j]) if np.isfinite(c[d, j]) else p['S0']
-                if d >= p['e']:
+                if str(days[d]) >= p['ed']:
                     pay = max(p['K'] - S_, 0.0)
                     cash -= p['n'] * pay
                     if (pay > 0 and cfg.get('v2') and p.get('rolls', 0) < cfg.get('roll', 0)
@@ -254,7 +270,8 @@ class Holguin:
                         e2 = exp[d + 1]                      # by a new put on the name that day, strike ~97.3%: the
                         g = grid(S_)                         # loss settles, next week's put at roll_k x the strike
                         K2 = math.floor(p['K'] * cfg.get('roll_k', .975) / g) * g
-                        T2 = P.years(days[d], days[e2])
+                        ed2 = A['exp_date'][d + 1]
+                        T2 = P.years(days[d], ed2)
                         q = self.v2_put(A, j, d, S_, K2, T2, e2, cfg)
                         if K2 > 0 and np.isfinite(q) and q > .01:
                             prem2 = q * (1 - P.half_spread(q) * cfg.get('spread_x', 1)) - P.COMMISSION / 100
@@ -262,13 +279,13 @@ class Holguin:
                                   if cfg.get('margin') == 'regt' else K2)
                             cash += p['n'] * prem2
                             trades.append(self.trade(A, p, d, pay, 'rolled'))
-                            keep.append(dict(p, K=K2, e=e2, prem=prem2, d0=d, S0=S_, m=m2, ev=0.0,
+                            keep.append(dict(p, K=K2, e=e2, ed=ed2, prem=prem2, d0=d, S0=S_, m=m2, ev=0.0,
                                              rolls=p.get('rolls', 0) + 1))
                             liab += p['n'] * q
                             continue
                     trades.append(self.trade(A, p, d, pay, 'expiry'))
                     continue
-                T = P.years(days[d], days[p['e']])
+                T = P.years(days[d], p['ed'])
                 ev = p['ev'] if any(d < i <= p['e'] for i in A['earn_idx'].get(j, [])) else 0.0
                 atm = self.model_vol(A, j, d + 1, cfg) if np.isfinite(iv[d, j]) else p['base']
                 v = P.vol_for(S_, p['K'], T, atm, True, cfg['skew'], earn_var=ev, base_atm=atm if not ev else p['base'])
@@ -294,9 +311,9 @@ class Holguin:
         return np.array(curve), days[d0:d1], trades
 
     def trade(self, A, p, d, pay, why):
-        return dict(code=A['codes_s'][p['j']], entry=str(A['days'][p['d0']]), expiry=str(A['days'][p['e']]),
+        return dict(code=A['codes_s'][p['j']], entry=str(A['days'][p['d0']]), expiry=p['ed'],
                     exit=str(A['days'][d]), K=p['K'], S0=p['S0'], prem=p['prem'], pay=pay, why=why,
-                    ret=None if pay is None else (p['prem'] - pay) / p['K'], n=p['n'])
+                    ret=None if pay is None else (p['prem'] - pay) / p['K'], n=p['n'], m=p['m'])
 
     # ----- his records -----
     @staticmethod

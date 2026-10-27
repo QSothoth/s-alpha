@@ -87,6 +87,8 @@ def stage(t, e):
 
 
 def run(system, market, mode=None, days=1, A=None):
+    if getattr(system, 'board_run', None):                 # a non-stock engine (systems.new_styles)
+        return system.board_run(system, market, mode, days, A)
     st, cfg = system.study, system.config
     A = A if A is not None else st.arrays(market, mode=mode)
     trace = {}
@@ -166,7 +168,7 @@ def run(system, market, mode=None, days=1, A=None):
     wins = [t for t in closed if t['ret'] > 0]
     peak = np.maximum.accumulate(np.concatenate([[1.0], curve]))[1:]
     out = dict(id=system.id, name=system.name, version=system.version, status=system.status, label=system.label,
-               market=market, data=A.get('digest'), last_day=str(dates[T]), days=days,
+               style=getattr(system, 'style', ''), market=market, data=A.get('digest'), last_day=str(dates[T]), days=days,
                equity_history=bounded_history(cdates, curve, str(dates[T])),
                strategy=system.strategy, buys=buys, sells=sells, wanted=wanted, holdings=holdings,
                gate_today=None if gate is None else bool(gate[T]),

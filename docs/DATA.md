@@ -304,6 +304,10 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 - 名单偏差：2020–2022 的“当日前 N”只能在这 81 只里取，会漏掉当时大、后来变小的股票。
 - live：`data/trader-live-hourly/trader-hourly-v1/`（订阅接口只追加，未发布）。
 
+### 期权统计的 live 叠加层（未发布）
+
+`data/trader-options-live/us/{iv,stat}/<code>.csv` 与 `earnings.csv`：冻结的期权统计（`data/trader-options-v1/us`，到 2026-10-23，取数说明见 `studies/trader_options/fetch.py`）之后的日子，只为看板上的期权交易员（Holguin 名单约 140 只）补。`python -m studies.trader_screens.scan refresh us`（以及 `run us` 的 live 模式）按需调用 `studies/trader_options/live.py`，走 OpenD、不扣 K 线额度、不定时；读取时先用冻结数据，只从这里补缺的日子。
+
 ### 交易员统一数据层 trader-data-v1
 
 所有交易员复刻研究、横向比对和看板冻结回放共用的日 K，规范见 [TRADER_PROTOCOL_CN](TRADER_PROTOCOL_CN.md)。2026-10-19 发布为 [trader-data-v1](https://github.com/QSothoth/s-alpha/releases/tag/trader-data-v1)：ZIP SHA256 `109799cbaa64e73efe1634e953dd381159d19c5b5b4197df2b9bbecdf4f068ce`，`CHECKSUMS.sha256` 的 SHA256 `812054a6f67600b4df2dde3d093c1a8062ae9632d1c9f34e7f8189aaf301d9ca`，已从 GitHub 回下载核对；解压到 `data/` 即可。面板摘要固定在 `studies/trader_replication/DATA_PIN.json`。目录 `data/trader-data-v1/{us,hk,cn}`，格式同 `trend_breakout.fetch`（不复权日 K、源前复权日 K、公司行动、名单、进度），面板由统一数据接口 `studies/trader_data` 构建；本地 live 增量在 `data/trader-live/trader-data-v1/`（未发布）。

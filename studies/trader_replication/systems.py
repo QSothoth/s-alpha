@@ -24,6 +24,13 @@ class System:
     freeze: str = FREEZE
     registered: str = ''              # the day this version was registered (its commit): records after the freeze day
                                       # and before this day are a continued replay, not observations kept day by day
+    markets: tuple = ('us', 'hk', 'cn')  # the markets the board runs it on
+    wrap: bool = True                 # False: the study's own `short` key is its own short side, not a short round
+    board_run: object = field(default=None, repr=False)  # a non-stock engine's runner (runner.run's result shape)
+
+    @property
+    def style(self):
+        return STYLE.get(self.id, '')
 
     @property
     def label(self):
@@ -36,7 +43,7 @@ class System:
         if not hasattr(self, '_loaded'):
             from .shorts import wrap
             st, cfg = self.loader()
-            self._loaded = wrap(st), cfg
+            self._loaded = (wrap(st) if self.wrap else st), cfg
         return self._loaded
 
     @property
@@ -137,8 +144,40 @@ def all_():
                    registered='2026-10-20')]
 
 
+def _holguin():
+    def load():
+        from studies.alfredo_holguin.replicate import STUDY
+        return STUDY, json.loads((STUDY.reports / 'err7.json').read_text(encoding='utf-8'))['configs']['OWN180Y']
+    return load
+
+
+def _holguin_run(system, market, mode=None, days=1, A=None):
+    from studies.alfredo_holguin.board import run
+    return run(system, market, mode, days, A)
+
+
+def new_styles():
+    """2026-10-27 (user approved): the other styles' research versions, US only, on the board -- not in the
+    comparison (all_()), whose loops assume the stock engine on three markets.  studies/trader_replication/reports/
+    ERR_ROUNDS_20261027_CN.md, ERR7_20261027_CN.md, ERR8_20261027_CN.md."""
+    return [System('evan_medeiros', 'ERR6 XS5TO50L1', 'research', _carried('evan_medeiros', 'err6.json', 'XS5TO50L1'),
+                   registered='2026-10-27', markets=('us',), wrap=False),
+            System('alfredo_holguin', 'ERR7 OWN180Y', 'research', _holguin(), registered='2026-10-27',
+                   markets=('us',), wrap=False, board_run=_holguin_run)]
+
+
+def board(market=None):
+    """Every system the trader-screens board shows (on `market`): the comparison set plus the other styles."""
+    return [x for x in all_() + new_styles() if market is None or market in getattr(x, 'markets', ('us', 'hk', 'cn'))]
+
+
 def get(id_):
-    return next(x for x in all_() if x.id == id_)
+    return next(x for x in board() if x.id == id_)
+
+
+STYLE = {'martin_luk': '动量波段', 'christian_flanders': '动量波段', 'clement_ang': '动量波段', 'qullamaggie': '动量波段',
+         'oliver_kell': '动量波段', 'marios_stamatoudis': '动量波段', 'mark_minervini': '成长股趋势',
+         'evan_medeiros': '均值回归', 'alfredo_holguin': '卖 Put 收租'}
 
 
 STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, 仓位与市况); hand-written from each configuration
@@ -183,4 +222,14 @@ STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, �
                            '+3R 卖 1/4 并把止损移到成本（R 是入场到止损的距离；他说的 2.5–3 ADR 只在止损约 1 ADR 时相当），余下收盘跌破 10 日线',
                            '每笔风险 0.3%，单只 ≤ 25%，总敞口 ≤ 100%，最多 15 只，每天突破 ≤ 3 笔、EP 另计 ≤ 2 笔（C4B）；无市况过滤。'
                            '空头 S1：抛物线（连涨 ≥ 3 天，20 日涨 ≥ 300%，大票 ≥ 50%）收阴且收在昨收下方，收盘卖空，止损当日高点；指数 < 50 EMA 才开、每天 1 笔；沿用多头的 +3R 回补 1/4 与 +3R 移到成本，最多 5 天'),
+    'evan_medeiros': ('ERR6 XS5TO50L1（研究版，只美股）',
+                      '200 日线向上且在其上方、RSI2 首日跌破 5 或 3 日跌 10%、连跌 ≥ 3 天；HV100 15–35（按他基金的单笔赚亏倒推，原话是 ≥ 40）；池：成交额 ≥ 5000 万、价格 ≥ 5，同日波动高的先',
+                      '次日限价前收 −1%（开盘已低于限价按开盘成交），20% 灾难止损',
+                      '收盘站上 5 日线卖，最多持有 10 天',
+                      '每只 15%，最多 15 只、总敞口 150%；池等权指数在 200 日线上方才开多'),
+    'alfredo_holguin': ('ERR7 OWN180Y（研究版，只美股，期权）',
+                        '只在他近 180 天卖过 Put 的票里选（他公开台账，按当时已入场的交易；名单固定在台账公开的 2026-05-28，刷新要手动），不跨财报，同日按权利金 / 执行价排序',
+                        '开盘卖当周 Put（剩不到 2 天卖下周），执行价 = 开盘 − 2 × ATR14；期权价格是 v2 模型估算',
+                        '持有到周五到期：收在执行价上方作废、权利金全收；下方按差价赔付（被行权）',
+                        '每笔占用 5% 净值（Reg-T 保证金），同一只票最多 2 笔、每天最多新开 4 只，总占用 ≤ 100%'),
 }
