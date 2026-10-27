@@ -22,6 +22,7 @@ Skill 是任务入口，不改变实现的成熟度、策略资格或交易权�
 
 - 交易接口（`OpenSecTradeContext`、`place_order`、`unlock_trade`、`modify_order`）只允许 `custody/broker.py` 使用（测试扫描全仓库）。
 - 密码、交易密码（`FUTU_TRADE_PASSWORD` / `FUTU_TRADE_PASSWORD_MD5`）、WxPusher SPT 等只放环境变量或未跟踪文件，不提交、不作命令行参数。
+- 首次使用 checkout 运行 `python3 scripts/install_secret_guard.py` 安装密钥检查；不绕过提交或推送钩子。检查失败先修复，诊断不得输出密钥原文。安装、误报处理与发布包检查见 [密钥提交保护](docs/SECRET_PROTECTION.md)。
 
 ## 数据
 

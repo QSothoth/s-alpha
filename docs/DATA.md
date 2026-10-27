@@ -208,9 +208,12 @@ test ! -e data/custody-0dte-v6.zip.sha256
 cp -r data/custody-0dte-work data/custody-0dte-v6
 python3 -m custody check --dataset data/custody-0dte-v6      # 必须 "ok": true（含 CALL/PUT 两边齐全）
 sha256sum data/custody-0dte-v6/CHECKSUMS.sha256
-(cd data && python3 -m zipfile -c custody-0dte-v6.zip custody-0dte-v6 && sha256sum custody-0dte-v6.zip > custody-0dte-v6.zip.sha256)
+python3 -m custody.release --dataset data/custody-0dte-v6 --out data/custody-0dte-v6.zip
+(cd data && sha256sum custody-0dte-v6.zip > custody-0dte-v6.zip.sha256)
 cat data/custody-0dte-v6.zip.sha256
 ```
+
+安全打包器只接受登记的 CSV 行情及规定的文本元数据，拒绝额外文件、二进制文件和符号链接，在临时副本上重新验证数据并扫描密钥。含 Parquet 副本的目录需另备 CSV 发布目录并更新校验清单，不修改原数据。工具缺失或扫描失败不会生成发布包。首次使用先按 [密钥提交保护](SECRET_PROTECTION.md) 安装检查工具。
 
 核对检查结果、窗口、标的、case 数和上面两个 SHA256，将它们填写到发布说明后再执行发布：
 

@@ -24,6 +24,12 @@
 
 ## 本机使用
 
+首次使用先安装提交与推送前的密钥检查。新 clone 也需安装，详见 [密钥提交保护](docs/SECRET_PROTECTION.md)。
+
+```bash
+python3 scripts/install_secret_guard.py
+```
+
 本仓库的 skill 依赖同一 checkout 的代码和资料；安装时链接整个 skill 目录，相对引用按真实路径解析。已有技能链接迁移到 `skills/`，不要复制出第二份。单个技能的链接示例：
 
 ```bash
