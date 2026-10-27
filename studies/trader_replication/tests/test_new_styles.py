@@ -240,6 +240,14 @@ class GoalTests(unittest.TestCase):
         r = G.period_returns(np.array([1.0, 1.1, 1.21, 2.0]), dates, {'p': ('2025-01-02', '2025-08-29', .05)})
         self.assertAlmostEqual(r['p'], .21)                      # from the close before the first day
 
+    def test_count_is_required_and_ranges(self):
+        from studies.trader_options import goal as G
+        self.assertEqual(G.deviations({'per_year': 600}, {'per_year': (400, 1250)}), {'per_year': 0.0})
+        self.assertAlmostEqual(G.deviations({'per_year': 300}, {'per_year': (400, 1250)})['per_year'], .25)
+        self.assertAlmostEqual(G.deviations({'per_year': 1500}, {'per_year': (400, 1250)})['per_year'], .2)
+        self.assertFalse(G.meets(-.1, {}, 1.0, 0.0))                      # no sourced count: never a pass
+        self.assertTrue(G.meets(-.1, {'per_year': .1}, 1.0, 0.0))
+
     def test_goal_and_guards(self):
         from studies.trader_options import goal as G
         g, y, b = G.goal_of({'2024': .15}, {'win': .06, 'per_year': .3})

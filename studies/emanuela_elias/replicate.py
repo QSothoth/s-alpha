@@ -375,7 +375,7 @@ class Emanuela(GoalMixin, study.Study):
         dv = G.deviations(st.get('goal_behaviour', {}), self.goal_behaviour)
         st['goal'], st['goal_years'], st['goal_behav'] = G.goal_of(pg, dv)
         st['goal_parts'] = dict(periods=pg, behaviour=dv)
-        st['meets'] = bool(st['goal'] >= -1 and st['total'] > st['placebo']['median'])
+        st['meets'] = G.meets(st['goal'], dv, st['total'], st['placebo']['median'])
         return st, tr
 
     def options(self, report, key='chosen', dte=30, seg=WINDOW, frac=.10):

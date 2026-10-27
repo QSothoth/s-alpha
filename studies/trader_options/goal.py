@@ -2,7 +2,8 @@
 
 A configuration meets the goal when (1) every period he published that lies in the selection segment is within 0.3
 of his figure in log terms, (2) every behaviour measure he published is within +-30% of his, and (3) the selection
-segment beats the same-pool random-entry median.  `goal` folds (1) and (2) into one number to maximise:
+segment beats the same-pool random-entry median.  His trade count per year is required: a trader with no sourced
+count never meets the goal, and a (low, high) pair states a sourced range.  `goal` folds (1) and (2) into one number to maximise:
 
     goal = -max(max period gap / 0.3, max behaviour deviation / 0.3)      (>= -1 means both are met)
 
@@ -47,14 +48,23 @@ def behaviour_of(tr, n_days):
 
 
 def deviations(ours, his):
-    """{measure: |ours / his - 1|} over the measures he published (sign mismatches count as 1)."""
+    """{measure: |ours / his - 1|} over the measures he published (sign mismatches count as 1).  A (low, high) pair is
+    a sourced range: 0 inside it, else the distance to the nearer end."""
     out = {}
     for k, h in his.items():
         o = ours.get(k)
         if o is None or h is None or h == 0:
             continue
+        if isinstance(h, (tuple, list)):
+            lo, hi = h
+            h = lo if o < lo else hi if o > hi else o
         out[k] = abs(o / h - 1) if o * h > 0 else 1.0
     return out
+
+
+def meets(goal, devs, total, placebo_median):
+    """A replication counts only with his published trade count matched: no sourced count, no pass."""
+    return bool(goal >= -1 and 'per_year' in devs and total > placebo_median)
 
 
 def period_gaps(rets, periods, seg):
@@ -97,7 +107,7 @@ class GoalMixin:
         dv = deviations(st.get('goal_behaviour', {}), self.goal_behaviour)
         st['goal'], st['goal_years'], st['goal_behav'] = goal_of(pg, dv)
         st['goal_parts'] = dict(periods=pg, behaviour=dv)
-        st['meets'] = bool(st['goal'] >= -1 and st['total'] > st['placebo']['median'])
+        st['meets'] = meets(st['goal'], dv, st['total'], st['placebo']['median'])
         return st, tr
 
     @staticmethod

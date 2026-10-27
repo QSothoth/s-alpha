@@ -56,7 +56,7 @@ class Sam(GoalMixin, study.Study):
     base = DRAFT
     periods = {'2024': ('2024-01-02', '2024-12-31', 1.0), '2025': ('2025-01-02', '2025-12-31', None),
                '2023 (behaviour only)': ('2023-01-03', '2023-12-29', 0.0), '2026 (used)': ('2026-01-02', '2026-10-16', None)}
-    goal_behaviour = dict(per_year=400)
+    goal_behaviour = dict(per_year=(400, 1250))   # 2019 ~400 round trips; daily "five and under on average" (notes/PROGRESS.md)
     starts = ('2024-01-02', '2024-02-01', '2024-03-01', '2024-04-01', '2024-07-01', '2025-01-02')
 
     data_tag = 'trader-data-v1'        # a round's "data" key (and a config's) switches the frozen dataset
