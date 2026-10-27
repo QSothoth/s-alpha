@@ -418,3 +418,11 @@ class EmanuelaSwingTimingTests(unittest.TestCase):
         _, _, m, _ = STUDY.build(A, cfg)
         _, _, m2, _ = STUDY.build(B, cfg)
         np.testing.assert_array_equal(m[:307], m2[:307])
+
+
+class SamRunPriorityTests(unittest.TestCase):
+    def test_run_priority_reads_the_prior_close(self):
+        import inspect
+        from studies.sam_miesse import replicate as R
+        src = inspect.getsource(R.Sam.build)
+        self.assertIn("run5 = lag(F.ret(5))", src)                     # the 5-session run up to the prior close

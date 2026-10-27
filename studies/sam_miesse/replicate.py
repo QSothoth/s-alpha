@@ -109,6 +109,7 @@ class Sam(GoalMixin, study.Study):
         if cfg.get('stop_atr'):                     # R11: "the data should tell you where that is": the stop this
             with np.errstate(invalid='ignore', divide='ignore'):            # many 14-day ATRs (as a share of the
                 atrp = lag(F.atr14 / c)                                       # prior close) above, at least 10%
+        run5 = lag(F.ret(5)) if pri == 'run' else None
         for d, j in zip(*np.nonzero(m)):
             f = max(float(o[d, j]), float(lvl[d, j])) if ext else float(o[d, j]) * (1 + spike)
             if cfg.get('stop_atr'):
@@ -117,7 +118,11 @@ class Sam(GoalMixin, study.Study):
             else:
                 st = f * (1 + stop)
             ex = st if h[d, j] >= st else float(c[d, j])
-            pr = -float(gap[d, j]) if pri == 'gap' else float(gap[d, j])
+            if pri == 'run':                         # R12: the most extended first (5 sessions up into the gap)
+                r5 = float(run5[d, j])
+                pr = -(r5 if np.isfinite(r5) else -9.0) - float(gap[d, j])
+            else:
+                pr = -float(gap[d, j]) if pri == 'gap' else float(gap[d, j])
             entries[d].append((pr, int(j), -1, f, st, 'gap', ex))
         ro = dict(cfg.get('rule_opts', {}))
         ro['trims'] = tuple(ro.get('trims', ()))
