@@ -1,6 +1,6 @@
 # 尾盘单图发布
 
-用户于 2026-10-22 授权的盘中发布任务。沿用 `intraday-board` 工作树的盘中快照实现和系统配置，未将研究分支合入 main。行情只在内存中追加到前一交易日的面板，不写入正式日线或收盘看板。
+用户于 2026-10-22 授权的盘中发布任务。A 股、港股使用主目录的盘中快照实现和系统配置，与手动 live 一致；美股开盘精选仍使用 `intraday-board` 工作树独有的情景模型，尚未迁移。行情只在内存中追加到前一交易日的面板，不写入正式日线或收盘看板。
 
 ## 时间与内容
 
@@ -21,12 +21,12 @@
 ## 入口与依赖
 
 - 发布：`research/trader_preclose_to_qq.py`，使用已有 QQ 发送、回执核对和单图渲染实现。
-- 计算：`research/trader_preclose_worker.py`，通过 `/opt/futu-opend/venv/bin/python` 导入 `/opt/opend-us-options/.claude/worktrees/intraday-board/studies/trader_screens/intraday.py`。
+- 计算：`research/trader_preclose_worker.py`，通过 `/opt/futu-opend/venv/bin/python` 运行；A 股、港股导入主目录，只有美股开盘精选导入 `/opt/opend-us-options/.claude/worktrees/intraday-board/`。结果 `source` 记录代码根目录和 worker 动作。
 - 调度：`/etc/systemd/system/trader-preclose-{cn,hk}.timer`、`trader-preclose@.service`、`trader-preclose-failure@.service`。
 - 状态与结果：`data/trader-screens/qq/preclose/<cn|hk>/<日期>/`；包括交易日历、`board.json`、图片、发布回执和失败通知回执。每个市场的面板缓存隔离在自身 `panel-cache/` 下。
 - 前一天日线由原收盘更新流程准备。缺少上一交易日时本任务拒绝运行，不在盘中自动拉全量历史。
 
-工作树必须保留，并带有 `captured_at`、`coverage` 等行情验证元数据。更换工作树或移除代码前先更新发布入口并验证。`research/` 脚本及运行数据按现有约定留在本机，不进入 Git。
+美股开盘精选仍依赖该工作树，必须保留。所有结果带有 `captured_at`、`coverage` 等行情验证元数据。更换工作树或移除代码前先更新发布入口并验证。`research/` 脚本及运行数据按现有约定留在本机，不进入 Git。
 
 ```bash
 systemctl status trader-preclose-cn.timer trader-preclose-hk.timer
@@ -42,8 +42,15 @@ python3 -m unittest research.test_trader_preclose research.test_trader_board_sch
 
 发布前验证当日、市场、盘中模式、取得及生成时间、源行情时间、至少 95% 的上一交易日活跃标的覆盖率。源行情最新时间距离取得时间不超过三分钟，发布时快照不超过五分钟；超过发送窗口拒绝发送。无效报价被隔离，涉及持仓或买卖时停止当次运行。
 
-与日报共用进程锁，避免同时计算或发布。可用内存不足 1.6 GB 时在剩余窗口内等待；服务内存上限 1400 MB，计算单线程。图片超过一张时拒绝发布，不截掉信号。
+与日报共用进程锁；盘中任务在读写状态、查日历、计算或发布之前取得锁，失败通知也使用同一把锁。不设可用内存预检门槛；服务仍由 systemd 限制内存 1400 MB、swap 64 MB，计算单线程。图片超过一张时拒绝发布，不截掉信号。
 
 系统服务失败后间隔 45 秒重试，二十分钟内最多启动三次；最终失败触发 QQ 异常通知。超过窗口后不重新取数发旧信号。每次发送前保存回执，响应丢失时只查远端核对，不直接重发；每日每市场独立回执，避免和正式日报互相覆盖。
 
 2026-10-22 已验证真实交易日历查询、窗口外真实服务跳过、已有真实盘中结果的单图渲染，以及模拟发布响应丢失后的回执恢复。首次按新计划实时取数并发布需在后续交易日观察，不将上述验证当作已完成定时实发。
+
+## 2026-10-26 脚本复核
+
+- 删除可用内存预检，保留 systemd 的内存和 swap 上限。
+- 先查已有发送回执，再查行情日历。已有回执恢复不依赖 OpenD，也不重算、不重发。失败通知先核对发送回执，已确认补发时修正状态、不再告警。
+- A 股、港股切回主目录，避免旧工作树遗漏行情校验和系统更新；美股情景模型继续单独记录来源，不宣称三地已经完全共用代码。
+- 手工补发后通过 `run cn`（或对应市场）核对原回执并恢复任务状态；已有回执时只读远端，不补发第二帖。超窗无回执仍拒绝自动发布。

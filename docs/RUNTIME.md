@@ -10,7 +10,7 @@
 | `custody evaluate` | 已冻结的历史数据集 | 离线成交模型 | 评测策略，见 [STANDARD](STANDARD.md) |
 | `custody dryrun` | OpenD 实时，只读 | 不发单，本地模拟成交 | 盘中观察信号 |
 | `custody run --mode paper` | OpenD 实时 | 发到 OpenD 模拟账户（SIMULATE） | 演练真实下单流程 |
-| `custody run --mode live` | OpenD 实时 | 发到真实账户（REAL），只接受 `accepted` 策略 | 实盘 |
+| `custody run --mode live` | OpenD 实时 | 发到真实账户（REAL），只接受 `accepted` 策略或带上限的智能单（1b） | 实盘 |
 
 ## 1. 一个任务（job）
 
@@ -67,6 +67,63 @@ python3 -m custody stop --db data/retained-dryrun.sqlite --job '<只卖任务ID>
 买卖／只买模式可按授权使用 `run --mode live|paper --acc-id ...`；只卖候选目前仅支持 dryrun／paper，live 在连接交易账户前拒绝，不能继承 open_hold_v3 的 accepted 状态。只卖模式不接受 `--entry-valid-until` 或 `--max-entry-premium`。只卖使用独立的实验规则 position_pnl_v1，尚无收益认证；原日内策略参数、哈希与离线报告均未修改。
 
 只卖规则固定为毛亏损 30% 止损、毛收益 100% 止盈、毛收益达到 50% 后回落至接管后最高毛收益的一半退出。规则副本与峰值存入 job，重启沿用；重复、倒序、过期报价不更新峰值。不追溯接管前的峰值，不把毛收益称为扣费净收益。已有本库仓位的成本取原买单成交加权价；外部仓位只接受券商 `average_cost`，缺失或非正则拒绝，不用 `cost_price` 或现价替代。预登记见 [POSITION_EXIT_V1_PREREG](../studies/us_0dte_picks/notes/POSITION_EXIT_V1_PREREG.md)，本轮只完成工程测试，后续须独立真实报价验证。
+
+## 1b. 智能买 / 智能卖（`--manual`）
+
+2026-10-26 用户把人工下单票重新定义为代替盯盘的**原子单**，只有两种：
+
+- **智能买**（`--trade-action buy_only`）：在时间段内买入指定合约、指定张数，买完保留仓位（`HELD`）。
+- **智能卖**（`--trade-action sell_only`）：在时间段内卖出指定张数，只能卖已持有的仓位（禁止裸卖）；止盈、止损都是挂一张智能卖。
+
+每张单在时间段结束时必须成交；同一合约一天可以挂多张，彼此独立。选股、方向、何时挂、时间段多长由用户决定。任务不读策略，`--symbol` / `--direction` 从合约代码推出；去重、先落库再发单、客户单号、重启对账、只卖持有数量、权利金上限与策略任务相同。旧版票面的止盈止损、追踪、`--entry-at` / `--exit-at` 与当日买卖（`round_trip`）已删除。
+
+| 参数 | 默认 | 含义 |
+|---|---|---|
+| `--trade-action` | 必填 | `buy_only` = 智能买，`sell_only` = 智能卖 |
+| `--start-at` / `--end-at` | 立即 / 必填 | 时间段（美东，`HH:MM` 表示当天）。`--end-at` 是必须成交的时刻：当天到期合约最晚 15:45，其余最晚收盘前 2 分钟 |
+| `--playbook` | `off` | `off`：时间段一开始就动手；`v2`：按场景剧本二版决定何时动手（见下）。二版在 EXEC8 未通过，只作可选项 |
+| `--start-price` | `mid` | 挂价起点 `bid` / `mid` / `ask` |
+| `--chase-step` | 0.25 | 第 k 次改价位于起点到对手价之间 k × 该比例处，0.25 时第 4 次改价到达对手价；价格按 0.01（3 美元以下）/ 0.05 向不利于成交的一侧取整，挂单不超过对手价 |
+| `--reprice-seconds` | 30 | 挂单多久未成交就撤单、按新报价改价（5–120 秒） |
+| `--name` | 自动 | 票名；只有同一合约、同一天挂两张参数完全相同的单时才需要。同一条命令重跑会接着执行同一张票（重启恢复） |
+| `--max-qty` | 1 | 张数 |
+| `--max-entry-premium` | 必填（智能买） | 这张票全部张数的权利金上限（美元），已成交金额加当次挂单价一起检查；它优先于“必须成交”，超限时不挂单、标记 `ENTRY_PREMIUM_LIMIT` |
+| `--daily-premium-cap-usd` | 必填（智能买） | 账户当天权利金总上限：已买到的按成交金额计，未买完的票按其 `--max-entry-premium` 预留，加上新票超过上限就拒绝建票 |
+
+何时动手（`--playbook v2`，可选）：
+
+- 每根正股 1m K 线收盘后，用当天已完成的正股 1m 和这张合约的 1m（只算有成交的分钟）重放剧本，规则见 [EXEC8 预登记](../studies/us_0dte_picks/notes/EXEC8_PREREG.md)，实现 `custody/playbook.py`（与研究评测代码逐分钟一致，有测试）。买：不追急涨、回调到 EMA9 附近再买、急跌后等止跌；卖：急涨时等第一根不再走高就卖（卖进强势），跌破当日低点、急跌、深跌、逆势、失守 VWAP 直接卖。
+- 保护：时间段开始时记下第一笔新鲜报价（到达价）；之后智能买的 ask 比到达 ask 高 10%、智能卖的 bid 比到达 bid 低 10%，立即动手。
+- 截止：到 `--end-at` 前 1 分钟仍未动手就立即动手；`--end-at` 之后所有挂单直接挂对手价，智能卖一直挂到成交，智能买在 `--end-at` 后 2 分钟（不晚于收盘）停止并保留已买到的部分。
+- 挂价：一旦动手，从 `--start-price` 起步逐步靠向对手价；保护、截止、人工 `stop`，以及卖单的“转弱直接卖”（跌破当日低点、急跌、深跌、逆势、失守）直接挂对手价。部分成交后自动继续买 / 卖剩余张数，直到够数或截止。
+- 剧本二版在 EXEC8 未通过（[EXEC_RESULTS](../studies/us_0dte_picks/reports/EXEC_RESULTS_CN.md)：买单最坏 5% 超过 −20%，卖单“转弱直接卖”常卖在局部低点），所以默认 `off`；没有正股或期权 1m 时剧本照常读能读到的部分，保护和截止不依赖 K 线。
+
+卖单预留：智能卖建票时就从本库已持有的仓位（智能买或只买任务留下的 `HELD`）里划走自己的张数，成本按原买单成交价加权；划空的来源任务记为 `TRANSFERRED`。所以多张卖单加起来不会超过持有数量。paper / live 另外核对券商持仓：券商持有数量必须 ≥ 本单 + 其他未完成智能卖的剩余张数，本库没有的部分按券商 `average_cost` 记成本；dryrun 只认本库持仓，不虚构仓位。
+
+每笔订单落库时额外记录：提交时的 bid / ask（`quote_bid` / `quote_ask`）、时间段开始时的到达价（`arrival`）、动手时刻与场景（`decided_at` / `scene`）、首次成交时刻（`first_fill_at`）、终态时刻（`finished_at`）与成交均价。以后用这些记录量挂价效果，并在新数据上检验剧本。
+
+- 合约到期日不限；当天到期合约也能智能买，但工具不会替你卖：持有到期前要自己挂智能卖。
+- live：智能单不受“策略必须 accepted”的限制（用户 2026-10-25 决定），但智能买必须带 `--max-entry-premium` 与 `--daily-premium-cap-usd`，账户号、交易密码环境变量要求与策略任务相同；仍须用户在场确认。paper 冒烟需要用户提供模拟账户并在交易日进行。
+- dryrun 模拟成交只在挂单价能和当时报价成交（买价 ≥ ask、卖价 ≤ bid）时才算成交，按挂单价记；挂在中间价的单如果报价没有越过，就等到超时改价，所以 dryrun 偏保守。
+- 每张票一个进程；同一数据库可以同时跑多张（SQLite 事务隔离）。数据库结构为第 5 版（`jobs.slot`），第 4 版的库在第一次打开时原地升级，原有任务身份不变。
+
+```bash
+# 10:30–11:30 之间按剧本二版买 2 张 0DTE，11:30 前一定买到；单票 300 美元、当天 600 美元上限
+/opt/futu-opend/venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action buy_only \
+  --contract '<合约>' --max-qty 2 --start-at 10:30 --end-at 11:30 --playbook v2 \
+  --max-entry-premium 300 --daily-premium-cap-usd 600 --db data/smart-paper.sqlite
+
+# 同一合约挂两张卖单：1 张 13:00 前卖（止盈），1 张到 15:45 前卖；两张都从上面买到的 2 张里预留
+/opt/futu-opend/venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action sell_only \
+  --contract '<合约>' --max-qty 1 --end-at 13:00 --name tp --db data/smart-paper.sqlite
+/opt/futu-opend/venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action sell_only \
+  --contract '<合约>' --max-qty 1 --end-at 15:45 --name rest --db data/smart-paper.sqlite
+
+# 默认（不用剧本）：一开始就从中间价追价买入
+/opt/futu-opend/venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action buy_only \
+  --contract '<周权>' --end-at 15:30 \
+  --max-entry-premium 300 --daily-premium-cap-usd 600 --db data/smart-paper.sqlite
+```
 
 ## 2. 状态机（默认 round_trip）
 
@@ -146,4 +203,4 @@ python3 -m custody stop   --db custody-paper.sqlite --job <job_id>   # 人工停
 
 - 只有 `custody/broker.py` 使用 OpenD 交易接口；其他模块不得引用 `OpenSecTradeContext`、`place_order`、`unlock_trade`、`modify_order`（测试扫描）。
 - `dryrun` 模式的服务拒绝发单，控制器也不带券商对象；模拟成交只允许在 dryrun 使用。
-- `live` 只接受状态为 `accepted` 的策略（见 [STANDARD](STANDARD.md)）。
+- `live` 只接受状态为 `accepted` 的策略（见 [STANDARD](STANDARD.md)），或带单票与每日权利金上限的智能单（见 1b）。

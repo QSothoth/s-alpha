@@ -577,6 +577,51 @@ def structure(bars, d):
     return bull, bear
 
 
+def swing_points(highs, lows, left=SWING_LEFT):
+    """last_swing() over the last 24 bars, with each swing's absolute position."""
+    s = max(0, len(highs) - 24)
+    sh = sl = jh = jl = None
+    for j in range(s + left, len(highs) - left):
+        if highs[j] == max(highs[j - left:j + left + 1]):
+            sh, jh = highs[j], j
+        if lows[j] == min(lows[j - left:j + left + 1]):
+            sl, jl = lows[j], j
+    return sh, jh, sl, jl
+
+
+def turn(bars, arm, prev):
+    """W34/W35 first turn on the latest bar: (side, stop) or None; updates `arm`.
+
+    Arm a SELL when a bar wicks above the last confirmed swing high and closes
+    back at or below it, that swing being the highest high since the last BUY
+    mark (or the open). It fires once a later close falls below the lowest low
+    between the swing and the arming bar, and is cancelled by any high above
+    the sweep. BUY mirrors it. No VWAP / EMA / RSI here: the turn comes
+    first, before the bias has flipped. `prev` maps side -> last mark index.
+    """
+    i = len(bars) - 1
+    highs = [b[2] for b in bars]
+    lows = [b[3] for b in bars]
+    close = bars[i][4]
+    fired = {}
+    for side, a in list(arm.items()):
+        if a is None:
+            continue
+        if (highs[i] > a[0]) if side == 'SELL' else (lows[i] < a[0]):
+            arm[side] = None
+        elif (close < a[1]) if side == 'SELL' else (close > a[1]):
+            fired[side] = a[0]
+            arm[side] = None
+    sh, jh, sl, jl = swing_points(highs, lows)
+    if sh is not None and highs[i] > sh >= close and jh + 1 <= i - 1:
+        if max(highs[prev.get('BUY') or 0:i]) == sh:
+            arm['SELL'] = (highs[i], min(lows[jh + 1:i]))
+    if sl is not None and lows[i] < sl <= close and jl + 1 <= i - 1:
+        if min(lows[prev.get('SELL') or 0:i]) == sl:
+            arm['BUY'] = (lows[i], max(highs[jl + 1:i]))
+    return next(iter(fired.items())) if len(fired) == 1 else None
+
+
 def hk_tick(price, day=None):
     """HKEX equity spreads, with inclusive upper bounds and dated reductions."""
     day = day or now_hkt().strftime('%Y-%m-%d')
@@ -658,39 +703,58 @@ def marks(bars, rule='repeat15', tick=hk_tick):
     they are downgraded on the board, not dropped. `fine` (>= FINE_TPB ticks
     per bar) is logged only: on its own it was never significant (W9).
     W2/W9 figures used the old spread table, not the corrected W12 groups.
+
+    TURN (W34/W35, studies/watch_signal/): the first mark of a turn may come
+    from `turn()` without the bias; it is tagged `TURN` in `trigger` and its
+    stop is the sweep extreme. Repeats still need bias + structure, and TURN
+    marks go through the same de-duplication. On 32 unused HK days it came
+    a median 3 (SELL) / 2 (BUY) bars after the leg's extreme vs 11 / 9 for the
+    current first mark, with direction right +3.7 / +3.6 points more often.
+    Both are negative after the 10bp round trip.
     """
     if rule not in ('repeat15', 'repeat30', 'episode', 'extend2'):
         raise ValueError('unknown mark rule %r' % rule)
     out, last, anchor, d = [], {}, None, None
+    arm, prev = {'SELL': None, 'BUY': None}, {}
     tpb = ticks_per_bar(bars, tick)
     for end in range(1, len(bars) + 1):
         i = end - 1
         d = read(bars[:end])
-        if None in (d['vwap'], d['ema9'], d['ema21'], d['rsi']) or i < WARMUP_BARS:
+        if i < WARMUP_BARS:
             continue
-        bull, bear = structure(bars[:end], d)
-        long_bias = d['close'] > d['vwap'] and d['ema9'] > d['ema21'] and d['rsi'] >= 50
-        short_bias = d['close'] < d['vwap'] and d['ema9'] < d['ema21'] and d['rsi'] <= 50
-        side = trig = None
-        if long_bias and bull:
-            side, trig, ok_zone = 'BUY', '+'.join(bull), d['pos'] <= PREMIUM
-        elif short_bias and bear:
-            side, trig, ok_zone = 'SELL', '+'.join(bear), d['pos'] >= 1 - PREMIUM
+        fired = turn(bars[:end], arm, prev)
+        side = trig = stop = None
+        if None not in (d['vwap'], d['ema9'], d['ema21'], d['rsi']):
+            bull, bear = structure(bars[:end], d)
+            long_bias = d['close'] > d['vwap'] and d['ema9'] > d['ema21'] and d['rsi'] >= 50
+            short_bias = d['close'] < d['vwap'] and d['ema9'] < d['ema21'] and d['rsi'] <= 50
+            if long_bias and bull:
+                side, trig = 'BUY', '+'.join(bull)
+            elif short_bias and bear:
+                side, trig = 'SELL', '+'.join(bear)
+        if fired and side in (None, fired[0]):  # an opposite bias mark wins
+            trig = 'TURN+' + trig if side else 'TURN'
+            side, stop = fired
         if side is None:
             continue
+        ok_zone = d['pos'] <= PREMIUM if side == 'BUY' else d['pos'] >= 1 - PREMIUM
         vr = d['vol_ratio']
         tier = 'vol' if (vr is not None and vr >= VOL_MULT and ok_zone) else 'plain'
         if not _emit_ok(rule, i, side, tier, d, last, anchor):
             continue
         last[(side, tier)] = i
+        prev[side] = i
         anchor = (side, d['close'])
+        if stop is None:
+            stop = d['swing_low'] if side == 'BUY' else d['swing_high']
         out.append({'i': i, 't': bars[i][0][11:16], 'side': side, 'tier': tier,
                     'tpb': round(tpb[i], 2), 'fine': tpb[i] >= FINE_TPB,
                     'coarse': tpb[i] < GATE_TPB,
-                    'trigger': trig, 'close': d['close'], 'rsi': round(d['rsi'], 1),
-                    'vwap': round(d['vwap'], 3), 'vol_ratio': round(vr, 2) if vr is not None else None,
-                    'pos': round(d['pos'], 2),
-                    'stop': d['swing_low'] if side == 'BUY' else d['swing_high']})
+                    'trigger': trig, 'close': d['close'],
+                    'rsi': round(d['rsi'], 1) if d['rsi'] is not None else None,
+                    'vwap': round(d['vwap'], 3) if d['vwap'] is not None else None,
+                    'vol_ratio': round(vr, 2) if vr is not None else None,
+                    'pos': round(d['pos'], 2), 'stop': stop})
     if d is not None and tpb:
         d['tpb'] = tpb[-1]
     return out, d

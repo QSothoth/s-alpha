@@ -209,6 +209,50 @@ def test_the_fixture_breakout_is_marked_as_volume_confirmed():
     assert m['stop'] is not None and m['stop'] < m['close'], m
 
 
+def turn_bars(new_high_before_break=False):
+    """Price stays above VWAP throughout: heavy volume at 90 early, light above.
+    Swing high 101 at bar 30, pullback low 99.1, bar 35 wicks to 101.3 and
+    closes back under 101, then closes slide until bar 39 closes at 99.0."""
+    rows = []
+    for k in range(30):
+        c = 90 + 0.3 * k
+        rows.append((stamp(k), c, c + 0.5, c - 0.5, c, 1e6 if k < 25 else 1e5))
+    rows.append((stamp(30), 98.7, 101.0, 98.5, 100.3, 1e5))
+    for h, l, c in ((100.4, 99.1, 100.0), (100.2, 99.7, 99.8), (100.0, 99.5, 99.9), (100.1, 99.8, 100.0)):
+        rows.append((stamp(len(rows)), rows[-1][4], h, l, c, 1e5))
+    rows.append((stamp(35), 100.0, 101.3, 99.9, 100.8, 1e5))
+    for c in (100.5, 100.2, 99.9):
+        o = rows[-1][4]
+        h = 101.5 if new_high_before_break and len(rows) == 37 else max(o, c) + 0.1
+        rows.append((stamp(len(rows)), o, h, min(o, c) - 0.1, c, 1e5))
+    rows.append((stamp(39), 99.9, 100.0, 98.9, 99.0, 1e5))
+    return rows
+
+
+def test_turn_sells_the_first_break_while_still_above_vwap():
+    bars = turn_bars()
+    with patch.object(w, 'turn', return_value=None):
+        assert not [m for m in w.marks(bars)[0] if m['side'] == 'SELL']
+    sells = [m for m in w.marks(bars)[0] if m['side'] == 'SELL']
+    assert len(sells) == 1, sells
+    m = sells[0]
+    assert m['i'] == 39 and m['trigger'] == 'TURN' and m['stop'] == 101.3, m
+    assert m['close'] > m['vwap'], m
+
+
+def test_turn_is_cancelled_by_a_new_high_before_the_break():
+    sells = [m for m in w.marks(turn_bars(new_high_before_break=True))[0] if m['side'] == 'SELL']
+    assert not sells, sells
+
+
+def test_bias_and_structure_marks_are_unchanged_by_turn():
+    bars = fake_bars()
+    full = w.marks(bars)[0]
+    with patch.object(w, 'turn', return_value=None):
+        old = w.marks(bars)[0]
+    assert [m for m in full if 'TURN' not in m['trigger']] == old, (full, old)
+
+
 def test_flat_volume_leaves_only_plain_marks():
     bars = [(t, o, h, l, c, 10000.0) for t, o, h, l, c, _v in fake_bars()]
     ms = w.marks(bars)[0]

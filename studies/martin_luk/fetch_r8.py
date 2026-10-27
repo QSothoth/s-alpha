@@ -19,7 +19,7 @@ import numpy as np
 from . import intraday as I, luk
 
 ROOT = luk.ROOT
-DAILY = ROOT / 'data' / 'martin-luk-universe-us'
+DAILY = ROOT / 'data' / 'trader-data-v1'     # the daily pull below, published unchanged as trader-data-v1/us
 K5 = ROOT / 'data' / 'martin-luk-k5-r8'
 SEED, N, MIN_DAYS = 20261017, 200, 5
 K5_START, K5_END = '2023-10-02', '2026-10-16'
@@ -27,6 +27,9 @@ RESERVE = 80          # history quota left for custody
 
 
 def daily():
+    """The 2026-10-17 pull (into the old data/martin-luk-universe-us); frozen since in release trader-data-v1."""
+    if (DAILY / 'us' / 'universe.json').exists():
+        raise SystemExit(f'{DAILY}/us is the frozen release; unpack trader-pack-20261025 instead of refetching')
     from studies.trend_breakout import fetch, sources
     sources.OpenDSource.FILTERS = {'us': ('US', 1.0, 2e6)}
     return fetch.fetch(DAILY.parent / DAILY.name, 'us', '2023-01-01', '2026-10-16')

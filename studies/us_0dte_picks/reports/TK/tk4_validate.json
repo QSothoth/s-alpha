@@ -1,0 +1,775 @@
+{
+ "stage": "used_validation_report_only",
+ "round": "TK4",
+ "datasets": [
+  "data/custody-pack-20261025/custody-eval-holdout-20261023",
+  "data/custody-pack-20261025/custody-eval-2026-09-18-v2"
+ ],
+ "results": {
+  "C1": {
+   "cases": 106,
+   "sessions": 4,
+   "traded": 7,
+   "hit_0.5": {
+    "expectancy": -0.014273554526546118,
+    "win_rate": 0.009433962264150947,
+    "payoff_ratio": 1.6118511113279637,
+    "profit_factor": 0.268641851887994
+   },
+   "traded_only_raw": {
+    "win_rate": 0.14285714285714285,
+    "payoff_ratio": 1.611851111327964,
+    "profit_factor": 0.268641851887994,
+    "expectancy": -0.2161423971162697
+   },
+   "hit_0.6": {
+    "expectancy": -0.013629958058066565,
+    "win_rate": 0.011320754716981135,
+    "payoff_ratio": 1.6317191323622977,
+    "profit_factor": 0.31581660626367053
+   },
+   "breakeven_hit_rate": null,
+   "sides": {
+    "CALL": {
+     "expectancy": -0.017346785105989564,
+     "win_rate": 0.0,
+     "payoff_ratio": null,
+     "profit_factor": 0.0
+    },
+    "PUT": {
+     "expectancy": -0.017115154534072075,
+     "win_rate": 0.015723270440251583,
+     "payoff_ratio": 1.6899611548969422,
+     "profit_factor": 0.33799223097938846
+    }
+   },
+   "hold_minutes_median": 18,
+   "exit_reasons": {
+    "invalidation_stop": 6,
+    "scheduled_flatten": 1
+   },
+   "bootstrap_95": {
+    "0.5": [
+     -0.026787534956896005,
+     -0.004679502863277905
+    ],
+    "0.6": [
+     -0.026941683285870235,
+     -0.002725366453681259
+    ]
+   },
+   "stress_slippage_0.5": -0.015131674137996891,
+   "after_v66_development": {
+    "cases": 78,
+    "sessions": 3,
+    "traded": 5,
+    "hit_0.5": {
+     "expectancy": -0.007944204196252497,
+     "win_rate": 0.0128205128205128,
+     "payoff_ratio": 1.8912792144326485,
+     "profit_factor": 0.47281980360816206
+    },
+    "traded_only_raw": {
+     "win_rate": 0.2,
+     "payoff_ratio": 1.891279214432648,
+     "profit_factor": 0.472819803608162,
+     "expectancy": -0.12392958546153916
+    },
+    "hit_0.6": {
+     "expectancy": -0.0069786651091800775,
+     "win_rate": 0.015384615384615389,
+     "payoff_ratio": 1.9270854796486985,
+     "profit_factor": 0.5505958513281997
+    },
+    "breakeven_hit_rate": null,
+    "sides": {
+     "CALL": {
+      "expectancy": -0.008689173218231334,
+      "win_rate": 0.0,
+      "payoff_ratio": null,
+      "profit_factor": 0.0
+     },
+     "PUT": {
+      "expectancy": -0.009306420752263215,
+      "win_rate": 0.021634615384615384,
+      "payoff_ratio": 1.947298408185725,
+      "profit_factor": 0.5636916444748151
+     }
+    },
+    "hold_minutes_median": 18,
+    "exit_reasons": {
+     "invalidation_stop": 4,
+     "scheduled_flatten": 1
+    },
+    "bootstrap_95": null
+   }
+  },
+  "C2": {
+   "cases": 106,
+   "sessions": 4,
+   "traded": 32,
+   "hit_0.5": {
+    "expectancy": -0.031198097898750644,
+    "win_rate": 0.07547169811320756,
+    "payoff_ratio": 1.750220268042267,
+    "profit_factor": 0.583406756014089
+   },
+   "traded_only_raw": {
+    "win_rate": 0.25,
+    "payoff_ratio": 1.7502202680422665,
+    "profit_factor": 0.5834067560140889,
+    "expectancy": -0.10334369928961153
+   },
+   "hit_0.6": {
+    "expectancy": -0.02027658643576854,
+    "win_rate": 0.08679245283018869,
+    "payoff_ratio": 1.862532782563396,
+    "profit_factor": 0.7199706554446741
+   },
+   "breakeven_hit_rate": 0.7856573286999264,
+   "sides": {
+    "CALL": {
+     "expectancy": -0.015212902774338745,
+     "win_rate": 0.047169811320754734,
+     "payoff_ratio": 2.6053129551953527,
+     "profit_factor": 0.7474258478019451
+    },
+    "PUT": {
+     "expectancy": -0.04477057396644583,
+     "win_rate": 0.10265049415992819,
+     "payoff_ratio": 1.3639105248599404,
+     "profit_factor": 0.49288874732009547
+    }
+   },
+   "hold_minutes_median": 48.5,
+   "exit_reasons": {
+    "breakeven_stop": 8,
+    "invalidation_stop": 14,
+    "charm_exit": 2,
+    "scheduled_flatten": 8
+   },
+   "bootstrap_95": {
+    "0.5": [
+     -0.05962712281588113,
+     -0.011522456391512096
+    ],
+    "0.6": [
+     -0.04923366186695073,
+     0.00312870995311462
+    ]
+   },
+   "stress_slippage_0.5": -0.039772796960367326,
+   "after_v66_development": {
+    "cases": 78,
+    "sessions": 3,
+    "traded": 25,
+    "hit_0.5": {
+     "expectancy": -0.034539973303744365,
+     "win_rate": 0.0897435897435896,
+     "payoff_ratio": 1.379986607587668,
+     "profit_factor": 0.5366614585063154
+    },
+    "traded_only_raw": {
+     "win_rate": 0.28,
+     "payoff_ratio": 1.3799866075876683,
+     "profit_factor": 0.5366614585063154,
+     "expectancy": -0.10776471670768265
+    },
+    "hit_0.6": {
+     "expectancy": -0.026996556082375125,
+     "win_rate": 0.1025641025641026,
+     "payoff_ratio": 1.4676752134056468,
+     "profit_factor": 0.6381196580024553
+    },
+    "breakeven_hit_rate": 0.9578823136807841,
+    "sides": {
+     "CALL": {
+      "expectancy": -0.06024186349958312,
+      "win_rate": 0.031468531468531465,
+      "payoff_ratio": 0.967983459498707,
+      "profit_factor": 0.17213654698759717
+     },
+     "PUT": {
+      "expectancy": 0.007095015387369845,
+      "win_rate": 0.13265900765900768,
+      "payoff_ratio": 1.8304684749694073,
+      "profit_factor": 1.1387278996149723
+     }
+    },
+    "hold_minutes_median": 47,
+    "exit_reasons": {
+     "breakeven_stop": 6,
+     "invalidation_stop": 10,
+     "charm_exit": 2,
+     "scheduled_flatten": 7
+    },
+    "bootstrap_95": null
+   }
+  },
+  "C3": {
+   "cases": 106,
+   "sessions": 4,
+   "traded": 22,
+   "hit_0.5": {
+    "expectancy": 0.00473489436011832,
+    "win_rate": 0.0849056603773585,
+    "payoff_ratio": 1.618360301843341,
+    "profit_factor": 1.1204032858915438
+   },
+   "traded_only_raw": {
+    "win_rate": 0.4090909090909091,
+    "payoff_ratio": 1.618360301843341,
+    "profit_factor": 1.1204032858915436,
+    "expectancy": 0.022813581916933723
+   },
+   "hit_0.6": {
+    "expectancy": 0.011788253441379584,
+    "win_rate": 0.09622641509433963,
+    "payoff_ratio": 1.6502707244432435,
+    "profit_factor": 1.294827799178545
+   },
+   "breakeven_hit_rate": 0.4328703628225412,
+   "sides": {
+    "CALL": {
+     "expectancy": 0.039359841627874904,
+     "win_rate": 0.11320754716981137,
+     "payoff_ratio": 1.9559745927621113,
+     "profit_factor": 1.8706094777079771
+    },
+    "PUT": {
+     "expectancy": -0.01868017489298929,
+     "win_rate": 0.07075471698113212,
+     "payoff_ratio": 0.9182721864722122,
+     "profit_factor": 0.478900229699912
+    }
+   },
+   "hold_minutes_median": 29.0,
+   "exit_reasons": {
+    "breakeven_stop": 6,
+    "invalidation_stop": 8,
+    "scheduled_flatten": 8
+   },
+   "bootstrap_95": {
+    "0.5": [
+     -0.03176606930177289,
+     0.034942588425131774
+    ],
+    "0.6": [
+     -0.028172160897967643,
+     0.04485894117049447
+    ]
+   },
+   "stress_slippage_0.5": 0.0010773531793303425,
+   "after_v66_development": {
+    "cases": 78,
+    "sessions": 3,
+    "traded": 17,
+    "hit_0.5": {
+     "expectancy": -0.008026749340181783,
+     "win_rate": 0.0897435897435896,
+     "payoff_ratio": 1.164293970385966,
+     "profit_factor": 0.8150057792701763
+    },
+    "traded_only_raw": {
+     "win_rate": 0.4117647058823529,
+     "payoff_ratio": 1.1642939703859658,
+     "profit_factor": 0.8150057792701761,
+     "expectancy": -0.03682861461965763
+    },
+    "hit_0.6": {
+     "expectancy": -0.003185967350979202,
+     "win_rate": 0.10000000000000003,
+     "payoff_ratio": 1.1894839109613027,
+     "profit_factor": 0.9277974505498161
+    },
+    "breakeven_hit_rate": 0.6658151380934214,
+    "sides": {
+     "CALL": {
+      "expectancy": 0.0164843404861341,
+      "win_rate": 0.12004662004662003,
+      "payoff_ratio": 1.345751533719531,
+      "profit_factor": 1.336713422850741
+     },
+     "PUT": {
+      "expectancy": -0.017183698966672066,
+      "win_rate": 0.07473776223776224,
+      "payoff_ratio": 0.7370898687251417,
+      "profit_factor": 0.4627834108911591
+     }
+    },
+    "hold_minutes_median": 27,
+    "exit_reasons": {
+     "breakeven_stop": 5,
+     "invalidation_stop": 6,
+     "scheduled_flatten": 6
+    },
+    "bootstrap_95": null
+   }
+  },
+  "C4": {
+   "cases": 106,
+   "sessions": 4,
+   "traded": 54,
+   "hit_0.5": {
+    "expectancy": -0.08350689716565939,
+    "win_rate": 0.09433962264150944,
+    "payoff_ratio": 1.7478680711420926,
+    "profit_factor": 0.3972427434413847
+   },
+   "traded_only_raw": {
+    "win_rate": 0.18518518518518517,
+    "payoff_ratio": 1.7478680711420924,
+    "profit_factor": 0.3972427434413846,
+    "expectancy": -0.16392094628814619
+   },
+   "hit_0.6": {
+    "expectancy": -0.06710023349920859,
+    "win_rate": 0.11320754716981132,
+    "payoff_ratio": 1.7608857143784844,
+    "profit_factor": 0.49602414489534774
+   },
+   "breakeven_hit_rate": null,
+   "sides": {
+    "CALL": {
+     "expectancy": -0.09879503295721428,
+     "win_rate": 0.0707547169811321,
+     "payoff_ratio": 1.9775316789593078,
+     "profit_factor": 0.33137699695296413
+    },
+    "PUT": {
+     "expectancy": -0.08335151892644231,
+     "win_rate": 0.11051212938005398,
+     "payoff_ratio": 1.6736473013164077,
+     "profit_factor": 0.41499570217098714
+    }
+   },
+   "hold_minutes_median": 33.5,
+   "exit_reasons": {
+    "breakeven_stop": 15,
+    "invalidation_stop": 25,
+    "scheduled_flatten": 12,
+    "charm_exit": 2
+   },
+   "bootstrap_95": {
+    "0.5": [
+     -0.11172583437597235,
+     -0.052338902549840985
+    ],
+    "0.6": [
+     -0.10933034718455527,
+     -0.022303548362065165
+    ]
+   },
+   "stress_slippage_0.5": -0.09547883093187925,
+   "after_v66_development": {
+    "cases": 78,
+    "sessions": 3,
+    "traded": 42,
+    "hit_0.5": {
+     "expectancy": -0.0811128555069648,
+     "win_rate": 0.10256410256410241,
+     "payoff_ratio": 1.87998005354957,
+     "profit_factor": 0.4423482478940168
+    },
+    "traded_only_raw": {
+     "win_rate": 0.19047619047619047,
+     "payoff_ratio": 1.8799800535495717,
+     "profit_factor": 0.4423482478940169,
+     "expectancy": -0.1506381602272205
+    },
+    "hit_0.6": {
+     "expectancy": -0.06309929732320306,
+     "win_rate": 0.12307692307692313,
+     "payoff_ratio": 1.903063741695464,
+     "profit_factor": 0.5502834915745922
+    },
+    "breakeven_hit_rate": 0.9502878036619222,
+    "sides": {
+     "CALL": {
+      "expectancy": -0.14060479383155963,
+      "win_rate": 0.0944055944055944,
+      "payoff_ratio": 1.765027965025107,
+      "profit_factor": 0.3172392459228072
+     },
+     "PUT": {
+      "expectancy": -0.06410782101252332,
+      "win_rate": 0.10119047619047619,
+      "payoff_ratio": 2.1818454163867322,
+      "profit_factor": 0.4953714732761584
+     }
+    },
+    "hold_minutes_median": 28.5,
+    "exit_reasons": {
+     "breakeven_stop": 13,
+     "invalidation_stop": 19,
+     "scheduled_flatten": 8,
+     "charm_exit": 2
+    },
+    "bootstrap_95": null
+   }
+  },
+  "C5": {
+   "cases": 106,
+   "sessions": 4,
+   "traded": 54,
+   "hit_0.5": {
+    "expectancy": -0.08850336923262957,
+    "win_rate": 0.09433962264150944,
+    "payoff_ratio": 1.6733697331625836,
+    "profit_factor": 0.3803113029914963
+   },
+   "traded_only_raw": {
+    "win_rate": 0.18518518518518517,
+    "payoff_ratio": 1.6733697331625843,
+    "profit_factor": 0.3803113029914964,
+    "expectancy": -0.17372883590108767
+   },
+   "hit_0.6": {
+    "expectancy": -0.07209858153357065,
+    "win_rate": 0.11320754716981132,
+    "payoff_ratio": 1.6934410356697776,
+    "profit_factor": 0.47479655205694704
+   },
+   "breakeven_hit_rate": null,
+   "sides": {
+    "CALL": {
+     "expectancy": -0.10513537957146081,
+     "win_rate": 0.0707547169811321,
+     "payoff_ratio": 1.8043747050100178,
+     "profit_factor": 0.3177426386841209
+    },
+    "PUT": {
+     "expectancy": -0.08309081761505104,
+     "win_rate": 0.11096136567834687,
+     "payoff_ratio": 1.709798399115321,
+     "profit_factor": 0.4111772997580414
+    }
+   },
+   "hold_minutes_median": 31.0,
+   "exit_reasons": {
+    "breakeven_stop": 11,
+    "invalidation_stop": 29,
+    "scheduled_flatten": 12,
+    "charm_exit": 2
+   },
+   "bootstrap_95": {
+    "0.5": [
+     -0.14342067804593836,
+     -0.039610900472000096
+    ],
+    "0.6": [
+     -0.14172145994700253,
+     -0.009230067603422588
+    ]
+   },
+   "stress_slippage_0.5": -0.10139020181685271,
+   "after_v66_development": {
+    "cases": 78,
+    "sessions": 3,
+    "traded": 43,
+    "hit_0.5": {
+     "expectancy": -0.08648437051884005,
+     "win_rate": 0.11538461538461521,
+     "payoff_ratio": 1.6487044105052877,
+     "profit_factor": 0.43642175572198816
+    },
+    "traded_only_raw": {
+     "win_rate": 0.20930232558139536,
+     "payoff_ratio": 1.6487044105052888,
+     "profit_factor": 0.4364217557219882,
+     "expectancy": -0.15687862559231477
+    },
+    "hit_0.6": {
+     "expectancy": -0.06818964924416844,
+     "win_rate": 0.1384615384615385,
+     "payoff_ratio": 1.673036027378106,
+     "profit_factor": 0.5409817094516034
+    },
+    "breakeven_hit_rate": 0.9727285495118849,
+    "sides": {
+     "CALL": {
+      "expectancy": -0.14835928636300508,
+      "win_rate": 0.0944055944055944,
+      "payoff_ratio": 1.6120432644648852,
+      "profit_factor": 0.3057271139380252
+     },
+     "PUT": {
+      "expectancy": -0.05942739817998219,
+      "win_rate": 0.11584249084249085,
+      "payoff_ratio": 2.121813070231282,
+      "profit_factor": 0.525964707798491
+     }
+    },
+    "hold_minutes_median": 27,
+    "exit_reasons": {
+     "breakeven_stop": 9,
+     "invalidation_stop": 23,
+     "scheduled_flatten": 9,
+     "charm_exit": 2
+    },
+    "bootstrap_95": null
+   }
+  },
+  "B2": {
+   "cases": 106,
+   "sessions": 4,
+   "traded": 58,
+   "hit_0.5": {
+    "expectancy": -0.09875773660619576,
+    "win_rate": 0.10377358490566038,
+    "payoff_ratio": 1.56309329140286,
+    "profit_factor": 0.365830344796414
+   },
+   "traded_only_raw": {
+    "win_rate": 0.1896551724137931,
+    "payoff_ratio": 1.5630932914028597,
+    "profit_factor": 0.365830344796414,
+    "expectancy": -0.18048827724580604
+   },
+   "hit_0.6": {
+    "expectancy": -0.08103064881288374,
+    "win_rate": 0.12452830188679245,
+    "payoff_ratio": 1.5808217010133603,
+    "profit_factor": 0.4576062818722885
+   },
+   "breakeven_hit_rate": null,
+   "sides": {
+    "CALL": {
+     "expectancy": -0.12642111415266571,
+     "win_rate": 0.0707547169811321,
+     "payoff_ratio": 1.8042976610409605,
+     "profit_factor": 0.2791795673582388
+    },
+    "PUT": {
+     "expectancy": -0.08442760884892377,
+     "win_rate": 0.12668463611859848,
+     "payoff_ratio": 1.5485515101720377,
+     "profit_factor": 0.42516943420164993
+    }
+   },
+   "hold_minutes_median": 37.5,
+   "exit_reasons": {
+    "breakeven_stop": 14,
+    "invalidation_stop": 29,
+    "scheduled_flatten": 13,
+    "charm_exit": 2
+   },
+   "bootstrap_95": {
+    "0.5": [
+     -0.1523185856144706,
+     -0.058030424906644326
+    ],
+    "0.6": [
+     -0.14926299565799375,
+     -0.026784921686981253
+    ]
+   },
+   "stress_slippage_0.5": -0.11321765824193772,
+   "after_v66_development": {
+    "cases": 78,
+    "sessions": 3,
+    "traded": 46,
+    "hit_0.5": {
+     "expectancy": -0.10183835525948855,
+     "win_rate": 0.11538461538461521,
+     "payoff_ratio": 1.6309900347184092,
+     "profit_factor": 0.39672730574231596
+    },
+    "traded_only_raw": {
+     "win_rate": 0.1956521739130435,
+     "payoff_ratio": 1.6309900347184103,
+     "profit_factor": 0.396727305742316,
+     "expectancy": -0.17268242848348087
+    },
+    "hit_0.6": {
+     "expectancy": -0.08203037454435137,
+     "win_rate": 0.1384615384615385,
+     "payoff_ratio": 1.6587471089653745,
+     "profit_factor": 0.4948748280891175
+    },
+    "breakeven_hit_rate": null,
+    "sides": {
+     "CALL": {
+      "expectancy": -0.17297118781470425,
+      "win_rate": 0.0944055944055944,
+      "payoff_ratio": 1.642310332211517,
+      "profit_factor": 0.2741515352339249
+     },
+     "PUT": {
+      "expectancy": -0.06712209307823822,
+      "win_rate": 0.11584249084249085,
+      "payoff_ratio": 1.9991108981255505,
+      "profit_factor": 0.4955487333645148
+     }
+    },
+    "hold_minutes_median": 31.0,
+    "exit_reasons": {
+     "breakeven_stop": 12,
+     "invalidation_stop": 23,
+     "scheduled_flatten": 9,
+     "charm_exit": 2
+    },
+    "bootstrap_95": null
+   }
+  },
+  "v6.6": {
+   "cases": 106,
+   "sessions": 4,
+   "traded": 58,
+   "hit_0.5": {
+    "expectancy": -0.019154617029030773,
+    "win_rate": 0.12264150943396226,
+    "payoff_ratio": 2.8214998117832955,
+    "profit_factor": 0.8150999456262853
+   },
+   "traded_only_raw": {
+    "win_rate": 0.22413793103448276,
+    "payoff_ratio": 2.821499811783295,
+    "profit_factor": 0.8150999456262852,
+    "expectancy": -0.03500671388064243
+   },
+   "hit_0.6": {
+    "expectancy": -0.0009176201992635564,
+    "win_rate": 0.1377358490566038,
+    "payoff_ratio": 2.999670934846635,
+    "profit_factor": 0.9908415305149519
+   },
+   "breakeven_hit_rate": 0.6050316409437073,
+   "sides": {
+    "CALL": {
+     "expectancy": -0.09378413472005895,
+     "win_rate": 0.0790655884995508,
+     "payoff_ratio": 1.053682837093066,
+     "profit_factor": 0.18555951503740203
+    },
+    "PUT": {
+     "expectancy": 0.025246268104721283,
+     "win_rate": 0.14600179694519325,
+     "payoff_ratio": 3.766884789392224,
+     "profit_factor": 1.2440174337490832
+    }
+   },
+   "hold_minutes_median": 13.0,
+   "exit_reasons": {
+    "breakeven_stop": 11,
+    "invalidation_stop": 16,
+    "no_progress": 19,
+    "trailing_stop": 2,
+    "scheduled_flatten": 3,
+    "profit_lock": 5,
+    "take_profit": 2
+   },
+   "bootstrap_95": {
+    "0.5": [
+     -0.07568459067714155,
+     0.02586095130738303
+    ],
+    "0.6": [
+     -0.07561893632586295,
+     0.04914665790318124
+    ]
+   },
+   "after_v66_development": {
+    "cases": 78,
+    "sessions": 3,
+    "traded": 46,
+    "hit_0.5": {
+     "expectancy": -0.0277820464461552,
+     "win_rate": 0.12820512820512803,
+     "payoff_ratio": 2.7632232570678603,
+     "profit_factor": 0.767562015852184
+    },
+    "traded_only_raw": {
+     "win_rate": 0.21739130434782608,
+     "payoff_ratio": 2.7632232570678616,
+     "profit_factor": 0.7675620158521838,
+     "expectancy": -0.04710868745217629
+    },
+    "hit_0.6": {
+     "expectancy": -0.007840123127487972,
+     "win_rate": 0.14358974358974363,
+     "payoff_ratio": 2.980987323437454,
+     "profit_factor": 0.9325993861033379
+    },
+    "breakeven_hit_rate": 0.6393147792332456,
+    "sides": {
+     "CALL": {
+      "expectancy": -0.1481581413872016,
+      "win_rate": 0.09922369297369296,
+      "payoff_ratio": 0.8953870799272168,
+      "profit_factor": 0.15844544303594846
+     },
+     "PUT": {
+      "expectancy": -0.017299125308924378,
+      "win_rate": 0.10885989010989011,
+      "payoff_ratio": 3.6911789998284625,
+      "profit_factor": 0.847175750174544
+     }
+    },
+    "hold_minutes_median": 13.5,
+    "exit_reasons": {
+     "breakeven_stop": 10,
+     "invalidation_stop": 14,
+     "no_progress": 14,
+     "trailing_stop": 1,
+     "scheduled_flatten": 2,
+     "profit_lock": 3,
+     "take_profit": 2
+    },
+    "bootstrap_95": null
+   }
+  },
+  "open_hold": {
+   "cases": 106,
+   "sessions": 4,
+   "traded": 106,
+   "hit_0.5": {
+    "expectancy": -0.31124128167392173,
+    "win_rate": 0.26415094339622647,
+    "payoff_ratio": 1.275119961089618,
+    "profit_factor": 0.4577353706475552
+   },
+   "traded_only_raw": {
+    "win_rate": 0.2641509433962264,
+    "payoff_ratio": 1.2751199610896184,
+    "profit_factor": 0.4577353706475554,
+    "expectancy": -0.31124128167392157
+   },
+   "hit_0.6": {
+    "expectancy": -0.1976836570994875,
+    "win_rate": 0.31509433962264155,
+    "payoff_ratio": 1.334476110507937,
+    "profit_factor": 0.6139325356882246
+   },
+   "breakeven_hit_rate": 0.7740822404839491,
+   "sides": {
+    "CALL": {
+     "expectancy": -0.24979953528239496,
+     "win_rate": 0.27735849056603784,
+     "payoff_ratio": 1.4945333524694364,
+     "profit_factor": 0.5736198506867027
+    },
+    "PUT": {
+     "expectancy": -0.344914361117456,
+     "win_rate": 0.2515723270440253,
+     "payoff_ratio": 1.13318960215947,
+     "profit_factor": 0.3809040679527632
+    }
+   },
+   "hold_minutes_median": 370.0,
+   "exit_reasons": {
+    "scheduled_flatten": 106
+   },
+   "bootstrap_95": {
+    "0.5": [
+     -0.46430103552520136,
+     -0.21190717753337
+    ],
+    "0.6": [
+     -0.38212378853063494,
+     -0.08413173827096877
+    ]
+   }
+  }
+ }
+}

@@ -306,12 +306,12 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 11 只会话池股票 8 个交易日（09-21、09-23 仅 AAPL、09-25 留出、10-02 → 10-12 收盘采集）的当天到期平值 CALL/PUT 1m，本机 `data/sv1-*`，未发布。2026-10-16 用户放弃 SV1，代码移出（见 [archive](../studies/archive/README.md)）；数据从未用于评测，仍可作验证段。
 
-### Martin Luk 复刻 R8 新取数据（本机，未发布）
+### Martin Luk 复刻 R8 新取数据（日 K 与 5 分钟已并入 trader-pack-20261025）
 
 用户 2026-10-17 同意取数，见 [PREREG_R8](../studies/martin_luk/notes/PREREG_R8.md)。
 
-- `data/martin-luk-universe-us/us`：现价 ≥ 1 美元、20 日均成交额 ≥ 200 万美元的美股 3433 只（取到 3424）日 K 1000 根，`get_cur_kline` 订阅接口，不扣历史额度，141MB。用于按历史各日条件抽样和日线回测；初始名单由2026-10现价/流动性筛选，有幸存者及初始名单偏差，不能称完整点时股票全集。
-- `data/martin-luk-k5-r8`：按当时领涨条件随机抽出的 200 只（`sample.json` 记录候选池、种子与名单）常规时段前复权 5 分钟 K，2023-10-02 → 2026-10-16，`request_history_kline` 扣历史额度 200（18/282 → 218/82），212MB。R8 已评测一次（样本外，未通过）。
+- 原 `data/martin-luk-universe-us/us`（2026-10-25 起并入 `data/trader-data-v1/us`，逐字节相同，旧目录已删）：现价 ≥ 1 美元、20 日均成交额 ≥ 200 万美元的美股 3433 只（取到 3424）日 K 1000 根，`get_cur_kline` 订阅接口，不扣历史额度，141MB。用于按历史各日条件抽样和日线回测；初始名单由2026-10现价/流动性筛选，有幸存者及初始名单偏差，不能称完整点时股票全集。
+- `data/martin-luk-k5-r8`：按当时领涨条件随机抽出的 200 只（`sample.json` 记录候选池、种子与名单）常规时段前复权 5 分钟 K，2023-10-02 → 2026-10-16，`request_history_kline` 扣历史额度 200（18/282 → 218/82），212MB。R8 已评测一次（样本外，未通过）。2026-10-25 随 `trader-pack-20261025` 发布。
 - `data/martin-luk-cache`：本研究的 npz 缓存，可由上述及既有 5 分钟数据重建。
 - `data/martin-luk-benchmarks-v1`：2026-10-18前台重取已占用额度的QQQ/IWM前复权日线，各1202根，2022-01-03→2026-10-16；用于核查用股票池等权指数代替本人指数观察的输入差距。前后历史额度218/82不变；metadata.json登记文件SHA256。未发布，不进Git。
 - `data/martin-luk-cache/r77/verify`：五只已占用股票的异常日期日线/5分钟/1分钟原始响应，用于R77数据核验，前后额度218/82不变；不作为新增独立验证段。
@@ -335,11 +335,30 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 
 所有交易员复刻研究、横向比对和看板冻结回放共用的日 K，规范见 [TRADER_PROTOCOL_CN](TRADER_PROTOCOL_CN.md)。2026-10-19 发布为 [trader-data-v1](https://github.com/QSothoth/s-alpha/releases/tag/trader-data-v1)：ZIP SHA256 `109799cbaa64e73efe1634e953dd381159d19c5b5b4197df2b9bbecdf4f068ce`，`CHECKSUMS.sha256` 的 SHA256 `812054a6f67600b4df2dde3d093c1a8062ae9632d1c9f34e7f8189aaf301d9ca`，已从 GitHub 回下载核对；解压到 `data/` 即可。面板摘要固定在 `studies/trader_replication/DATA_PIN.json`。目录 `data/trader-data-v1/{us,hk,cn}`，格式同 `trend_breakout.fetch`（不复权日 K、源前复权日 K、公司行动、名单、进度），面板由统一数据接口 `studies/trader_data` 构建；本地 live 增量在 `data/trader-live/trader-data-v1/`（未发布）。
 
-- 美股：即上文 `martin-luk-universe-us/us`（3433 只，取到 3424；2023-01-03 → 2026-10-16），原样放入，不重拉。
+- 美股：即 Martin R8 的日 K 取数（3433 只，取到 3424；2023-01-03 → 2026-10-16），原样放入，不重拉。
 - 港股、A 股：名单沿用 `data/trend-scan/2026-10-15` 的 505 只（20 日均成交额 ≥ 2000 万港元）/ 1697 只（市值 ≥ 100 亿元、不含北交所），2026-10-19 前台一次性补取 2023-01-01 → 2026-10-16（OpenD `get_cur_kline` / 新浪），不扣历史 K 线额度，均无失败。
 - 公共评测区间 2024-01-02 → 2026-10-16，2023 年只作指标暖机。名单是 2026-10 快照，期间退市的不在内。
 
-- `data/trader-data-v2`（本机，未发布，2026-10-19）：名单放宽的对照版本。美股 4462 只（不限价格、20 日均成交额 ≥ 50 万美元，2026-10-19 快照；含 v1 全部 3433 只，取到 4451），港股 758 只（≥ 500 万港元，含 v1 全部 505 只）；v1 已有股票的日 K 直接复制，其余同窗口补取，不扣额度。比对结果见 `studies/trader_replication/reports/VERSIONS_CN.md`。
+- `data/trader-data-v2`（2026-10-19 取数，2026-10-25 随 `trader-pack-20261025` 发布）：名单放宽的对照版本。美股 4462 只（不限价格、20 日均成交额 ≥ 50 万美元，2026-10-19 快照；含 v1 全部 3433 只，取到 4451），港股 758 只（≥ 500 万港元，含 v1 全部 505 只）；v1 已有股票的日 K 直接复制，其余同窗口补取，不扣额度。比对结果见 `studies/trader_replication/reports/VERSIONS_CN.md`。
+- `data/trader-options-v1`（2026-10-25 取数，用户同意，随 `trader-pack-20261025` 发布）：v1 美股名单 3,433 只的每日 30 天 IV / HV（`us/iv/`）、期权成交量与持仓（`us/stat/`），2023-06 → 2026-10-23；财报日历 45,867 条（`us/earnings.csv`）。OpenD 只读接口，不扣历史 K 线额度。没有期权报价，期权收益用正股加 IV 近似（`studies/trader_options/pricing.py`）。
+
+### 交易员数据总包 trader-pack-20261025
+
+交易员研究用到的数据统一从这一个 Release 取：[trader-pack-20261025](https://github.com/QSothoth/s-alpha/releases/tag/trader-pack-20261025)，2026-10-25 发布并回下载核对。每个 zip 以本机目录名为顶层，解压到 `data/` 后代码路径不变；本机不保留 zip，只留 `data/trader-pack-20261025/` 下的 README、manifest 和校验文件。
+
+| 附件 | 解压目录 | ZIP SHA256 | `CHECKSUMS.sha256` 的 SHA256 |
+|---|---|---|---|
+| `trader-data-v1.zip` | `data/trader-data-v1` | `109799cbaa64e73efe1634e953dd381159d19c5b5b4197df2b9bbecdf4f068ce`（与原 tag 相同） | `812054a6f67600b4df2dde3d093c1a8062ae9632d1c9f34e7f8189aaf301d9ca` |
+| `trader-data-v2.zip` | `data/trader-data-v2` | `f2fbc11393a49002b39316161a6d4dcad65e3e0cd4abbcba0ab78515d7b17ec3` | `009df01d4e87d68b068a3d489eb35c252414d498b4bda6724fdf938d09f7e4f1` |
+| `trader-options-v1.zip` | `data/trader-options-v1` | `78c674b205b425ead4073cf9e021028865b70f494c2839b69d32ddf478a2320a` | `ad35e5da3be288c72230201fddae8722cb4dd7a99e25b5f8bde4b723d345f69b` |
+| `martin-luk-k5-r8.zip` | `data/martin-luk-k5-r8` | `7076bb0cf1d8c850a87ca38e3bf14fb001951a0decca1528169e40d7e360c662` | `855b4d05fe630a84fe962b15a946ce454608407270c58ec879915fbcab74fc03` |
+
+```bash
+gh release download trader-pack-20261025 --repo QSothoth/s-alpha --dir data/trader-pack-20261025
+cd data/trader-pack-20261025 && sha256sum -c PACK_CHECKSUMS.sha256 && for z in *.zip; do python3 -m zipfile -e "$z" ..; done
+```
+
+不在包里、只留本机的：`data/trader-live`（看板增量）、`data/trader-data/cache`、`data/martin-luk-cache`（可重建的缓存），以及 `data/new-styles-sources-20261025`（新流派交易员的一手材料：Karl 结单 PDF、Holguin 台账网页、Sam 访谈字幕，含他人公开的个人资料，不转发到公开仓库）。
 
 ## 附录：日 K 突破趋势跟随研究数据（已发布 Release）
 
@@ -421,6 +440,10 @@ cd data && sha256sum -c preopen-us-train-v1.zip.sha256 && unzip preopen-us-train
 `data/human-nearest-2026-09-29-pre`：11 只科技股的真实最近到期日与标准 Call／Put 链、盘前快照、IV／HV、期权量、财报辅助、原生 RTH 15／30 分钟 K、冻结排名与量基准、请求日志和采集源码；2026-09-29 06:30 ET 完成。只用订阅接口，未调用历史 K 线配额接口。
 
 87 个冻结输入成员已逐项核验；`CHECKSUMS.sha256` 的 SHA256：`a818551c5cb5df379d0a8ac1372a83b71f87c89ade5713f27239512329e4a3d8`。量基准为 09-09→09-28 的 14 个完整日；15／30 分钟开盘量最大差 1 股。角色是人工试运行输入，不是新增独立验证集。`monitor/` 为随后产生的分钟记录，不包含在该冻结输入清单内；尚未收盘，不提前声明输出完整。数据未进 git，未发布 Release。
+
+## 附录：智能买卖执行测试集采集（本机，未发布）
+
+用户 2026-10-26 同意：为“智能买 / 智能卖”执行测试补非 0DTE 期权分钟线。`studies/us_0dte_picks/exec_capture.py` 在每个交易日收盘后，用订阅接口（不扣历史额度）抓 14 个标的四档到期（当天、1–4、5–30、31–75 天）开盘平值 CALL + PUT 的当天 1m，写到 `data/exec-capture-<日期>/`。用户 2026-10-26 决定本机不运行采集，由其他人在其他机器上进行；本机未产生任何采集数据。设计与用途见 [EXEC_TESTSET_CN](../studies/us_0dte_picks/notes/EXEC_TESTSET_CN.md)；攒够交易日后发 Release 再登记哈希。另下载了已归档的 `custody-train-dte4` 到 `data/custody-train-dte4-dl/`，单边且按事后走势选方向，只作诊断。
 
 ## 附录：本机研究工作数据（未发布）
 

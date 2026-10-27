@@ -1,0 +1,991 @@
+{
+ "stage": "used_validation_report_only",
+ "round": "TK14",
+ "datasets": [
+  "data/custody-pack-20261025/custody-eval-holdout-20261023",
+  "data/custody-pack-20261025/custody-eval-2026-09-18-v2"
+ ],
+ "results": {
+  "A2": {
+   "account": {
+    "days": 4,
+    "sharpe": -5.244818089680442,
+    "total": -5.9914177593705675,
+    "max_drawdown": 7.050941089299583,
+    "return_over_drawdown": -0.849733061656559,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.10330030619604429,
+    "win_rate": 0.3275862068965517,
+    "payoff_ratio": 1.4457884860227947,
+    "profit_factor": 0.7043584931905923
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.5196364274153012,
+    "big_winner_200_share": 0.017241379310344827,
+    "profit_factor_first_half": 0.334638780174857,
+    "profit_factor_second_half": 1.1095832877135012
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.25021948389975707,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.1998809391448489,
+     "left_with_loss": 0.42857142857142855
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.7432548840060255,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.4018567502005148,
+     "left_with_loss": 0.15384615384615385
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.39597536638936115
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.5356880815539885
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.48048617476888605
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.3010560640498882
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.4428940838335292
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 36,
+    "platform_flatten": 21,
+    "ticket_take_profit": 1
+   },
+   "contracts": 1,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -3.2957105107523987,
+     "total": -4.162439064026087,
+     "max_drawdown": 6.600654253739329,
+     "return_over_drawdown": -0.6306100734890073,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.07176619075907045
+   }
+  },
+  "G4": {
+   "account": {
+    "days": 4,
+    "sharpe": -2.8440213626973896,
+    "total": -1.9158947313785197,
+    "max_drawdown": 3.7271753069563505,
+    "return_over_drawdown": -0.5140339730741185,
+    "positive_weeks": 0.5
+   },
+   "raw": {
+    "expectancy": -0.03303266778238824,
+    "win_rate": 0.39655172413793105,
+    "payoff_ratio": 1.3498283153503692,
+    "profit_factor": 0.8870300358016712
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.4845522423275004,
+    "big_winner_200_share": 0.017241379310344827,
+    "profit_factor_first_half": 0.8895901764359463,
+    "profit_factor_second_half": 0.8848737383145625
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.39577387775661593,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.3161530554778185,
+     "left_with_loss": 0.2857142857142857
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.9517111483271182,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.5145631161345121,
+     "left_with_loss": 0.0
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.3114093548035034
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.4487416946076015
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.4289458039118266
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.6953223597426201
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.26218617207990474
+    }
+   },
+   "exit_reasons": {
+    "ticket_ratchet": 13,
+    "ticket_stop_loss": 29,
+    "ticket_late_trail": 10,
+    "platform_flatten": 6
+   },
+   "contracts": 1,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -0.31025878280433106,
+     "total": -0.21403645660542692,
+     "max_drawdown": 3.1365419551586826,
+     "return_over_drawdown": -0.06823962812083553,
+     "positive_weeks": 0.5
+    },
+    "raw_expectancy": -0.003690283734576309
+   }
+  },
+  "P2A": {
+   "account": {
+    "days": 4,
+    "sharpe": -4.193942942939086,
+    "total": -3.5755390459396104,
+    "max_drawdown": 4.190101158659757,
+    "return_over_drawdown": -0.8533300057804046,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.06164722492999328,
+    "win_rate": 0.3620689655172414,
+    "payoff_ratio": 1.4345019316696461,
+    "profit_factor": 0.8141767720287181
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.5200436537768837,
+    "big_winner_200_share": 0.017241379310344827,
+    "profit_factor_first_half": 0.6629276426619621,
+    "profit_factor_second_half": 0.9639288311565208
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.3365008665222912,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.26880444390364405,
+     "left_with_loss": 0.35714285714285715
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.929091708116099,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.5023334289435413,
+     "left_with_loss": 0.0
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.3887353569554569
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.5356880815539885
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.48048617476888605
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.5093392147322796
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.31179608403206005
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 34,
+    "ticket_ratchet": 4,
+    "platform_flatten": 18,
+    "ticket_take_profit": 2
+   },
+   "contracts": 2,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -2.8505117825471262,
+     "total": -2.678883097929418,
+     "max_drawdown": 3.9951420807079603,
+     "return_over_drawdown": -0.6705351258633349,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.04618763961947271
+   }
+  },
+  "P2B": {
+   "account": {
+    "days": 4,
+    "sharpe": -2.303818907546823,
+    "total": -1.5705125446850814,
+    "max_drawdown": 3.958638232808054,
+    "return_over_drawdown": -0.39673050486632644,
+    "positive_weeks": 0.5
+   },
+   "raw": {
+    "expectancy": -0.02707780249457037,
+    "win_rate": 0.3620689655172414,
+    "payoff_ratio": 1.6085673849864675,
+    "profit_factor": 0.9129706779652924
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.4877239532506183,
+    "big_winner_200_share": 0.017241379310344827,
+    "profit_factor_first_half": 0.9811722594695478,
+    "profit_factor_second_half": 0.8507573263011943
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.4081089558528101,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.3260065926838983,
+     "left_with_loss": 0.35714285714285715
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 1.0308017623734533,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.557325158895291,
+     "left_with_loss": 0.0
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.3675644589729418
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.492214888080795
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.4547159893403563
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.6617501403564234
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.24010651171689162
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 34,
+    "ticket_ratchet": 8,
+    "platform_flatten": 11,
+    "ticket_late_trail": 4,
+    "ticket_take_profit": 1
+   },
+   "contracts": 2,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -1.0178967793881017,
+     "total": -0.704221132189276,
+     "max_drawdown": 3.565842017933321,
+     "return_over_drawdown": -0.19749083909147105,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.01214174365843581
+   }
+  },
+  "P3A": {
+   "account": {
+    "days": 4,
+    "sharpe": -2.215694393218513,
+    "total": -1.7857570235137201,
+    "max_drawdown": 4.035792541425288,
+    "return_over_drawdown": -0.4424798859663531,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.030788914198512398,
+    "win_rate": 0.3620689655172414,
+    "payoff_ratio": 1.591319950199905,
+    "profit_factor": 0.9031815933567028
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.4984971867593735,
+    "big_winner_200_share": 0.017241379310344827,
+    "profit_factor_first_half": 0.8438400476339004,
+    "profit_factor_second_half": 0.9588788086419463
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.40042165303750155,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.3198658026771925,
+     "left_with_loss": 0.35714285714285715
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 1.0317520792817356,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.5578389681855369,
+     "left_with_loss": 0.0
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.37702870914965525
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.5067059525718596
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.46330605114986617
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.7305325174038155
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.2952594467146749
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 34,
+    "ticket_ratchet": 7,
+    "platform_flatten": 14,
+    "ticket_late_trail": 1,
+    "ticket_take_profit": 2
+   },
+   "contracts": 3,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -1.8263336119686921,
+     "total": -1.4432976780135651,
+     "max_drawdown": 3.708942038858201,
+     "return_over_drawdown": -0.3891399927236083,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.02488444272437182
+   }
+  },
+  "P3B": {
+   "account": {
+    "days": 4,
+    "sharpe": -2.6206527683042977,
+    "total": -1.6270882954129466,
+    "max_drawdown": 3.5585046322736518,
+    "return_over_drawdown": -0.4572393360559836,
+    "positive_weeks": 0.5
+   },
+   "raw": {
+    "expectancy": -0.028053246472636992,
+    "win_rate": 0.4482758620689655,
+    "payoff_ratio": 1.1107545423165253,
+    "profit_factor": 0.9024880656321768
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.5214388327059256,
+    "big_winner_200_share": 0.0,
+    "profit_factor_first_half": 0.9535633953814922,
+    "profit_factor_second_half": 0.8605381941638887
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.40608839332681484,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.3243925219928301,
+     "left_with_loss": 0.17857142857142858
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.8271535484554773,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.44721836889597544,
+     "left_with_loss": 0.0
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.36191727397183326
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.41267381983004936
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.40811551238508303
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.44413531405206985
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.24924463899056412
+    }
+   },
+   "exit_reasons": {
+    "ticket_ratchet": 9,
+    "ticket_stop_loss": 29,
+    "platform_flatten": 18,
+    "ticket_take_profit": 2
+   },
+   "contracts": 3,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": 1.5049374066152972,
+     "total": 1.0106245526579283,
+     "max_drawdown": 2.8186930327899864,
+     "return_over_drawdown": 0.3585436728658588,
+     "positive_weeks": 0.5
+    },
+    "raw_expectancy": 0.017424561252722907
+   }
+  },
+  "P3C": {
+   "account": {
+    "days": 4,
+    "sharpe": -2.721733009982411,
+    "total": -2.537905031470678,
+    "max_drawdown": 4.190101158659757,
+    "return_over_drawdown": -0.6056906349923186,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.04375698330121859,
+    "win_rate": 0.3620689655172414,
+    "payoff_ratio": 1.5295153852274095,
+    "profit_factor": 0.8681033267506919
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.5200436537768837,
+    "big_winner_200_share": 0.017241379310344827,
+    "profit_factor_first_half": 0.7019612774430699,
+    "profit_factor_second_half": 1.032600895071888
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.37355922418189597,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.29840749166284647,
+     "left_with_loss": 0.35714285714285715
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 1.008909709229094,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.5454887491775475,
+     "left_with_loss": 0.0
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.39114264113799857
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.5356880815539885
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.48048617476888605
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.726347954689841
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.3430524949247872
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 34,
+    "ticket_ratchet": 6,
+    "platform_flatten": 16,
+    "ticket_take_profit": 2
+   },
+   "contracts": 3,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -2.528029510405284,
+     "total": -2.4224155976121726,
+     "max_drawdown": 3.9951420807079603,
+     "return_over_drawdown": -0.6063402874480268,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.04176578616572711
+   }
+  },
+  "T1": {
+   "account": {
+    "days": 4,
+    "sharpe": -5.74494126933189,
+    "total": -4.091123349980588,
+    "max_drawdown": 4.091123349980588,
+    "return_over_drawdown": -1.0,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.07053660948242393,
+    "win_rate": 0.3448275862068966,
+    "payoff_ratio": 1.4608576957649604,
+    "profit_factor": 0.7688724714552423
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.46580838495019156,
+    "big_winner_200_share": 0.0,
+    "profit_factor_first_half": 0.6842346577861649,
+    "profit_factor_second_half": 0.8617486313002687
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.27365933853927427,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.2186052210662456,
+     "left_with_loss": 0.39285714285714285
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.7525447217083208,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.4068795009005349,
+     "left_with_loss": 0.15384615384615385
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.35770410314818796
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.4836035047672339
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.37272838341469483
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.18000173071219194
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.26838147845112054
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 22,
+    "ticket_breakeven": 3,
+    "ticket_ema_trail": 13,
+    "platform_flatten": 8,
+    "ticket_structure_stop": 12
+   },
+   "contracts": 1,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -3.3247886305472716,
+     "total": -2.546636332548393,
+     "max_drawdown": 3.711762220289217,
+     "return_over_drawdown": -0.6860989959507594,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.04390752297497229
+   }
+  },
+  "T2": {
+   "account": {
+    "days": 4,
+    "sharpe": -2.6380834165665497,
+    "total": -2.073579510396276,
+    "max_drawdown": 3.9299573964112624,
+    "return_over_drawdown": -0.5276340940209215,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.03575137086890131,
+    "win_rate": 0.3448275862068966,
+    "payoff_ratio": 1.6774214057333892,
+    "profit_factor": 0.8828533714386259
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.46580838495019156,
+    "big_winner_200_share": 0.0,
+    "profit_factor_first_half": 0.8087217778346797,
+    "profit_factor_second_half": 0.9642006728238706
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.34652338897619867,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.2768106597644757,
+     "left_with_loss": 0.39285714285714285
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.8844473673473376,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.47819550522149096,
+     "left_with_loss": 0.15384615384615385
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.34152745452939814
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.4836035047672339
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.3528714699966776
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.4824674161686174
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.23362443060518046
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 22,
+    "ticket_breakeven": 3,
+    "ticket_ema_trail": 13,
+    "platform_flatten": 8,
+    "ticket_structure_stop": 12
+   },
+   "contracts": 2,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -0.2732938414936553,
+     "total": -0.23264398038878076,
+     "max_drawdown": 3.711762220289217,
+     "return_over_drawdown": -0.06267750103093979,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.004011103110151388
+   }
+  },
+  "T3": {
+   "account": {
+    "days": 4,
+    "sharpe": -5.147549360656457,
+    "total": -4.00396207603165,
+    "max_drawdown": 4.00396207603165,
+    "return_over_drawdown": -1.0,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.06903382889709739,
+    "win_rate": 0.3448275862068966,
+    "payoff_ratio": 1.4702136108541934,
+    "profit_factor": 0.7737966372916809
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.46580838495019156,
+    "big_winner_200_share": 0.0,
+    "profit_factor_first_half": 0.6304757953324138,
+    "profit_factor_second_half": 0.9310678243638943
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.27731151671958326,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.2215226629585682,
+     "left_with_loss": 0.39285714285714285
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.7345742173186797,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.39716336092098686,
+     "left_with_loss": 0.15384615384615385
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.3567436359657168
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.4836035047672339
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.3663527568025373
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.22909469344245537
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.292938258280384
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 24,
+    "ticket_breakeven": 4,
+    "platform_flatten": 17,
+    "ticket_structure_stop": 12,
+    "ticket_r_strength": 1
+   },
+   "contracts": 3,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -2.7471905375306127,
+     "total": -2.303222150552461,
+     "max_drawdown": 3.711762220289217,
+     "return_over_drawdown": -0.6205198538749598,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.03971072673366311
+   }
+  },
+  "T4": {
+   "account": {
+    "days": 4,
+    "sharpe": -3.244063012753206,
+    "total": -2.4203322662919637,
+    "max_drawdown": 3.929957396411263,
+    "return_over_drawdown": -0.6158673039311189,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.04172986666020625,
+    "win_rate": 0.3448275862068966,
+    "payoff_ratio": 1.6402008696611625,
+    "profit_factor": 0.8632636156111382
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.46580838495019156,
+    "big_winner_200_share": 0.0,
+    "profit_factor_first_half": 0.8090358982064791,
+    "profit_factor_second_half": 0.9227696677097651
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.3341393619799241,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.2669180210785044,
+     "left_with_loss": 0.39285714285714285
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.8705972889421265,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.47070716223484016,
+     "left_with_loss": 0.15384615384615385
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.3306674545773053
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.4836035047672339
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.3590037520816535
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.5039401845984193
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.2539443134719662
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 22,
+    "ticket_breakeven": 3,
+    "ticket_swing_trail": 13,
+    "platform_flatten": 8,
+    "ticket_structure_stop": 12
+   },
+   "contracts": 2,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -0.7683184831108547,
+     "total": -0.6186490151907127,
+     "max_drawdown": 3.711762220289217,
+     "return_over_drawdown": -0.16667258797157222,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.010666362330874354
+   }
+  },
+  "T5": {
+   "account": {
+    "days": 4,
+    "sharpe": -4.072754948027627,
+    "total": -2.977262627521505,
+    "max_drawdown": 3.9299573964112624,
+    "return_over_drawdown": -0.7575814003073585,
+    "positive_weeks": 0.25
+   },
+   "raw": {
+    "expectancy": -0.05133211426761214,
+    "win_rate": 0.3448275862068966,
+    "payoff_ratio": 1.5804198116957615,
+    "profit_factor": 0.8317999008925061
+   },
+   "shape": {
+    "trades": 58,
+    "average_loss": -0.46580838495019156,
+    "big_winner_200_share": 0.0,
+    "profit_factor_first_half": 0.7674354847330411,
+    "profit_factor_second_half": 0.902429322239933
+   },
+   "kept_profit": {
+    "peak_50": {
+     "trades": 28,
+     "share": 0.4827586206896552,
+     "exit_mean": 0.3139793541663741,
+     "peak_mean": 1.251842646778986,
+     "kept": 0.25081375440775144,
+     "left_with_loss": 0.39285714285714285
+    },
+    "peak_100": {
+     "trades": 13,
+     "share": 0.22413793103448276,
+     "exit_mean": 0.8312464331975248,
+     "peak_mean": 1.849551820730056,
+     "kept": 0.44943127512340514,
+     "left_with_loss": 0.15384615384615385
+    }
+   },
+   "by_scenario": {
+    "trend_with": {
+     "trades": 20,
+     "mean": 0.33967967076759953
+    },
+    "trend_against": {
+     "trades": 13,
+     "mean": -0.4836035047672339
+    },
+    "reversal_against": {
+     "trades": 9,
+     "mean": -0.3635786291926673
+    },
+    "reversal_with": {
+     "trades": 6,
+     "mean": 0.3959606999696768
+    },
+    "chop": {
+     "trades": 10,
+     "mean": -0.25875670179835103
+    }
+   },
+   "exit_reasons": {
+    "ticket_stop_loss": 22,
+    "ticket_breakeven": 3,
+    "ticket_ema_trail": 5,
+    "platform_flatten": 8,
+    "ticket_swing_trail": 8,
+    "ticket_structure_stop": 12
+   },
+   "contracts": 3,
+   "no_slippage": {
+    "account": {
+     "days": 4,
+     "sharpe": -1.6009246900935223,
+     "total": -1.2613114543099395,
+     "max_drawdown": 3.711762220289217,
+     "return_over_drawdown": -0.33981472396463464,
+     "positive_weeks": 0.25
+    },
+    "raw_expectancy": -0.021746749212240353
+   }
+  }
+ },
+ "lodo": null,
+ "passed": null
+}
