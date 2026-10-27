@@ -408,3 +408,13 @@ class EmanuelaSwingTimingTests(unittest.TestCase):
         F = A['F']
         for d in np.flatnonzero(m[:, 0]):
             self.assertTrue(F.c[d, 0] > F.ema(10)[d, 0])
+
+    def test_e4_switches_read_nothing_later(self):
+        from studies.emanuela_elias.swing import STUDY, SWING
+        cfg = dict(SWING, setups=['pullback'], trend=dict(sma_long=250, sma_daily=None, stage2=True),
+                   pullback=dict(SWING['pullback'], tight=10.0, need_high=False, trigger='bounce',
+                                 ma_tight=(.05, .10), higher_low=True))
+        A, B = self.panel(), self.panel(tail=1.0)
+        _, _, m, _ = STUDY.build(A, cfg)
+        _, _, m2, _ = STUDY.build(B, cfg)
+        np.testing.assert_array_equal(m[:307], m2[:307])

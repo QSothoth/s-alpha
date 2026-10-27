@@ -57,6 +57,9 @@ class Swing(Emanuela):
             trend = c > F.sma(tr['sma_long'])
             if tr.get('sma_daily'):                               # E2: None drops the daily 200 SMA filter
                 trend = trend & (c > F.sma(tr['sma_daily']))
+            if tr.get('stage2'):                                  # E4: "the moving averages are aligned and the stock
+                trend = ((e10 > e20) & (e20 > F.sma(50)) & (F.sma(50) > F.sma(200))   # is above the 200 SMA ... I
+                         & (c > F.sma(200)))                                         # don't trade stocks that do not look like this"
             pool = lag(self.pool(A, cfg))
             entries = [[] for _ in range(len(c))]
             mask = np.zeros(c.shape, bool)
@@ -72,12 +75,17 @@ class Swing(Emanuela):
                     near |= (l <= e20 * (1 + pb["touch"])) if k == 0 else lag(l <= e20 * (1 + pb["touch"]), k)
                 atr5 = self._atr(A, 5)
                 tight = atr5 <= pb['tight'] * self._atr(A, 20)
+                if pb.get('ma_tight'):                            # E4: "the moving averages are super close. I like
+                    tight = ((np.abs(e10 - e20) <= pb['ma_tight'][0] * c)            # that tightness"
+                             & (np.abs(e20 - F.sma(50)) <= pb['ma_tight'][1] * c))
                 reclaim = (c > e10) & (lag(c) <= lag(e10))         # the daily close back above the 10 EMA
                 if pb.get('trigger') == 'bounce':                 # E2: or the day's low on the 10 EMA, the close
                     reclaim = reclaim | ((l <= e10) & (c > e10))   # above it (her hourly entry off the daily EMA)
                 if not pb.get('need_high', True):                 # E2: no recent breakout required
                     made_high = np.ones(c.shape, bool)
                 m = pool & trend & made_high & near & tight & reclaim
+                if pb.get('higher_low'):                          # E4: the pullback holds above the prior swing low
+                    m = m & (F.lo(5) > lag(F.lo(10), 5))
                 stop = np.fmin(F.lo(cfg['stop_floor']), c * (1 - cfg['min_stop']))
                 self._add(entries, mask, m, F, stop, 'pb')
             if 'base' in cfg['setups']:
@@ -91,6 +99,11 @@ class Swing(Emanuela):
                     else pool & dropped & flat & brk
                 stop = np.fmin(b_lo * .995, c * (1 - cfg['min_stop']))
                 self._add(entries, mask, m, F, stop, 'bb')
+        if cfg.get('no_earn'):                                    # E4: "I don't stay in my options during earnings.
+            soon = self._earn_soon(A, cfg['no_earn'])             # I'm out before them": no entry with a scheduled
+            for d in range(len(entries)):                         # report inside the next n sessions
+                entries[d] = [e for e in entries[d] if not soon[d, e[1]]]
+            mask &= ~soon
         ro = dict(cfg.get('rule_opts', {}))
         ro['trims'] = tuple(ro.get('trims', ()))
         rules = Y.Rules(**ro, exit_signal='x_ext', max_new_all=cfg.get('max_new', 3))
@@ -113,6 +126,20 @@ class Swing(Emanuela):
                  turnover=F.turnover, raw=F.raw, volume=F.v)
         A['to20'], A['adr'], A['has'], A['digest'] = F.to20, F.adr, np.isfinite(F.c), 'trader-hourly-v1 daily'
         return A
+
+    def _earn_soon(self, A, n):
+        """(days x codes) bool: a scheduled earnings reaction day within the next n sessions (the calendar is
+        published ahead of the report)."""
+        from studies.trader_options import pricing as P
+        key = ('earn_soon', n)
+        if key not in A:
+            ev = P.earnings({str(c) for c in A['codes']})
+            out = np.zeros((len(A['days']), len(A['codes'])), bool)
+            for j, code in enumerate(A['codes']):
+                for r in P.reactions(A['days'], ev.get(str(code), [])):
+                    out[max(r - n, 0):r, j] = True
+            A[key] = out
+        return A[key]
 
     @staticmethod
     def _add(entries, mask, m, F, stop, kind):
