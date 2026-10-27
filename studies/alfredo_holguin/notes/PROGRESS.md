@@ -61,3 +61,7 @@ R4 RTOE = 20 日成交额 ≥ 5 亿、期权日均 ≥ 2 万张、价格 ≥ 20�
 ## 2026-10-27：ERR2–ERR6（5 轮）
 
 见 `studies/trader_replication/reports/ERR_ROUNDS_20261027_CN.md`。
+
+## 2026-10-27：ERR7（用他自己的滚动名单选股）
+
+带入 OWN180Y：2025 +69.1
