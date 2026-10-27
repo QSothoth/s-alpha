@@ -13,4 +13,4 @@
 | 止损 | “I do use hard stop … the data should tell you where that is” | 00:35–00:36 | 入场价上方固定百分比，日 K 上碰到最高价就按止损（假设先止损） |
 | 仓位 | “every day I was resetting risk … based upon the account size” | 00:34 | 每笔风险 2% 净值（研究者取值），每天按当前净值 |
 | 费用 | “locate fees … I don't like to think about it” | 00:29 | 每笔另扣 0.5% 名义金额 |
-| 成绩 | 2019 年 1 万 → 8.6 万；2020 年 → 220 万；2021 年末 380 万；2022–2023 “basically a wash”；2024 年“up like 100%”；约 400 笔 / 年；单日最大亏损 50 万 | 00:26–00:41、00:53 | 2024 年 +100% 作为目标 |
+| 成绩 | 2019 年 1 万 → 8.6 万；2020 年 → 220 万；2021 年末 380 万；2022–2023 “basically a wash”；2024 年“up like 100%”；约 400 笔是 **2019 年**（“the first year … 400 round trip”），2020 年“至少翻倍”；2024 年笔数未说（2026-10-26 更正：此前误把 400 当成 2024 的年笔数）；单日最大亏损 50 万 | 00:26–00:41、00:53 | 2024 年 +100% 作为目标 |
