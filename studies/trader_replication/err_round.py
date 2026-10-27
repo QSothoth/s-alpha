@@ -93,7 +93,10 @@ for key in who:
     ref = s['ref']
     ok = [k for k in res if res[k]['beats']]
     best = min(ok, key=lambda k: res[k]['maxerr']) if ok else ref
-    chosen = best if res[best]['maxerr'] < res[ref]['maxerr'] else ref
+    rk = lambda k: max(v for m, v in res[k]['err'].items() if m.startswith('ret'))
+    if res[best]['maxerr'] >= res[ref]['maxerr'] or rk(best) > max(rk(ref), .15):   # ERR3: no return regression
+        best = ref
+    chosen = best
     out[key] = dict(results=res, ref=ref, chosen=chosen, meets=bool(res[chosen]['maxerr'] <= .15 and res[chosen]['beats']))
     print(key, 'CHOSEN', chosen, res[chosen]['maxerr'], 'meets', out[key]['meets'], flush=True); save()
 print('exit 0')
