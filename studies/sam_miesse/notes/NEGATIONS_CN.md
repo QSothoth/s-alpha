@@ -52,3 +52,7 @@
 | R11 | his stop and his names, at his worst-day risk | ATR3TO20 | `{"stop_atr": 3.0, "turnover_max": 20000000.0}` | r9.json:chosen | G25S5R4 | gates: years；全区间 -2%（带入 +82%） | open |
 | R11 | his stop and his names, at his worst-day risk | MX3 | `{"max_new": 3}` | r9.json:chosen | G25S5R4 | gates: years；全区间 +83%（带入 +82%） | open |
 | R11 | his stop and his names, at his worst-day risk | TO20 | `{"turnover_max": 20000000.0}` | r9.json:chosen | G25S5R4 | gates: years；全区间 +99%（带入 +82%） | open |
+| R12 | parabolic / hyperextension at his worst-day risk | D220 | `{"d2": 0.2}` | r11.json:chosen | PRUN | gates: years, behav；全区间 -6%（带入 +84%） | open |
+| R12 | parabolic / hyperextension at his worst-day risk | PRUNMX3 | `{"priority": "run", "max_new": 3}` | r11.json:chosen | PRUN | gates: years；全区间 +66%（带入 +84%） | open |
+| R12 | parabolic / hyperextension at his worst-day risk | RUN30 | `{"run": 0.3}` | r11.json:chosen | PRUN | gates: years, behav；全区间 +21%（带入 +84%） | open |
+| R12 | parabolic / hyperextension at his worst-day risk | RUN50 | `{"run": 0.5}` | r11.json:chosen | PRUN | gates: years, behav；全区间 -14%（带入 +84%） | open |
