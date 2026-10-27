@@ -138,10 +138,31 @@ class Holguin:
                 m &= A['trend'] <= cfg['trend_max']
             if cfg.get('iv_min'):                                    # R6: his names' IV (median 0.54, 25% 0.41)
                 m &= A['iv'] >= cfg['iv_min']
+            if cfg.get('his_roll'):                                  # ERR7: his own selection -- names he sold puts on
+                m &= self.his_names_mask(A, cfg['his_roll'])         # in the prior N calendar days (known by then)
             if cfg.get('names'):                                     # ERR4 diagnosis only: his own names (lookahead)
                 keep = set(cfg['names'])
                 m &= np.array([str(c)[3:] in keep for c in A['codes']])[None, :]
         return lag(m)                                                # as of the prior close
+
+    def his_names_mask(self, A, days_back):
+        """[day, name]: he opened a put on the name within the `days_back` calendar days before that day (his ledger,
+        only trades already entered -- no lookahead)."""
+        days = [dt.date.fromisoformat(str(d)) for d in A['days']]
+        ci = {str(c)[3:]: j for j, c in enumerate(A['codes'])}
+        seen = {}
+        for t in csv.DictReader(open(HERE / 'notes' / 'trades_holguin.csv', encoding='utf-8')):
+            j = ci.get(t['symbol'].upper())
+            if j is not None and t['date_entered']:
+                seen.setdefault(j, []).append(dt.date.fromisoformat(t['date_entered'][:10]))
+        m = np.zeros((len(days), len(A['codes'])), bool)
+        for j, ds in seen.items():
+            ds = np.array(sorted(ds), dtype='datetime64[D]')
+            for i, d in enumerate(days):
+                d64 = np.datetime64(d)
+                k = np.searchsorted(ds, d64)                         # entries strictly before d
+                m[i, j] = k > 0 and (d64 - ds[k - 1]).astype(int) <= days_back
+        return m
 
     def simulate(self, cfg, start, end, placebo=None, audit=False):
         """(equity curve, dates, trades).  placebo: a numpy Generator; each day's new puts go to random eligible
