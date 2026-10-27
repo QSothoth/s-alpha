@@ -71,7 +71,7 @@ for key in who:
                           maxerr=round(max(err.values()), 3), placebo=round(st['placebo']['median'], 3), beats=bool(st['total'] > st['placebo']['median']),
                           y2026=dict(total=round(st26['total'], 3), n=st26['trades']))
             print(key, k, json.dumps({x: res[k][x] for x in ('err', 'maxerr', 'total', 'strike_med', 'beats', 'y2026')}), flush=True)
-    elif key == 'hol':
+    elif key in ('hol', 'hol_diag'):
         from studies.alfredo_holguin.replicate import STUDY as H
         base = base_of(H, s); res = {}
         his = dict(ret=.56, win=.898, per_week=16.6, names_per_week=12.7, per_name_week=1.31)

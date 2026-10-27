@@ -138,6 +138,9 @@ class Holguin:
                 m &= A['trend'] <= cfg['trend_max']
             if cfg.get('iv_min'):                                    # R6: his names' IV (median 0.54, 25% 0.41)
                 m &= A['iv'] >= cfg['iv_min']
+            if cfg.get('names'):                                     # ERR4 diagnosis only: his own names (lookahead)
+                keep = set(cfg['names'])
+                m &= np.array([str(c)[3:] in keep for c in A['codes']])[None, :]
         return lag(m)                                                # as of the prior close
 
     def simulate(self, cfg, start, end, placebo=None, audit=False):
