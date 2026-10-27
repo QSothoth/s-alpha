@@ -1,0 +1,399 @@
+{
+ "name": "R6",
+ "base": [
+  "r5.json",
+  "chosen"
+ ],
+ "configs": {
+  "CHL13": {
+   "lead": 13,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 1,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.01,
+   "e_mode": "hist",
+   "e_mult": 2.0,
+   "take_intraday": true,
+   "placebo_events": true,
+   "cheap": 1.2
+  },
+  "CHD35": {
+   "lead": 12,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.35,
+   "max_open": 1,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.01,
+   "e_mode": "hist",
+   "e_mult": 2.0,
+   "take_intraday": true,
+   "placebo_events": true,
+   "cheap": 1.2
+  },
+  "CHL13D35": {
+   "lead": 13,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.35,
+   "max_open": 1,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.01,
+   "e_mode": "hist",
+   "e_mult": 2.0,
+   "take_intraday": true,
+   "placebo_events": true,
+   "cheap": 1.2
+  },
+  "CH15": {
+   "lead": 12,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 1,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.01,
+   "e_mode": "hist",
+   "e_mult": 2.0,
+   "take_intraday": true,
+   "placebo_events": true,
+   "cheap": 1.5
+  },
+  "CH15L13": {
+   "lead": 13,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 1,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.01,
+   "e_mode": "hist",
+   "e_mult": 2.0,
+   "take_intraday": true,
+   "placebo_events": true,
+   "cheap": 1.5
+  },
+  "CH12": {
+   "lead": 12,
+   "width": 1.0,
+   "ratio": 2.0,
+   "take": 0.25,
+   "stop": 0.0,
+   "exit_lead": 1,
+   "turnover": 1000000000.0,
+   "optvol": 50000,
+   "price": 50.0,
+   "debit": 0.25,
+   "max_open": 1,
+   "skew": 0.0,
+   "call_skew": 0.0,
+   "spread": 0.01,
+   "e_mode": "hist",
+   "e_mult": 2.0,
+   "take_intraday": true,
+   "placebo_events": true,
+   "cheap": 1.2
+  }
+ },
+ "full": {
+  "CHL13": {
+   "total": 0.41690783180547664,
+   "maxdd": 0.27838308983128945,
+   "by_year": {
+    "2024": -0.08177456581991482,
+    "2025": 0.5430936446131902
+   },
+   "trades": 35,
+   "win": 0.7428571428571429,
+   "avg_ret": 0.057804960302632984,
+   "hold": 5.942857142857143,
+   "why": {
+    "take": 22,
+    "stop": 0,
+    "time": 13
+   },
+   "placebo": {
+    "median": 0.025270011257131186,
+    "rank": 1.0,
+    "draws": 6
+   },
+   "his_hit": {
+    "positions": 26,
+    "same_name_within_5d": 7,
+    "names": 17
+   },
+   "goal": -3.348585306360827,
+   "goal_years": 3.348585306360827,
+   "goal_behav": 1.8796992481203012,
+   "goal_parts": {
+    "year": 1.004575591908248,
+    "behaviour": {
+     "per_year": 0.30000000000000004,
+     "win": 0.11564625850340127,
+     "hold": 0.5639097744360904
+    }
+   },
+   "meets": false
+  },
+  "CHD35": {
+   "total": 2.4096594094313337,
+   "maxdd": 0.35818287351353273,
+   "by_year": {
+    "2024": -0.12881846717994905,
+    "2025": 2.913833433078091
+   },
+   "trades": 39,
+   "win": 0.7692307692307693,
+   "avg_ret": 0.10441432889686983,
+   "hold": 4.384615384615385,
+   "why": {
+    "take": 28,
+    "stop": 0,
+    "time": 11
+   },
+   "placebo": {
+    "median": 0.43242230859150355,
+    "rank": 1.0,
+    "draws": 6
+   },
+   "his_hit": {
+    "positions": 26,
+    "same_name_within_5d": 6,
+    "names": 17
+   },
+   "goal": -0.7333333333333333,
+   "goal_years": 0.24615847347362368,
+   "goal_behav": 0.7333333333333333,
+   "goal_parts": {
+    "year": 0.0738475420420871,
+    "behaviour": {
+     "per_year": 0.21999999999999997,
+     "win": 0.08424908424908417,
+     "hold": 0.15384615384615397
+    }
+   },
+   "meets": true
+  },
+  "CHL13D35": {
+   "total": 0.5587321312082223,
+   "maxdd": 0.37603564005802526,
+   "by_year": {
+    "2024": -0.12703348225633504,
+    "2025": 0.7855577499547621
+   },
+   "trades": 35,
+   "win": 0.7428571428571429,
+   "avg_ret": 0.057804960302632984,
+   "hold": 5.942857142857143,
+   "why": {
+    "take": 22,
+    "stop": 0,
+    "time": 13
+   },
+   "placebo": {
+    "median": -0.012608944905157793,
+    "rank": 1.0,
+    "draws": 6
+   },
+   "his_hit": {
+    "positions": 26,
+    "same_name_within_5d": 7,
+    "names": 17
+   },
+   "goal": -2.862113406752161,
+   "goal_years": 2.862113406752161,
+   "goal_behav": 1.8796992481203012,
+   "goal_parts": {
+    "year": 0.8586340220256483,
+    "behaviour": {
+     "per_year": 0.30000000000000004,
+     "win": 0.11564625850340127,
+     "hold": 0.5639097744360904
+    }
+   },
+   "meets": false
+  },
+  "CH15": {
+   "total": 3.087942438707892,
+   "maxdd": 0.10227479504201009,
+   "by_year": {
+    "2024": 0.438084730725141,
+    "2025": 1.842629750088915
+   },
+   "trades": 47,
+   "win": 0.8297872340425532,
+   "avg_ret": 0.12868967742851217,
+   "hold": 4.276595744680851,
+   "why": {
+    "take": 33,
+    "stop": 0,
+    "time": 14
+   },
+   "placebo": {
+    "median": 0.9490825243321348,
+    "rank": 1.0,
+    "draws": 6
+   },
+   "his_hit": {
+    "positions": 26,
+    "same_name_within_5d": 8,
+    "names": 17
+   },
+   "goal": -1.3121175378027725,
+   "goal_years": 1.3121175378027725,
+   "goal_behav": 0.4180664427025005,
+   "goal_parts": {
+    "year": 0.39363526134083177,
+    "behaviour": {
+     "per_year": 0.06000000000000005,
+     "win": 0.012158054711246202,
+     "hold": 0.12541993281075015
+    }
+   },
+   "meets": false
+  },
+  "CH15L13": {
+   "total": 2.3238784706622164,
+   "maxdd": 0.15974566040657467,
+   "by_year": {
+    "2024": 0.286365309532024,
+    "2025": 1.5839304325389758
+   },
+   "trades": 47,
+   "win": 0.7872340425531915,
+   "avg_ret": 0.11473222833285264,
+   "hold": 4.829787234042553,
+   "why": {
+    "take": 35,
+    "stop": 0,
+    "time": 12
+   },
+   "placebo": {
+    "median": 1.109702192989314,
+    "rank": 1.0,
+    "draws": 6
+   },
+   "his_hit": {
+    "positions": 26,
+    "same_name_within_5d": 5,
+    "names": 17
+   },
+   "goal": -1.6301773008166287,
+   "goal_years": 1.6301773008166287,
+   "goal_behav": 0.9033221351250464,
+   "goal_parts": {
+    "year": 0.4890531902449886,
+    "behaviour": {
+     "per_year": 0.06000000000000005,
+     "win": 0.06281661600810529,
+     "hold": 0.27099664053751393
+    }
+   },
+   "meets": false
+  },
+  "CH12": {
+   "total": 1.4653043657348266,
+   "maxdd": 0.2626439661175839,
+   "by_year": {
+    "2024": -0.08136140516789214,
+    "2025": 1.6836498919201084
+   },
+   "trades": 39,
+   "win": 0.7692307692307693,
+   "avg_ret": 0.10441432889686983,
+   "hold": 4.384615384615385,
+   "why": {
+    "take": 28,
+    "stop": 0,
+    "time": 11
+   },
+   "placebo": {
+    "median": 0.3339149809997668,
+    "rank": 1.0,
+    "draws": 6
+   },
+   "his_hit": {
+    "positions": 26,
+    "same_name_within_5d": 6,
+    "names": 17
+   },
+   "goal": -1.5039569515418558,
+   "goal_years": 1.5039569515418558,
+   "goal_behav": 0.7333333333333333,
+   "goal_parts": {
+    "year": 0.4511870854625567,
+    "behaviour": {
+     "per_year": 0.21999999999999997,
+     "win": 0.08424908424908417,
+     "hold": 0.15384615384615397
+    }
+   },
+   "meets": false
+  }
+ },
+ "chosen": "CHD35",
+ "chosen_config": {
+  "lead": 12,
+  "width": 1.0,
+  "ratio": 2.0,
+  "take": 0.25,
+  "stop": 0.0,
+  "exit_lead": 1,
+  "turnover": 1000000000.0,
+  "optvol": 50000,
+  "price": 50.0,
+  "debit": 0.35,
+  "max_open": 1,
+  "skew": 0.0,
+  "call_skew": 0.0,
+  "spread": 0.01,
+  "e_mode": "hist",
+  "e_mult": 2.0,
+  "take_intraday": true,
+  "placebo_events": true,
+  "cheap": 1.2
+ },
+ "gates": [
+  "placebo",
+  "years",
+  "behav"
+ ],
+ "objective": "goal"
+}

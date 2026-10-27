@@ -1,0 +1,453 @@
+{
+ "name": "R8",
+ "base": [
+  "r7.json",
+  "chosen"
+ ],
+ "configs": {
+  "C175": {
+   "cushion": 1.75,
+   "trend": 2.0,
+   "turnover": 100000000.0,
+   "optvol": 20000,
+   "price": 20.0,
+   "earnings": false,
+   "min_dte": 2,
+   "frac": 0.05,
+   "cap": 1.0,
+   "max_new": 4,
+   "priority": "turnover",
+   "skew": 0.1,
+   "spread": 0.05,
+   "take": 0.0,
+   "margin": "regt",
+   "vol": "max5",
+   "v2": true,
+   "k": 0.05,
+   "iv_min": 0.4
+  },
+  "E": {
+   "cushion": 2.0,
+   "trend": 2.0,
+   "turnover": 100000000.0,
+   "optvol": 20000,
+   "price": 20.0,
+   "earnings": true,
+   "min_dte": 2,
+   "frac": 0.05,
+   "cap": 1.0,
+   "max_new": 4,
+   "priority": "turnover",
+   "skew": 0.1,
+   "spread": 0.05,
+   "take": 0.0,
+   "margin": "regt",
+   "vol": "max5",
+   "v2": true,
+   "k": 0.05,
+   "iv_min": 0.4
+  },
+  "F6": {
+   "cushion": 2.0,
+   "trend": 2.0,
+   "turnover": 100000000.0,
+   "optvol": 20000,
+   "price": 20.0,
+   "earnings": false,
+   "min_dte": 2,
+   "frac": 0.06,
+   "cap": 1.0,
+   "max_new": 4,
+   "priority": "turnover",
+   "skew": 0.1,
+   "spread": 0.05,
+   "take": 0.0,
+   "margin": "regt",
+   "vol": "max5",
+   "v2": true,
+   "k": 0.05,
+   "iv_min": 0.4
+  },
+  "MN5": {
+   "cushion": 2.0,
+   "trend": 2.0,
+   "turnover": 100000000.0,
+   "optvol": 20000,
+   "price": 20.0,
+   "earnings": false,
+   "min_dte": 2,
+   "frac": 0.05,
+   "cap": 1.0,
+   "max_new": 5,
+   "priority": "turnover",
+   "skew": 0.1,
+   "spread": 0.05,
+   "take": 0.0,
+   "margin": "regt",
+   "vol": "max5",
+   "v2": true,
+   "k": 0.05,
+   "iv_min": 0.4
+  },
+  "C175MN5": {
+   "cushion": 1.75,
+   "trend": 2.0,
+   "turnover": 100000000.0,
+   "optvol": 20000,
+   "price": 20.0,
+   "earnings": false,
+   "min_dte": 2,
+   "frac": 0.05,
+   "cap": 1.0,
+   "max_new": 5,
+   "priority": "turnover",
+   "skew": 0.1,
+   "spread": 0.05,
+   "take": 0.0,
+   "margin": "regt",
+   "vol": "max5",
+   "v2": true,
+   "k": 0.05,
+   "iv_min": 0.4
+  },
+  "TO1": {
+   "cushion": 2.0,
+   "trend": 2.0,
+   "turnover": 100000000.0,
+   "optvol": 20000,
+   "price": 20.0,
+   "earnings": false,
+   "min_dte": 2,
+   "frac": 0.05,
+   "cap": 1.0,
+   "max_new": 4,
+   "priority": "turnover",
+   "skew": 0.1,
+   "spread": 0.05,
+   "take": 0.0,
+   "margin": "regt",
+   "vol": "max5",
+   "v2": true,
+   "k": 0.05,
+   "iv_min": 0.4
+  }
+ },
+ "full": {
+  "C175": {
+   "total": 0.036896889237084896,
+   "maxdd": 0.45086066528497715,
+   "by_year": {
+    "2024": 0.04810696807166659,
+    "2025": -0.010695548427853918
+   },
+   "trades": 1574,
+   "win": 0.9186785260482846,
+   "worst_trade": -0.28873400188008186,
+   "fidelity": {
+    "his_positions": 705,
+    "ours": 1590,
+    "both": 225,
+    "his_hit": 0.3191489361702128,
+    "our_hit": 0.14150943396226415,
+    "names_his": 111,
+    "names_ours": 132,
+    "names_both": 65,
+    "win": 0.9186785260482846,
+    "his_win": 0.8984375,
+    "per_week": 15.134615384615385,
+    "his_per_week": 16.59259259259259
+   },
+   "weekly": {
+    "weeks": 53,
+    "corr": 0.24704967747162607,
+    "ours_compound": -0.011494192180255824,
+    "his_compound": 0.516737658169903,
+    "worst_week": -0.18208618310135105
+   },
+   "placebo": {
+    "median": -0.2270900301293433,
+    "rank": 1.0,
+    "draws": 10
+   },
+   "goal": -1.5187708913631417,
+   "goal_years": 1.5187708913631417,
+   "goal_behav": 0.2942539388322522,
+   "goal_parts": {
+    "year": 0.4556312674089425,
+    "behaviour": {
+     "win": 0.0234832063817787,
+     "per_week": 0.08827618164967566
+    }
+   },
+   "meets": false
+  },
+  "E": {
+   "total": 0.36092629131688003,
+   "maxdd": 0.28841778970805376,
+   "by_year": {
+    "2024": 0.16242156893330084,
+    "2025": 0.170768271760251
+   },
+   "trades": 1576,
+   "win": 0.9371827411167513,
+   "worst_trade": -0.21733836882271693,
+   "fidelity": {
+    "his_positions": 705,
+    "ours": 1592,
+    "both": 229,
+    "his_hit": 0.324822695035461,
+    "our_hit": 0.14384422110552764,
+    "names_his": 111,
+    "names_ours": 135,
+    "names_both": 67,
+    "win": 0.9371827411167513,
+    "his_win": 0.8984375,
+    "per_week": 15.153846153846153,
+    "his_per_week": 16.59259259259259
+   },
+   "weekly": {
+    "weeks": 53,
+    "corr": 0.010868602806913527,
+    "ours_compound": 0.17364140728394584,
+    "his_compound": 0.516737658169903,
+    "worst_week": -0.13176610117364929
+   },
+   "placebo": {
+    "median": -0.09394804887033176,
+    "rank": 0.8,
+    "draws": 10
+   },
+   "goal": -0.9573931154019379,
+   "goal_years": 0.9573931154019379,
+   "goal_behav": 0.29039233858511004,
+   "goal_parts": {
+    "year": 0.28721793462058137,
+    "behaviour": {
+     "win": 0.044098419247717624,
+     "per_week": 0.087117701575533
+    }
+   },
+   "meets": true
+  },
+  "F6": {
+   "total": 0.10507552566847012,
+   "maxdd": 0.36428286954799316,
+   "by_year": {
+    "2024": -0.055423723746285125,
+    "2025": 0.1699166636402425
+   },
+   "trades": 1388,
+   "win": 0.9380403458213257,
+   "worst_trade": -0.2791794975309922,
+   "fidelity": {
+    "his_positions": 705,
+    "ours": 1403,
+    "both": 213,
+    "his_hit": 0.3021276595744681,
+    "our_hit": 0.1518175338560228,
+    "names_his": 111,
+    "names_ours": 120,
+    "names_both": 61,
+    "win": 0.9380403458213257,
+    "his_win": 0.8984375,
+    "per_week": 13.346153846153847,
+    "his_per_week": 16.59259259259259
+   },
+   "weekly": {
+    "weeks": 53,
+    "corr": 0.1512764532421572,
+    "ours_compound": 0.17740778219319453,
+    "his_compound": 0.516737658169903,
+    "worst_week": -0.1295177142447438
+   },
+   "placebo": {
+    "median": -0.13794063342196689,
+    "rank": 0.9,
+    "draws": 10
+   },
+   "goal": -0.9598186395001905,
+   "goal_years": 0.9598186395001905,
+   "goal_behav": 0.6533827618164971,
+   "goal_parts": {
+    "year": 0.28794559185005714,
+    "behaviour": {
+     "win": 0.04505386120914179,
+     "per_week": 0.19601482854494912
+    }
+   },
+   "meets": true
+  },
+  "MN5": {
+   "total": 0.39297817405349744,
+   "maxdd": 0.24818491716133584,
+   "by_year": {
+    "2024": 0.08581999457197198,
+    "2025": 0.2828813072304923
+   },
+   "trades": 1687,
+   "win": 0.946058091286307,
+   "worst_trade": -0.2791794975309922,
+   "fidelity": {
+    "his_positions": 705,
+    "ours": 1705,
+    "both": 239,
+    "his_hit": 0.33900709219858155,
+    "our_hit": 0.14017595307917888,
+    "names_his": 111,
+    "names_ours": 138,
+    "names_both": 66,
+    "win": 0.946058091286307,
+    "his_win": 0.8984375,
+    "per_week": 16.221153846153847,
+    "his_per_week": 16.59259259259259
+   },
+   "weekly": {
+    "weeks": 53,
+    "corr": 0.1892493581359608,
+    "ours_compound": 0.28384835799656427,
+    "his_compound": 0.516737658169903,
+    "worst_week": -0.10221498967532405
+   },
+   "placebo": {
+    "median": -0.06106548677533369,
+    "rank": 0.9,
+    "draws": 10
+   },
+   "goal": -0.6525651367079964,
+   "goal_years": 0.6525651367079964,
+   "goal_behav": 0.1799542902789179,
+   "goal_parts": {
+    "year": 0.19576954101239893,
+    "behaviour": {
+     "win": 0.053986287083675366,
+     "per_week": 0.022822057460611722
+    }
+   },
+   "meets": true
+  },
+  "C175MN5": {
+   "total": -0.022502894445917465,
+   "maxdd": 0.4797857737565322,
+   "by_year": {
+    "2024": -0.009211508206303676,
+    "2025": -0.013414958237505825
+   },
+   "trades": 1707,
+   "win": 0.9250146455770357,
+   "worst_trade": -0.2975676412225027,
+   "fidelity": {
+    "his_positions": 705,
+    "ours": 1726,
+    "both": 237,
+    "his_hit": 0.33617021276595743,
+    "our_hit": 0.1373117033603708,
+    "names_his": 111,
+    "names_ours": 140,
+    "names_both": 66,
+    "win": 0.9250146455770357,
+    "his_win": 0.8984375,
+    "per_week": 16.41346153846154,
+    "his_per_week": 16.59259259259259
+   },
+   "weekly": {
+    "weeks": 53,
+    "corr": 0.22375048599877814,
+    "ours_compound": -0.016953616922423143,
+    "his_compound": 0.516737658169903,
+    "worst_week": -0.1897979105056341
+   },
+   "placebo": {
+    "median": -0.4515425923014673,
+    "rank": 1.0,
+    "draws": 10
+   },
+   "goal": -1.5279462072090109,
+   "goal_years": 1.5279462072090109,
+   "goal_behav": 0.10180721025340105,
+   "goal_parts": {
+    "year": 0.4583838621627032,
+    "behaviour": {
+     "win": 0.030542163076020312,
+     "per_week": 0.011237256719184407
+    }
+   },
+   "meets": false
+  },
+  "TO1": {
+   "total": 0.4819483629912664,
+   "maxdd": 0.27920998020033494,
+   "by_year": {
+    "2024": 0.13730430483151257,
+    "2025": 0.3030359216048264
+   },
+   "trades": 1566,
+   "win": 0.9412515964240102,
+   "worst_trade": -0.2791794975309922,
+   "fidelity": {
+    "his_positions": 705,
+    "ours": 1582,
+    "both": 227,
+    "his_hit": 0.3219858156028369,
+    "our_hit": 0.14348925410872312,
+    "names_his": 111,
+    "names_ours": 133,
+    "names_both": 65,
+    "win": 0.9412515964240102,
+    "his_win": 0.8984375,
+    "per_week": 15.057692307692308,
+    "his_per_week": 16.59259259259259
+   },
+   "weekly": {
+    "weeks": 53,
+    "corr": 0.10769997803701468,
+    "ours_compound": 0.3073550507216649,
+    "his_compound": 0.516737658169903,
+    "worst_week": -0.11239456547760585
+   },
+   "placebo": {
+    "median": -0.009033213806067142,
+    "rank": 1.0,
+    "draws": 10
+   },
+   "goal": -0.6006041477264272,
+   "goal_years": 0.6006041477264272,
+   "goal_behav": 0.309700339820822,
+   "goal_parts": {
+    "year": 0.18018124431792817,
+    "behaviour": {
+     "win": 0.04863145769163357,
+     "per_week": 0.0929101019462466
+    }
+   },
+   "meets": true
+  }
+ },
+ "chosen": "TO1",
+ "chosen_config": {
+  "cushion": 2.0,
+  "trend": 2.0,
+  "turnover": 100000000.0,
+  "optvol": 20000,
+  "price": 20.0,
+  "earnings": false,
+  "min_dte": 2,
+  "frac": 0.05,
+  "cap": 1.0,
+  "max_new": 4,
+  "priority": "turnover",
+  "skew": 0.1,
+  "spread": 0.05,
+  "take": 0.0,
+  "margin": "regt",
+  "vol": "max5",
+  "v2": true,
+  "k": 0.05,
+  "iv_min": 0.4
+ },
+ "gates": [
+  "placebo",
+  "years",
+  "behav"
+ ],
+ "objective": "goal"
+}

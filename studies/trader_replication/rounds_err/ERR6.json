@@ -1,0 +1,118 @@
+{
+ "evan": {
+  "base": "r8.json",
+  "ref": "L2",
+  "cands": {
+   "L2": {},
+   "XS5TO20": {
+    "long": {
+     "limit": 0.015
+    },
+    "short": {
+     "limit": 0.015
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 20000000.0,
+     "price": 5.0
+    }
+   },
+   "XS5TO50L1": {
+    "long": {
+     "limit": 0.01
+    },
+    "short": {
+     "limit": 0.01
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 50000000.0,
+     "price": 5.0
+    }
+   },
+   "XS5TO20L1": {
+    "long": {
+     "limit": 0.01
+    },
+    "short": {
+     "limit": 0.01
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 20000000.0,
+     "price": 5.0
+    }
+   },
+   "XS5TO100L1": {
+    "long": {
+     "limit": 0.01
+    },
+    "short": {
+     "limit": 0.01
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 100000000.0,
+     "price": 5.0
+    }
+   }
+  }
+ },
+ "hol": {
+  "base": "r7.json",
+  "ref": "PN2MN3P",
+  "cands": {
+   "PN2MN3P": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 3,
+    "priority": "yield"
+   },
+   "TO5MN4": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 4,
+    "priority": "yield",
+    "turnover": 500000000.0
+   },
+   "TO10MN4": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 4,
+    "priority": "yield",
+    "turnover": 1000000000.0
+   },
+   "TO2MN4": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 4,
+    "priority": "yield",
+    "turnover": 200000000.0
+   },
+   "TR0TO10MN4": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 4,
+    "priority": "yield",
+    "trend": 0.0,
+    "turnover": 1000000000.0
+   }
+  }
+ }
+}

@@ -1,0 +1,851 @@
+{
+ "evan": {
+  "results": {
+   "L2": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.02,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.02,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 5000000.0,
+      "price": 5.0
+     },
+     "regime": "sma200",
+     "exit_long": "xhi",
+     "exit_short": "xlo",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 5,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {},
+    "periods": {
+     "2024": 0.194,
+     "2025-01..08": 0.102
+    },
+    "beh": {
+     "per_year": 269.5697,
+     "per_week": 5.184,
+     "win": 0.6238,
+     "avg_win": 0.0263,
+     "avg_loss": -0.0309,
+     "days": 3.3464
+    },
+    "err": {
+     "ret 2024": 0.008,
+     "ret 2025-01..08": 0.049,
+     "per_year": 0.178,
+     "win": 0.022,
+     "avg_win": 0.147,
+     "avg_loss": 0.094,
+     "days": 0.163
+    },
+    "maxerr": 0.178,
+    "total": 0.376,
+    "maxdd": 0.115,
+    "placebo": -0.145,
+    "beats": true,
+    "y2026": {
+     "total": 0.105,
+     "placebo": -0.014,
+     "n": 287
+    }
+   },
+   "L15": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.015,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.015,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 5000000.0,
+      "price": 5.0
+     },
+     "regime": "sma200",
+     "exit_long": "xhi",
+     "exit_short": "xlo",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 5,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {
+     "long": {
+      "limit": 0.015
+     },
+     "short": {
+      "limit": 0.015
+     }
+    },
+    "periods": {
+     "2024": 0.253,
+     "2025-01..08": 0.036
+    },
+    "beh": {
+     "per_year": 353.9044,
+     "per_week": 6.8059,
+     "win": 0.6057,
+     "avg_win": 0.0248,
+     "avg_loss": -0.0287,
+     "days": 3.2099
+    },
+    "err": {
+     "ret 2024": 0.04,
+     "ret 2025-01..08": 0.014,
+     "per_year": 0.079,
+     "win": 0.05,
+     "avg_win": 0.085,
+     "avg_loss": 0.014,
+     "days": 0.198
+    },
+    "maxerr": 0.198,
+    "total": 0.335,
+    "maxdd": 0.122,
+    "placebo": -0.153,
+    "beats": true,
+    "y2026": {
+     "total": 0.135,
+     "placebo": -0.007,
+     "n": 364
+    }
+   },
+   "L15T7": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.015,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.015,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 5000000.0,
+      "price": 5.0
+     },
+     "regime": "sma200",
+     "exit_long": "xhi",
+     "exit_short": "xlo",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 7,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {
+     "long": {
+      "limit": 0.015
+     },
+     "short": {
+      "limit": 0.015
+     },
+     "rule_opts": {
+      "max_days": 7
+     }
+    },
+    "periods": {
+     "2024": 0.202,
+     "2025-01..08": 0.049
+    },
+    "beh": {
+     "per_year": 341.3546,
+     "per_week": 6.5645,
+     "win": 0.6368,
+     "avg_win": 0.0253,
+     "avg_loss": -0.0339,
+     "days": 3.6397
+    },
+    "err": {
+     "ret 2024": 0.002,
+     "ret 2025-01..08": 0.001,
+     "per_year": 0.041,
+     "win": 0.001,
+     "avg_win": 0.103,
+     "avg_loss": 0.198,
+     "days": 0.09
+    },
+    "maxerr": 0.198,
+    "total": 0.277,
+    "maxdd": 0.129,
+    "placebo": -0.149,
+    "beats": true,
+    "y2026": {
+     "total": 0.081,
+     "placebo": 0.052,
+     "n": 343
+    }
+   },
+   "L15T10": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.015,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.015,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 5000000.0,
+      "price": 5.0
+     },
+     "regime": "sma200",
+     "exit_long": "xhi",
+     "exit_short": "xlo",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 10,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {
+     "long": {
+      "limit": 0.015
+     },
+     "short": {
+      "limit": 0.015
+     },
+     "rule_opts": {
+      "max_days": 10
+     }
+    },
+    "periods": {
+     "2024": 0.185,
+     "2025-01..08": 0.051
+    },
+    "beh": {
+     "per_year": 326.7968,
+     "per_week": 6.2846,
+     "win": 0.6406,
+     "avg_win": 0.0254,
+     "avg_loss": -0.034,
+     "days": 4.0369
+    },
+    "err": {
+     "ret 2024": 0.016,
+     "ret 2025-01..08": 0.001,
+     "per_year": 0.004,
+     "win": 0.005,
+     "avg_win": 0.107,
+     "avg_loss": 0.204,
+     "days": 0.009
+    },
+    "maxerr": 0.204,
+    "total": 0.272,
+    "maxdd": 0.124,
+    "placebo": -0.135,
+    "beats": true,
+    "y2026": {
+     "total": 0.042,
+     "placebo": 0.003,
+     "n": 330
+    }
+   }
+  },
+  "ref": "L2",
+  "chosen": "L2",
+  "meets": false
+ },
+ "sam": {
+  "results": {
+   "PRUN": {
+    "cfg": {
+     "gap": 0.2,
+     "price": [
+      1.0,
+      20.0
+     ],
+     "turnover_max": 50000000.0,
+     "run": 0.0,
+     "stop": 0.3,
+     "priority": "run",
+     "max_new": 5,
+     "locate": 0.005,
+     "rule_opts": {
+      "risk": 0.08,
+      "max_position": 0.6,
+      "max_gross": 2.0,
+      "max_open": 10,
+      "trail": "",
+      "trims": []
+     },
+     "spike": 0.07,
+     "data": "trader-data-v2",
+     "gap_max": 3.0
+    },
+    "change": {
+     "gap": 0.2,
+     "spike": 0.07,
+     "priority": "run"
+    },
+    "periods": {
+     "2024": 0.788,
+     "2025": 0.233
+    },
+    "beh": {
+     "per_year": 427.1952,
+     "per_week": 8.2153,
+     "win": 0.5535,
+     "avg_win": 0.1635,
+     "avg_loss": -0.1817,
+     "days": 0.0,
+     "worst_day": 0.2449
+    },
+    "err": {
+     "ret 2024": 0.106,
+     "per_year": 0.0,
+     "worst_day": 0.065
+    },
+    "maxerr": 0.106,
+    "total": 1.205,
+    "maxdd": 0.778,
+    "placebo": -0.682,
+    "beats": true,
+    "y2026": {
+     "total": 0.804,
+     "placebo": -0.18,
+     "n": 430
+    }
+   },
+   "PRUNMX10": {
+    "cfg": {
+     "gap": 0.2,
+     "price": [
+      1.0,
+      20.0
+     ],
+     "turnover_max": 50000000.0,
+     "run": 0.0,
+     "stop": 0.3,
+     "priority": "run",
+     "max_new": 10,
+     "locate": 0.005,
+     "rule_opts": {
+      "risk": 0.08,
+      "max_position": 0.6,
+      "max_gross": 2.0,
+      "max_open": 10,
+      "trail": "",
+      "trims": []
+     },
+     "spike": 0.07,
+     "data": "trader-data-v2",
+     "gap_max": 3.0
+    },
+    "change": {
+     "gap": 0.2,
+     "spike": 0.07,
+     "priority": "run",
+     "max_new": 10
+    },
+    "periods": {
+     "2024": 0.626,
+     "2025": 0.266
+    },
+    "beh": {
+     "per_year": 430.2072,
+     "per_week": 8.2732,
+     "win": 0.5531,
+     "avg_win": 0.1628,
+     "avg_loss": -0.1812,
+     "days": 0.0,
+     "worst_day": 0.2449
+    },
+    "err": {
+     "ret 2024": 0.187,
+     "per_year": 0.0,
+     "worst_day": 0.065
+    },
+    "maxerr": 0.187,
+    "total": 1.06,
+    "maxdd": 0.798,
+    "placebo": -0.682,
+    "beats": true,
+    "y2026": {
+     "total": 0.674,
+     "placebo": -0.18,
+     "n": 440
+    }
+   },
+   "PRUNR9": {
+    "cfg": {
+     "gap": 0.2,
+     "price": [
+      1.0,
+      20.0
+     ],
+     "turnover_max": 50000000.0,
+     "run": 0.0,
+     "stop": 0.3,
+     "priority": "run",
+     "max_new": 5,
+     "locate": 0.005,
+     "rule_opts": {
+      "risk": 0.09,
+      "max_position": 0.6,
+      "max_gross": 2.0,
+      "max_open": 10,
+      "trail": "",
+      "trims": []
+     },
+     "spike": 0.07,
+     "data": "trader-data-v2",
+     "gap_max": 3.0
+    },
+    "change": {
+     "gap": 0.2,
+     "spike": 0.07,
+     "priority": "run",
+     "rule_opts": {
+      "risk": 0.09
+     }
+    },
+    "periods": {
+     "2024": 0.789,
+     "2025": 0.123
+    },
+    "beh": {
+     "per_year": 427.1952,
+     "per_week": 8.2153,
+     "win": 0.5535,
+     "avg_win": 0.1635,
+     "avg_loss": -0.1817,
+     "days": 0.0,
+     "worst_day": 0.2755
+    },
+    "err": {
+     "ret 2024": 0.105,
+     "per_year": 0.0,
+     "worst_day": 0.198
+    },
+    "maxerr": 0.198,
+    "total": 1.01,
+    "maxdd": 0.829,
+    "placebo": -0.747,
+    "beats": true,
+    "y2026": {
+     "total": 0.722,
+     "placebo": -0.096,
+     "n": 430
+    }
+   }
+  },
+  "ref": "PRUN",
+  "chosen": "PRUN",
+  "meets": true
+ },
+ "hol": {
+  "results": {
+   "PN2MN3P": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 2.0,
+     "turnover": 100000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 3,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 3,
+     "priority": "yield"
+    },
+    "total": 0.546,
+    "beh": {
+     "win": 0.892,
+     "per_week": 13.472,
+     "names_per_week": 10.434,
+     "per_name_week": 1.291
+    },
+    "err": {
+     "ret 2025": 0.009,
+     "win": 0.007,
+     "per_week": 0.188,
+     "names_per_week": 0.178,
+     "per_name_week": 0.014
+    },
+    "maxerr": 0.188,
+    "placebo": 0.223,
+    "beats": true,
+    "y2026": {
+     "total": -0.333,
+     "placebo": 0.037,
+     "per_week": 13.0,
+     "names_per_week": 10.1,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   },
+   "PN2MN4P": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 2.0,
+     "turnover": 100000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 4,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 4,
+     "priority": "yield"
+    },
+    "total": 0.229,
+    "beh": {
+     "win": 0.896,
+     "per_week": 15.245,
+     "names_per_week": 11.434,
+     "per_name_week": 1.333
+    },
+    "err": {
+     "ret 2025": 0.212,
+     "win": 0.002,
+     "per_week": 0.082,
+     "names_per_week": 0.1,
+     "per_name_week": 0.018
+    },
+    "maxerr": 0.212,
+    "placebo": 0.042,
+    "beats": true,
+    "y2026": {
+     "total": -0.307,
+     "placebo": 0.03,
+     "per_week": 15.0,
+     "names_per_week": 11.1,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   },
+   "PN2MN5P": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 2.0,
+     "turnover": 100000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 5,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 5,
+     "priority": "yield"
+    },
+    "total": -0.047,
+    "beh": {
+     "win": 0.9,
+     "per_week": 16.528,
+     "names_per_week": 12.113,
+     "per_name_week": 1.364
+    },
+    "err": {
+     "ret 2025": 0.389,
+     "win": 0.002,
+     "per_week": 0.004,
+     "names_per_week": 0.046,
+     "per_name_week": 0.042
+    },
+    "maxerr": 0.389,
+    "placebo": 0.007,
+    "beats": false,
+    "y2026": {
+     "total": -0.378,
+     "placebo": -0.019,
+     "per_week": 16.2,
+     "names_per_week": 11.4,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   },
+   "PN2MN4YI": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 2.0,
+     "turnover": 100000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 4,
+     "priority": "yield_iv",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 4,
+     "priority": "yield_iv"
+    },
+    "total": 0.163,
+    "beh": {
+     "win": 0.9,
+     "per_week": 15.17,
+     "names_per_week": 10.943,
+     "per_name_week": 1.386
+    },
+    "err": {
+     "ret 2025": 0.255,
+     "win": 0.002,
+     "per_week": 0.086,
+     "names_per_week": 0.138,
+     "per_name_week": 0.058
+    },
+    "maxerr": 0.255,
+    "placebo": 0.042,
+    "beats": true,
+    "y2026": {
+     "total": -0.478,
+     "placebo": 0.03,
+     "per_week": 14.9,
+     "names_per_week": 10.7,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   },
+   "PN2MN4P30": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 2.0,
+     "turnover": 100000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 4,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.3,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 4,
+     "priority": "yield",
+     "iv_min": 0.3
+    },
+    "total": 0.205,
+    "beh": {
+     "win": 0.888,
+     "per_week": 15.302,
+     "names_per_week": 11.774,
+     "per_name_week": 1.3
+    },
+    "err": {
+     "ret 2025": 0.228,
+     "win": 0.011,
+     "per_week": 0.078,
+     "names_per_week": 0.073,
+     "per_name_week": 0.008
+    },
+    "maxerr": 0.228,
+    "placebo": -0.014,
+    "beats": true,
+    "y2026": {
+     "total": -0.25,
+     "placebo": 0.034,
+     "per_week": 15.0,
+     "names_per_week": 11.3,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   }
+  },
+  "ref": "PN2MN3P",
+  "chosen": "PN2MN3P",
+  "meets": false
+ }
+}

@@ -1,0 +1,9 @@
+{"stage": "re-score under exit-price option pricing", "base": ["r6.json", "chosen"], "ref": "D10", "objective": "goal",
+ "gates": ["placebo", "years"], "draws": 30,
+ "candidates": {
+  "B2": {"band": 0.02},
+  "B15": {"band": 0.015},
+  "B25": {"band": 0.025},
+  "MX5": {"max_new": 5},
+  "B2F12": {"band": 0.02, "opt": {"frac": 0.12}}
+ }}

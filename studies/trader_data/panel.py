@@ -57,8 +57,9 @@ def assemble(ds):
     return dict(days=days, codes=np.array(codes), **out)
 
 
-def build(ds, upto=None, cache=True):
-    """The panel of `ds` (cached by digest); `upto` (ISO day) cuts it after that day."""
+def build(ds, upto=None, cache=True, write_cache=True):
+    """The panel of `ds` (cached by digest); `upto` cuts it after that day. write_cache=False reads existing
+    caches but builds a missing/stale one only in memory, for the read-only intraday path."""
     digest = ds.digest()
     path = cache_path(ds)
     p = None
@@ -68,7 +69,7 @@ def build(ds, upto=None, cache=True):
                 p = {k: z[k] for k in z.files}
     if p is None:
         p = assemble(ds)
-        if cache:
+        if cache and write_cache:
             CACHE.mkdir(parents=True, exist_ok=True)
             np.savez_compressed(path, digest=np.array(digest), **p)
     p['digest'], p['dataset'] = digest, ds.id

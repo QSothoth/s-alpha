@@ -70,6 +70,19 @@ class Qullamaggie(CF.Flanders):
             out['ep'] = (m, x.price, F.l)
         return out
 
+    def kind_pools(self, A, cfg, kinds):
+        """brk / ep run the board's screens.Qullamaggie, whose floors are fixed there (brk: 20M and ADR >= 4%; ep:
+        20M, or ep['liquid'] when the EP's values are replaced)."""
+        out = super().kind_pools(A, cfg, kinds)
+        F, o = A['F'], cfg.get('ep', {})
+        with np.errstate(invalid='ignore'):
+            if 'brk' in kinds:
+                out['brk'] = lag(F.liquid(20e6) & (F.adr >= 4))
+            if 'ep' in kinds:
+                out['ep'] = lag(F.liquid(o.get('liquid', 20e6) if ('min_gap' in o or 'liquid' in o or 'heavy' in o)
+                                         else 20e6))
+        return out
+
     def market_ok(self, A, cfg):
         """'light': his green light on the pool's equal-weight index (QQQ in his words): the 10-day line above the
         20-day and both rising, as of the day before (1AJIzXSkfyM@00:35:30, VdQSDGZBLQE@00:55:30)."""

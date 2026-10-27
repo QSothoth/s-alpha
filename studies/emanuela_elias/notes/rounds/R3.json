@@ -1,0 +1,9 @@
+{"stage": "instrument: option account", "base": ["r2.json", "chosen"], "ref": "H10", "objective": "goal",
+ "gates": ["placebo", "years"], "draws": 30,
+ "candidates": {
+  "O30": {"opt": {"dte": 30, "mny": 0.0, "frac": 0.10, "spread": 0.03}},
+  "O30S1": {"opt": {"dte": 30, "mny": 0.0, "frac": 0.10, "spread": 0.01}},
+  "O30S1G": {"opt": {"dte": 30, "mny": 0.0, "frac": 0.10, "spread": 0.01}, "long_gate": 20, "short_gate": 20},
+  "O60S1G": {"opt": {"dte": 60, "mny": 0.0, "frac": 0.10, "spread": 0.01}, "long_gate": 20, "short_gate": 20},
+  "O14S1G": {"opt": {"dte": 14, "mny": 0.02, "frac": 0.10, "spread": 0.01}, "long_gate": 20, "short_gate": 20}
+ }}

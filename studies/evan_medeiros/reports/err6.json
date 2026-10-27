@@ -1,0 +1,74 @@
+{
+ "name": "ERR6 carried (studies/trader_replication/reports/ERR_ROUNDS_20261027_CN.md)",
+ "configs": {
+  "XS5TO50L1": {
+   "sides": [
+    "long",
+    "short"
+   ],
+   "long": {
+    "rsi": 5,
+    "down": 3,
+    "hv": 15,
+    "trend": true,
+    "limit": 0.01,
+    "drop": 0.1,
+    "either": true,
+    "hv_max": 35
+   },
+   "short": {
+    "rsi": 99,
+    "up": 3,
+    "hv": 15,
+    "trend": false,
+    "limit": 0.01,
+    "run": 0.1,
+    "hv_max": 35
+   },
+   "pool": {
+    "turnover": 50000000.0,
+    "price": 5.0
+   },
+   "regime": "sma200",
+   "exit_long": "xsma5",
+   "exit_short": "xsma5s",
+   "priority": "hv",
+   "rule_opts": {
+    "risk": 1.0,
+    "max_position": 0.15,
+    "max_gross": 1.5,
+    "max_open": 15,
+    "trail": "",
+    "trims": [],
+    "max_days": 10,
+    "short_max_days": 5,
+    "buy_cost": 0.0005,
+    "sell_cost": 0.0005,
+    "borrow_rate": 0.03
+   },
+   "stop": 0.2
+  }
+ },
+ "chosen": "XS5TO50L1",
+ "periods": {
+  "2024": 0.205,
+  "2025-01..08": 0.049
+ },
+ "beh": {
+  "per_year": 320.2709,
+  "per_week": 6.1591,
+  "win": 0.6599,
+  "avg_win": 0.0223,
+  "avg_loss": -0.0318,
+  "days": 3.7492
+ },
+ "err": {
+  "ret 2024": 0.001,
+  "ret 2025-01..08": 0.001,
+  "per_year": 0.024,
+  "win": 0.035,
+  "avg_win": 0.024,
+  "avg_loss": 0.127,
+  "days": 0.063
+ }
+}

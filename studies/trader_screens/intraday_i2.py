@@ -371,14 +371,14 @@ def fit(market):
 def row_for(P, d, parts_by_code, cut, scheme, pred=None, cause=None):
     """D's row with every name of parts_by_code provisional at `cut`: V0 (volume so far), 'model' (the chosen
     estimate of the full day), or a cause put back (true close / high-low / volume)."""
-    row = {k: P[k][d].astype(float).copy() for k in ('open', 'high', 'low', 'close', 'volume', 'turnover')}
+    row = {k: np.full(len(P['codes']), np.nan) for k in ('open', 'high', 'low', 'close', 'volume', 'turnover', 'raw_close')}
     covered = []
     for j, c in enumerate(str(c) for c in P['codes']):
         got = parts_by_code.get(c)
         if got is None or not np.isfinite(P['close'][d, j]):
             continue
         kind, full, parts = got
-        if cut not in parts or not full[4] > 0:
+        if cut not in parts or not parts[cut][3] > 0:
             continue
         h, l, cl, v, t = parts[cut]
         if kind == 'recent':
@@ -390,9 +390,8 @@ def row_for(P, d, parts_by_code, cut, scheme, pred=None, cause=None):
             to = P['turnover'][d, j] * (t / full[5] if full[5] > 0 else v / full[4])
         if scheme == 'model':
             p = (pred or {}).get(c)
-            if p is None:
-                continue                               # no estimate: the name keeps its true bar (counted out)
-            vol, to = p[1] * p[0], to * p[0]
+            if p is not None:
+                vol, to = p[1] * p[0], to * p[0]
         op = float(P['open'][d, j])
         hi, lo, close = h * k, l * k, cl * k
         if cause == 'close':
@@ -402,6 +401,7 @@ def row_for(P, d, parts_by_code, cut, scheme, pred=None, cause=None):
         elif cause == 'volume':
             vol, to = float(P['volume'][d, j]), float(P['turnover'][d, j])
         row['open'][j], row['close'][j] = op, close
+        row['raw_close'][j] = close / k
         row['high'][j], row['low'][j] = max(hi, op, close), min(lo, op, close)
         row['volume'][j], row['turnover'][j] = vol, to
         covered.append(c)

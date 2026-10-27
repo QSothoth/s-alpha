@@ -1,0 +1,9 @@
+{"stage": "pool / entry / exit", "base": ["r5.json", "chosen"], "ref": "B2550T5P15", "objective": "goal",
+ "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "B2040": {"long": {"hv": 20, "hv_max": 40}, "short": {"hv": 20, "hv_max": 40}},
+  "B2540": {"long": {"hv": 25, "hv_max": 40}, "short": {"hv": 25, "hv_max": 40}},
+  "X5": {"exit_long": "xsma5", "exit_short": "xsma5s"},
+  "LATR": {"long": {"limit_atr": 0.5}, "short": {"limit_atr": 0.5}},
+  "T3": {"rule_opts": {"max_days": 3, "short_max_days": 3}}
+ }}

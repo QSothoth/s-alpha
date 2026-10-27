@@ -45,6 +45,7 @@ SOURCES = ('studies/trader_replication/*.py', 'studies/trader_data/*.py', 'studi
            'studies/mark_minervini/replicate.py', 'studies/marios_stamatoudis/replicate.py',
            'studies/martin_luk/replicate.py', 'studies/martin_luk/luk.py',
            'studies/martin_luk/selection.py', 'studies/trader_screens/screens.py', 'studies/trader_screens/data.py',
+           'studies/trader_screens/scan.py', 'studies/trader_screens/intraday.py',   # index_above, at_limit_up
            'studies/trend_breakout/panel.py')
 
 

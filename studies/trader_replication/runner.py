@@ -62,21 +62,39 @@ def forward(curve, dates, trades, freeze):
 
 
 def reference(system, market):
-    """The comparison report's numbers for this system, when they were made with the same configuration."""
+    """The comparison report's numbers for this system, when they were made with the same configuration and the
+    same code (compare.code_digest); otherwise None (no reference: the check is 'missing', never 'passed')."""
     path = OUT / 'compare.json'
     if not path.exists():
         return None
-    from .compare import config_digest
+    from .compare import code_digest, config_digest
     r = json.loads(path.read_text(encoding='utf-8')).get(system.id, {}).get('markets', {}).get(market)
-    if not r or r['run']['config_digest'] != config_digest(system.config):
+    if not r or r['run']['config_digest'] != config_digest(system.config) \
+            or r['run'].get('code_digest') != code_digest():
         return None
     return r
 
 
+def stage(t, e):
+    """When an execution happened inside its day: 'open' (gap stop, a trade filled during the day), 'intraday'
+    (stop, R partial, target, a same-day stop) or 'close'."""
+    a = e['action']
+    if a == 'entry':
+        return 'intraday' if t.get('intraday') else 'close'
+    if a == 'gap_stop':
+        return 'open'
+    return 'intraday' if a in ('stop', 'trim', 'target', 'stop_day0') else 'close'
+
+
 def run(system, market, mode=None, days=1, A=None):
+    if getattr(system, 'board_run', None):                 # a non-stock engine (systems.new_styles)
+        return system.board_run(system, market, mode, days, A)
     st, cfg = system.study, system.config
     A = A if A is not None else st.arrays(market, mode=mode)
-    entries, rules, mask, pool = st.build(A, cfg)
+    trace = {}
+    entries, rules, mask, pool = st.build(A, cfg, trace)
+    skipped = trace.get('limit_up') or []
+    del trace
     ema = st.ema_inputs(A, pool, rules)
     dates, codes = A['days'], [str(c) for c in A['codes']]
     T = len(dates) - 1
@@ -94,19 +112,22 @@ def run(system, market, mode=None, days=1, A=None):
     for t in tr:
         opened.add((t['code'], t['entry']))
         ex = t['executions']
+        d0 = int(np.searchsorted(dates, t['entry']))
+        t['intraday'] = t['kind'] in rules.intraday_kinds or not t['fill'] == A['close'][d0, col[t['code']]]
         if t['entry'] in window:
             buys.append(dict(code=t['code'], day=t['entry'], setup=t['kind'], side=t['side'], price=t['fill'],
-                             stop=t['stop'], weight=ex[0]['shares'] * ex[0]['price'] / prev_eq(t['entry'])))
+                             stop=t['stop'], weight=ex[0]['shares'] * ex[0]['price'] / prev_eq(t['entry']),
+                             stage=stage(t, ex[0])))
         for e in ex:
             if e['action'] in ('entry', 'end') or e['time'][:10] not in window:
                 continue
             if e['action'] == 'add':
                 buys.append(dict(code=t['code'], day=e['time'][:10], setup='加码', side=t['side'], price=e['price'],
-                                 stop=None,
+                                 stop=None, stage='close',
                                  weight=e['shares'] * e['price'] / prev_eq(e['time'][:10])))
                 continue
             why = (WHY if t['side'] > 0 else WHY_SHORT).get(e['action'], e['action'])
-            sells.append(dict(code=t['code'], day=e['time'][:10], why=why, side=t['side'],
+            sells.append(dict(code=t['code'], day=e['time'][:10], why=why, side=t['side'], stage=stage(t, e),
                               price=e['price'], ret=t['side'] * (e['price'] / t['fill'] - 1),
                               full=e is [x for x in ex if x['action'] != 'end'][-1] and t['why'] != 'end'))
     wanted = []
@@ -116,29 +137,38 @@ def run(system, market, mode=None, days=1, A=None):
             c = codes[e[1]]
             if (c, day) not in opened:
                 wanted.append(dict(code=c, day=day, setup=e[5], side=int(e[2]), price=float(e[3]), stop=float(e[4])))
+        for e in (skipped[d] if d < len(skipped) else []):      # A-share limit-up closes: not bought (shorts.py)
+            wanted.append(dict(code=codes[e[1]], day=day, setup=e[5], side=int(e[2]), price=float(e[3]),
+                               stop=float(e[4]), limit_up=True))
     holdings = []
     for t in (t for t in tr if t['why'] == 'end'):
         s, j = t['state'], col[t['code']]
-        close = float(A['close'][T, j])
+        seen = np.flatnonzero(np.isfinite(A['close'][:T + 1, j]))   # the engine's valuation: the last close it has
+        close = float(A['close'][seen[-1], j]) if len(seen) else t['fill']
         line = ema.get(s['trail']) if s['trail'] else None
         R = abs(t['fill'] - t['stop'])
         sd = t['side']
         holdings.append(dict(code=t['code'], entry_day=t['entry'], setup=t['kind'], side=sd, fill=t['fill'],
-                             close=close, ret=sd * (close / t['fill'] - 1),
+                             close=close, close_day=str(dates[seen[-1]]) if len(seen) else t['entry'],
+                             tradable=bool(np.isfinite(A['close'][T, j])), ret=sd * (close / t['fill'] - 1),
                              r_now=sd * (close - t['fill']) / R if R else None,
                              stop=s['stop'], trail=float(line[T, j]) if line is not None and s['armed'] else None,
                              trail_name=s['trail'], next_trim=s['next_trim'], trim_frac=s['trim_frac'],
                              next_add=s['next_add'], day_trim_pending=s['day_trim_pending'] and sd > 0,
                              trim_day=s['trim_day'], trim_day_frac=s['trim_day_frac'],
                              trim_day_profit=s['trim_day_profit'], next_target=s.get('next_target'),
-                             target_name=s.get('target_name', ''),
+                             target_name=s.get('target_name', ''), max_days=s.get('max_days', 0),
+                             short_trim_day_pending=s.get('short_trim_day_pending', False),
+                             short_trim_day=s.get('short_trim_day', 0), short_trim_day_frac=s.get('short_trim_day_frac', 0),
+                             trim_signal=s.get('trim_signal', ''), trim_signal_frac=s.get('trim_signal_frac', 0),
+                             breakeven=s.get('breakeven'),
                              weight=s['shares'] * close / equity, days=int(T - int(np.searchsorted(dates, t['entry'])))))
     gate = st.market_gate(A, cfg)
     closed = [t for t in tr if t['why'] != 'end']
     wins = [t for t in closed if t['ret'] > 0]
     peak = np.maximum.accumulate(np.concatenate([[1.0], curve]))[1:]
     out = dict(id=system.id, name=system.name, version=system.version, status=system.status, label=system.label,
-               market=market, data=A.get('digest'), last_day=str(dates[T]), days=days,
+               style=getattr(system, 'style', ''), market=market, data=A.get('digest'), last_day=str(dates[T]), days=days,
                equity_history=bounded_history(cdates, curve, str(dates[T])),
                strategy=system.strategy, buys=buys, sells=sells, wanted=wanted, holdings=holdings,
                gate_today=None if gate is None else bool(gate[T]),
@@ -146,12 +176,15 @@ def run(system, market, mode=None, days=1, A=None):
                             trades=len(closed), win=len(wins) / len(closed) if closed else None,
                             exposure=float(sum(h['weight'] for h in holdings)),
                             short_exposure=float(sum(h['weight'] for h in holdings if h['side'] < 0))),
-               freeze=system.freeze, forward=forward(curve, cdates, tr, system.freeze))
+               freeze=system.freeze, registered=getattr(system, 'registered', ''),
+               forward=forward(curve, cdates, tr, system.freeze))
     ref = reference(system, market)
-    if ref is not None:
+    if ref is None:
+        out['check'] = dict(ok=None, status='missing')
+    else:
         mine = years_until(curve, cdates, system.freeze)
-        out['check'] = dict(ok=all(abs(mine.get(y, np.nan) - v) < 1e-9 for y, v in ref['by_year'].items()),
-                            replay=mine, research=ref['by_year'])
+        ok = all(abs(mine.get(y, np.nan) - v) < 1e-9 for y, v in ref['by_year'].items())
+        out['check'] = dict(ok=ok, status='passed' if ok else 'failed', replay=mine, research=ref['by_year'])
     del entries, mask, pool
     gc.collect()
     return out

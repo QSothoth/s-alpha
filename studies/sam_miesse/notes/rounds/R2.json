@@ -1,0 +1,9 @@
+{"stage": "timing / parabolic", "base": ["r1.json", "chosen"], "ref": "G50", "objective": "his_years",
+ "gates": ["placebo"], "draws": 50,
+ "candidates": {
+  "D2": {"gap": -1.0, "d2": 0.50},
+  "D2SP": {"gap": -1.0, "d2": 0.50, "spike": 0.10},
+  "G50SP": {"spike": 0.10},
+  "G50SP20": {"spike": 0.20, "stop": 0.30},
+  "G20SP20": {"gap": 0.20, "spike": 0.20, "stop": 0.30}
+ }}

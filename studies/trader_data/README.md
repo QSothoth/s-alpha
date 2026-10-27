@@ -8,6 +8,7 @@
 | `dataset.py` | `Dataset` 抽象：固定名单与规则、不复权日 K、复权因子、摘要；`FolderDataset` 读 fetch 格式的目录（冻结 Release） |
 | `live.py` | `LiveDataset`：冻结底座 + `data/trader-live/<版本>/<市场>/` 只追加的增量；`update()` 只补缺的已收盘交易日（缺一天且今天未开盘：一次快照；否则重读历史）；`Provisional`：盘中快照当临时收盘，不写盘 |
 | `providers.py` | `Provider` 抽象：交易日历、全名单快照（含交易所昨收价）、历史重读；`OpenDProvider`（美股、港股）、`SinaProvider`（A 股）。新数据源加一个子类 |
+| `hourly.py` | 小时线：`HourlyDataset`（冻结 Release `trader-hourly-v1`）、`LiveHourly`（订阅接口只追加，核对重叠）、逐根前复权的面板与 `daily()` 重建日 K、`fetch`（`request_history_kline`，扣历史额度，先问用户）；入口 `TD.load_hourly`，规范见 TRADER_PROTOCOL 第 6 节 |
 | `panel.py` | 唯一的面板构建：按复权因子前复权、修正开收盘落在高低之外的坏 K 线；按数据集摘要缓存在 `data/trader-data/cache/` |
 
 ```bash

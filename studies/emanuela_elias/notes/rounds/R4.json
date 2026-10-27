@@ -1,0 +1,13 @@
+{"stage": "option exits / size", "base": ["r3.json", "chosen"],
+ "base_change": {"opt": {"dte": 30, "mny": 0.0, "frac": 0.10, "spread": 0.01}},
+ "ref": "O30S1", "objective": "goal", "gates": ["placebo", "years"], "draws": 30,
+ "candidates": {
+  "T3R2": {"rule_opts": {"max_days": 3, "short_max_days": 3, "trims": [2], "trim_frac": 1.0}},
+  "T3R2F25": {"rule_opts": {"max_days": 3, "short_max_days": 3, "trims": [2], "trim_frac": 1.0},
+              "opt": {"dte": 30, "mny": 0.0, "frac": 0.25, "spread": 0.01}},
+  "T3R2L10": {"level": 10, "rule_opts": {"max_days": 3, "short_max_days": 3, "trims": [2], "trim_frac": 1.0}},
+  "T3R2F25L10": {"level": 10, "rule_opts": {"max_days": 3, "short_max_days": 3, "trims": [2], "trim_frac": 1.0},
+                 "opt": {"dte": 30, "mny": 0.0, "frac": 0.25, "spread": 0.01}},
+  "T3R2F25T30": {"top": 30, "rule_opts": {"max_days": 3, "short_max_days": 3, "trims": [2], "trim_frac": 1.0},
+                 "opt": {"dte": 30, "mny": 0.0, "frac": 0.25, "spread": 0.01}}
+ }}

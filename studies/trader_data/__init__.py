@@ -6,6 +6,7 @@ trader-screens board): docs/TRADER_PROTOCOL_CN.md.
     p = TD.load('us', mode='frozen')         # the frozen release only (research, gates, comparisons)
     p = TD.load('us', mode='live')           # the release continued to the newest finished session
     ds = TD.dataset('hk', mode='live'); ds.update(); ds.panel()
+    h = TD.load_hourly('us')                 # hourly bars, same modes (hourly.py)
 
 Mode and version come from the arguments, else from TRADER_DATA_MODE (frozen | live, default frozen) and
 TRADER_DATA_TAG (default trader-data-v1).  Both modes read the same frozen bars and build panels with the same
@@ -71,6 +72,28 @@ def load(market, mode=None, version=None, upto=None, update=True, now=None, prov
             rows = [(c, day, s['open'], s['high'], s['low'], s['close'], s['volume'], s['turnover'])
                     for c, s in snap.items() if s['trading']]
             ds = Provisional(ds, rows)
+    return ds.panel(upto)
+
+
+def hourly_dataset(market, mode=None, version=None, provider=None):
+    """The market's hourly Dataset (studies/trader_data/hourly.py): the frozen release TRADER_HOURLY_TAG (default
+    trader-hourly-v1), in live mode plus the bars after it."""
+    from . import hourly as H
+    base = H.HourlyDataset(ROOT / 'data' / H.tag(version), market)
+    if not base.exists():
+        raise FileNotFoundError(f'{base.sub}: unpack the GitHub release {H.tag(version)} into data/ (docs/DATA.md)')
+    if resolve_mode(mode) == 'frozen':
+        return base
+    return H.LiveHourly(base, H.LIVE_ROOT / H.tag(version), provider)
+
+
+def load_hourly(market, mode=None, version=None, upto=None, update=True):
+    """The market's hourly panel: (bars x codes) forward-adjusted, with 'times' (bar end, exchange time) and
+    'days'.  live: first appends the bars after the newest stored one (update=False reads what is cached)."""
+    from . import hourly as H
+    ds = hourly_dataset(market, mode, version)
+    if isinstance(ds, H.LiveHourly) and update:
+        ds.update()
     return ds.panel(upto)
 
 

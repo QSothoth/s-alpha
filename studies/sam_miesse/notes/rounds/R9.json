@@ -1,0 +1,10 @@
+{"stage": "count on v2 (gap <= 300% hygiene)", "data": "trader-data-v2", "base": ["r8.json", "chosen"],
+ "base_change": {"gap_max": 3.0}, "ref": "G30S5", "objective": "goal",
+ "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "G25S5": {"gap": 0.25},
+  "G20S5": {"gap": 0.20},
+  "G30S3": {"spike": 0.03},
+  "G30S0": {"spike": 0.0},
+  "G25S5R6": {"gap": 0.25, "rule_opts": {"risk": 0.06, "max_position": 0.45}}
+ }}

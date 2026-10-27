@@ -1,0 +1,26 @@
+{
+ "evan": {"base": "r8.json", "ref": "L2", "cands": {
+   "L2": {},
+   "L1": {"long": {"limit": 0.01}, "short": {"limit": 0.01}},
+   "L0": {"long": {"limit": 0.0}, "short": {"limit": 0.0}},
+   "L1T7": {"long": {"limit": 0.01}, "short": {"limit": 0.01}, "rule_opts": {"max_days": 7}},
+   "L0T7": {"long": {"limit": 0.0}, "short": {"limit": 0.0}, "rule_opts": {"max_days": 7}}}},
+ "sam": {"base": "r9.json", "ref": "G20S7", "cands": {
+   "G20S7": {"gap": 0.2, "spike": 0.07},
+   "R10": {"gap": 0.2, "spike": 0.07, "rule_opts": {"risk": 0.10}},
+   "PRUN": {"gap": 0.2, "spike": 0.07, "priority": "run"},
+   "ST35": {"gap": 0.2, "spike": 0.07, "stop": 0.35},
+   "ST35PRUN": {"gap": 0.2, "spike": 0.07, "stop": 0.35, "priority": "run"}}},
+ "hol": {"base": "r7.json", "ref": "TO1", "cands": {
+   "TO1": {"strip": false},
+   "PN2": {"strip": false, "per_name": 2},
+   "PN2MN3": {"strip": false, "per_name": 2, "max_new": 3},
+   "PN3MN3": {"strip": false, "per_name": 3, "max_new": 3},
+   "PN2MN3P": {"strip": false, "per_name": 2, "max_new": 3, "priority": "yield"}}},
+ "karl": {"base": "r6.json", "ref": "CHD35", "strike_target": [0.07, 0.12], "cands": {
+   "CHD35": {},
+   "W03": {"width": 0.3},
+   "W04": {"width": 0.4},
+   "W04TK15": {"width": 0.4, "take": 0.15},
+   "W04D50": {"width": 0.4, "debit": 0.5}}}
+}

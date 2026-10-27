@@ -43,6 +43,7 @@ class Fake(PV.Provider):
 
     def __init__(self, sessions, snap=None, hist=None):
         self._s, self.snap, self.hist, self.calls = sessions, snap or {}, hist or {}, []
+        self.anchor = {}                # code -> the stored close of the anchor day, served as a real provider does
 
     def sessions(self, start, end):
         if start > end:
@@ -56,7 +57,19 @@ class Fake(PV.Provider):
     def history(self, codes, start, end):
         self.calls.append('history')
         for c in codes:
-            yield c, [r for r in self.hist.get(c, []) if start <= r[1] <= end], []
+            rows = [r for r in self.hist.get(c, []) if start <= r[1] <= end]
+            if rows and c in self.anchor and not any(r[1] == start for r in rows):
+                x = self.anchor[c]
+                rows = [(c, start, x, x, x, x, 1000, x * 1000)] + rows
+            yield c, rows, []
+
+
+def anchored(fake, base):
+    """The fake serves the stored anchor-day bar (as OpenD's history does) where a test gives none."""
+    if isinstance(fake, Fake) and not fake.anchor:
+        p = base.panel()
+        fake.anchor = {str(c): float(p['raw_close'][-1, j]) for j, c in enumerate(p['codes'])}
+    return fake
 
 
 def snap(close, prev, vol=1000):
@@ -84,7 +97,7 @@ class Base(unittest.TestCase):
 
     def live(self, fake, **kw):
         base = write_folder(self.root / 'rel', **kw)
-        return TD.LiveDataset(base, self.root / 'live', provider=lambda: fake)
+        return TD.LiveDataset(base, self.root / 'live', provider=lambda: anchored(fake, base))
 
 
 class PanelTests(Base):
@@ -204,7 +217,7 @@ class LiveTests(Base):
             with self.subTest(case=i):
                 fake = Fake(SESS, hist=available)
                 base = write_folder(self.root / f'rel-{i}')
-                ds = TD.LiveDataset(base, self.root / f'live-{i}', provider=lambda: fake)
+                ds = TD.LiveDataset(base, self.root / f'live-{i}', provider=lambda: anchored(fake, base))
                 before = ds.digest()
                 with self.assertRaisesRegex(RuntimeError, 'no trading bars for completed sessions'):
                     ds.update(ny('2026-10-20', 17))
@@ -321,7 +334,7 @@ class LiveTests(Base):
         hist[codes[1]] = [(codes[1], '2026-10-19', 15., 15., 15., float('nan'), 1000., 15000.)]
         with mock.patch(__name__ + '.CODES', codes):
             base = write_folder(self.root / 'other')
-        ds = TD.LiveDataset(base, self.root / 'other-live', provider=lambda: Fake(SESS, hist=hist))
+        ds = TD.LiveDataset(base, self.root / 'other-live', provider=lambda: anchored(Fake(SESS, hist=hist), base))
         with self.assertRaisesRegex(RuntimeError, 'insufficient trading-name coverage'):
             ds.update(ny('2026-10-20', 11))
         self.assertFalse(ds.dir.exists())
@@ -348,6 +361,31 @@ class LiveTests(Base):
         self.assertEqual(report['rejected_bars'][0]['code'], codes[0])
         self.assertTrue(np.isnan(ds.panel()['close'][-1, 0]))
         self.assertEqual((ds.dir / 'bars_raw.csv.gz').read_bytes(), original)
+
+
+class ReviewBoundaryTests(unittest.TestCase):
+    """2026-10-25 strategy review R07: no relabelled snapshot, no agreement claimed on nothing compared."""
+
+    def test_snapshot_dated_another_session_is_rejected(self):
+        class Snap:
+            @staticmethod
+            def snapshot(codes):
+                return {'US.A': dict(open=10, high=10, low=10, close=10, volume=1, turnover=10, prev_close=10,
+                                     trading=True, time='2026-10-15 16:00:00'),
+                        'US.B': dict(open=11, high=11, low=11, close=11, volume=1, turnover=11, prev_close=11,
+                                     trading=True, time='2026-10-19 16:00:00')}
+        rows, _, check = LV.LiveDataset.from_snapshot(Snap, ['US.A', 'US.B'], '2026-10-19',
+                                                      {'US.A': ('2026-10-16', 10), 'US.B': ('2026-10-16', 11)})
+        self.assertEqual([r[0] for r in rows], ['US.B'])
+        self.assertEqual(check['rejected_bars'][0]['reason'], 'quote dated 2026-10-15')
+
+    def test_history_without_the_anchor_day_is_refused(self):
+        class NoOverlap:
+            @staticmethod
+            def history(codes, start, end):
+                yield 'US.A', [('US.A', '2026-10-19', 10, 10, 10, 10, 1, 10)], []
+        with self.assertRaisesRegex(RuntimeError, 'no bar on 2026-10-16'):
+            LV.LiveDataset.from_history(NoOverlap, ['US.A'], '2026-10-16', ['2026-10-19'], {'US.A': 10})
 
 
 class ApiTests(Base):

@@ -1,0 +1,10 @@
+{"stage": "data layer: his low price / low liquidity on trader-data-v2", "data": "trader-data-v2", "base": ["r8.json", "chosen"],
+ "base_change": {"data": "trader-data-v2"}, "ref": "L2V2", "objective": "goal",
+ "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "TO1": {"pool": {"turnover": 1000000.0, "price": 5.0}},
+  "P3": {"pool": {"turnover": 5000000.0, "price": 3.0}},
+  "TO1P3": {"pool": {"turnover": 1000000.0, "price": 3.0}},
+  "B2040": {"long": {"hv": 20, "hv_max": 40}, "short": {"hv": 20, "hv_max": 40}},
+  "TO1B2040": {"pool": {"turnover": 1000000.0, "price": 5.0}, "long": {"hv": 20, "hv_max": 40}, "short": {"hv": 20, "hv_max": 40}}
+ }}

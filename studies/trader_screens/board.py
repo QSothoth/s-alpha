@@ -14,6 +14,8 @@ WHY = {'跌破止损': '止损', '跳空跌破止损': '跳空止损', '收盘�
        '跳空涨破止损回补': '跳空止损', '收盘站上跟踪线回补': '站上跟踪线', '按 R 回补一部分': '分批',
        '当天止损回补': '当天止损', '持有到期回补': '到期', '到达目标线回补': '到目标线',
        'day_trim': '第 N 天盈利回补'}           # a short's day partial (the runner passes the engine's name through)
+STAGE = {'open': '开盘', 'intraday': '盘中', 'close': '收盘'}
+SIGNAL = {'atr50x8': '高出 50 日线 8 ATR', 'ext10_30': '高出 10 日线 30%'}
 SHORT_KIND = {'Z1': '首次反抽 50 EMA', 'Z2': '反抽下行均线', 'Z5': '收紧后跌破前低', 'Z6': '前领涨股反抽 9 EMA',
               'Z8': '高开到 21 EMA 被拒'}
 
@@ -53,29 +55,68 @@ def line_name(key):
     return f"{key[3:]} 日线" if key.startswith('sma') else f"{key[3:]} EMA" if key.startswith('ema') else key
 
 
+def when(n, days):
+    left = n - days
+    return '明天' if left == 1 else f'{left}天后' if left > 1 else '已到'
+
+
+def option_buy(b):
+    """A short put sold today: strike, its distance under the price, expiry, premium as a share of the strike."""
+    o = b['option']
+    return (f"卖 Put{stage(b)} {stock(b)}：执行价 {px(o['strike'])}（低于现价 {1 - o['strike'] / o['spot']:.0%}），"
+            f"{o['expiry'][5:]} 到期，权利金 {px(o['premium'])}（执行价的 {o['premium'] / o['strike']:.1%}），"
+            f"占用 {pct(b['weight'], False)}")
+
+
+def option_sell(s):
+    o = s['option']
+    end = '作废，权利金全收' if s['why'] == '到期作废' else f"收在执行价 {px(o['strike'])} 下方，按差价赔付"
+    return f"到期 {stock(s)}：{end}，{pct(s['ret'])}（相对执行价）"
+
+
 def exit_text(h):
-    """Next session's exit plan, short: stop · trail · next partial · day partial · add.  A short covers above its
-    stop ("涨破 X 回补") and on a close above its trail line."""
+    """Next session's exit plan, short: stop · trail · next partial · breakeven · day partial · signal partial ·
+    holding limit · add, every rule the engine manages the position with.  A short covers above its stop ("涨破 X
+    回补") and on a close above its trail line.  Line values are today's: tomorrow's close line moves with tomorrow."""
+    if h.get('option'):                         # a short put: held to its expiry
+        o = h['option']
+        return (f"执行价 {px(o['strike'])}，{o['expiry'][5:]} 到期；现价 {px(h['close'])}"
+                f"（高出执行价 {h['close'] / o['strike'] - 1:.0%}），到期收在执行价下方会被行权")
     if h.get('side', 1) < 0:
         parts = [f"涨破 {px(h['stop'])} 回补"]
         if h.get('trail_name') and h.get('trail') is not None:
             parts.append(f"收盘站上 {line_name(h['trail_name'])} {px(h['trail'])} 回补")
         if h.get('next_trim') is not None:
             parts.append(f"{px(h['next_trim'])} 回补{h['trim_frac']:.0%}")
+        if h.get('breakeven') is not None:
+            parts.append(f"跌到 {px(h['breakeven'])} 止损移到成本")
         if h.get('next_target') is not None:
             parts.append(f"跌到 {line_name(h['target_name'])} {px(h['next_target'])} 回补")
+        if h.get('short_trim_day_pending'):
+            parts.append(f"第{h['short_trim_day']}天收盘盈利回补{h['short_trim_day_frac']:.0%}"
+                         f"（{when(h['short_trim_day'], h['days'])}）")
+        if h.get('max_days'):
+            parts.append(f"第{h['max_days']}天收盘回补（{when(h['max_days'], h['days'])}）")
         return ' · '.join(parts)
     parts = [f"止损 {px(h['stop'])}"]
     if h.get('trail_name') and h.get('trail') is not None:
         parts.append(f"破 {line_name(h['trail_name'])} {px(h['trail'])}")
     if h.get('next_trim') is not None:
         parts.append(f"{px(h['next_trim'])} 卖{h['trim_frac']:.0%}")
+    if h.get('breakeven') is not None:
+        parts.append(f"到 {px(h['breakeven'])} 止损移到成本")
+    if h.get('trim_signal'):
+        parts.append(f"收盘{SIGNAL.get(h['trim_signal'], h['trim_signal'])}卖{h['trim_signal_frac']:.0%}")
     if h.get('day_trim_pending'):
         left = h['trim_day'] - h['days']
         parts.append(f"第{h['trim_day']}天{'盈利' if h.get('trim_day_profit') else ''}卖{h['trim_day_frac']:.0%}"
                      f"（{'明天' if left == 1 else f'{left}天后' if left > 1 else '已到'}）")
+    if h.get('max_days'):
+        parts.append(f"第{h['max_days']}天收盘卖（{when(h['max_days'], h['days'])}）")
     if h.get('next_add') is not None:
         parts.append(f"{px(h['next_add'])} 加码")
+    if h.get('tradable') is False:
+        parts.append(f"今天无报价，按 {h.get('close_day', '')} 收盘估值")
     return ' · '.join(parts)
 
 
@@ -84,12 +125,22 @@ def gate_text(t):
 
 
 def today_text(t):
+    puts = [ticker(x['code']) for x in t['buys'] if x.get('option')]
+    if puts or any(x.get('option') for x in t['holdings']):
+        ends = [ticker(x['code']) for x in t['sells'] if x.get('option')]
+        return '；'.join(([f"卖 Put {'、'.join(puts)}"] if puts else []) + ([f"到期 {'、'.join(ends)}"] if ends else [])) or '—'
     out = []
     for word, key, side in (('买', 'buys', 1), ('卖', 'sells', 1), ('卖空', 'buys', -1), ('回补', 'sells', -1)):
         names = [ticker(x['code']) for x in t[key] if (x.get('side', 1) > 0) == (side > 0)]
         if names:
             out.append(f"{word} {'、'.join(names)}")
     return '；'.join(out) or '—'
+
+
+def stage(x):
+    """'（盘中）' for an execution that happened before the close (the board's default is the close)."""
+    s = x.get('stage', 'close')
+    return '' if s == 'close' else f"（{STAGE.get(s, s)}）"
 
 
 def table(head, rows, right=()):
@@ -102,45 +153,60 @@ def table(head, rows, right=()):
 def trader(t, days):
     lines = [f"**{t['name']}**" + ('' if days == 1 else f'（近 {days} 个交易日）')]
     for b in t['buys']:
+        if b.get('option'):
+            lines.append('- ' + option_buy(b) + (f"（{b['day']}）" if days > 1 else ''))
+            continue
         short = b.get('side', 1) < 0
         stop = (f"，涨破 {px(b['stop'])} 回补" if short else f"，止损 {px(b['stop'])}") if b['stop'] else ''
-        lines.append(f"- {'卖空' if short else '买'} {stock(b)}：{kind(b['setup'])}，{px(b['price'])}{stop}，"
+        lines.append(f"- {'卖空' if short else '买'}{stage(b)} {stock(b)}：{kind(b['setup'])}，{px(b['price'])}{stop}，"
                      f"仓位 {pct(b['weight'], False)}" + (f"（{b['day']}）" if days > 1 else ''))
     for s in t['sells']:
+        if s.get('option'):
+            lines.append('- ' + option_sell(s) + (f"（{s['day']}）" if days > 1 else ''))
+            continue
         short = s.get('side', 1) < 0
-        lines.append(f"- {'回补' if short else '卖'} {stock(s)}：{WHY.get(s['why'], s['why'])}"
+        lines.append(f"- {'回补' if short else '卖'}{stage(s)} {stock(s)}：{WHY.get(s['why'], s['why'])}"
                      f"{'' if s['full'] else '一部分'}，{px(s['price'])}，{pct(s['ret'])}"
                      + (f"（{s['day']}）" if days > 1 else ''))
     if t['wanted_n']:
-        lines.append(f"- 另有 {t['wanted_n']} 个买点没做：" + '、'.join(ticker(x['code']) for x in t['wanted'][:5])
+        lines.append(f"- 另有 {t['wanted_n']} 个买点没做：" + '、'.join(
+            ticker(x['code']) + ('（涨停买不到）' if x.get('limit_up') else '') for x in t['wanted'][:5])
                      + ('等' if t['wanted_n'] > 5 else ''))
     if t['holdings']:
         lines += [''] + table(['持仓', '方向', '开仓日', '盈亏', '仓位', '明天的离场线'], [
-            [stock(h), '空' if h.get('side', 1) < 0 else '多', h['entry_day'][5:], pct(h['ret']),
+            [stock(h), 'Put' if h.get('option') else '空' if h.get('side', 1) < 0 else '多', h['entry_day'][5:],
+             pct(h['ret']),
              pct(h['weight'], False), exit_text(h)]
             for h in sorted(t['holdings'], key=lambda h: -h['weight'])], right=('盈亏', '仓位'))
     return lines + ['']
 
 
 def orders(r):
-    """The closing orders of a provisional run (scan run --provisional): every system's buys and sells of today."""
+    """The orders of a provisional run (scan run --provisional): today's close-time buys and sells are the closing
+    orders; what the replay already filled earlier in the day (shorts at the open or a level, stops, R partials) is
+    listed apart as done in the simulation, not as an order still to place."""
     p = r['provisional']
     lines = [f"**盘中临时**：{p['now'][11:16]} 的快照当作今天的收盘算出（{p['snapshot_names']} 只有报价），不是收盘后的正式结果；"
-             f"尾盘按收盘价执行，收盘前价格还会变，收盘后用 `scan diff` 对照。", '']
-    rows = []
+             f"信号价沿用登记系统的模拟成交价，快照价是当前报价；收盘后用 `scan diff` 对照。", '']
+    rows, done = [], []
     for t in r['traders']:
         for b in t['buys']:
             short = b.get('side', 1) < 0
             act = '卖空' if short else ('加码' if b['setup'] == '加码' else '买')
             note = '涨停，收盘买不到，跳过' if b.get('limit_up') else kind(b['setup'])
-            rows.append([t['name'], act, stock(b), px(b['price']),
-                         (('涨破 ' if short else '') + px(b['stop'])) if b['stop'] else '—',
-                         pct(b['weight'], False), note])
+            row = [t['name'], act, stock(b), px(b['price']), px(b.get('snapshot_price')),
+                   (('涨破 ' if short else '') + px(b['stop'])) if b['stop'] else '—', pct(b['weight'], False), note]
+            (rows if b.get('stage', 'close') == 'close' else done).append(row)
         for s in t['sells']:
             short = s.get('side', 1) < 0
-            rows.append([t['name'], '回补' if short else '卖', stock(s), px(s['price']), '—',
-                         '全部' if s['full'] else '一部分', WHY.get(s['why'], s['why'])])
-    lines += table(['交易员', '操作', '股票', '快照价', '止损', '仓位', '说明'], rows, right=('快照价',)) or ['尾盘没有单子。']
+            row = [t['name'], '回补' if short else '卖', stock(s), px(s['price']), px(s.get('snapshot_price')), '—',
+                   '全部' if s['full'] else '一部分', WHY.get(s['why'], s['why'])]
+            (rows if s.get('stage', 'close') == 'close' else done).append(row)
+    head = ['交易员', '操作', '股票', '信号价', '快照价', '止损', '仓位', '说明']
+    lines += table(head, rows, right=('信号价', '快照价')) or ['尾盘没有单子。']
+    if done:
+        lines += ['', '今天盘中已在模拟里成交（开盘或盘中价位，不是尾盘要下的单）：', ''] + table(head, done,
+                                                                         right=('信号价', '快照价'))
     return lines + ['']
 
 
@@ -183,26 +249,37 @@ def market(r):
     st = r['state']
     state = '、'.join(f"{'站上' if st[f'above_ema{n}'] else '跌破'} {n} EMA" for n in (20, 50))
     lines = [f"## {NAMES[r['market']]} · {r['last_day']}", '', f'股票池等权指数{state}。', '']
+    if r['market'] == 'cn':
+        lines += ['> A 股仅供观察：收盘涨停买不到之后，七个系统在 A 股都不成立（研究区间全段为负或低于同池随机入场，'
+                  '`studies/trader_screens/reports/STRATEGY_REVIEW_20261025_FIXES_CN.md`），不作下单依据。', '']
     if r.get('provisional'):
         lines = lines[:1] + [''] + orders(r) + confidence(r) + lines[1:]
-    lines += table(['交易员', '版本', '仓位', '市况', '账户', '冻结后', '今天' if days == 1 else f'近 {days} 天'], [
-        [t['name'], f"{t['version']}（{STATUS[t['status']]}）", pct(t['account']['exposure'], False), gate_text(t),
+    lines += table(['交易员', '流派', '版本', '仓位', '市况', '账户', '冻结后', '今天' if days == 1 else f'近 {days} 天'], [
+        [t['name'], t.get('style') or '—', f"{t['version']}（{STATUS[t['status']]}）", pct(t['account']['exposure'], False), gate_text(t),
          f"{pct(t['account']['ret'])} / 回撤 {pct(t['account']['maxdd'], False)}",
          pct(t['forward']['ret']) if t['forward']['days'] else '—', today_text(t)] for t in r['traders']],
         right=('仓位',))
     c = r['common']
-    both = [(title, c[key]) for key, title in (('bought', '多人买入'), ('held', '多人持有'), ('shorted', '多人卖空'),
-                                                ('held_short', '多人做空')) if c.get(key)]
+    window = '' if days == 1 else f'近 {days} 天内'
+    both = [(key, title, c[key]) for key, title in (('bought', f'{window}多人买入'), ('held', '多人持有'),
+                                                     ('shorted', f'{window}多人卖空'), ('held_short', '多人做空'))
+            if c.get(key)]
+
+    def who(key, x):
+        if days == 1 or key.startswith('held'):
+            return '、'.join(x['traders'])
+        return '；'.join(f"{n} {'、'.join(d[5:] for d in ds)}" for n, ds in x.get('days', {}).items()) + \
+            (f"；同日：{'、'.join(x['same_day'])}" if x.get('same_day') else '；不是同一天')
     if both:
         lines.append('')
-        lines += [f"{title}：" + '；'.join(f"{ticker(x['code'])}（{'、'.join(x['traders'])}）" for x in rows[:8])
-                  for title, rows in both]
+        lines += [f"{title}：" + '；'.join(f"{ticker(x['code'])}（{who(key, x)}）" for x in rows[:8])
+                  for key, title, rows in both]
     active = [t for t in r['traders'] if t['buys'] or t['sells'] or t['holdings']]
     if active:
         lines.append('')
         for t in active:
             lines += trader(t, days)
-    bad = [t['name'] for t in r['traders'] if 'check' in t and not t['check']['ok']]
+    bad = [t['name'] for t in r['traders'] if (t.get('check') or {}).get('status') == 'failed']
     if bad:
         lines.append(f"**回放到冻结日与比对表不一致：{'、'.join(bad)}**")
         lines.append('')
@@ -212,14 +289,22 @@ def market(r):
 def render(results):
     results = results if isinstance(results, list) else [results]
     lines = ['# 交易员看板' + ('（盘中临时）' if any(r.get('provisional') for r in results) else ''), '',
-             '> 各交易员按研究里登记的系统（与横向比对表同一版本）从 2024-01-02 回放到最新收盘。买卖按收盘价，'
-             '“今天”的买卖是收盘那一刻的操作；离场线是下一交易日的计划：盘中破止损即卖，收盘破跟踪线即卖。'
-             '冻结日 2026-10-16 之前全是样本内。不是投资建议或订单。', '']
+             '> 各交易员按研究里登记的系统（与横向比对表同一版本）从 2024-01-02 回放到最新收盘。多头买入和跟踪线离场按收盘价；'
+             '卖空（开盘或反抽到价位）、跳空止损、盘中止损和按 R 分批发生在盘中，表里标了（开盘）（盘中）。'
+             '离场线是下一交易日的计划：盘中破止损即卖，收盘破跟踪线即卖；均线值是今天的，明天收盘时的线会变。'
+             '冻结日 2026-10-16 之前全是样本内。不是投资建议或订单。'
+             + ('卖 Put 在开盘按模型估价成交、持有到周五到期，权利金是估算值。'
+                if any(h.get('option') for r in results for t in r['traders'] for h in t['buys'] + t['holdings'])
+                else ''), '']
     for r in results:
         lines += market(r)
-    checked = [t for r in results for t in r['traders'] if 'check' in t]
-    if checked and all(t['check']['ok'] for t in checked):
-        lines += ['回放核对：到冻结日的分年收益与比对表全部一致。', '']
+    status = [((t.get('check') or {}).get('status') or 'missing', t['name'], r['market']) for r in results
+              for t in r['traders']]
+    missing = [f"{NAMES[m]} {n}" for s, n, m in status if s == 'missing']
+    if status and all(s == 'passed' for s, _, _ in status):
+        lines += ['回放核对：到冻结日的分年收益与比对表（同配置、同代码）全部一致。', '']
+    elif missing:
+        lines += [f"回放核对：{'、'.join(missing)} 没有同配置、同代码的比对表参考，未核对。", '']
     seen, rules = set(), []
     for r in results:
         for t in r['traders']:

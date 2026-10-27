@@ -1,0 +1,9 @@
+{"stage": "entry / exit / short", "base": ["r1.json", "chosen"], "ref": "DROP", "objective": "his_years",
+ "gates": ["placebo", "behaviour+0.15"], "draws": 50,
+ "candidates": {
+  "DL5": {"long": {"limit": 0.05}, "short": {"limit": 0.05}},
+  "EITHER": {"long": {"rsi": 5, "either": true}},
+  "XUP": {"exit_long": "xup", "exit_short": "xdn"},
+  "SNT": {"short": {"trend": false}},
+  "EL4": {"long": {"rsi": 5, "either": true, "limit": 0.04}, "short": {"limit": 0.04}}
+ }}

@@ -1,0 +1,9 @@
+{"stage": "risk per trade vs his worst day", "data": "trader-data-v2", "base": ["r9.json", "chosen"], "ref": "G25S5",
+ "objective": "goal", "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "R6": {"rule_opts": {"risk": 0.06, "max_position": 0.45}},
+  "R4": {"rule_opts": {"risk": 0.04, "max_position": 0.30}},
+  "R6S20": {"stop": 0.20, "rule_opts": {"risk": 0.06, "max_position": 0.45}},
+  "R4MX3": {"max_new": 3, "rule_opts": {"risk": 0.04, "max_position": 0.30}},
+  "R6G3": {"rule_opts": {"risk": 0.06, "max_position": 0.45, "max_gross": 1.5}}
+ }}

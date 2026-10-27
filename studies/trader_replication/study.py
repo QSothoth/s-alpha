@@ -247,12 +247,14 @@ class Study:
         return res['chosen_config'] if key == 'chosen' else res['configs'][key]
 
     def px(self, A):
-        return dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'])
+        return dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'],
+                    kind_pools=A.get('kind_pools'))
 
     def ema_inputs(self, A, pool, rules):
         """Every array the rules read by name, built on demand through named()."""
-        names = {rules.trail, rules.trail_after_trim, rules.trail_alt, rules.exit_signal, rules.trim_signal, rules.trim_signal2,
-                 rules.risk_scale, rules.trail_alt_days}
+        names = {rules.trail, rules.trail_after_trim, rules.trail_alt, rules.exit_signal, rules.short_exit_signal,
+                 rules.trim_signal, rules.trim_signal2,
+                 rules.risk_scale, rules.trail_alt_days, rules.unit_adr}
         names |= {o.get('trail', '') for o in rules.management_by_kind.values()}
         names |= set(rules.short_targets)
         names |= {getattr(rules, k, '') for k in ('add_signal', 'trim_day_signal')}

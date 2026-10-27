@@ -55,6 +55,13 @@ class Minervini(CF.Flanders):
             out['vcp_mm'] = (x.mask, x.price, x.stop)
         return out
 
+    def kind_pools(self, A, cfg, kinds):
+        """vcp_mm runs the board's screens.MarkMinervini (20M floor)."""
+        out = super().kind_pools(A, cfg, kinds)
+        if 'vcp_mm' in kinds:
+            out['vcp_mm'] = lag(A['F'].liquid(20e6))
+        return out
+
     def entries(self, A, cfg, masks):
         """'close' entries take the day's low as the stop (the corrected entry); with stop 'base' the draft's base
         low (at most 8% below the fill) replaces it."""

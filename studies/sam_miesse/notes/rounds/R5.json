@@ -1,0 +1,9 @@
+{"stage": "size x stop", "base": ["r4.json", "chosen"], "ref": "R4S30", "objective": "his_years",
+ "gates": ["placebo"], "draws": 50,
+ "candidates": {
+  "R6S30": {"rule_opts": {"risk": 0.06, "max_position": 0.50}},
+  "R8S30": {"rule_opts": {"risk": 0.08, "max_position": 0.60}},
+  "R6S20": {"stop": 0.20, "rule_opts": {"risk": 0.06, "max_position": 0.50}},
+  "R8S20": {"stop": 0.20, "rule_opts": {"risk": 0.08, "max_position": 0.60}},
+  "R6S30G40": {"gap": 0.40, "rule_opts": {"risk": 0.06, "max_position": 0.50}}
+ }}

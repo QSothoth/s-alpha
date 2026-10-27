@@ -1,0 +1,17 @@
+{
+ "evan": {"base": "r8.json", "ref": "L2", "cands": {
+   "L2": {},
+   "L15": {"long": {"limit": 0.015}, "short": {"limit": 0.015}},
+   "L15T7": {"long": {"limit": 0.015}, "short": {"limit": 0.015}, "rule_opts": {"max_days": 7}},
+   "L15T10": {"long": {"limit": 0.015}, "short": {"limit": 0.015}, "rule_opts": {"max_days": 10}}}},
+ "sam": {"base": "r9.json", "ref": "PRUN", "cands": {
+   "PRUN": {"gap": 0.2, "spike": 0.07, "priority": "run"},
+   "PRUNMX10": {"gap": 0.2, "spike": 0.07, "priority": "run", "max_new": 10},
+   "PRUNR9": {"gap": 0.2, "spike": 0.07, "priority": "run", "rule_opts": {"risk": 0.09}}}},
+ "hol": {"base": "r7.json", "ref": "PN2MN3P", "cands": {
+   "PN2MN3P": {"strip": false, "per_name": 2, "max_new": 3, "priority": "yield"},
+   "PN2MN4P": {"strip": false, "per_name": 2, "max_new": 4, "priority": "yield"},
+   "PN2MN5P": {"strip": false, "per_name": 2, "max_new": 5, "priority": "yield"},
+   "PN2MN4YI": {"strip": false, "per_name": 2, "max_new": 4, "priority": "yield_iv"},
+   "PN2MN4P30": {"strip": false, "per_name": 2, "max_new": 4, "priority": "yield", "iv_min": 0.3}}}
+}

@@ -1,0 +1,9 @@
+{"stage": "daily slots by depth, not by HV (the HV ceiling's fragility)", "base": ["r8.json", "chosen"],
+ "ref": "L2", "objective": "goal", "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "PRSI": {"priority": "rsi"},
+  "PRSI40": {"priority": "rsi", "long": {"rsi": 5, "down": 3, "hv": 15, "trend": true, "limit": 0.02, "drop": 0.1, "either": true, "hv_max": 40}, "short": {"rsi": 99, "up": 3, "hv": 15, "trend": false, "limit": 0.02, "run": 0.1, "hv_max": 40}},
+  "PDROP": {"priority": "drop3"},
+  "PDROP40": {"priority": "drop3", "long": {"rsi": 5, "down": 3, "hv": 15, "trend": true, "limit": 0.02, "drop": 0.1, "either": true, "hv_max": 40}, "short": {"rsi": 99, "up": 3, "hv": 15, "trend": false, "limit": 0.02, "run": 0.1, "hv_max": 40}},
+  "HV40": {"long": {"rsi": 5, "down": 3, "hv": 15, "trend": true, "limit": 0.02, "drop": 0.1, "either": true, "hv_max": 40}, "short": {"rsi": 99, "up": 3, "hv": 15, "trend": false, "limit": 0.02, "run": 0.1, "hv_max": 40}}
+ }}

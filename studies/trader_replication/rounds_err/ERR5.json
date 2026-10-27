@@ -1,0 +1,130 @@
+{
+ "evan": {
+  "base": "r8.json",
+  "ref": "L2",
+  "cands": {
+   "L2": {},
+   "XSMA5": {
+    "long": {
+     "limit": 0.015
+    },
+    "short": {
+     "limit": 0.015
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s"
+   },
+   "XS5TO50": {
+    "long": {
+     "limit": 0.015
+    },
+    "short": {
+     "limit": 0.015
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 50000000.0,
+     "price": 5.0
+    }
+   },
+   "XS5LC": {
+    "long": {
+     "limit": 0.015
+    },
+    "short": {
+     "limit": 0.015
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 100000000.0,
+     "price": 20.0
+    }
+   },
+   "XS5HV30": {
+    "long": {
+     "limit": 0.015,
+     "hv_max": 30
+    },
+    "short": {
+     "limit": 0.015,
+     "hv_max": 30
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s"
+   },
+   "XS5LCL1": {
+    "long": {
+     "limit": 0.01
+    },
+    "short": {
+     "limit": 0.01
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 100000000.0,
+     "price": 20.0
+    }
+   }
+  }
+ },
+ "hol": {
+  "base": "r7.json",
+  "ref": "PN2MN3P",
+  "cands": {
+   "PN2MN3P": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 3,
+    "priority": "yield"
+   },
+   "TO5": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 3,
+    "priority": "yield",
+    "turnover": 500000000.0
+   },
+   "TO10": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 3,
+    "priority": "yield",
+    "turnover": 1000000000.0
+   },
+   "TR0TO5": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 3,
+    "priority": "yield",
+    "trend": 0.0,
+    "turnover": 500000000.0
+   },
+   "TR0TO10": {
+    "strip": false,
+    "per_name": 2,
+    "max_new": 3,
+    "priority": "yield",
+    "trend": 0.0,
+    "turnover": 1000000000.0
+   }
+  }
+ }
+}

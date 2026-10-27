@@ -75,6 +75,18 @@ class Marios(Q.Qullamaggie):
                 out['brk'] = self.leader_breakout(F, bo)
         return out
 
+    def kind_pools(self, A, cfg, kinds):
+        """His own floors where the configuration sets them: the EP's price / turnover, the breakout's bo floors."""
+        out = super().kind_pools(A, cfg, kinds)
+        F, o, bo = A['F'], cfg.get('ep', {}), cfg.get('brk')
+        with np.errstate(invalid='ignore'):
+            if 'ep' in kinds and 'price' in o:
+                out['ep'] = lag((F.to20 >= o.get('liquid', 20e6)) & (F.raw >= o['price']))
+            if 'brk' in kinds and bo:
+                out['brk'] = lag((F.to20 >= bo.get('turnover', 20e6)) & (F.raw >= bo.get('price', 5.0))
+                                 & (F.adr >= bo.get('adr', 4.0)))
+        return out
+
     @staticmethod
     def leader_breakout(F, bo):
         """screens.Qullamaggie's breakout (10-day tightening within 3 ADR, narrowing, higher lows, within 1 ADR of
@@ -87,13 +99,6 @@ class Marios(Q.Qullamaggie):
                     & (F.c >= F.hi(10) * (1 - adr / 100)))
         m, entry = S.triggered_from(F, watch & base, F.hi(10))
         return m, entry, F.l
-
-    def his_entry(self, A, d, j, cfg):
-        """His ticker on his day with our execution: the close, stop at the day's low (at least stop_min)."""
-        c, l = A['close'][d, j], A['low'][d, j]
-        if not (np.isfinite(c) and np.isfinite(l) and c > 0):
-            return None
-        return (0.0, j, 1, c, min(l, c * (1 - cfg.get('stop_min', .01))), 'his')
 
     def validate(self, report, key='chosen', short_report=''):
         """The chosen configuration (with the short side carried by `short_report`, an S round) on the validation

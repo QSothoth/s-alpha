@@ -62,18 +62,32 @@ def index_above(F, n):
 
 
 def overlaps(traders, inds):
-    """Names several traders bought (held) the same day, longs and shorts apart."""
+    """Names several traders bought (held) inside the window, longs and shorts apart.  A row keeps each trader's
+    days and same_day: the traders that bought it on one same day (one-day windows: all of them)."""
     def multi(key, side=1):
-        who = defaultdict(list)
+        who, days = defaultdict(list), defaultdict(dict)
         for t in traders:
             for x in t[key]:
-                if (x.get('side', 1) > 0) != (side > 0):
+                if x.get('option') or (x.get('side', 1) > 0) != (side > 0):   # a short put is not a stock trade
                     continue
                 if t['name'] not in who[x['code']]:
                     who[x['code']].append(t['name'])
-        rows = [dict(code=c, traders=v, industry=inds.get(c, '')) for c, v in who.items() if len(v) >= 2]
+                d = x.get('day') or x.get('entry_day')
+                days[x['code']].setdefault(t['name'], [])
+                if d and d not in days[x['code']][t['name']]:
+                    days[x['code']][t['name']].append(d)
+        rows = []
+        for c, v in who.items():
+            if len(v) < 2:
+                continue
+            by_day = defaultdict(list)
+            for name, ds in days[c].items():
+                for d in ds:
+                    by_day[d].append(name)
+            same = max((n for n in by_day.values() if len(n) >= 2), key=len, default=[])
+            rows.append(dict(code=c, traders=v, industry=inds.get(c, ''), days=days[c], same_day=same))
         return sorted(rows, key=lambda x: (-len(x['traders']), x['code']))
-    held = Counter(inds.get(h['code'], '') or '未知' for t in traders for h in t['holdings'])
+    held = Counter(inds.get(h['code'], '') or '未知' for t in traders for h in t['holdings'] if not h.get('option'))
     return dict(bought=multi('buys'), held=multi('holdings'), shorted=multi('buys', -1),
                 held_short=multi('holdings', -1), industries_held=held.most_common(10),
                 in_cash=[t['name'] for t in traders if not t['holdings']])
@@ -93,13 +107,20 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
     F = S.Feat(p, market)
     state = {f'above_ema{n}': bool(index_above(F, n)[-1]) for n in (20, 50)}
     last, digest, codes = str(p['days'][-1]), p['digest'], [str(c) for c in p['codes']]
+    nm = ds.names()
+    capped = set()
+    if market == 'cn':
+        with np.errstate(invalid='ignore', divide='ignore'):
+            prev = p['close'][-2] * p['raw_close'][-1] / p['close'][-1]
+        capped = {code for j, code in enumerate(codes)
+                  if intraday.at_limit_up(code, nm.get(code, ''), p['raw_close'][-1, j], prev[j], last)}
     tail_days, tail_close = p['days'][-61:].copy(), p['close'][-61:].copy()
     market_curve = runner.bounded_history(p['days'], pool_index(F), last)
     del p, F
     traders = []
     with intraday.shared(panel, market) if panel is not None else nullcontext():
-        for x in SY.all_():
-            if only and x.id not in only:
+        for x in SY.board(market):
+            if (only and x.id not in only) or (panel is not None and getattr(x, 'board_run', None)):   # Holguin sells at the open
                 continue
             t0 = time.perf_counter()
             t = runner.run(x, market, mode, days)
@@ -110,13 +131,14 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
             t['wanted_n'] = len(t['wanted'])
             t['wanted'] = t['wanted'][:WANTED_N]
             traders.append(t)
-    nm = ds.names()
     inds = data.industries(codes, market)
     signal_codes = set()
     for t in traders:
         for key in ('buys', 'sells', 'holdings', 'wanted'):
             for y in t[key]:
                 y['name'], y['industry'] = nm.get(y['code'], ''), inds.get(y['code'], '')
+                if key == 'buys' and y.get('day') == last and y.get('side', 1) > 0 and y['code'] in capped:
+                    y['limit_up'] = True
                 signal_codes.add(y['code'])
     columns = {code: j for j, code in enumerate(codes)}
     stocks = {}
@@ -147,28 +169,38 @@ def show(r):
     for t in r['traders']:
         a = t['account']
         gate = '' if t['gate_today'] is None else ('；今天市况允许开新仓' if t['gate_today'] else '；今天市况不许开新仓')
-        print(f"\n[{t['name']}｜{t['label']}] 仓位 {a['exposure']:.0%}{gate}；账户自 {a['since']} 起 {pct(a['ret'])}，"
+        print(f"\n[{t['name']}｜{t.get('style') or '—'}｜{t['label']}] 仓位 {a['exposure']:.0%}{gate}；账户自 {a['since']} 起 {pct(a['ret'])}，"
               f"回撤 {a['maxdd']:.0%}，{a['trades']} 笔平仓" + (f"、胜率 {a['win']:.0%}" if a['win'] is not None else ''))
-        if 'check' in t:
-            print(f"  回放核对（到冻结日 {t['freeze']}）：{'一致' if t['check']['ok'] else '不一致'}")
+        status = (t.get('check') or {}).get('status', 'missing')
+        print(f"  回放核对（到冻结日 {t['freeze']}）："
+              f"{dict(passed='一致', failed='不一致').get(status, '没有同配置、同代码的参考，未核对')}")
         f = t['forward']
         if f['days']:
             print(f"  冻结日之后 {f['days']} 个交易日：{pct(f['ret'])}，回撤 {f['maxdd']:.0%}，新开 {f['trades']} 笔")
         print(f"  {span}买入：" + ('无' if not t['buys'] else ''))
         for b in t['buys']:
+            if b.get('option'):
+                print(f"    {board.option_buy(b)}")
+                continue
             short = b.get('side', 1) < 0
             stop = (f" 涨破 {px(b['stop'])} 回补（{(b['stop'] - b['price']) / b['price']:.1%}）" if short else
                     f" 止损 {px(b['stop'])}（{(b['price'] - b['stop']) / b['price']:.1%}）") if b['stop'] else ''
             print(f"    {b['code']} {b['name'][:10]} {b['setup']} {'卖空' if short else '买'} {px(b['price'])}{stop} "
-                  f"仓位 {b['weight']:.0%} {b['industry']}")
+                  f"仓位 {b['weight']:.0%} {b['industry']}" + ('｜涨停，收盘买不到，跳过' if b.get('limit_up') else ''))
         if t['wanted_n']:
             print(f"  另有 {t['wanted_n']} 个买点没做：" + '、'.join(x['code'] for x in t['wanted']))
         print(f"  {span}卖出：" + ('无' if not t['sells'] else ''))
         for x in t['sells']:
+            if x.get('option'):
+                print(f"    {board.option_sell(x)}")
+                continue
             print(f"    {x['code']} {x['name'][:10]} {board.WHY.get(x['why'], x['why'])}{'' if x['full'] else '（部分）'} {px(x['price'])}，"
                   f"{'空单盈亏' if x.get('side', 1) < 0 else '相对买价'} {pct(x['ret'])}")
         print(f"  持仓 {len(t['holdings'])} 只：" + ('空仓' if not t['holdings'] else ''))
         for h in t['holdings']:
+            if h.get('option'):
+                print(f"    {board.stock(h)} {h['entry_day']} 卖 Put，占用 {h['weight']:.0%}，{board.exit_text(h)}")
+                continue
             print(f"    {h['code']} {h['name'][:10]} {h['entry_day']} {'卖空' if h.get('side', 1) < 0 else '买'} "
                   f"{px(h['fill'])} → {px(h['close'])}"
                   f"（{pct(h['ret'])}）仓位 {h['weight']:.0%}，" + board.exit_text(h) + f" {h['industry']}")
@@ -179,7 +211,9 @@ def show(r):
         rows = c.get(key, [])
         print(f"{title}：" + ('无' if not rows else ''))
         for x in rows[:15]:
-            print(f"  {x['code']} {x['industry']}：{'、'.join(x['traders'])}")
+            when = '' if r['days'] == 1 or key.startswith('held') else \
+                '（' + '；'.join(f"{n} {'、'.join(d[5:] for d in ds)}" for n, ds in x.get('days', {}).items()) + '）'
+            print(f"  {x['code']} {x['industry']}：{'、'.join(x['traders'])}{when}")
     print('持仓行业：' + '、'.join(f'{k}({v})' for k, v in c['industries_held']))
     if c['in_cash']:
         print('空仓的：' + '、'.join(c['in_cash']))
@@ -199,11 +233,13 @@ def main(argv=None):
     parser.add_argument('--days', type=int, default=1, help='trades of the last N sessions (5 = the week)')
     parser.add_argument('--traders', help='comma-separated ids (default: every registered trader)')
     args = parser.parse_args(argv)
+    if args.provisional and (args.action != 'run' or args.mode != 'live' or args.days != 1):
+        parser.error('--provisional requires run, --mode live and --days 1')
     from studies import trader_data as TD
     if args.action == 'list':
         from studies.trader_replication import systems as SY
-        for x in SY.all_():
-            print(f"{x.id}: {x.name}｜{x.label}｜冻结日 {x.freeze}")
+        for x in SY.board():
+            print(f"{x.id}: {x.name}｜{x.style}｜{x.label}｜{'/'.join(x.markets)}｜冻结日 {x.freeze}")
         return
     if args.action == 'board':                      # one page with the newest daily run of every market
         out = data.SCANS / 'out'
@@ -227,10 +263,19 @@ def main(argv=None):
         provisional_cli(args.market, set(args.traders.split(',')) if args.traders else None)
         return
     freshness = None
+    only = set(args.traders.split(',')) if args.traders else None
     if args.action == 'refresh' or (args.action == 'run' and args.mode == 'live'):
         r = freshness = TD.dataset(args.market, 'live').update()
         print(f"== {data.NAMES[args.market]} 数据：原有最后一天 {r['last_before']}，补 {len(r['missing'])} 个交易日"
               f"{'（' + r['method'] + '）' if r['method'] else '（已是最新）'}，{r['rows']} 根日 K，{r['actions']} 个复权")
+        from studies.trader_replication import systems as SY
+        if (not only or 'alfredo_holguin' in only) and any(x.id == 'alfredo_holguin' for x in SY.board(args.market)):
+            from studies.alfredo_holguin.replicate import STUDY as HO     # his names' IV and the earnings calendar
+            from studies.trader_options import live as OL                 # (OpenD, on demand, no kline quota)
+            names = {t['symbol'].upper() for t in HO.his_trades() if t['symbol']}
+            o = OL.refresh({f'US.{s}' for s in names})
+            print(f"== 期权数据（Holguin 名单 {o['codes']} 只）：补 {o['rows']} 行波动率 / 统计，财报日历 {o['earnings']} 条"
+                  + (f"；{len(o['errors'])} 只失败" if o['errors'] else ''))
         if args.action == 'refresh':
             return
     if args.action == 'industry':
@@ -238,7 +283,6 @@ def main(argv=None):
         got = data.industries([str(c) for c in p['codes']], args.market, fetch=True)
         print(f"{data.NAMES[args.market]}：{sum(bool(v) for v in got.values())}/{len(got)} 只有行业")
         return
-    only = set(args.traders.split(',')) if args.traders else None
     r = run(args.market, args.mode, args.days, only)
     if freshness is not None:
         if r['last_day'] != freshness['expected_last_day']:
@@ -273,7 +317,7 @@ def with_confidence(market, mode, days, only, panel=None, seconds=None):
         return r
     t0 = time.perf_counter()
     hhmm = intraday.market_now(market).strftime('%H:%M')
-    systems = [x for x in SY.all_() if not only or x.id in only]
+    systems = [x for x in SY.board(market) if not getattr(x, 'board_run', None) and (not only or x.id in only)]
     try:
         c = CF.live(panel, market, hhmm, model, systems=systems)
     except Exception as e:                          # the direct board stands on its own
@@ -291,7 +335,7 @@ def with_confidence(market, mode, days, only, panel=None, seconds=None):
             j = col.get(x['code'])
             if market == 'cn' and x['kind'] == 'buy' and x['side'] > 0 and j is not None:
                 x['limit_up'] = intraday.at_limit_up(x['code'], x['name'], float(panel['raw_close'][d, j]),
-                                                     float(panel['raw_close'][d - 1, j]))
+                                                     float(panel['raw_close'][d - 1, j]), r['last_day'])
     c['seconds'] = round(time.perf_counter() - t0, 2)
     r['confidence'] = c
     return r

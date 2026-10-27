@@ -1,0 +1,12 @@
+{"stage": "entry depth x volatility", "base": ["r6.json", "chosen"], "ref": "T3", "objective": "goal",
+ "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "L1": {"long": {"limit": 0.01}, "short": {"limit": 0.01}},
+  "B2040L1": {"long": {"hv": 20, "hv_max": 40, "limit": 0.01}, "short": {"hv": 20, "hv_max": 40, "limit": 0.01}},
+  "B2040L1T5": {"long": {"hv": 20, "hv_max": 40, "limit": 0.01}, "short": {"hv": 20, "hv_max": 40, "limit": 0.01},
+                "rule_opts": {"max_days": 5, "short_max_days": 5}},
+  "B1535L1T5": {"long": {"hv": 15, "hv_max": 35, "limit": 0.01}, "short": {"hv": 15, "hv_max": 35, "limit": 0.01},
+                "rule_opts": {"max_days": 5, "short_max_days": 5}},
+  "B2040L0T5": {"long": {"hv": 20, "hv_max": 40, "limit": 0.0}, "short": {"hv": 20, "hv_max": 40, "limit": 0.0},
+                "rule_opts": {"max_days": 5, "short_max_days": 5}}
+ }}

@@ -1,0 +1,9 @@
+{"stage": "count / holding", "base": ["r7.json", "chosen"], "ref": "B1535L1T5", "objective": "goal",
+ "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "L2": {"long": {"limit": 0.02}, "short": {"limit": 0.02}},
+  "L15": {"long": {"limit": 0.015}, "short": {"limit": 0.015}},
+  "T10": {"rule_opts": {"max_days": 10, "short_max_days": 10}},
+  "L2T10": {"long": {"limit": 0.02}, "short": {"limit": 0.02}, "rule_opts": {"max_days": 10, "short_max_days": 10}},
+  "O10": {"rule_opts": {"max_open": 10}}
+ }}

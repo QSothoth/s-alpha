@@ -22,6 +22,15 @@ class System:
     status: str                       # 'frozen' (approved by the user) | 'research' (carried, not frozen) | 'baseline'
     loader: object = field(repr=False)  # () -> (study, configuration)
     freeze: str = FREEZE
+    registered: str = ''              # the day this version was registered (its commit): records after the freeze day
+                                      # and before this day are a continued replay, not observations kept day by day
+    markets: tuple = ('us', 'hk', 'cn')  # the markets the board runs it on
+    wrap: bool = True                 # False: the study's own `short` key is its own short side, not a short round
+    board_run: object = field(default=None, repr=False)  # a non-stock engine's runner (runner.run's result shape)
+
+    @property
+    def style(self):
+        return STYLE.get(self.id, '')
 
     @property
     def label(self):
@@ -34,7 +43,7 @@ class System:
         if not hasattr(self, '_loaded'):
             from .shorts import wrap
             st, cfg = self.loader()
-            self._loaded = wrap(st), cfg
+            self._loaded = (wrap(st) if self.wrap else st), cfg
         return self._loaded
 
     @property
@@ -73,50 +82,102 @@ def _martin(short=None):
     return load
 
 
-def _study(module, report, short=None, common=None):
+def _study(module, report, short=None, common=None, fix=None):
     """The study's carried long configuration from a round report, plus (short = (report, key)) the short side of a
-    short round (docs/TRADER_PROTOCOL_CN.md section 5) and (common) the shared-mechanism switches of
-    trader_replication/common.py carried for this trader (reports/COMMON_RESULTS_CN.md)."""
+    short round (docs/TRADER_PROTOCOL_CN.md section 5), (common) the shared-mechanism switches of
+    trader_replication/common.py carried for this trader (reports/COMMON_RESULTS_CN.md) and (fix) account-rule
+    corrections that make the configuration do what its rule card says (version suffix RV1)."""
     def load():
         import importlib
         st = importlib.import_module(f'studies.{module}.replicate').STUDY
         cfg, sc = st.config(report), _short(st, short)
         if common:
             cfg = dict(cfg, common=common)
+        if fix:
+            cfg = dict(cfg, rule_opts={**cfg.get('rule_opts', {}), **fix})
         return st, dict(cfg, short=sc) if sc else cfg
     return load
 
 
-def _carried(module, report, key):
-    """A whole configuration carried out of a later round (studies/<id>/reports/<report>, key), short side included."""
+def _carried(module, report, key, fix=None):
+    """A whole configuration carried out of a later round (studies/<id>/reports/<report>, key), short side included;
+    fix: rule_opts overrides of a later round (as _study)."""
     def load():
         import importlib
         st = importlib.import_module(f'studies.{module}.replicate').STUDY
-        return st, json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
+        cfg = json.loads((st.reports / report).read_text(encoding='utf-8'))['configs'][key]
+        if fix:
+            cfg = dict(cfg, rule_opts={**cfg.get('rule_opts', {}), **fix})
+        return st, cfg
     return load
 
 
 def all_():
     # 2026-10-19: long-short versions frozen by the user (gate v2, studies/<id>/notes/SHORTS_CONCLUSION_CN.md)
-    return [System('martin_luk', 'R74 + S7', 'frozen', _martin(('s7.json', 'S7C'))),
+    return [System('martin_luk', 'R74 + S7', 'frozen', _martin(('s7.json', 'S7C')), registered='2026-10-19'),
             # 2026-10-20: + the common-gap version validated on 2026 (user approved, reports/COMMON_RESULTS_CN.md)
             System('christian_flanders', 'R15 C4 + C1C + S4', 'frozen',
-                   _study('christian_flanders', 'r15.json', ('s4.json', 'F4A'), {'rank': 'ep_own'})),
-            System('clement_ang', 'R15 AA3 + C4A + S5', 'frozen',
-                   _study('clement_ang', 'r15.json', ('s5.json', 'C5A'), {'ep_slots': 1})),
+                   _study('christian_flanders', 'r15.json', ('s4.json', 'F4A'), {'rank': 'ep_own'}),
+                   registered='2026-10-20'),
+            # RV1 (2026-10-25 review R04): the extension trim is taken once a position, as the rule card says ("sell a
+            # third, trail the rest"); before, every close the extension held sold another third.  ADR (review M02,
+            # user approved 2026-10-25): his "2 ADR" partial and breakeven in ADRs of the session before entry, not R
+            # (chosen on the same window, no independent validation: trader_screens/reports/
+            # STRATEGY_REVIEW_20261025_FIXES_CN.md)
+            System('clement_ang', 'R15 AA3 + C4A + S5 + RV1 + ADR', 'frozen',
+                   _study('clement_ang', 'r15.json', ('s5.json', 'C5A'), {'ep_slots': 1},
+                          {'trim_signal_max': 1, 'unit_adr': 'adr'}), registered='2026-10-25'),
             # 2026-10-21: + his risk per trade, half size after losses and in a weak market, kept because his
             # published win rate came closer (user approved; trader_replication/notes/SHARED_ROUNDS_CN.md, P1)
-            System('qullamaggie', 'R11 N3 + S7 + P1B', 'frozen', _carried('qullamaggie', 'p1.json', 'P1B')),
-            System('oliver_kell', 'R6 A5 + S5', 'frozen', _study('oliver_kell', 'r6.json', ('s5.json', 'K5B'))),
-            System('mark_minervini', 'R0b', 'baseline', _study('mark_minervini', 'r0b.json')),
+            # RB1 (2026-10-25, user approved; qullamaggie/notes/PREREG_RB1.md): on the fixed engine the third-day half
+            # sale keeps the initial stop (no breakeven move), B2; same window, not a new validation
+            System('qullamaggie', 'R11 N3 + S7 + P1B + RB1', 'frozen',
+                   _carried('qullamaggie', 'p1.json', 'P1B', {'breakeven_r': 0.0}), registered='2026-10-25'),
+            System('oliver_kell', 'R6 A5 + S5 + RV1', 'frozen',
+                   _study('oliver_kell', 'r6.json', ('s5.json', 'K5B'), fix={'trim_signal_max': 1}),
+                   registered='2026-10-25'),
+            System('mark_minervini', 'R0b', 'baseline', _study('mark_minervini', 'r0b.json'), registered='2026-10-19'),
             # 2026-10-20: put on the board by the user as a research version (B ledger; the 2026 validation segment
             # did not beat same-pool random entry), studies/marios_stamatoudis/reports/FINAL_CN.md
             System('marios_stamatoudis', 'R1 L4 + C4B + S1 P4', 'research',
-                   _study('marios_stamatoudis', 'r1.json', ('s1.json', 'P4'), {'ep_slots': 2}))]
+                   _study('marios_stamatoudis', 'r1.json', ('s1.json', 'P4'), {'ep_slots': 2}),
+                   registered='2026-10-20')]
+
+
+def _holguin():
+    def load():
+        from studies.alfredo_holguin.replicate import STUDY
+        return STUDY, json.loads((STUDY.reports / 'err7.json').read_text(encoding='utf-8'))['configs']['OWN180Y']
+    return load
+
+
+def _holguin_run(system, market, mode=None, days=1, A=None):
+    from studies.alfredo_holguin.board import run
+    return run(system, market, mode, days, A)
+
+
+def new_styles():
+    """2026-10-27 (user approved): the other styles' research versions, US only, on the board -- not in the
+    comparison (all_()), whose loops assume the stock engine on three markets.  studies/trader_replication/reports/
+    ERR_ROUNDS_20261027_CN.md, ERR7_20261027_CN.md, ERR8_20261027_CN.md."""
+    return [System('evan_medeiros', 'ERR6 XS5TO50L1', 'research', _carried('evan_medeiros', 'err6.json', 'XS5TO50L1'),
+                   registered='2026-10-27', markets=('us',), wrap=False),
+            System('alfredo_holguin', 'ERR7 OWN180Y', 'research', _holguin(), registered='2026-10-27',
+                   markets=('us',), wrap=False, board_run=_holguin_run)]
+
+
+def board(market=None):
+    """Every system the trader-screens board shows (on `market`): the comparison set plus the other styles."""
+    return [x for x in all_() + new_styles() if market is None or market in getattr(x, 'markets', ('us', 'hk', 'cn'))]
 
 
 def get(id_):
-    return next(x for x in all_() if x.id == id_)
+    return next(x for x in board() if x.id == id_)
+
+
+STYLE = {'martin_luk': '动量波段', 'christian_flanders': '动量波段', 'clement_ang': '动量波段', 'qullamaggie': '动量波段',
+         'oliver_kell': '动量波段', 'marios_stamatoudis': '动量波段', 'mark_minervini': '成长股趋势',
+         'evan_medeiros': '均值回归', 'alfredo_holguin': '卖 Put 收租'}
 
 
 STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, 仓位与市况); hand-written from each configuration
@@ -127,27 +188,27 @@ STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, �
                    '每笔风险 0.5%（近 5 笔赚钱时 0.8%），指数回踩 9 / 21 EMA 时 ×1.6；+10R、+20R 加码；单只 ≤ 50%，总敞口 ≤ 280%；池等权指数在 50 EMA 上方才开新多，每天 ≤ 4 笔。'
                    '空头 S7：前领涨股（成交额 ≥ 1 亿）前一日收在下行 21 EMA 下方，次日反抽到它限价卖空，止损 min(5%, 半个 ADR)；指数 < 50 EMA 才开、每天 1 笔；第 1 天盈利回补一半、余下站上 9 EMA 回补，最多 5 天'),
     'christian_flanders': ('R15 C4 + C1C + S4（已冻结）',
-                           '10 天底部后的 52 周新高突破（20 日成交额 ≥ 2000 万、ADR ≥ 2%、50 日线上方，按相对强度排序）；EP（跳空 ≥ 10%、3 倍量、离 52 周低点 ≥ 50%，可来自 ≥ 2 美元、500 万成交额的小盘）',
+                           '10 天底部后的 52 周新高突破（20 日成交额 ≥ 2000 万、ADR ≥ 3%、50 日线上方：看板筛选里写死的门槛，配置的 ADR 2% 对它不生效；按相对强度排序）；EP（跳空 ≥ 10%、3 倍量、离 52 周低点 ≥ 50%，可来自 ≥ 2 美元、500 万成交额的小盘）',
                            '收盘买，当日低点止损，宽度 1% ~ 6%',
                            '第 3 天卖一半，余下收盘跌破 10 日线',
                            '每笔风险 0.5%，单只 ≤ 30%，总敞口 ≤ 100%，最多 8 只，每天 ≤ 2 笔，当天 EP 先买（C1C）；无市况过滤。'
                            '空头 S4：前一日收在下行 200 日线下方、该线 60 天内压回过反抽，次日反抽到它限价卖空，止损 min(5%, 半个 ADR)；指数 < 50 EMA 才开、每天 1 笔；第 1 天盈利全部回补，最多 3 天'),
-    'clement_ang': ('R15 AA3 + C4A + S5（已冻结）',
+    'clement_ang': ('R15 AA3 + C4A + S5 + RV1 + ADR（已冻结）',
                     '精选清单（ADR ≥ 4%、离 52 周高 25% 内、高出 50 日线不到 4 ATR、5 日窄幅）越过昨高；清单内的 10 / 20 EMA 回踩；EP。池：成交额 ≥ 5000 万、ADR ≥ 3%、50 日线上方，按成交额排序',
                     '收盘买，当日低点止损（≥ 1%，不封顶）',
-                    '+2R 卖 1/3 并保本，高出 50 日线 8 ATR 再卖 1/3，余下收盘跌破 20 EMA',
+                    '浮盈到 2 倍 ADR（入场前一日的 ADR）卖 1/3 并保本，高出 50 日线 8 ATR 再卖 1/3（每笔一次，RV1），余下收盘跌破 20 EMA',
                     '每笔风险 0.5%，单只 ≤ 30%，总敞口 ≤ 200%，最多 30 只，每天 ≤ 10 笔（EP 另计，每天 ≤ 1 笔，C4A）；池等权指数在 20 EMA 上方才开新仓。'
-                    '空头 S5：晚期失败底部——大型前领涨股（成交额 ≥ 5 亿、3 个月高点 ≥ 52 周低点 2 倍）收破 20 EMA 后缩量反抽，次日到 20 EMA 限价卖空；指数连续 5 个收盘 < 50 EMA 才开、每天 1 笔；站上 10 EMA 回补，最多 5 天'),
-    'qullamaggie': ('R11 N3 + S7 + P1B（已冻结）',
+                    '空头 S5：晚期失败底部——大型前领涨股（成交额 ≥ 5 亿、3 个月高点 ≥ 52 周低点 2 倍）收破 20 EMA 后缩量反抽，次日到 20 EMA 限价卖空；指数连续 5 个收盘 < 50 EMA 才开、每天 1 笔；沿用多头的 2 ADR 回补 1/3 与 2 ADR 移到成本，站上 10 EMA 回补，最多 5 天'),
+    'qullamaggie': ('R11 N3 + S7 + P1B + RB1（已冻结）',
                     'EP 优先；10 天收紧底部的突破（1 / 3 / 6 月强度前 2%）。池：成交额 ≥ 2000 万、ADR ≥ 4%',
                     '收盘买，当日低点止损；突破单止损宽于 1 ADR 就不做',
-                    '第 3 天赚钱时卖一半，最好价到 +2R 才把止损移到成本（R11，偏离“卖后立刻保本”），余下收盘跌破 20 EMA',
+                    '第 3 天赚钱时卖一半，止损不移到成本（RB1，偏离“卖后立刻保本”：原话版胜率超过门禁 35%），余下收盘跌破 20 EMA',
                     '每笔风险 0.5%（最近 5 笔合计亏时 0.25%；池等权指数在 20 日线下方时再减半，P1B），单只 ≤ 30%，总敞口 ≤ 100%，最多 15 只，每天 ≤ 5 笔；池等权指数 10 日线在 20 日线上方且都向上（他的“绿灯”）。'
                     '空头 S7：小盘抛物线（20 日涨 ≥ 300%、连涨 ≥ 3 天）收红后，次日开盘或反弹到 VWAP 近似价卖空，止损在顶部上方且 ≤ 1.5 ADR；10 日线回补，最多 10 天'),
-    'oliver_kell': ('R6 A5 + S5（已冻结）',
-                    'Wedge Pop、EMA Crossback、10 / 20 EMA 回踩、VCP、52 周突破、两根内包、跌破又收回 20 EMA；只做相对强度前 10%。池：成交额 ≥ 1 亿、ADR ≥ 3%，按成交额排序',
+    'oliver_kell': ('R6 A5 + S5 + RV1（已冻结）',
+                    'Wedge Pop、EMA Crossback、10 / 20 EMA 回踩、VCP、52 周突破、两根内包、跌破又收回 20 EMA；只做相对强度前 10%。池：成交额 ≥ 1 亿、ADR ≥ 3%（Wedge Pop / EMA Crossback 用看板筛选写死的 2000 万、ADR ≥ 3%），按成交额排序',
                     '收盘买，当日低点止损（≥ 1%，不封顶）',
-                    '高出 10 日线 30% 卖 1/3，余下收盘跌破 20 EMA',
+                    '高出 10 日线 30% 卖 1/3（每笔一次，RV1），余下收盘跌破 20 EMA',
                     '每笔风险 0.5%，单只 ≤ 9%，总敞口 ≤ 150%，最多 12 只，每天 ≤ 4 笔；池等权指数在 20 EMA 上方才开新仓。'
                     '空头 S5：Wedge Drop 后反抽到下行 10 / 20 EMA，次日到线限价卖空，止损 min(5%, 半个 ADR)；指数 < 50 EMA 才开、每天 ≤ 2 笔；站上 10 EMA 回补，最多 10 天'),
     'mark_minervini': ('R0b（B 级，基线）',
@@ -158,7 +219,17 @@ STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, �
     'marios_stamatoudis': ('R1 L4 + C4B + S1 P4（研究版，B 级）',
                            '10 天收紧底部的突破（1 / 3 / 6 月强度前 2%）；EP（高开 ≥ 5%、3 倍量）。池：20 日成交额 ≥ 200 万、价格 ≥ 1 美元、突破另要 ADR ≥ 4%',
                            '收盘买，当日低点止损（≥ 1%）；突破单止损宽于 1 ADR、EP 宽于 3 ADR 就不做',
-                           '+3R 卖 1/4 并把止损移到成本，余下收盘跌破 10 日线',
+                           '+3R 卖 1/4 并把止损移到成本（R 是入场到止损的距离；他说的 2.5–3 ADR 只在止损约 1 ADR 时相当），余下收盘跌破 10 日线',
                            '每笔风险 0.3%，单只 ≤ 25%，总敞口 ≤ 100%，最多 15 只，每天突破 ≤ 3 笔、EP 另计 ≤ 2 笔（C4B）；无市况过滤。'
-                           '空头 S1：抛物线（连涨 ≥ 3 天，20 日涨 ≥ 300%，大票 ≥ 50%）收阴且收在昨收下方，收盘卖空，止损当日高点；指数 < 50 EMA 才开、每天 1 笔，最多 5 天'),
+                           '空头 S1：抛物线（连涨 ≥ 3 天，20 日涨 ≥ 300%，大票 ≥ 50%）收阴且收在昨收下方，收盘卖空，止损当日高点；指数 < 50 EMA 才开、每天 1 笔；沿用多头的 +3R 回补 1/4 与 +3R 移到成本，最多 5 天'),
+    'evan_medeiros': ('ERR6 XS5TO50L1（研究版，只美股）',
+                      '200 日线向上且在其上方、RSI2 首日跌破 5 或 3 日跌 10%、连跌 ≥ 3 天；HV100 15–35（按他基金的单笔赚亏倒推，原话是 ≥ 40）；池：成交额 ≥ 5000 万、价格 ≥ 5，同日波动高的先',
+                      '次日限价前收 −1%（开盘已低于限价按开盘成交），20% 灾难止损',
+                      '收盘站上 5 日线卖，最多持有 10 天',
+                      '每只 15%，最多 15 只、总敞口 150%；池等权指数在 200 日线上方才开多'),
+    'alfredo_holguin': ('ERR7 OWN180Y（研究版，只美股，期权）',
+                        '只在他近 180 天卖过 Put 的票里选（他公开台账，按当时已入场的交易；名单固定在台账公开的 2026-05-28，刷新要手动），不跨财报，同日按权利金 / 执行价排序',
+                        '开盘卖当周 Put（剩不到 2 天卖下周），执行价 = 开盘 − 2 × ATR14；期权价格是 v2 模型估算',
+                        '持有到周五到期：收在执行价上方作废、权利金全收；下方按差价赔付（被行权）',
+                        '每笔占用 5% 净值（Reg-T 保证金），同一只票最多 2 笔、每天最多新开 4 只，总占用 ≤ 100%'),
 }

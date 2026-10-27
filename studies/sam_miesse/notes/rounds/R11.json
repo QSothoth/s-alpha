@@ -1,0 +1,10 @@
+{"stage": "his stop and his names, at his worst-day risk", "data": "trader-data-v2", "base": ["r9.json", "chosen"],
+ "base_change": {"rule_opts": {"risk": 0.04, "max_position": 0.3, "max_gross": 2.0, "max_open": 10, "trail": "", "trims": []}},
+ "ref": "G25S5R4", "objective": "goal", "gates": ["placebo", "years", "behav"], "draws": 50,
+ "candidates": {
+  "ATR2": {"stop_atr": 2.0},
+  "ATR3": {"stop_atr": 3.0},
+  "TO20": {"turnover_max": 20000000.0},
+  "ATR3TO20": {"stop_atr": 3.0, "turnover_max": 20000000.0},
+  "MX3": {"max_new": 3}
+ }}
