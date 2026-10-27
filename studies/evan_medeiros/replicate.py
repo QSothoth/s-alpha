@@ -212,7 +212,13 @@ class Evan(GoalMixin, study.Study):
                     level = lag(c) * (1 - side * lim_k)
                 hit = arm & ((l <= level) if side > 0 else (h >= level)) & np.isfinite(o)
                 fill = np.where(side > 0, np.fmin(o, level), np.fmax(o, level))
-            pr = -lag(hv) if cfg.get('priority', 'hv') == 'hv' else lag(rsi2) * side
+            pri_ = cfg.get('priority', 'hv')
+            if pri_ == 'hv':
+                pr = -lag(hv)
+            elif pri_ == 'drop3':                    # R10: the deepest 3-session move into the setup first
+                pr = lag(F.ret(3)) * side
+            else:                                    # 'rsi': the most stretched RSI2 first
+                pr = lag(rsi2) * side
             kind = 'mrl' if side > 0 else 'mrs'
             for d, j in zip(*np.nonzero(hit)):
                 f = float(fill[d, j])
