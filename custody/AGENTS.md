@@ -9,6 +9,7 @@
 - 一个 case = `symbol + contract + trade_date`，最多一笔。默认 `round_trip` 有信号才买、收盘前卖；无信号可以不交易，不为完成率兜底。部分成交也算这一笔。
 - 2026-09-30 用户要求灵活的单边执行：显式 `--trade-action buy_only` 只买不卖（包括策略退出、尾盘与 stop 都不卖），确认买单终态后保留仓位为 `HELD`；`sell_only` 接管核实过的多头仓位，按独立的持仓毛收益规则自动退出，兼容人工／尾盘退出，不发新买单；首版 position_pnl_v1 仅支持 dryrun/paper，未获 live 资格。它们是运行时执行权限，不修改历史日内策略和评测；详情见 [RUNTIME](../docs/RUNTIME.md)。
 - 永远是买方：LONG 买 CALL，SHORT 买 PUT；不选标的 / 方向 / 合约，不卖出开仓；同一标的不同合约互相独立。
+- 2026-10-25 用户要求把 custody 当期权程序化执行工具；2026-10-26 重新定义为两种原子单：`--manual` 智能买（`buy_only`）/ 智能卖（`sell_only`，只卖持仓），在用户给定时间段内一次成交、到点必成交，同一合约一天可挂多张（`jobs.slot`），卖单建票时预留持有数量；默认时间段一开始动手，可选场景剧本二版（`playbook.py`，EXEC8 未通过）决定时机；挂价从中间价追向对手价。可在 live 使用（不受 accepted 限制），但智能买必须设单票与账户每日权利金上限。智能单不是策略，不进评测、不改变任何策略资格；参数与边界见 [RUNTIME](../docs/RUNTIME.md) 1b。
 - 策略输入只有：当天已完成的正股 1m K 线、方向、行权价、开收盘时间。禁止期权价格、前日及更早数据、日线、场景标签、未完成或未来的 bar、随机数、跨实例状态。此契约约束原日内正股择时引擎；2026-09-30 用户要求的独立 sell_only 持仓退出使用经核实成本及真实报价，不复用原引擎的入场假设，也不继承其评测资格。
 - 择时线（`zero_dte_timing`）入场不依赖固定时刻或价格；收盘前 15 分钟（`flatten_before_close_minutes`）禁止买入，默认日内模式必须退出；`buy_only` 仅撤销未成交买单并保留已成交仓位。
 - **保证入场线**（`open_hold_*`，2026-09-20 用户决定）：开盘 1 小时内必须买入一单，时刻与方式可调（固定时刻 `open_hold`，或择时 + `must_enter_by_minute` 兜底）。不适用「无信号可以不交易」，也不按「优于对照组」的门槛（G3 / G5 / G7–G10 / G12）和随机入场对照（G13）判定，看自身盈亏平衡命中率（[STANDARD](../docs/STANDARD.md)）。
@@ -32,7 +33,7 @@
 
 ## 运行
 
-`custody dryrun` 只读、只记意图和模拟成交；`custody run` 下单（`paper` 模拟、`live` 真钱且只接受 `accepted` 策略）。细节见 [RUNTIME](../docs/RUNTIME.md)。
+`custody dryrun` 只读、只记意图和模拟成交；`custody run` 下单（`paper` 模拟、`live` 真钱且只接受 `accepted` 策略或带上限的智能单）。细节见 [RUNTIME](../docs/RUNTIME.md)。
 
 ## 修改
 

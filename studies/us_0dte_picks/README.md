@@ -2,6 +2,10 @@
 
 使用入口：[near-expiry-session](../../skills/near-expiry-session/SKILL.md)。操作流程、许可、预算、异常恢复和复盘统一维护在 skill 的 [运行资料](../../skills/near-expiry-session/references/WORKFLOW_CN.md)。当前会话使用 v6.6，只做 mock；代码能力不等于收益验证或实盘许可。
 
+2026-10-26 现状、问题与建议（人工下单票执行工具、v6.6 重评、TK1–TK6）：[STATUS_20261026_CN](reports/STATUS_20261026_CN.md)。
+
+智能买 / 智能卖（custody 原子单）的执行研究 EXEC1–EXEC8：[EXEC_RESULTS_CN](reports/EXEC_RESULTS_CN.md)（最新在最上面）；测试集 [EXEC_TESTSET_CN](notes/EXEC_TESTSET_CN.md)；实现 `exec_eval.py`、`exec_testset.py`，运行时剧本 `custody/playbook.py`。
+
 ## 保留的实现
 
 - `prepare_watch.py`、`launch_watch.py`、`live_watch.py`：盘前输入与盘中观察。

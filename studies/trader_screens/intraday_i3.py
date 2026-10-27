@@ -646,6 +646,101 @@ def posthoc():
     return out
 
 
+# ----- I4: the US early board, every scenario (notes/INTRADAY_I4_PREREG_CN.md) -----
+I4_RANGE, I4_CUT = ('2026-07-01', '2026-09-30'), '10:30'
+
+
+def i4_days():
+    """Unused US local-set sessions of the pre-registered range (>= MIN_NAMES whole names, not an I2 / I3 day)."""
+    P = IS.panel('us')
+    S = load_sessions('us')
+    pd_ = np.array([str(x) for x in P['days']])
+    cnt = defaultdict(int)
+    for d, rec in zip(S['d'], S['recent']):
+        if not rec:
+            cnt[pd_[d]] += 1
+    used = set(days('us')['local_test'])
+    return sorted(x for x, n in cnt.items() if I4_RANGE[0] <= x <= I4_RANGE[1] and n >= MIN_NAMES['us']
+                  and x not in used)
+
+
+def i4_run():
+    import warnings
+    warnings.simplefilter('ignore', RuntimeWarning)
+    vm, fms, _ = volume_model()
+    P = IS.panel('us')
+    R = rolling(P)
+    S = load_sessions('us')
+    pd_ = [str(x) for x in P['days']]
+    sday = np.array(pd_)[S['d']]
+    path = WORK / 'i4_us.jsonl'
+    done = {json.loads(x)['day'] for x in path.open(encoding='utf-8')} if path.exists() else set()
+    t_rest = time.time()
+    for day in i4_days():
+        if day in done:
+            continue
+        t0 = time.time()
+        idx = np.flatnonzero((sday == day) & ~S['recent'])
+        rows, info, covered = day_rows(P, R, S, idx, 'us', (I4_CUT,), vm, fms['us'], True)
+        d = pd_.index(day)
+        named = {s: r for (c, s), r in rows.items()}
+        named['true'] = {k: P[k][d].astype(float).copy() for k in ('open', 'high', 'low', 'close', 'volume',
+                                                                   'turnover', 'raw_close')}
+        dec = CF.decide_many(P, d, named, 'us')
+        rec = dict(day=day, covered=covered, info=info[I4_CUT], dec={k: compact(v) for k, v in dec.items()})
+        with path.open('a', encoding='utf-8') as out:
+            out.write(json.dumps(rec, default=float) + '\n')
+        log('i4', day, f'{time.time() - t0:.0f}s')
+        del rows, named, dec, rec
+        gc.collect()
+        if time.time() - t_rest > IS.WORK_SECONDS:
+            log(f'rest {IS.REST_SECONDS // 60} min')
+            time.sleep(IS.REST_SECONDS)
+            t_rest = time.time()
+
+
+def i4_summary():
+    """Direct run vs every-scenario at 10:30 on the I4 days (subset names only): buys and sells apart."""
+    P = IS.panel('us')
+    pd_ = {str(x): i for i, x in enumerate(P['days'])}
+    col = {str(c): j for j, c in enumerate(P['codes'])}
+    out = {}
+    for rec in map(json.loads, (WORK / 'i4_us.jsonl').open(encoding='utf-8')):
+        cov = set(rec['covered'])
+        keys = {n: {k for k in CF.keys_of(expand(v), cov) if order(k)} for n, v in rec['dec'].items()}
+        true = keys['true']
+        rules = dict(direct=keys['V0'], robust=set.intersection(*(keys[n] for n in CF.SCEN)))
+        d = pd_[rec['day']]
+        for name, got in rules.items():
+            for kind in ('buy', 'sell'):
+                a = out.setdefault(f'{name}|{kind}', dict(same=0, false=0, true=0, days=0, false_move=[]))
+                g, t = {k for k in got if k[0] == kind}, {k for k in true if k[0] == kind}
+                a['same'] += len(g & t)
+                a['false'] += len(g - t)
+                a['true'] += len(t)
+                a['days'] += 1
+                for k in g - t:
+                    price = (rec['info'].get(k[2]) or [None])[0]
+                    mv = side_move(k, price, float(P['close'][d, col[k[2]]])) if k[2] in col else None
+                    if mv is not None:
+                        a['false_move'].append(mv)
+    res = {}
+    for key, a in out.items():
+        n = a['same'] + a['false']
+        res[key] = dict(same=a['same'], false=a['false'], true=a['true'], days=a['days'],
+                        precision=a['same'] / n if n else None, recall=a['same'] / a['true'] if a['true'] else None,
+                        per_day=n / a['days'] if a['days'] else None, false_move=stats(a['false_move']))
+    b, s = res.get('robust|buy', {}), res.get('robust|sell', {})
+    bd = res.get('direct|buy', {})
+    res['judge'] = dict(
+        buys=bool(b.get('precision') is not None and b['precision'] >= .8 and bd.get('precision') is not None
+                  and b['precision'] >= bd['precision'] + .15),
+        sells=bool(s.get('precision') is not None and s['precision'] >= .95))
+    res['days'] = len({json.loads(x)['day'] for x in (WORK / 'i4_us.jsonl').open(encoding='utf-8')})
+    (REPORTS / 'intraday_i4_summary.json').write_text(json.dumps(res, indent=1, default=float), encoding='utf-8')
+    return res
+
+
 if __name__ == '__main__':
     cmd = sys.argv[1] if len(sys.argv) > 1 else ''
     if cmd == 'sessions':
@@ -662,5 +757,9 @@ if __name__ == '__main__':
         evaluate()
     elif cmd == 'posthoc':
         posthoc()
+    elif cmd == 'i4':
+        i4_run()
+    elif cmd == 'i4-summary':
+        print(json.dumps(i4_summary(), indent=1, default=float))
     else:
         raise SystemExit(__doc__)

@@ -43,7 +43,7 @@ def tag(value=None):
 def frozen(market, version=None):
     ds = FolderDataset(ROOT / 'data' / tag(version), market)
     if not ds.exists():
-        raise FileNotFoundError(f'{ds.sub}: unpack the GitHub release {tag(version)} into data/ (docs/DATA.md)')
+        raise FileNotFoundError(f'{ds.sub}: unpack {tag(version)}.zip of the GitHub release trader-pack-20261025 into data/ (docs/DATA.md)')
     return ds
 
 

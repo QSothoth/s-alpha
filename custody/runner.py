@@ -22,11 +22,13 @@ import urllib.request
 from datetime import datetime, timedelta
 
 from .controller import Controller
-from .models import ET, Frame, OrderUpdate, instant, symbol as normalize_symbol
+from .dataset import parse_option_code
+from .models import ET, MANUAL, Frame, OrderUpdate, instant, symbol as normalize_symbol
+from .playbook import PLAYBOOK_ID, decide as playbook_decide, underlying_series as playbook_series
 from .opend import OpenDContractResolver, OpenDMarket, OpenDTradingCalendar
 from .registry import Registry, add_strategy_arguments
 from .service import ACTIVE, CustodyService, ExecutionPolicy
-from .strategy import build_strategy
+from .strategy import build_strategy, session_minute
 
 SECURITY_FIRMS = ('FUTUSECURITIES', 'FUTUINC', 'FUTUSG', 'FUTUAU', 'FUTUCA', 'FUTUMY', 'FUTUJP')
 
@@ -148,6 +150,47 @@ class StrategyFrameSource:
         return self._frame
 
 
+class PlaybookFrameSource:
+    """Replay the smart-order playbook over today's completed bars at each minute (restart-safe).
+
+    Underlying 1m comes from the same-day history; the contract's 1m from the subscribed stream (traded minutes
+    only). The first decision inside the window becomes an ENTER (smart buy) or EXIT (smart sell) frame whose
+    reason is the scene; quote protection and the deadline are the service's.
+    """
+
+    def __init__(self, history, market, max_age_seconds=15):
+        self.history, self.market = history, market
+        self.max_age_seconds = float(max_age_seconds)
+        self._key = self._frame = None
+
+    def frame(self, job, now=None):
+        now = instant(now) if now is not None else datetime.now(ET)
+        boundary = bar_boundary(now)
+        if boundary is None:
+            return None
+        if boundary.isoformat() != self._key:
+            session, bars = self.history.collect(boundary)
+            contract = job['request']['contract']
+            try:
+                rows = self.market.current_bars(contract, 600, 'K_1M', boundary=boundary)
+            except Exception:  # noqa: BLE001 - without option bars the playbook reads the underlying only
+                rows = []
+            options = {session_minute(session, b.close_time): b for b in rows
+                       if session.opens < b.close_time <= boundary and b.volume and b.volume > 0}
+            smart, side = job['smart'], 'BUY' if job['request']['trade_action'] == 'buy_only' else 'SELL'
+            minute = lambda t: max(0, int((instant(t) - session.opens).total_seconds() // 60))
+            sign = 1 if job['contract']['right'] == 'CALL' else -1
+            found = playbook_decide(side, playbook_series(bars, session, sign), options, minute(smart['start_at']),
+                                    minute(smart['end_at']), None, smart['zero_dte'], until=len(bars))
+            self._key = boundary.isoformat()
+            self._frame = None if found is None else Frame(
+                job['request']['symbol'], PLAYBOOK_ID, bars[-1].close_time, bars[-1].close,
+                'ENTER' if side == 'BUY' else 'EXIT', found[1], {'decided_bar': found[0]})
+        if self._frame is None or (now - instant(self._frame.bar_close)).total_seconds() > self.max_age_seconds:
+            return None
+        return self._frame
+
+
 class Runner:
     """Resident loop: poll market data, advance the controller, log every order change.
 
@@ -205,16 +248,20 @@ class Runner:
         if self.simulate_fills:
             if clock:
                 now = clock()
-            state = self._simulate_fills(state, now, mark)
+            state = self._simulate_fills(state, now, mark, quote)
         self.log('tick', mode=self.service.mode, state=state['state'], underlying_mark=mark,
                  action=frame and frame.action, reason=frame and frame.reason, position_qty=state['position_qty'],
                  attention=state['attention'],
                  quote=None if quote is None else {'bid': quote.bid, 'ask': quote.ask, 'as_of': quote.as_of.isoformat()})
         return state
 
-    def _simulate_fills(self, state, now, mark):
+    def _simulate_fills(self, state, now, mark, quote=None):
+        """Fill an unsent intent at its limit only while the live quote would take it (buy >= ask, sell <= bid)."""
         for order in state['orders']:
+            marketable = quote is not None and quote.contract == order['contract'] and order['limit_price'] is not None and (
+                order['limit_price'] >= quote.ask if order['side'] == 'BUY_OPEN' else order['limit_price'] <= quote.bid)
             if (order['kind'] != 'LIMIT' or order['status'] != 'CREATED' or order['limit_price'] is None
+                    or not marketable
                     or (order['side'] == 'BUY_OPEN' and not mark)
                     or not 0 <= (now-instant(order['quote_as_of'])).total_seconds() <= self.service.policy.quote_max_age_seconds):
                 continue
@@ -286,8 +333,9 @@ def build_argument_parser(command):
         parser.add_argument('--account', default='opend-dryrun')
         parser.add_argument('--intent-only', action='store_true', help='do not mark intents as simulated fills')
     add_strategy_arguments(parser)
-    parser.add_argument('--symbol', required=True, help='underlying, e.g. US.QQQ')
-    parser.add_argument('--direction', choices=['LONG', 'SHORT'], required=True)
+    parser.add_argument('--symbol', default=None, help='underlying, e.g. US.QQQ (manual: taken from the contract)')
+    parser.add_argument('--direction', choices=['LONG', 'SHORT'], default=None,
+                        help='required for strategy jobs; manual tickets take it from the contract')
     parser.add_argument('--contract', required=True, help='exact upstream-selected option code')
     parser.add_argument('--expiry-policy', choices=['0_1dte', 'nearest'], default='0_1dte',
                         help='nearest: verify the earliest unexpired expiry with OpenD')
@@ -310,7 +358,44 @@ def build_argument_parser(command):
     parser.add_argument('--once', action='store_true', help='run a single poll')
     parser.add_argument('--no-subscribe', action='store_true', help='snapshot/history polling only')
     parser.add_argument('--wxpusher-spt', default=None, help='WxPusher SPT for order pushes (or CUSTODY_WXPUSHER_SPT)')
+    manual = parser.add_argument_group(
+        'smart order (--manual: no strategy; any unexpired contract; live allowed). '
+        '--trade-action buy_only = smart buy, sell_only = smart sell (only what is held)')
+    manual.add_argument('--manual', action='store_true', help='place a smart buy / smart sell instead of a strategy job')
+    manual.add_argument('--name', default=None,
+                        help='ticket name; needed only for a second identical ticket on the same contract and day')
+    manual.add_argument('--start-at', default=None, help='window start, ET (HH:MM or ISO); default: now')
+    manual.add_argument('--end-at', default=None,
+                        help='window end, ET (HH:MM or ISO): filled by then; 0DTE at most 15:45, others close-2min')
+    manual.add_argument('--playbook', choices=['v2', 'off'], default=None,
+                        help='off (default): act at the start; v2: scenario playbook v2 picks the moment '
+                             '(failed EXEC8 on seen data, opt-in only)')
+    manual.add_argument('--start-price', choices=['bid', 'mid', 'ask'], default=None, help='start of the price chase')
+    manual.add_argument('--chase-step', type=float, default=None, help='share of the spread added per reprice (0-1]')
+    manual.add_argument('--reprice-seconds', type=float, default=None, help='seconds an order rests before repricing')
+    manual.add_argument('--daily-premium-cap-usd', type=float, default=None,
+                        help='account cap on premium spent or reserved today; required for a smart buy')
     return parser
+
+
+TICKET_ARGS = ('name', 'start_at', 'end_at', 'playbook', 'start_price', 'chase_step', 'reprice_seconds',
+               'daily_premium_cap_usd')
+
+
+def _et_time(value, now):
+    """``HH:MM`` means today in ET; anything else must be an ISO timestamp with a zone."""
+    if value is None or 'T' in value or '+' in value:
+        return value
+    hour, minute = (int(x) for x in value.split(':'))
+    return instant(now).astimezone(ET).replace(hour=hour, minute=minute, second=0, microsecond=0).isoformat()
+
+
+def ticket_from_args(args, now):
+    ticket = {name: getattr(args, name) for name in TICKET_ARGS if getattr(args, name) is not None}
+    for name in ('start_at', 'end_at'):
+        if name in ticket:
+            ticket[name] = _et_time(ticket[name], now)
+    return ticket
 
 
 def _summary(job):
@@ -342,12 +427,22 @@ def main(command, argv=None):
     if command in ('status', 'stop'):
         return _operate(command, args)
     registry = Registry()
-    try:
-        strategy_id = registry.resolve_id(args.strategy, args.strategy_version, args.strategy_mode)
-    except ValueError as exc:
-        parser.error(str(exc))
+    if args.manual:
+        underlying, _, right, _ = parse_option_code(args.contract)
+        args.symbol = args.symbol or underlying
+        args.direction = args.direction or ('LONG' if right == 'CALL' else 'SHORT')
+        args.expiry_policy, strategy_id = 'any', MANUAL
+    else:
+        if any(getattr(args, name) is not None for name in TICKET_ARGS):
+            parser.error('ticket options need --manual')
+        if args.symbol is None or args.direction is None:
+            parser.error('--symbol and --direction are required for strategy jobs')
+        try:
+            strategy_id = registry.resolve_id(args.strategy, args.strategy_version, args.strategy_mode)
+        except ValueError as exc:
+            parser.error(str(exc))
     mode = args.mode if command == 'run' else 'dryrun'
-    if mode == 'live' and args.trade_action == 'sell_only':
+    if mode == 'live' and args.trade_action == 'sell_only' and not args.manual:
         raise SystemExit('sell_only position_pnl_v1 has no independent validation; use dryrun/paper')
     if mode == 'live' and args.max_loss_usd is not None:
         raise SystemExit('max_loss_usd guard has no independent validation; use dryrun/paper')
@@ -374,16 +469,12 @@ def main(command, argv=None):
                                   'expiry_policy': args.expiry_policy,
                                   'trade_action': args.trade_action,
                                   'entry_valid_until': args.entry_valid_until}
+        if args.manual:
+            payload['ticket'] = ticket_from_args(args, datetime.now(ET))
         position = None
         if args.trade_action == 'sell_only' and broker is not None:
-            # Existing jobs resume from their own durable fills, never re-import account quantity.
-            from .models import JobRequest
-            request = JobRequest.parse(payload, datetime.now(ET))
-            with service._tx() as db:
-                exists = db.execute('SELECT 1 FROM jobs WHERE account=? AND contract=? AND day=?',
-                                    (service.account, request.contract, request.trade_date)).fetchone()
-            if not exists:
-                position = broker.position_snapshot(args.contract, datetime.now(ET))
+            # Read only when a new job is created; existing jobs resume from their own durable fills.
+            position = broker.position_snapshot(args.contract, datetime.now(ET))
         job = service.create_job(payload, datetime.now(ET), position=position)
         underlying = 'US.' + normalize_symbol(args.symbol)
         if not args.no_subscribe:
@@ -392,14 +483,19 @@ def main(command, argv=None):
                 subscribed = True
             except Exception as exc:  # noqa: BLE001 - polling still works
                 _json_logger('subscribe_error', error=repr(exc))
-        runner = Runner(service, market, job['id'], broker=broker,
-                        frame_source=None if args.trade_action == 'sell_only' else StrategyFrameSource(SameDayHistorySource(market, calendar, underlying,
-                                                                             allow_history=not args.stream_only),
-                                                         max_age_seconds=service.policy.frame_max_age_seconds),
+        history = SameDayHistorySource(market, calendar, underlying, allow_history=not args.stream_only)
+        if args.manual:
+            frame_source = (PlaybookFrameSource(history, market, max_age_seconds=service.policy.frame_max_age_seconds)
+                            if job['smart']['playbook'] == PLAYBOOK_ID else None)
+        else:
+            frame_source = None if args.trade_action == 'sell_only' else StrategyFrameSource(
+                history, max_age_seconds=service.policy.frame_max_age_seconds)
+        runner = Runner(service, market, job['id'], broker=broker, frame_source=frame_source,
                         interval=args.interval, wxpusher_spt=args.wxpusher_spt,
                         simulate_fills=command == 'dryrun' and not args.intent_only)
         _json_logger('start', command=command, mode=mode, account=service.account, db=service.path, job_id=job['id'],
                      strategy_version=args.strategy_version, strategy_mode=args.strategy_mode,
+                     ticket=job['request'].get('ticket'),
                      strategy_id=job['strategy']['strategy_id'], strategy_status=job['strategy']['status'],
                      symbol=underlying, direction=args.direction, contract=args.contract, state=job['state'],
                      flatten_at=job['flatten_at'], orders_to=broker.env if broker else None)

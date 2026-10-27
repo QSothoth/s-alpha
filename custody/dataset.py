@@ -116,7 +116,8 @@ def default_session(day, close=None):
 class Dataset:
     """Verified read access to one dataset directory."""
 
-    def __init__(self, root):
+    def __init__(self, root, require_0dte=True):
+        self.require_0dte = require_0dte  # execution studies read any unexpired contract; evaluation stays 0DTE
         self.root = Path(root).resolve()
         try:
             self.manifest = json.loads((self.root / 'manifest.json').read_text(encoding='utf-8'))
@@ -179,7 +180,7 @@ class Dataset:
         underlying, expiry, right, strike = parse_option_code(contract)
         if 'US.' + underlying != symbol:
             raise DatasetError('contract %s does not belong to %s' % (contract, symbol))
-        if expiry != trade_date:
+        if expiry < trade_date or (self.require_0dte and expiry != trade_date):
             raise DatasetError('%s is not 0DTE on %s (expiry %s)' % (contract, trade_date, expiry))
         direction = 'LONG' if right == 'CALL' else 'SHORT'
         if item.get('right', right) != right or item.get('direction', direction) != direction:
@@ -298,7 +299,7 @@ def isolation_report(reference, validation):
             'date_overlap': date_overlap, 'session_overlap': session_overlap}
 
 
-def check(root, validation=None):
+def check(root, validation=None, require_0dte=True):
     """Everything a Release must satisfy before publication (docs/DATA.md).
 
     With ``validation`` given it additionally proves the held-out slice is
@@ -306,7 +307,7 @@ def check(root, validation=None):
     leak.
     """
     try:
-        dataset = Dataset(root)
+        dataset = Dataset(root, require_0dte=require_0dte)
     except DatasetError as exc:
         return {'root': str(root), 'ok': False, 'error': str(exc)}
     failures = []

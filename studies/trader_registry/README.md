@@ -8,6 +8,9 @@
 - [历史研究分支33对象实验](https://github.com/QSothoth/s-alpha/blob/9bc6a6b29c577d4ad6d6d13312beaf15ae7ab1f2/studies/trader_common/README.md)：代码存在、局部假设运行和原方法完整复现是不同概念
 - [另外44个名字的原报告附录](dossiers/remaining/COVERAGE_ONLY_APPENDIX_CN.md)：仅保留名单，不计入35份档案，也不是44套实现
 - [Martin版本对照](dossiers/swing/MARTIN_VERSION_CROSSWALK.md)：ADR、R、价格幅度和账户风险不混用；保留冲突，不改历史代码或结果
+- [2026-10-25不同流派补充研究](DISTINCT_STYLES_RESEARCH_20261025_CN.md)：新增期权、做空候选，核对官方比赛与公开结单；包含选标的价值、规则缺口和港股检索边界，不计入上述35份冻结档案
+- [2026-10-25扩展研究](DISTINCT_STYLES_EXPANDED_20261025_CN.md)：继续核查79组人物或团队线索，展开个股期权、信息差、小盘反转、港股价值与事件、系统化方法；逐项区分赛事、结单、自报、基金与模拟，不计入35份冻结档案
+- [2026-10-25流派与评分总表](TRADER_SCORECARD_20261025_CN.md)：合并上述79组线索及首轮／已有档案10组对照，共89组；逐行列流派、选股作用、年度收益口径、稳健分、复现分、证据分及理由，资料不足标待评，不计入35份冻结档案
 
 ## main 上的筛选代码
 

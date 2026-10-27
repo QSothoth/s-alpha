@@ -50,6 +50,7 @@ class JobRequest:
     trade_action: str = 'round_trip'
     max_loss_usd: float | None = None
     estimated_round_trip_fee_per_contract_usd: float | None = None
+    ticket: dict | None = None
 
     @classmethod
     def parse(cls, payload, now):
@@ -80,7 +81,7 @@ class JobRequest:
             fees = float(fees)
         if trade_action == 'sell_only' and (premium is not None or payload.get('entry_valid_until') is not None):
             raise ValueError('sell_only does not accept entry constraints')
-        if expiry_policy not in ('0_1dte', 'nearest'):
+        if expiry_policy not in ('0_1dte', 'nearest', 'any'):
             raise ValueError('expiry_policy must be 0_1dte or nearest')
         if premium is not None:
             premium = positive(premium, 'max_entry_premium')
@@ -90,8 +91,74 @@ class JobRequest:
             if deadline.date().isoformat() != day:
                 raise ValueError('entry deadline must be on trade_date')
             deadline = deadline.isoformat()
+        ticket = payload.get('ticket')
+        if (ticket is None) != (payload['strategy_id'] != MANUAL):
+            raise ValueError('a ticket goes with strategy_id %r and only with it' % MANUAL)
+        if ticket is not None:
+            if expiry_policy != 'any' or loss is not None or deadline is not None:
+                raise ValueError('a smart order uses expiry_policy any and its own window (no loss guard or review card)')
+            if trade_action == 'round_trip':
+                raise ValueError('a smart order is one side: trade_action buy_only (smart buy) or sell_only (smart sell)')
+            if trade_action == 'buy_only' and premium is None:
+                raise ValueError('a smart buy needs max_entry_premium')
+            ticket = parse_ticket(ticket, day, trade_action)
+        elif expiry_policy not in ('0_1dte', 'nearest'):
+            raise ValueError('expiry_policy must be 0_1dte or nearest')
         return cls(payload['strategy_id'], symbol(payload['symbol']), payload['direction'], payload['contract'].strip(),
-                   qty, day, premium, expiry_policy, deadline, trade_action, loss, fees)
+                   qty, day, premium, expiry_policy, deadline, trade_action, loss, fees, ticket)
+
+
+MANUAL = 'manual'
+PRICE_STYLES = ('bid', 'mid', 'ask')
+PLAYBOOKS = ('v2', 'off')
+TICKET_DEFAULTS = {'name': None, 'start_at': None, 'end_at': None, 'playbook': 'off', 'start_price': 'mid',
+                   'chase_step': 0.25, 'reprice_seconds': 30, 'daily_premium_cap_usd': None}
+
+
+def _same_day(value, day, name):
+    value = instant(value).astimezone(ET)
+    if value.date().isoformat() != day:
+        raise ValueError(name + ' must be on trade_date')
+    return value.isoformat()
+
+
+def parse_ticket(raw, day, trade_action):
+    """A smart buy / smart sell: one side, one window, filled once by its end. Prices are per share."""
+    if not isinstance(raw, dict):
+        raise ValueError('ticket must be an object')
+    if set(raw) - set(TICKET_DEFAULTS):
+        raise ValueError('unknown ticket fields: ' + ','.join(sorted(set(raw) - set(TICKET_DEFAULTS))))
+    t = {**TICKET_DEFAULTS, **{k: v for k, v in raw.items() if v is not None}}
+    if t['end_at'] is None:
+        raise ValueError('a smart order needs end_at (the time by which it must be filled)')
+    for name in ('start_at', 'end_at'):
+        if t[name] is not None:
+            t[name] = _same_day(t[name], day, name)
+    if t['start_at'] is not None and instant(t['start_at']) >= instant(t['end_at']):
+        raise ValueError('start_at must be before end_at')
+    name = t['name']
+    if name is not None and (not isinstance(name, str) or not 0 < len(name) <= 40
+                             or any(not (c.isalnum() or c in '-_') for c in name)):
+        raise ValueError('name must be 1-40 letters, digits, - or _')
+    if t['playbook'] not in PLAYBOOKS:
+        raise ValueError('playbook must be v2 or off')
+    if t['start_price'] not in PRICE_STYLES:
+        raise ValueError('start_price must be bid, mid or ask')
+    step = t['chase_step']
+    if isinstance(step, bool) or not isinstance(step, (int, float)) or not 0 < step <= 1:
+        raise ValueError('chase_step must be within (0, 1]')
+    t['chase_step'] = float(step)
+    t['reprice_seconds'] = positive(t['reprice_seconds'], 'reprice_seconds')
+    if not 5 <= t['reprice_seconds'] <= 120:
+        raise ValueError('reprice_seconds must be within [5, 120]')
+    if trade_action == 'sell_only':
+        if t['daily_premium_cap_usd'] is not None:
+            raise ValueError('a smart sell has no premium cap')
+    else:
+        if t['daily_premium_cap_usd'] is None:
+            raise ValueError('a smart buy needs daily_premium_cap_usd')
+        t['daily_premium_cap_usd'] = positive(t['daily_premium_cap_usd'], 'daily_premium_cap_usd')
+    return t
 
 
 @dataclass(frozen=True)
@@ -113,6 +180,9 @@ class Contract:
         if request.trade_action == 'sell_only':
             if days < 0:
                 raise ValueError('cannot sell an expired contract')
+        elif request.expiry_policy == 'any':
+            if days < 0:
+                raise ValueError('cannot buy an expired contract')
         elif request.expiry_policy == 'nearest':
             if days < 0 or self.expiry != nearest_expiry:
                 raise ValueError('contract must match the verified nearest unexpired expiry')

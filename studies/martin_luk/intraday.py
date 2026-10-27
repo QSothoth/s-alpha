@@ -671,7 +671,7 @@ SEGMENTS['k30'] = ('2026-06-09', '2026-09-25')
 
 
 R8_DIR = luk.ROOT / 'data' / 'martin-luk-k5-r8'
-R8_DAILY = luk.ROOT / 'data' / 'martin-luk-universe-us' / 'us'
+R8_DAILY = luk.ROOT / 'data' / 'trader-data-v1' / 'us'   # the R8 daily pull, published as trader-data-v1/us
 R8_FIRST = '2023-06-01'
 
 
