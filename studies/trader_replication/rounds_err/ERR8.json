@@ -1,0 +1,211 @@
+{
+ "evan": {
+  "base": "r8.json",
+  "ref": "XS5TO50L1",
+  "cands": {
+   "XS5TO50L1": {
+    "long": {
+     "limit": 0.01
+    },
+    "short": {
+     "limit": 0.01
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 50000000.0,
+     "price": 5.0
+    }
+   },
+   "OWN": {
+    "long": {
+     "limit": 0.01,
+     "hv": 40,
+     "hv_max": 1000
+    },
+    "short": {
+     "limit": 0.01,
+     "hv": 40,
+     "hv_max": 1000
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 2000000.0,
+     "price": 1.0
+    }
+   },
+   "OWNL2": {
+    "long": {
+     "limit": 0.02,
+     "hv": 40,
+     "hv_max": 1000
+    },
+    "short": {
+     "limit": 0.02,
+     "hv": 40,
+     "hv_max": 1000
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 2000000.0,
+     "price": 1.0
+    }
+   },
+   "OWNL3": {
+    "long": {
+     "limit": 0.03,
+     "hv": 40,
+     "hv_max": 1000
+    },
+    "short": {
+     "limit": 0.03,
+     "hv": 40,
+     "hv_max": 1000
+    },
+    "rule_opts": {
+     "max_days": 10
+    },
+    "exit_long": "xsma5",
+    "exit_short": "xsma5s",
+    "pool": {
+     "turnover": 2000000.0,
+     "price": 1.0
+    }
+   }
+  }
+ },
+ "sam": {
+  "base": "r9.json",
+  "ref": "PRUN",
+  "cands": {
+   "PRUN": {
+    "gap": 0.2,
+    "spike": 0.07,
+    "priority": "run"
+   },
+   "OWN": {
+    "gap": 0.2,
+    "spike": 0.07,
+    "priority": "run",
+    "price": [
+     1.0,
+     1000000000.0
+    ],
+    "turnover_max": 1000000000000000.0
+   },
+   "OWNP": {
+    "gap": 0.2,
+    "spike": 0.07,
+    "priority": "run",
+    "turnover_max": 1000000000000000.0
+   },
+   "OWNT": {
+    "gap": 0.2,
+    "spike": 0.07,
+    "priority": "run",
+    "price": [
+     1.0,
+     1000000000.0
+    ]
+   }
+  }
+ },
+ "karl": {
+  "base": "r6.json",
+  "ref": "CHD35",
+  "strike_target": [
+   0.07,
+   0.12
+  ],
+  "cands": {
+   "CHD35": {},
+   "KN": {
+    "names": [
+     "TSM",
+     "MU",
+     "NVDA",
+     "HD",
+     "COST",
+     "AMAT",
+     "V",
+     "ORCL",
+     "JPM",
+     "IBM",
+     "HOOD",
+     "GOOGL",
+     "CRWD",
+     "BIDU",
+     "AXP",
+     "AVGO",
+     "AMZN"
+    ],
+    "cheap": 0,
+    "turnover": 0,
+    "price": 0,
+    "optvol": 0
+   },
+   "KNC": {
+    "names": [
+     "TSM",
+     "MU",
+     "NVDA",
+     "HD",
+     "COST",
+     "AMAT",
+     "V",
+     "ORCL",
+     "JPM",
+     "IBM",
+     "HOOD",
+     "GOOGL",
+     "CRWD",
+     "BIDU",
+     "AXP",
+     "AVGO",
+     "AMZN"
+    ],
+    "cheap": 1.2,
+    "turnover": 0,
+    "price": 0,
+    "optvol": 0
+   },
+   "KNW04": {
+    "names": [
+     "TSM",
+     "MU",
+     "NVDA",
+     "HD",
+     "COST",
+     "AMAT",
+     "V",
+     "ORCL",
+     "JPM",
+     "IBM",
+     "HOOD",
+     "GOOGL",
+     "CRWD",
+     "BIDU",
+     "AXP",
+     "AVGO",
+     "AMZN"
+    ],
+    "cheap": 0,
+    "turnover": 0,
+    "price": 0,
+    "optvol": 0,
+    "width": 0.4
+   }
+  }
+ }
+}

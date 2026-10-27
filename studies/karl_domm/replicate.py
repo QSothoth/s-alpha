@@ -90,7 +90,10 @@ class Karl:
         absolute move of the name's earlier earnings (6% with fewer than two)."""
         days, c = A['days'], A['close']
         out = []
+        keep = set(cfg.get('names') or ())                      # ERR8: his own names (his 2025 statements)
         for j, code in enumerate(A['codes_s']):
+            if keep and code[3:] not in keep:
+                continue
             evs = A['earn'].get(code, [])
             moves = P.earnings_moves(days, c, j, evs)
             for date, pub in evs:
