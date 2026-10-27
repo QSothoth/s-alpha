@@ -13,6 +13,7 @@ are priced by studies/trader_options/pricing.py on OpenD's daily IV (an approxim
 """
 from __future__ import annotations
 
+import collections
 import csv
 import datetime as dt
 import json
@@ -153,11 +154,12 @@ class Holguin:
         exp = A['expiry']
         for d in range(d0, d1):
             # --- new puts at the open, sized on the prior close's equity ---
-            held = {p['j'] for p in pos}
-            coll = sum(p['m'] * p['n'] for p in pos)
+            held = collections.Counter(p['j'] for p in pos)      # per_name > 1 (ERR15-2): another put on a name
+            today = {p['j'] for p in pos if p['d0'] == d}            # already held, on a later day of the week --
+            coll = sum(p['m'] * p['n'] for p in pos)                 # 130 of his 147 repeat name-weeks in 2025
             cand = []
             for j in np.flatnonzero(elig[d]):
-                if j in held or not np.isfinite(o[d, j]):
+                if held[j] >= cfg.get('per_name', 1) or j in today or not np.isfinite(o[d, j]):
                     continue
                 e_ = exp[d]
                 if (dt.date.fromisoformat(str(days[e_])) - dt.date.fromisoformat(str(days[d]))).days < cfg['min_dte']:
