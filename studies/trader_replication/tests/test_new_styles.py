@@ -68,6 +68,9 @@ class PricingTests(unittest.TestCase):
         self.assertLess(flat, .5)                                          # the report's variance taken out
         self.assertGreater(P.vol_v2(100, 100, T, .5, False, E, True, True, 0), .5)
         self.assertGreater(P.vol_v2(100, 90, T, .5, True, k=.05), P.vol_v2(100, 100, T, .5, True, k=.05))
+        self.assertAlmostEqual(P.vol_v2(100, 100, T, .5, False, E, True, False, 0, strip=False), .5)   # v2.1
+        self.assertAlmostEqual(P.vol_v2(100, 100, T, .5, False, E, True, True, 0, strip=False),
+                               P.vol_v2(100, 100, T, .5, False, E, True, True, 0))                       # spanning: as v2
         self.assertAlmostEqual(P.half_spread(10.0), .01)
         self.assertAlmostEqual(P.half_spread(.5), .04)                     # two cents of a 50-cent option
         self.assertEqual(P.half_spread(.01), .5)

@@ -285,7 +285,7 @@ class Emanuela(GoalMixin, study.Study):
                 return max(K - S, 0.0) if put else max(S - K, 0.0)
             E = P.implied_event_var(iv, j, rx, i + 1, None) or 0.0
             _, near, spans = P.event_context(days, rx, i, ie)
-            return P.bs(S, K, T, P.vol_v2(S, K, T, v, put, E, near, spans, o.get('k', .05)), put)
+            return P.bs(S, K, T, P.vol_v2(S, K, T, v, put, E, near, spans, o.get('k', .05), o.get('strip', True)), put)
         q0, q1 = px(i0, S0, T0, v0), px(i1, S1, T1, v1)
         sx = o.get('spread_x', 1)
         p0 = q0 * (1 + P.half_spread(q0, o.get('spread', .01)) * sx)

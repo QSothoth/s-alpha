@@ -178,7 +178,7 @@ class Karl:
                 out.append(max(K - S_, 0.0) if put else max(S_ - K, 0.0))
                 continue
             T = P.years(days[i], days[exp])
-            v = P.vol_v2(S_, K, T, atm, put, E, near, i < r <= exp, cfg.get('k', .05))
+            v = P.vol_v2(S_, K, T, atm, put, E, near, i < r <= exp, cfg.get('k', .05), cfg.get('strip', True))
             out.append(P.bs(S_, K, T, v, put))
         return out
 

@@ -126,7 +126,7 @@ class Holguin:
                 and np.isfinite(c[i - 1, j])]
         E = P.implied_event_var(A['iv'], j, rx, ivd + 1, float(np.median(past)) ** 2 if len(past) >= 2 else .06 ** 2)
         _, near, spans = P.event_context(A['days'], rx, ivd, ie)
-        return P.bs(S, K, T, P.vol_v2(S, K, T, iv, True, E, near, spans, pc.get('k', .05)), True)
+        return P.bs(S, K, T, P.vol_v2(S, K, T, iv, True, E, near, spans, pc.get('k', .05), pc.get('strip', True)), True)
 
     def eligible(self, A, cfg):
         F = A['F']

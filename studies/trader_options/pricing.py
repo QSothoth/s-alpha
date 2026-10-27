@@ -104,12 +104,14 @@ def event_context(days, rx, d, expiry):
     return r, near, r <= expiry
 
 
-def vol_v2(S, K, T, iv30, put, E=0.0, near=False, spans=False, k=.1):
+def vol_v2(S, K, T, iv30, put, E=0.0, near=False, spans=False, k=.1, strip=True):
     """v2 vol of one option: the base (the 30-day IV without the next report's variance E when that report is within
     30 days), plus E spread over the option's life when the report falls inside it, times a smile
-    min(1 + k x m^2, 3), m = |ln K/S| in the option's sds.  Calls and puts alike."""
+    min(1 + k x m^2, 3), m = |ln K/S| in the option's sds.  Calls and puts alike.  strip=False (v2.1): an option
+    that does not span the report keeps the 30-day IV itself (Karl's near legs filled at 0.95 x it)."""
     T = max(T, 1e-6)
-    base2 = max(iv30 * iv30 - E / (30 / 365), (.5 * iv30) ** 2) if (near and E) else iv30 * iv30
+    cut = near and E and (strip or spans)
+    base2 = max(iv30 * iv30 - E / (30 / 365), (.5 * iv30) ** 2) if cut else iv30 * iv30
     v = math.sqrt(base2 + (E / T if spans else 0.0))
     m = abs(math.log(K / S)) / max(v * math.sqrt(T), 1e-6)
     return v * min(1 + k * m * m, 3.0)
