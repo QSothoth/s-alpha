@@ -1,0 +1,877 @@
+{
+ "evan": {
+  "results": {
+   "L2": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.02,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.02,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 5000000.0,
+      "price": 5.0
+     },
+     "regime": "sma200",
+     "exit_long": "xhi",
+     "exit_short": "xlo",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 5,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {},
+    "periods": {
+     "2024": 0.194,
+     "2025-01..08": 0.102
+    },
+    "beh": {
+     "per_year": 269.5697,
+     "per_week": 5.184,
+     "win": 0.6238,
+     "avg_win": 0.0263,
+     "avg_loss": -0.0309,
+     "days": 3.3464
+    },
+    "err": {
+     "ret 2024": 0.008,
+     "ret 2025-01..08": 0.049,
+     "per_year": 0.178,
+     "win": 0.022,
+     "avg_win": 0.147,
+     "avg_loss": 0.094,
+     "days": 0.163
+    },
+    "maxerr": 0.178,
+    "total": 0.376,
+    "maxdd": 0.115,
+    "placebo": -0.145,
+    "beats": true,
+    "y2026": {
+     "total": 0.105,
+     "placebo": -0.014,
+     "n": 287
+    }
+   },
+   "XSMA5": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.015,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.015,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 5000000.0,
+      "price": 5.0
+     },
+     "regime": "sma200",
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 10,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {
+     "long": {
+      "limit": 0.015
+     },
+     "short": {
+      "limit": 0.015
+     },
+     "rule_opts": {
+      "max_days": 10
+     },
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s"
+    },
+    "periods": {
+     "2024": 0.218,
+     "2025-01..08": 0.039
+    },
+    "beh": {
+     "per_year": 337.3386,
+     "per_week": 6.4873,
+     "win": 0.6429,
+     "avg_win": 0.0247,
+     "avg_loss": -0.0336,
+     "days": 3.8988
+    },
+    "err": {
+     "ret 2024": 0.011,
+     "ret 2025-01..08": 0.011,
+     "per_year": 0.028,
+     "win": 0.008,
+     "avg_win": 0.078,
+     "avg_loss": 0.188,
+     "days": 0.025
+    },
+    "maxerr": 0.188,
+    "total": 0.299,
+    "maxdd": 0.159,
+    "placebo": -0.158,
+    "beats": true,
+    "y2026": {
+     "total": 0.031,
+     "placebo": -0.039,
+     "n": 333
+    }
+   },
+   "XS5TO50": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.015,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.015,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 50000000.0,
+      "price": 5.0
+     },
+     "regime": "sma200",
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 10,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {
+     "long": {
+      "limit": 0.015
+     },
+     "short": {
+      "limit": 0.015
+     },
+     "rule_opts": {
+      "max_days": 10
+     },
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s",
+     "pool": {
+      "turnover": 50000000.0,
+      "price": 5.0
+     }
+    },
+    "periods": {
+     "2024": 0.267,
+     "2025-01..08": 0.084
+    },
+    "beh": {
+     "per_year": 247.4821,
+     "per_week": 4.7593,
+     "win": 0.6633,
+     "avg_win": 0.0249,
+     "avg_loss": -0.031,
+     "days": 3.8458
+    },
+    "err": {
+     "ret 2024": 0.052,
+     "ret 2025-01..08": 0.032,
+     "per_year": 0.245,
+     "win": 0.04,
+     "avg_win": 0.087,
+     "avg_loss": 0.096,
+     "days": 0.039
+    },
+    "maxerr": 0.245,
+    "total": 0.406,
+    "maxdd": 0.14,
+    "placebo": -0.07,
+    "beats": true,
+    "y2026": {
+     "total": 0.102,
+     "placebo": -0.012,
+     "n": 263
+    }
+   },
+   "XS5LC": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.015,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.015,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 100000000.0,
+      "price": 20.0
+     },
+     "regime": "sma200",
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 10,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {
+     "long": {
+      "limit": 0.015
+     },
+     "short": {
+      "limit": 0.015
+     },
+     "rule_opts": {
+      "max_days": 10
+     },
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s",
+     "pool": {
+      "turnover": 100000000.0,
+      "price": 20.0
+     }
+    },
+    "periods": {
+     "2024": 0.158,
+     "2025-01..08": 0.042
+    },
+    "beh": {
+     "per_year": 190.757,
+     "per_week": 3.6684,
+     "win": 0.6447,
+     "avg_win": 0.0242,
+     "avg_loss": -0.0324,
+     "days": 3.9658
+    },
+    "err": {
+     "ret 2024": 0.039,
+     "ret 2025-01..08": 0.008,
+     "per_year": 0.418,
+     "win": 0.011,
+     "avg_win": 0.056,
+     "avg_loss": 0.147,
+     "days": 0.009
+    },
+    "maxerr": 0.418,
+    "total": 0.211,
+    "maxdd": 0.138,
+    "placebo": 0.056,
+    "beats": true,
+    "y2026": {
+     "total": 0.1,
+     "placebo": -0.056,
+     "n": 217
+    }
+   },
+   "XS5HV30": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.015,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 30
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.015,
+      "run": 0.1,
+      "hv_max": 30
+     },
+     "pool": {
+      "turnover": 5000000.0,
+      "price": 5.0
+     },
+     "regime": "sma200",
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 10,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {
+     "long": {
+      "limit": 0.015,
+      "hv_max": 30
+     },
+     "short": {
+      "limit": 0.015,
+      "hv_max": 30
+     },
+     "rule_opts": {
+      "max_days": 10
+     },
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s"
+    },
+    "periods": {
+     "2024": 0.116,
+     "2025-01..08": -0.007
+    },
+    "beh": {
+     "per_year": 265.0518,
+     "per_week": 5.0971,
+     "win": 0.6288,
+     "avg_win": 0.0212,
+     "avg_loss": -0.0308,
+     "days": 3.9394
+    },
+    "err": {
+     "ret 2024": 0.074,
+     "ret 2025-01..08": 0.054,
+     "per_year": 0.192,
+     "win": 0.014,
+     "avg_win": 0.072,
+     "avg_loss": 0.089,
+     "days": 0.015
+    },
+    "maxerr": 0.192,
+    "total": 0.112,
+    "maxdd": 0.164,
+    "placebo": -0.173,
+    "beats": true,
+    "y2026": {
+     "total": -0.051,
+     "placebo": 0.005,
+     "n": 260
+    }
+   },
+   "XS5LCL1": {
+    "cfg": {
+     "sides": [
+      "long",
+      "short"
+     ],
+     "long": {
+      "rsi": 5,
+      "down": 3,
+      "hv": 15,
+      "trend": true,
+      "limit": 0.01,
+      "drop": 0.1,
+      "either": true,
+      "hv_max": 35
+     },
+     "short": {
+      "rsi": 99,
+      "up": 3,
+      "hv": 15,
+      "trend": false,
+      "limit": 0.01,
+      "run": 0.1,
+      "hv_max": 35
+     },
+     "pool": {
+      "turnover": 100000000.0,
+      "price": 20.0
+     },
+     "regime": "sma200",
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s",
+     "priority": "hv",
+     "rule_opts": {
+      "risk": 1.0,
+      "max_position": 0.15,
+      "max_gross": 1.5,
+      "max_open": 15,
+      "trail": "",
+      "trims": [],
+      "max_days": 10,
+      "short_max_days": 5,
+      "buy_cost": 0.0005,
+      "sell_cost": 0.0005,
+      "borrow_rate": 0.03
+     },
+     "stop": 0.2
+    },
+    "change": {
+     "long": {
+      "limit": 0.01
+     },
+     "short": {
+      "limit": 0.01
+     },
+     "rule_opts": {
+      "max_days": 10
+     },
+     "exit_long": "xsma5",
+     "exit_short": "xsma5s",
+     "pool": {
+      "turnover": 100000000.0,
+      "price": 20.0
+     }
+    },
+    "periods": {
+     "2024": 0.095,
+     "2025-01..08": 0.009
+    },
+    "beh": {
+     "per_year": 255.5139,
+     "per_week": 4.9137,
+     "win": 0.6405,
+     "avg_win": 0.0209,
+     "avg_loss": -0.0306,
+     "days": 3.8998
+    },
+    "err": {
+     "ret 2024": 0.091,
+     "ret 2025-01..08": 0.04,
+     "per_year": 0.221,
+     "win": 0.005,
+     "avg_win": 0.086,
+     "avg_loss": 0.081,
+     "days": 0.025
+    },
+    "maxerr": 0.221,
+    "total": 0.092,
+    "maxdd": 0.183,
+    "placebo": -0.027,
+    "beats": true,
+    "y2026": {
+     "total": 0.166,
+     "placebo": -0.018,
+     "n": 277
+    }
+   }
+  },
+  "ref": "L2",
+  "chosen": "L2",
+  "meets": false
+ },
+ "hol": {
+  "results": {
+   "PN2MN3P": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 2.0,
+     "turnover": 100000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 3,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 3,
+     "priority": "yield"
+    },
+    "total": 0.546,
+    "beh": {
+     "win": 0.892,
+     "per_week": 13.472,
+     "names_per_week": 10.434,
+     "per_name_week": 1.291
+    },
+    "err": {
+     "ret 2025": 0.009,
+     "win": 0.007,
+     "per_week": 0.188,
+     "names_per_week": 0.178,
+     "per_name_week": 0.014
+    },
+    "maxerr": 0.188,
+    "placebo": 0.223,
+    "beats": true,
+    "y2026": {
+     "total": -0.333,
+     "placebo": 0.037,
+     "per_week": 13.0,
+     "names_per_week": 10.1,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   },
+   "TO5": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 2.0,
+     "turnover": 500000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 3,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 3,
+     "priority": "yield",
+     "turnover": 500000000.0
+    },
+    "total": 0.864,
+    "beh": {
+     "win": 0.901,
+     "per_week": 13.396,
+     "names_per_week": 10.113,
+     "per_name_week": 1.325
+    },
+    "err": {
+     "ret 2025": 0.195,
+     "win": 0.004,
+     "per_week": 0.193,
+     "names_per_week": 0.204,
+     "per_name_week": 0.011
+    },
+    "maxerr": 0.204,
+    "placebo": 0.161,
+    "beats": true,
+    "y2026": {
+     "total": -0.051,
+     "placebo": 0.053,
+     "per_week": 13.1,
+     "names_per_week": 9.9,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   },
+   "TO10": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 2.0,
+     "turnover": 1000000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 3,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 3,
+     "priority": "yield",
+     "turnover": 1000000000.0
+    },
+    "total": 0.455,
+    "beh": {
+     "win": 0.911,
+     "per_week": 13.208,
+     "names_per_week": 9.151,
+     "per_name_week": 1.443
+    },
+    "err": {
+     "ret 2025": 0.068,
+     "win": 0.015,
+     "per_week": 0.204,
+     "names_per_week": 0.279,
+     "per_name_week": 0.102
+    },
+    "maxerr": 0.279,
+    "placebo": 0.089,
+    "beats": true,
+    "y2026": {
+     "total": -0.11,
+     "placebo": 0.227,
+     "per_week": 13.2,
+     "names_per_week": 9.6,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   },
+   "TR0TO5": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 0.0,
+     "turnover": 500000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 3,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 3,
+     "priority": "yield",
+     "trend": 0.0,
+     "turnover": 500000000.0
+    },
+    "total": 1.281,
+    "beh": {
+     "win": 0.908,
+     "per_week": 13.585,
+     "names_per_week": 10.434,
+     "per_name_week": 1.302
+    },
+    "err": {
+     "ret 2025": 0.462,
+     "win": 0.011,
+     "per_week": 0.182,
+     "names_per_week": 0.178,
+     "per_name_week": 0.006
+    },
+    "maxerr": 0.462,
+    "placebo": 0.2,
+    "beats": true,
+    "y2026": {
+     "total": -0.005,
+     "placebo": 0.12,
+     "per_week": 13.1,
+     "names_per_week": 10.1,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   },
+   "TR0TO10": {
+    "cfg": {
+     "cushion": 2.0,
+     "trend": 0.0,
+     "turnover": 1000000000.0,
+     "optvol": 20000,
+     "price": 20.0,
+     "earnings": false,
+     "min_dte": 2,
+     "frac": 0.05,
+     "cap": 1.0,
+     "max_new": 3,
+     "priority": "yield",
+     "skew": 0.1,
+     "spread": 0.05,
+     "take": 0.0,
+     "margin": "regt",
+     "vol": "max5",
+     "v2": true,
+     "k": 0.05,
+     "iv_min": 0.4,
+     "strip": false,
+     "per_name": 2
+    },
+    "change": {
+     "strip": false,
+     "per_name": 2,
+     "max_new": 3,
+     "priority": "yield",
+     "trend": 0.0,
+     "turnover": 1000000000.0
+    },
+    "total": 0.803,
+    "beh": {
+     "win": 0.918,
+     "per_week": 13.604,
+     "names_per_week": 9.925,
+     "per_name_week": 1.371
+    },
+    "err": {
+     "ret 2025": 0.156,
+     "win": 0.022,
+     "per_week": 0.18,
+     "names_per_week": 0.219,
+     "per_name_week": 0.046
+    },
+    "maxerr": 0.219,
+    "placebo": 0.077,
+    "beats": true,
+    "y2026": {
+     "total": -0.07,
+     "placebo": 0.271,
+     "per_week": 13.2,
+     "names_per_week": 9.7,
+     "his": {
+      "ret": 0.445,
+      "per_week": 23.5,
+      "names_per_week": 17.0
+     }
+    }
+   }
+  },
+  "ref": "PN2MN3P",
+  "chosen": "PN2MN3P",
+  "meets": false
+ }
+}
