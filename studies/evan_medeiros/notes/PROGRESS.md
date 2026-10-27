@@ -63,3 +63,7 @@ R8 L2 = 文章规则（RSI2 < 5 首日或 3 日跌 10%、连跌 3 天、200 日�
 ## 2026-10-27：ERR15（误差压到 15%）
 
 见 `studies/trader_replication/reports/ERR15_20261027_CN.md`。
+
+## 2026-10-27：ERR2–ERR6（5 轮）
+
+见 `studies/trader_replication/reports/ERR_ROUNDS_20261027_CN.md`。
