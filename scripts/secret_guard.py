@@ -20,6 +20,8 @@ FORBIDDEN_NAMES = ('.env', '.env.*', '*.pem', '*.key', '*.p12', '*.pfx', '*.jks'
                    '.netrc', '_netrc', '.npmrc', '.pypirc', 'credentials', 'credentials.json',
                    '*service-account*.json', '*service_account*.json')
 FORBIDDEN_DIRS = {'.ssh', '.aws', '.azure', '.gnupg'}
+# Committed skill-discovery symlinks: exact path -> exact target, nothing else.
+ALLOWED_LINKS = {'.claude/skills': b'../skills', '.agents/skills': b'../skills'}
 
 
 class GuardError(Exception):
@@ -171,6 +173,9 @@ def staged():
             path = os.fsdecode(raw)
             check_path(path)
             entry = git('ls-files', '--stage', '--', path).split(maxsplit=3)
+            if (entry and entry[0] == b'120000' and entry[2] == b'0'
+                    and path in ALLOWED_LINKS and git('show', ':' + path) == ALLOWED_LINKS[path]):
+                continue
             if not entry or entry[0] not in (b'100644', b'100755') or entry[2] != b'0':
                 raise GuardError('Only regular, resolved files can be staged: ' + repr(path))
             destination = Path(tmp) / path
