@@ -1,6 +1,6 @@
 # david_trullas：纳指期货日内（World Cup 季度赛）复刻
 
-`trader-replication` 的第一个日内例子，2026-10-28。结论见 [reports/REPLICATION_CN.md](reports/REPLICATION_CN.md)，原话见 [notes/RULES_CN.md](notes/RULES_CN.md)，台账 [notes/trades.csv](notes/trades.csv)，预登记 `notes/PREREG_R1–R10.md` 与 `notes/rounds/`，否定记录 [notes/NEGATIONS_CN.md](notes/NEGATIONS_CN.md)。区间内研究结论，不接 custody、不当生产能力。
+`trader-replication` 的第一个日内例子，2026-10-28。结论见 [reports/REPLICATION_CN.md](reports/REPLICATION_CN.md)，原话见 [notes/RULES_CN.md](notes/RULES_CN.md)，台账 [notes/trades.csv](notes/trades.csv)，预登记 `notes/PREREG_R1–R12.md` 与 `notes/rounds/`，否定记录 [notes/NEGATIONS_CN.md](notes/NEGATIONS_CN.md)。区间内研究结论，不接 custody、不当生产能力。
 
 | 文件 | 内容 |
 |---|---|

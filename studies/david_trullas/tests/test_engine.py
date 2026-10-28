@@ -51,6 +51,13 @@ class Manage(unittest.TestCase):
         k, fill, added, avg, why = E.manage(px, 60, 1, 100.0, 99.0, 101.0, 1, cfg, len(px['c']))
         self.assertEqual((k, why, fill), (61, 'target', 101.0))
 
+    def test_partial_then_runner_stopped_at_cost(self):
+        px = self.px([(100, 100, 100, 100, 1), (100, 101.2, 99.8, 101, 1), (101, 101.1, 99.9, 100, 1)])
+        cfg = E.Cfg(add_pts=0)
+        k, fill, added, avg, why = E.manage(px, 60, 1, 100.0, 99.0, 103.0, 1, cfg, len(px['c']), part=(0.8, 101.0))
+        self.assertEqual((k, why), (62, 'runner_stop'))     # bar 61 dipped to 99.8 but the BE stop starts at bar 62
+        self.assertAlmostEqual(fill, 0.8 * 101.0 + 0.2 * (100.0 + 1.5 / E.NQ_PER_QQQ))
+
     def test_intrabar_entry_bar_low_below_stop_is_a_loss(self):
         px = self.px([(100, 100.5, 98.5, 100.2, 1), (100.2, 102, 100.1, 101.5, 1)])
         cfg = E.Cfg()

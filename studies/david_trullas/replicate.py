@@ -171,11 +171,18 @@ def run_round(name):
                 r['gate_fails'].append(f"hold median {f['hold_med']}")
             if min(x['ret'] for x in rows.values()) <= fg.get('min_quarter_ret', -1e9):
                 r['gate_fails'].append('a losing selection quarter')
+            if f['hold_med'] is None or f['hold_med'] < fg.get('hold_min', -1):
+                r['gate_fails'].append(f"hold median {f['hold_med']} < {fg['hold_min']}")
+            if f['target_med_pts'] is None or f['target_med_pts'] < fg.get('target_min', -1):
+                r['gate_fails'].append(f"target median {f['target_med_pts']} < {fg['target_min']}")
         if cname == 'ref':
             continue
         if r['gate_fails'] or not r['beats_placebo']:
             continue
-        if fid_mode:
+        if fid_mode and rd.get('select_by') == 'return':
+            if r['objective'] > best_obj or best == 'ref' and res['ref']['gate_fails']:
+                best, best_obj = cname, r['objective']
+        elif fid_mode:
             key = (r['fid_score'], -r['fidelity']['time_distance'])
             if key > best_key and r['fid_score'] >= fg.get('min_excess', -1e9):
                 best, best_key = cname, key
@@ -200,7 +207,7 @@ def print_round(out):
         if 'fidelity' in r:
             f = r['fidelity']
             fid = (f" | hits {f['hits']}/{f['n']} (rand {f['random_hits']}) tdist {f['time_distance']} "
-                   f"stop {f['stop_med_pts']} hold {f['hold_med']}")
+                   f"stop {f['stop_med_pts']} tgt {f.get('target_med_pts')} hold {f['hold_med']}/{f.get('hold_mean')}")
         print(f"{cname:>8} obj {r['objective']:+.3f} pts {pts:+.0f} gates {'ok' if not r['gate_fails'] else r['gate_fails'][:2]} "
               f"placebo {'ok' if r['beats_placebo'] else 'no'} | {cells}{fid}")
 
@@ -305,8 +312,11 @@ def fidelity(mk, cfg, ledger, tol=5):
     hs, os_ = share(his_b), share(our_b)
     tv = round(sum(abs(hs[k] - os_[k]) for k in hs) / 2, 2)
     stops = [abs(t.entry - t.stop0) * E.NQ_PER_QQQ for t in trades]
+    tgts = [abs(t.target - t.entry) * E.NQ_PER_QQQ for t in trades]
     return dict(hits=hits, n=len(ledger), random_hits=round(expect, 1), his_buckets=hs, our_buckets=os_,
                 time_distance=tv, stop_med_pts=round(float(np.median(stops)), 1) if stops else None,
+                target_med_pts=round(float(np.median(tgts)), 1) if tgts else None,
+                hold_mean=round(float(np.mean([t.t_out - t.t_in for t in trades])), 1) if trades else None,
                 hold_med=float(np.median([t.t_out - t.t_in for t in trades])) if trades else None,
                 win=round(float(np.mean([t.pnl > 0 for t in trades])), 2) if trades else None,
                 days_traded_of_his=sum(bool(by_day.get(r['entry_date'])) for r in ledger), detail=detail)

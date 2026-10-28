@@ -13,6 +13,7 @@ from .replicate import REPORTS, cfg_of, fidelity, ledger_timed, market, override
 VERSIONS = {
     'R6 (clean out-of-sample)': ('r6', {}),
     'R8 (return-chosen)': ('r8', {}),
+    'R12: tight entry, far target on the 60-min leg, 80/20': ('r12', {}),
     'M930: MACD 09:00-10:30': ('r8', {'windows': [[540, 630]]}),
     'MDROP60: MACD after a 60-pt open drop': ('r8', {'windows': [[570, 630]], 'macd_drop': 60}),
     'MO930F: MACD + opening patterns, his stops': ('r8', {'trig': 'macd+open', 'windows': [[540, 630]],

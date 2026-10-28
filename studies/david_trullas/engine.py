@@ -63,6 +63,9 @@ class Cfg:
     shave: float = 0.25               # NQ points left before the target ("a tick before")
     drop_look: int = 120              # 'vol' trigger: bars back for the high the pullback started from
     stop_pts: float = 0.0             # cap the stop at this many NQ points below entry (0 = pattern stop)
+    leg_bars: int = 0                 # far target on the bigger leg: high of the last leg_bars minutes (0 = off)
+    leg_frac: float = 2 / 3           # far target = low + leg_frac x (that high - low)
+    part_frac: float = 0.0            # close this share at the near (pattern) target, the rest runs to the far one
     max_hold: int = 60                # minutes
     max_trades: int = 5               # per day
     max_losses: int = 3               # losing trades per day before stopping
@@ -463,8 +466,10 @@ class Trade:
     conf: int = 1
 
 
-def manage(px, i, side, entry, stop, target, units, cfg, e, intrabar=False):
-    """Run one position entered in bar i. Returns (exit bar, exit price, added units, avg cost, reason)."""
+def manage(px, i, side, entry, stop, target, units, cfg, e, intrabar=False, part=None):
+    """Run one position entered in bar i. Returns (exit bar, exit price, added units, avg cost, reason).
+    part = (fraction, price): that fraction is closed at `price` first and the stop goes to cost + be_plus; the
+    returned exit price is then the size-weighted average of both exits (his 80% / 20% split, 0UwzsfZxHr0 11:23)."""
     o, h, l, c, mins = px['o'], px['h'], px['l'], px['c'], px['mins']
     if intrabar and side * (l[i] if side == 1 else h[i]) <= side * stop:
         return i, stop, 0, entry, 'stop'
@@ -472,18 +477,26 @@ def manage(px, i, side, entry, stop, target, units, cfg, e, intrabar=False):
     add_px = entry + side * cfg.add_pts / NQ_PER_QQQ if cfg.add_pts > 0 else None
     added, avg, cur_stop = 0, entry, stop
     be_done = False
+    pf, ppx, pdone = (part[0], part[1], False) if part else (0.0, None, True)
+    mix = lambda fill: pf * ppx + (1 - pf) * fill if part and pdone else fill
     last = min(e - 1, i + cfg.max_hold)
     for k in range(i + 1, e):
         if k > last:
-            return k - 1, c[k - 1], added, avg, 'time'
+            return k - 1, mix(c[k - 1]), added, avg, 'time'
         if mins[k] >= 959:
-            return k, c[k], added, avg, 'close'
+            return k, mix(c[k]), added, avg, 'close'
         if side * (l[k] if side == 1 else h[k]) <= side * cur_stop:
             fill = o[k] if side * o[k] <= side * cur_stop else cur_stop
-            return k, fill, added, avg, 'stop'
+            return k, mix(fill), added, avg, 'stop' if not (part and pdone) else 'runner_stop'
+        if not pdone and side * (h[k] if side == 1 else l[k]) >= side * ppx:
+            pdone = True       # partial taken; the runner's stop moves to cost from the next bar
+            if side * (h[k] if side == 1 else l[k]) < side * target:
+                cur_stop = max(cur_stop * side, (entry + side * cfg.be_plus / NQ_PER_QQQ) * side) * side
+                be_done = True
+                continue
         if side * (h[k] if side == 1 else l[k]) >= side * target:
             fill = o[k] if side * o[k] >= side * target else target
-            return k, fill, added, avg, 'target'
+            return k, mix(fill), added, avg, 'target'
         best = h[k] if side == 1 else l[k]
         new_stop = cur_stop
         if add_px is not None and not added and side * best >= side * add_px:
@@ -532,13 +545,26 @@ def run(mk, cfg, d_lo, d_hi, start=START, entries=None):
                 continue
             if cfg.day_target > 0 and eq - eq_day >= cfg.day_target * eq_day:
                 break
+            pat_stop = stop       # targets are measured from the pattern low even when the stop is tightened
             if cfg.stop_pts > 0 and not kind.startswith('fixed') and abs(entry - stop) * NQ_PER_QQQ > cfg.stop_pts:
                 stop = entry - side * cfg.stop_pts / NQ_PER_QQQ     # his tight point stop instead of the pattern low
             R = abs(entry - stop)
             if R <= 0:
                 continue
             # external entries of kind 'fixed*' carry their target in the `top` slot
-            target = top if kind.startswith('fixed') else target_of(cfg, side, entry, stop, top, R)
+            target = top if kind.startswith('fixed') else target_of(cfg, side, entry, pat_stop, top, R)
+            part = None
+            if cfg.leg_bars > 0 and not kind.startswith('fixed'):
+                # the far target is measured on the bigger leg: from the pattern low to the highest high of the last
+                # leg_bars minutes ("from the session high to my entry low", HvUfJUhArX0 9:20)
+                low = pat_stop + side * TICK
+                a0 = max(mk.starts[d], i - cfg.leg_bars)
+                big = px['h'][a0:i + 1].max() if side == 1 else px['l'][a0:i + 1].min()
+                far = low + side * cfg.leg_frac * abs(big - low) - side * cfg.shave / NQ_PER_QQQ
+                if side * far > side * target:
+                    if cfg.part_frac > 0:
+                        part = (cfg.part_frac, target)
+                    target = far
             nq = entry * NQ_PER_QQQ
             lev = cfg.lev_hi if cfg.lev_hi > 0 and eq < cfg.lev_until * start else cfg.lev
             full = int(lev * eq / (nq * MNQ_USD))
@@ -548,7 +574,7 @@ def run(mk, cfg, d_lo, d_hi, start=START, entries=None):
                                        / (R * NQ_PER_QQQ * MNQ_USD + cfg.cost_pts * MNQ_USD)))
             if units < 1:
                 continue
-            k, fill, added, avg, why = manage(px, i, side, entry, stop, target, units, cfg, e, intrabar)
+            k, fill, added, avg, why = manage(px, i, side, entry, stop, target, units, cfg, e, intrabar, part)
             pts_first = side * (fill - entry) * NQ_PER_QQQ
             pts_add = side * (fill - (2 * avg - entry)) * NQ_PER_QQQ if added else 0.0
             pnl = MNQ_USD * (units * pts_first + added * pts_add) - cfg.cost_pts * MNQ_USD * (units + added)
