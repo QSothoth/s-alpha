@@ -98,7 +98,11 @@ class NoLookahead(unittest.TestCase):
         px = make_px(days)
         for cfg in (E.Cfg(trig='vol', zone='either', zone_tol=.01, windows=((480, 960),)),
                     E.Cfg(trig='macd', min_range=5, windows=((480, 960),)),
-                    E.Cfg(trig='macd', tf=5, piv=1, min_range=2, windows=((480, 960),))):
+                    E.Cfg(trig='macd', tf=5, piv=1, min_range=2, windows=((480, 960),)),
+                    E.Cfg(trig='open', min_range=2, open_drop=5, open_lows=2),
+                    E.Cfg(trig='macd+open', min_range=2, open_drop=5, open_lows=2, windows=((480, 960),)),
+                    E.Cfg(trig='mfail', min_range=2, mfail_gap=0.5, windows=((480, 960),)),
+                    E.Cfg(trig='macd', min_range=2, macd_drop=5, windows=((560, 960),))):
             d = max((1, 2), key=lambda d: len(E.setups(E.Market(px), d, cfg)))
             full = E.setups(E.Market(px), d, cfg)
             self.assertTrue(full, cfg.trig)
@@ -106,6 +110,20 @@ class NoLookahead(unittest.TestCase):
             cut = {k: (v[:cut_bar + 1] if k != 'dates' else v) for k, v in px.items()}
             part = E.setups(E.Market(cut), d, cfg)
             self.assertEqual([x for x in full if x[0] <= cut_bar], part)
+
+    def test_open_sweep_enters_on_the_bullish_sweep_bar(self):
+        rows = [(m, 100, 100.05, 99.95, 100, 1000) for m in range(480, 570)]
+        rows += [(570, 99.7, 100.02, 99.65, 99.9, 9000),     # 09:30 sweeps the 99.95 pre-open low, closes bullish
+                 (571, 99.9, 100.3, 99.85, 100.2, 5000)]
+        rows += [(m, 100.2, 100.25, 100.15, 100.2, 1000) for m in range(572, 960)]
+        px = make_px([('2025-01-02', rows)])
+        cfg = E.Cfg(trig='open', open_sets='B', min_range=1)
+        got = E.setups(E.Market(px), 0, cfg)
+        self.assertEqual(len(got), 1)
+        i, entry, stop, top, kind, units, intrabar = got[0]
+        self.assertEqual((px['mins'][i], kind, intrabar), (570, 'open_B', False))
+        self.assertAlmostEqual(entry, 99.9)
+        self.assertAlmostEqual(stop, 99.65 - E.TICK)
 
     def test_macd_entry_is_stop_order_above_fib(self):
         rng = np.random.default_rng(5)

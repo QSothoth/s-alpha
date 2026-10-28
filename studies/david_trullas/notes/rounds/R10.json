@@ -1,0 +1,10 @@
+{"stage": "R10 MACD rebound after the opening drop", "base": {"from": "R8"}, "draws": 100,
+ "objective": "fidelity", "ledger": ["0000", "2026-05-31"],
+ "fid_gates": {"stop_med_max": 20, "hold_max": 5, "min_quarter_ret": 0, "min_excess": 2},
+ "candidates": {
+  "MDROP": {"windows": [[570, 630]], "macd_drop": 100},
+  "MDROPPM": {"windows": [[570, 630], [780, 945]], "macd_drop": 100},
+  "MDROPF": {"windows": [[570, 630]], "macd_drop": 100, "stop_pts": 15, "be_at": 0.5},
+  "MDROPO": {"trig": "macd+open", "open_sets": "C", "windows": [[570, 630]], "macd_drop": 100},
+  "MDROP60": {"windows": [[570, 630]], "macd_drop": 60}
+}}

@@ -39,7 +39,14 @@ class Cfg:
     max_chase: float = 0.382          # skip if the bar opens above this fib level
     expire: int = 10                  # bars the pending entry stays live after confirmation
     min_range: float = 20.0           # NQ points top - low, smaller swings skipped
+    macd_drop: float = 0.0            # macd: require a session drop of this many NQ points from the high since 09:25
     confirm_units: bool = True        # units = MACD + RSI div + RSI extreme + volume div (1..4), else 1
+    # 'open' trigger (his opening patterns A / B / C)
+    open_sets: str = 'ABC'
+    open_lows: int = 3                # A: consecutive new lows on falling volume
+    open_drop: float = 100.0          # C: NQ points the session has dropped from its high since 09:25
+    open_units: int = 2               # confirmation units given to an opening setup (1-4)
+    mfail_gap: float = 0.25           # 'mfail': MACD-signal gap at the new low <= this share of its 20-bar max
     # 'vol' trigger
     div_look: int = 15
     reclaim_bars: int = 5
@@ -55,6 +62,7 @@ class Cfg:
     tgt_r: float = 3.5                # R target for 'r'
     shave: float = 0.25               # NQ points left before the target ("a tick before")
     drop_look: int = 120              # 'vol' trigger: bars back for the high the pullback started from
+    stop_pts: float = 0.0             # cap the stop at this many NQ points below entry (0 = pattern stop)
     max_hold: int = 60                # minutes
     max_trades: int = 5               # per day
     max_losses: int = 3               # losing trades per day before stopping
@@ -204,7 +212,122 @@ def setups(mk, d, cfg, side=1):
     `top` is the far end of the swing the targets are measured on (the high for a long)."""
     if not _bias_ok(mk, d, cfg, side):
         return []
-    return (_macd_setups if cfg.trig == 'macd' else _vol_setups)(mk, d, cfg, side)
+    out = []
+    for t in cfg.trig.split('+'):
+        out += {'macd': _macd_setups, 'vol': _vol_setups, 'open': _open_setups,
+                'mfail': _mfail_setups}[t](mk, d, cfg, side)
+    return sorted(out, key=lambda x: x[0])
+
+
+def _mfail_setups(mk, d, cfg, side):
+    """'MACD failure' (P1xgnJnf2PU 4:38-5:38): price makes a new low while the MACD line, above its signal line,
+    dips towards it and fails to cross (gap shrinks to <= mfail_gap of its recent maximum), then turns up; enter at
+    the close of the first bar that closes above the previous bar's high within reclaim_bars of the low."""
+    b = mk.bars(cfg.tf)
+    px = mk.px
+    s, e = b['start'][d], b['end'][d]
+    if side == 1:
+        lo, hi, cl, gap = b['l'], b['h'], b['c'], b['macd'] - b['sig']
+    else:
+        lo, hi, cl, gap = -b['h'], -b['l'], -b['c'], b['sig'] - b['macd']
+    last, mins = b['last'], px['mins']
+    inwin = lambda k: any(a <= mins[last[k]] < z for a, z in cfg.windows)
+    out, armed = [], None
+    for k in range(s + 30, e):
+        if not inwin(k):
+            armed = None
+            continue
+        ref = lo[k - cfg.div_look:k].min()
+        g = gap[k - 20:k].max()
+        if lo[k] < ref and g > 0 and 0 < gap[k] <= cfg.mfail_gap * g and \
+                (gap[k - 20:k + 1] > 0).all():
+            armed = (k, lo[k])
+            continue
+        if armed:
+            j, low = armed
+            if lo[k] < low or gap[k] <= 0 or k - j > cfg.reclaim_bars:
+                armed = None
+                continue
+            if gap[k] > gap[k - 1] and cl[k] > hi[k - 1]:
+                top = hi[k - 30:k + 1].max()
+                entry, stop = cl[k], low - TICK
+                if (top - low) * NQ_PER_QQQ >= cfg.min_range and entry - stop <= cfg.max_stop * abs(entry):
+                    out.append((int(last[k]), entry * side, stop * side, top * side, 'mfail', 4, False))
+                armed = None
+    return out
+
+
+def _open_setups(mk, d, cfg, side):
+    """His three opening patterns on 1m bars (RULES_CN 4, ledger T06-T20):
+    A pre-open: 09:00-09:29, >= open_lows consecutive new lows each on lower volume, then a close above the last
+      low bar's high -> enter at that close (6/1 "volume divergence before the open", 5/27 "four lows, falling volume");
+    B open sweep: in 09:30-09:35 a bar undercuts the 09:00-09:29 low and closes as a bullish body -> enter at its
+      close (6/22 "it was a sweep, I enter on the bullish body"; 6/3 opening longs);
+    C post-open flush: 09:35-10:30, the session has dropped >= open_drop NQ points from its high since 09:25, a new
+      low on lower volume than the previous low, then a close above that bar's high (6/3, 6/8, 5/27).
+    Stops a tick under the lowest low of the pattern; `top` = the high the drop started from."""
+    px = mk.px
+    s, e = mk.starts[d], mk.ends[d]
+    mins = px['mins']
+    if side == 1:
+        lo, hi, op, cl = px['l'], px['h'], px['o'], px['c']
+    else:
+        lo, hi, op, cl = -px['h'], -px['l'], -px['o'], -px['c']
+    vol = px['v']
+    m0 = mins[s:e]
+    idx = lambda a, b: np.nonzero((m0 >= a) & (m0 < b))[0] + s
+    out = []
+
+    def emit(i, low, top, kind):
+        entry = cl[i]
+        stop = low - TICK
+        if (top - low) * NQ_PER_QQQ < cfg.min_range or entry <= stop:
+            return
+        if (entry - stop) > cfg.max_stop * abs(entry):
+            return
+        out.append((int(i), entry * side, stop * side, top * side, kind, cfg.open_units, False))
+
+    if 'A' in cfg.open_sets:
+        bars = idx(540, 570)
+        lows = []                       # (bar, low, volume) of successive new lows since 09:00
+        for i in bars:
+            if not lows or lo[i] < lows[-1][1]:
+                if lows and vol[i] >= lows[-1][2]:
+                    lows = []           # volume did not shrink: restart the count from this low
+                lows.append((i, lo[i], vol[i]))
+                continue
+            if len(lows) >= cfg.open_lows and cl[i] > hi[lows[-1][0]]:
+                top = hi[idx(510, 570)[0]:i + 1].max()
+                emit(i, lows[-1][1], top, 'open_A')
+                break
+    if 'B' in cfg.open_sets:
+        pre = idx(540, 570)
+        if len(pre):
+            ref = lo[pre].min()
+            top = hi[pre].max()
+            swept = None
+            for i in idx(570, 575):
+                if swept is None and lo[i] < ref:
+                    swept = i
+                if swept is not None and cl[i] > op[i] and cl[i] >= (hi[i] + lo[i]) / 2 and i - swept <= 3:
+                    emit(i, lo[swept:i + 1].min(), top, 'open_B')
+                    break
+    if 'C' in cfg.open_sets:
+        start = idx(565, 570)
+        armed = None                    # (bar, low, high)
+        for i in idx(575, 630):
+            a0 = start[0] if len(start) else i
+            H = hi[a0:i + 1].max()
+            prev = lo[max(s, i - cfg.div_look):i - 2]
+            if len(prev):
+                j = max(s, i - cfg.div_look) + int(np.argmin(prev))
+                if lo[i] < lo[j] and vol[i] < vol[j] and (H - lo[i]) * NQ_PER_QQQ >= cfg.open_drop:
+                    armed = (i, lo[i], hi[i])
+                    continue
+            if armed and i - armed[0] <= cfg.reclaim_bars and cl[i] > armed[2] and lo[armed[0]:i + 1].min() >= armed[1]:
+                emit(i, armed[1], H, 'open_C')
+                armed = None
+    return out
 
 
 def _macd_setups(mk, d, cfg, side):
@@ -236,6 +359,10 @@ def _macd_setups(mk, d, cfg, side):
                 hidden = cfg.hidden and lo[j] > l1 and mac[j] < mac[j1]
                 top = hi[j1:j + 1].max()
                 rng_pts = (top - lo[j]) * NQ_PER_QQQ
+                if cfg.macd_drop > 0:      # only after the session fell macd_drop points from its high since 09:25
+                    since = [x for x in range(s, k + 1) if mins[last[x]] >= 565]
+                    if not since or (hi[since[0]:k + 1].max() - lo[j]) * NQ_PER_QQQ < cfg.macd_drop:
+                        regular = hidden = False
                 if (regular or hidden) and rng_pts >= cfg.min_range:
                     units = 1
                     if cfg.confirm_units:
@@ -405,6 +532,8 @@ def run(mk, cfg, d_lo, d_hi, start=START, entries=None):
                 continue
             if cfg.day_target > 0 and eq - eq_day >= cfg.day_target * eq_day:
                 break
+            if cfg.stop_pts > 0 and not kind.startswith('fixed') and abs(entry - stop) * NQ_PER_QQQ > cfg.stop_pts:
+                stop = entry - side * cfg.stop_pts / NQ_PER_QQQ     # his tight point stop instead of the pattern low
             R = abs(entry - stop)
             if R <= 0:
                 continue
@@ -423,7 +552,7 @@ def run(mk, cfg, d_lo, d_hi, start=START, entries=None):
             pts_first = side * (fill - entry) * NQ_PER_QQQ
             pts_add = side * (fill - (2 * avg - entry)) * NQ_PER_QQQ if added else 0.0
             pnl = MNQ_USD * (units * pts_first + added * pts_add) - cfg.cost_pts * MNQ_USD * (units + added)
-            eq += pnl
+            eq = max(eq + pnl, 0.0)     # an account cannot lose more than it holds (ruin = -100%)
             trades.append(Trade(px['dates'][d], side, int(i), int(k), entry, fill, stop, units, added,
                                 pts_first, pnl, kind, why, target, conf))
             n += 1

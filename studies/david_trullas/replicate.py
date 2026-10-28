@@ -145,17 +145,41 @@ def run_round(name):
     for cname, over in rd['candidates'].items():
         cfg = override(base, over)
         res[cname] = dict(over=over, cfg=asdict(cfg), rows=evaluate(mk, cfg, E.SELECT, draws))
+    fid_mode = rd.get('objective') == 'fidelity'
+    if fid_mode:   # behaviour first: his selection-ledger trades, see PREREG_R9
+        led = ledger_timed(lo=rd['ledger'][0], hi=rd['ledger'][1])
+        fg = rd.get('fid_gates', {})
+        for cname, r in res.items():
+            f = fidelity(mk, cfg_of(r['cfg']), led)
+            f.pop('detail')
+            r['fidelity'] = f
+            r['fid_score'] = round(f['hits'] - f['random_hits'], 1)
     ref_obj = objective(res['ref']['rows'])
     best, best_obj = 'ref', ref_obj
+    best_key = (res['ref'].get('fid_score', 0), -res['ref'].get('fidelity', {}).get('time_distance', 0))
     for cname, r in res.items():
         rows = r['rows']
         r['objective'] = round(objective(rows), 3)
         r['gate_fails'] = gates_ok(rows)
         r['beats_placebo'] = bool(np.median([x['ret'] for x in rows.values()])
                                   > np.median([x.get('placebo_med', -1e9) for x in rows.values()]))
+        if fid_mode:
+            f = r['fidelity']
+            if f['stop_med_pts'] is None or f['stop_med_pts'] > fg.get('stop_med_max', 1e9):
+                r['gate_fails'].append(f"stop median {f['stop_med_pts']}")
+            if f['hold_med'] is None or f['hold_med'] > fg.get('hold_max', 1e9):
+                r['gate_fails'].append(f"hold median {f['hold_med']}")
+            if min(x['ret'] for x in rows.values()) <= fg.get('min_quarter_ret', -1e9):
+                r['gate_fails'].append('a losing selection quarter')
         if cname == 'ref':
             continue
-        if not r['gate_fails'] and r['beats_placebo'] and r['objective'] > best_obj:
+        if r['gate_fails'] or not r['beats_placebo']:
+            continue
+        if fid_mode:
+            key = (r['fid_score'], -r['fidelity']['time_distance'])
+            if key > best_key and r['fid_score'] >= fg.get('min_excess', -1e9):
+                best, best_key = cname, key
+        elif r['objective'] > best_obj:
             best, best_obj = cname, r['objective']
     out = dict(round=name, stage=rd.get('stage'), chosen=best, chosen_cfg=res[best]['cfg'], results=res)
     os.makedirs(REPORTS, exist_ok=True)
@@ -172,8 +196,13 @@ def print_round(out):
         cells = ' '.join(f"{q[2:]} {x['ret']:+.0f}% n{x.get('n', 0)} w{x.get('win', 0):.2f} "
                          f"pl{x.get('placebo_med', float('nan')):+.0f}" for q, x in rows.items())
         pts = sum(x.get('pts_total', 0) for x in rows.values())
+        fid = ''
+        if 'fidelity' in r:
+            f = r['fidelity']
+            fid = (f" | hits {f['hits']}/{f['n']} (rand {f['random_hits']}) tdist {f['time_distance']} "
+                   f"stop {f['stop_med_pts']} hold {f['hold_med']}")
         print(f"{cname:>8} obj {r['objective']:+.3f} pts {pts:+.0f} gates {'ok' if not r['gate_fails'] else r['gate_fails'][:2]} "
-              f"placebo {'ok' if r['beats_placebo'] else 'no'} | {cells}")
+              f"placebo {'ok' if r['beats_placebo'] else 'no'} | {cells}{fid}")
 
 
 def validate(name):
@@ -235,6 +264,54 @@ def three(cfg=None):
     return out
 
 
+BUCKETS = (('pre', 0, 568), ('open', 568, 573), ('post', 573, 630), ('late_am', 630, 780), ('pm', 780, 1440))
+
+
+def bucket(m):
+    return next(name for name, a, b in BUCKETS if a <= m < b)
+
+
+def ledger_timed(rows=None, lo='0000', hi='9999'):
+    return [r for r in (rows or ledger_rows()) if r['time_prec'] != 'unknown' and lo <= r['entry_date'] <= hi]
+
+
+def fidelity(mk, cfg, ledger, tol=5):
+    """How much our executed trades look like his: on each of his timed trades, did we have an executed trade of the
+    same side within +-tol minutes; random baseline = the same number of our trades that day dropped uniformly in
+    our entry windows; time-of-day bucket shares (ours over all quarters vs his ledger); stop width and holding."""
+    px = mk.px
+    quarters = [q for q in E.QUARTERS if any(E.QUARTERS[q][0] <= r['entry_date'] <= E.QUARTERS[q][1] for r in ledger)]
+    trades = []
+    for q in quarters:     # sizing-free: a large account never runs out, the daily count / loss limits still apply
+        a, b = E.day_range(mk, *E.QUARTERS[q][:2])
+        trades += E.run(mk, override(cfg, dict(lev_hi=0.0)), a, b, start=1e7)[1]
+    by_day = {}
+    for t in trades:
+        by_day.setdefault(t.date, []).append(t)
+    win_min = sum(b - a for a, b in cfg.windows)
+    hits, expect = 0, 0.0
+    detail = []
+    for r in ledger:
+        m = int(r['time_et'][:2]) * 60 + int(r['time_et'][3:5])
+        side = 1 if r['side'] == 'long' else -1
+        ours = by_day.get(r['entry_date'], [])
+        hit = any(t.side == side and abs(px['mins'][t.t_in] - m) <= tol for t in ours)
+        hits += hit
+        expect += 1 - (1 - (2 * tol + 1) / win_min) ** len(ours) if win_min else 0
+        detail.append((r['id'], r['entry_date'], r['time_et'], len(ours), bool(hit)))
+    his_b = [bucket(int(r['time_et'][:2]) * 60 + int(r['time_et'][3:5])) for r in ledger]
+    our_b = [bucket(px['mins'][t.t_in]) for t in trades]
+    share = lambda xs: {name: round(xs.count(name) / max(len(xs), 1), 2) for name, _, _ in BUCKETS}
+    hs, os_ = share(his_b), share(our_b)
+    tv = round(sum(abs(hs[k] - os_[k]) for k in hs) / 2, 2)
+    stops = [abs(t.entry - t.stop0) * E.NQ_PER_QQQ for t in trades]
+    return dict(hits=hits, n=len(ledger), random_hits=round(expect, 1), his_buckets=hs, our_buckets=os_,
+                time_distance=tv, stop_med_pts=round(float(np.median(stops)), 1) if stops else None,
+                hold_med=float(np.median([t.t_out - t.t_in for t in trades])) if trades else None,
+                win=round(float(np.mean([t.pnl > 0 for t in trades])), 2) if trades else None,
+                days_traded_of_his=sum(bool(by_day.get(r['entry_date'])) for r in ledger), detail=detail)
+
+
 ROBUST = {   # one change each from the chosen config; report only, never used to choose
     'cost2': {'cost_pts': 2.0}, 'cost3': {'cost_pts': 3.0},
     'piv2': {'piv': 2}, 'no_hidden': {'hidden': False},
@@ -273,6 +350,16 @@ def main(argv):
     cmd = argv[0]
     if cmd == 'robust':
         return robust(argv[1])
+    if cmd == 'fidelity':      # fidelity R8 [extra-json-overrides]
+        with open(os.path.join(REPORTS, f'{argv[1].lower()}.json'), encoding='utf-8') as f:
+            cfg = cfg_of(json.load(f)['chosen_cfg'])
+        if len(argv) > 2:
+            cfg = override(cfg, json.loads(argv[2]))
+        res = fidelity(market(), cfg, ledger_timed())
+        for k, v in res.items():
+            if k != 'detail':
+                print(k, v)
+        return res
     if cmd == 'round':
         run_round(argv[1])
     elif cmd == 'validate':
