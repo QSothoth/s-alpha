@@ -1,4 +1,5 @@
 import json
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -18,6 +19,17 @@ class DocsTests(unittest.TestCase):
         root = (ROOT / 'AGENTS.md').read_text(encoding='utf-8')
         for sub in ('custody/AGENTS.md', 'watch/AGENTS.md', 'studies/AGENTS.md'):
             self.assertIn('(%s)' % sub, root, sub)
+
+    def test_commands_use_the_project_venv(self):
+        """Only the project .venv exists; reports and notes keep the commands they ran."""
+        old = '/opt/futu-opend/' + 'venv'
+        tracked = subprocess.run(['git', 'ls-files', '-z'], cwd=ROOT, capture_output=True, text=True, check=True)
+        for name in tracked.stdout.split('\0'):
+            parts = Path(name).parts
+            path = ROOT / name
+            if 'reports' in parts or 'notes' in parts or path.suffix not in ('.py', '.md') or not path.is_file():
+                continue
+            self.assertNotIn(old, path.read_text(encoding='utf-8'), name)
 
     def test_standard_document_matches_the_code_constants(self):
         text = (ROOT / 'docs' / 'STANDARD.md').read_text(encoding='utf-8')

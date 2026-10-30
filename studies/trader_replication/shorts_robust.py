@@ -1,7 +1,7 @@
 """Sensitivity of a round's carried long-short configuration (reported only, never used to choose): each variant
 changes one thing in the short side (or the costs) and reruns the three accounts without placebo.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.shorts_robust martin_luk s4.json
 """
 from __future__ import annotations

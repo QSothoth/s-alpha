@@ -2,7 +2,7 @@
 the same panels, window, costs, engine, placebo and benchmark for everybody, each run through the engineering gate.
 Writes studies/trader_replication/reports/compare.json and COMPARISON_CN.md; the numbers are for a person to judge.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.compare run [us,hk,cn] [trader ...]   # one process, one run at a time
     $PY -m studies.trader_replication.compare render
 """

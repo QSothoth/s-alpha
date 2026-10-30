@@ -48,7 +48,7 @@
 - 每轮门槛固定：同池随机中位、胜率 ≤ 35%、选择段总收益不低于参照。回撤只报告不作门槛（用户只要高盈亏比、及时止损）。中途不加门槛、不去门槛，要改先问我。
 - 不带入比参照更差的配置；预登记的选择规则选出明显更差的系统时，照记、不带入，并说明（R4 的 EP 就是例子）。
 - 只用现有数据 `trader-data-v1`，不拉新行情、不扣历史 K 线额度。网上找采访原话可以。
-- 机器：4GB 内存、2 核，一次只跑一个重计算进程：`systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.dan_zanger.replicate ...`
+- 机器：4GB 内存、2 核，一次只跑一个重计算进程：`systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m studies.dan_zanger.replicate ...`
 - 主目录就是生产环境：不切分支，不提交、不推送，除非我要求。改了哪里就跑哪里的测试，`custody/tests` 每次都跑。
 - 头部交易先在原始日 K（`data/trader-data-v1/us/bars_raw.csv.gz`）核对买入、加仓、离场日和价格，再报数字。
 - 预算：最多 10 轮。连续 3 轮在 7 条上没有进展就停，写清卡在哪一条、哪一层（数据、规则、执行）。

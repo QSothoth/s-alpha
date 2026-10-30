@@ -5,7 +5,7 @@ called as is; the candidate re-runs the same loop with the TURN rule added and,
 with TURN switched off, must reproduce the baseline mark for mark. Streams one
 (code, day) at a time; no network, no OpenD.
 
-    /opt/futu-opend/venv/bin/python studies/watch_signal/code/w34_turn.py
+    /opt/opend-us-options/.venv/bin/python studies/watch_signal/code/w34_turn.py
 """
 import csv
 import gzip

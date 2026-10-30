@@ -21,7 +21,7 @@
 数据缓存在 `data/martin-luk-cache/`（不进 git，可由原始数据重建）。只读研究，不接 custody、不产生交易许可。
 
 ```bash
-PY="nice -n 19 /opt/futu-opend/venv/bin/python"
+PY="nice -n 19 /opt/opend-us-options/.venv/bin/python"
 $PY -m unittest studies.martin_luk.tests.test_luk studies.martin_luk.tests.test_intraday studies.martin_luk.tests.test_replicate
 $PY -m studies.martin_luk.replicate r19   # 之后按顺序：r20 … r28（第一阶段）、r29 … r41（第二阶段前半）
 $PY -m studies.martin_luk.replicate round R42   # R42 … R74：读 notes/rounds/R*.json，写 reports/r42.json …

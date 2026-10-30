@@ -2,7 +2,7 @@
 a small list of liquid large caps, key levels, a failed break that is reclaimed ("buyers show up"), then a retest
 of the level to define risk; calls or puts both ways, held a few sessions (notes/RULES_CN.md).
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.emanuela_elias.replicate round R1
     $PY -m studies.emanuela_elias.replicate validate r1.json
 

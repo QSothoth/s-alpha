@@ -3,7 +3,7 @@ US stocks, long and short, from his own article (thetraderisk.com/mean-reversion
 Cesar Alvarez, notes/RULES_CN.md) and the published Lamorak statistics (328 trades a year, 63.76% winners, average
 winner 2.29%, win / loss 0.81, 4 days held, leverage up to 150%; 2024 +20.45%, 2025 to August +5.03%).
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.evan_medeiros.replicate round R1
     $PY -m studies.evan_medeiros.replicate validate r1.json
 

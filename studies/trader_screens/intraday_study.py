@@ -8,7 +8,7 @@ divided by the market's cumulative share f_m(C) (V1)); every registered system r
 (entry candidates, buys, exits) are stored beside the same on the true bar.  Test days: the last 5 full sessions of
 the one fetch; f_m comes from the fetch's earlier full sessions only.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_screens.minute fetch us                    # once: the five-minute bars (no quota)
     $PY -m studies.trader_screens.intraday_study reconcile us        # minute aggregate vs daily bars
     $PY -m studies.trader_screens.intraday_study days us             # the test days

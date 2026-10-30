@@ -1,7 +1,7 @@
 """Engineering gate (docs/TRADER_PROTOCOL_CN.md §2) on the carried long-short configuration over the whole window
 (after the single validation): look-ahead at the protocol's cut days, fills inside the day's range, win rate.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.marios_stamatoudis.gate_check r1.json s1.json
 """
 from __future__ import annotations

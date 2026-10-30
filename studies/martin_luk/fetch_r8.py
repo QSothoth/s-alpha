@@ -1,8 +1,8 @@
 """R8 data (notes/PREREG_R8.md): broad daily universe (free), point-in-time sample, then 5-minute history (quota).
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.fetch_r8 daily
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.fetch_r8 sample
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.fetch_r8 k5        # resumable
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.fetch_r8 daily
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.fetch_r8 sample
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.fetch_r8 k5        # resumable
 """
 from __future__ import annotations
 

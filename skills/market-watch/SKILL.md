@@ -15,7 +15,7 @@ description: 使用仓库看板盯港股、A 股和美股的盘中行情，解�
 
 ```bash
 cd /opt/opend-us-options
-/opt/futu-opend/venv/bin/python watch/smc_watch.py HK.00700 US.AAPL SH.600519
+/opt/opend-us-options/.venv/bin/python watch/smc_watch.py HK.00700 US.AAPL SH.600519
 ```
 
 脚本按所选市场最晚收盘后的截止时间结束；TTY 展示看板，非 TTY 每行一个 JSON，日志在 `watch/logs/`。港美走 OpenD，A 股走腾讯。脚本直接将位置参数视为代码，没有 `--help` 解析器；需要参数说明读源码和看板说明。

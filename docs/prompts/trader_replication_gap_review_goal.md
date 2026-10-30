@@ -57,6 +57,6 @@
 ## 规则
 
 - 只用现有数据 `trader-data-v1` 与已发布的 Release；不拉新行情、不扣历史 K 线额度；网上找原话可以。
-- 机器 4GB 内存、2 核，一次只跑一个重计算进程：`systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m ...`
+- 机器 4GB 内存、2 核，一次只跑一个重计算进程：`systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m ...`
 - 主目录是生产环境（QQ 定时推送从这里跑）：在单独的 worktree 里做，不提交、不推送，除非我要求。改了哪里跑哪里的测试，`custody/tests` 每次都跑。
 - 汇报先结论、白话、少术语，细节放报告文件。

@@ -17,7 +17,7 @@ description: 对指定的沪深 A 股、美股、港股做纯多头日 K 技术�
 
 ```bash
 cd /opt/opend-us-options
-/opt/futu-opend/venv/bin/python -m studies.daily_technical.assess US.AAPL HK.00700 SH.600519
+/opt/opend-us-options/.venv/bin/python -m studies.daily_technical.assess US.AAPL HK.00700 SH.600519
 ```
 
 沪深 A 股默认腾讯公开前复权日线，美港默认 OpenD 最近日 K，港股有腾讯备用；OpenD 仍需已有行情权限，但脚本不会调用消耗历史 K 线额度的接口或购买数据。默认每只 300 根，仅接纳已完成日 K。无 OpenD 时，沪深/港股可用系统 Python 加 `--source tencent`。接口错误或数据不足时报告缺口，不编造技术面，不改用付费接口。

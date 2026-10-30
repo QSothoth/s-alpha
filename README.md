@@ -37,7 +37,7 @@ mkdir -p ~/.codex/skills
 ln -s /opt/opend-us-options/skills/market-watch ~/.codex/skills/market-watch
 ```
 
-命令从仓库根目录运行；连接 OpenD 使用 `/opt/futu-opend/venv/bin/python`。只查看策略、不连接交易账户：
+命令从仓库根目录运行；连接 OpenD 使用 `/opt/opend-us-options/.venv/bin/python`。只查看策略、不连接交易账户：
 
 ```bash
 python3 -m custody strategies

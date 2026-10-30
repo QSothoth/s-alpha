@@ -9,7 +9,7 @@ list and the rule it was built with).  The panel applies the actions the way the
     h = TD.load_hourly('us')                 # frozen release (TRADER_HOURLY_TAG, default trader-hourly-v1)
     h = TD.load_hourly('us', mode='live')    # plus the bars after it, from OpenD's subscription (no history quota)
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_data.hourly fetch data/trader-hourly-v1 us 2020-01-01 2026-10-23 <codes.json> <rule.json>
 
 `fetch` uses request_history_kline (one history-quota unit per stock not fetched in the last 30 days: ask first,

@@ -6,7 +6,7 @@ USIC 2024 +283%、2025 +969.8% 的香港交易员，美股动量波段，紧止�
 
 ```bash
 cd /opt/opend-us-options
-PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
 # 第一阶段（逐环节像不像 + 超额）与第二阶段前半（带入规则）：按顺序，后一轮读前一轮报告里的 chosen
 for r in r19 r20 r21 r21b r22 r22b r23 r23b r23c r24 r24b r25 r26 r27 r27b r28 \
          r29 r30 r31 r32 r33 r34 r35 r36 r37 r38 r39 r40 r41; do

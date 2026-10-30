@@ -16,7 +16,7 @@ from .live_watch import select_candidates
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_PYTHON = Path('/opt/futu-opend/venv/bin/python')
+DEFAULT_PYTHON = Path('/opt/opend-us-options/.venv/bin/python')
 
 
 def validate_launch(candidates, baselines, out, until, budget, fee_reserve, now, symbols=None):

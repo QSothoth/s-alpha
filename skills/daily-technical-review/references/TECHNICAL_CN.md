@@ -9,7 +9,7 @@
 从仓库根目录运行：
 
 ```bash
-/opt/futu-opend/venv/bin/python -m studies.daily_technical.assess US.AAPL HK.00700 SH.600519 SZ.000001
+/opt/opend-us-options/.venv/bin/python -m studies.daily_technical.assess US.AAPL HK.00700 SH.600519 SZ.000001
 python3 -m studies.daily_technical.assess SH.600519 --source tencent
 python3 -m studies.daily_technical.assess HK.00700 --source tencent
 python3 -m studies.daily_technical.assess US.AAPL --csv /tmp/aapl.csv --csv-adjustment qfq

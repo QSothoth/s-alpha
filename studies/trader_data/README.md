@@ -12,7 +12,7 @@
 | `panel.py` | 唯一的面板构建：按复权因子前复权、修正开收盘落在高低之外的坏 K 线；按数据集摘要缓存在 `data/trader-data/cache/` |
 
 ```bash
-PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
 $PY -c "from studies import trader_data as TD; print(TD.dataset('cn', 'live').update())"   # 补到最新收盘
 $PY -m unittest discover -s studies/trader_data/tests -t .
 ```

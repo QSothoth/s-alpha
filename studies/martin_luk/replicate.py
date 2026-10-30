@@ -1,7 +1,7 @@
 """Martin Luk as the first case of skills/trader-replication: stage masks on the point-in-time US daily panel,
 scored against his public trades (notes/trades.csv) and against random entry on the same stocks.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.replicate r19
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.replicate r19
 """
 from __future__ import annotations
 

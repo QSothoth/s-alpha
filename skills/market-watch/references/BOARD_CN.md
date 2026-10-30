@@ -5,10 +5,10 @@
 ## 用法
 
 ```bash
-/opt/futu-opend/venv/bin/python watch/smc_watch.py                          # 默认标的
-/opt/futu-opend/venv/bin/python watch/smc_watch.py HK.02513 HK.09988 HK.01810
-/opt/futu-opend/venv/bin/python watch/smc_watch.py SZ.300795                # A 股走腾讯 1 分钟 K 线
-/opt/futu-opend/venv/bin/python watch/smc_watch.py US.AAPL US.NVDA          # 美股走 OpenD，按纽约时间
+/opt/opend-us-options/.venv/bin/python watch/smc_watch.py                          # 默认标的
+/opt/opend-us-options/.venv/bin/python watch/smc_watch.py HK.02513 HK.09988 HK.01810
+/opt/opend-us-options/.venv/bin/python watch/smc_watch.py SZ.300795                # A 股走腾讯 1 分钟 K 线
+/opt/opend-us-options/.venv/bin/python watch/smc_watch.py US.AAPL US.NVDA          # 美股走 OpenD，按纽约时间
 ```
 
 A 股代码写成 `SZ.300795`、`SH.600519` 或 6 位数字。行情来自腾讯财经的公开 1 分钟 K 线，不经过 OpenD。美股写成 `US.AAPL`，只看常规时段（纽约 09:31–16:00 的 390 根），价位按 0.01 美元。信号规则三地相同。

@@ -1,7 +1,7 @@
 """R1 runner: the five pre-registered candidates on one segment for all three markets.
 
-    /opt/futu-opend/venv/bin/python -m studies.martin_luk.r1 select
-    /opt/futu-opend/venv/bin/python -m studies.martin_luk.r1 validate C?   # once, after selection
+    /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r1 select
+    /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r1 validate C?   # once, after selection
 """
 from __future__ import annotations
 

@@ -9,7 +9,7 @@
 在美东当天 09:30 前运行，目录必须是新的：
 
 ```bash
-PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.prepare_watch \
+PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m studies.us_0dte_picks.prepare_watch \
   --out data/human-nearest-2026-09-29-pre --launch --until 15:45
 ```
 
@@ -26,7 +26,7 @@ PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.prepare_wa
 需要人类先挑几只时，先运行 `prepare_watch --out PRE`（不加 `--launch`），说明冻结名单和策略状态并取得当日模式、预算及买卖范围许可。选好后运行：
 
 ```bash
-/opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.launch_watch \
+/opt/opend-us-options/.venv/bin/python -m studies.us_0dte_picks.launch_watch \
   --candidates PRE/ranking.json --baselines PRE/baselines.json --out PRE/monitor \
   --symbols AAPL,NVDA --until 15:45 --check-only
 ```

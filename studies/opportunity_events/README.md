@@ -6,7 +6,7 @@
 
 ```bash
 # 仅在美股盘前运行。上下各取十条、最多两只补新闻，不订阅或启动定时任务。
-/opt/futu-opend/venv/bin/python -m studies.opportunity_events.research discover --count 10 --news 2 --output data/opportunity-events/discovery-new.json
+/opt/opend-us-options/.venv/bin/python -m studies.opportunity_events.research discover --count 10 --news 2 --output data/opportunity-events/discovery-new.json
 
 # 固定历史诊断，使用已有本地数据，不联网。输出路径必须不存在。
 python3 -m studies.opportunity_events.research pilot --output data/opportunity-events/ep0-new.json

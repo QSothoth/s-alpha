@@ -1,7 +1,7 @@
 """After the single validation: the carried configuration over the whole common window in all three markets
 (study.final with full = WINDOW; HK / A-shares run untuned), reported only.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.sean_ryan.final_window r8.json
 """
 import sys

@@ -1,7 +1,7 @@
 """Dan Zanger through skills/trader-replication, on the Flanders machinery (entries, pools, the generic loop); only
 his base breakout, stop and exits are his own.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.dan_zanger.replicate round R1
     $PY -m studies.dan_zanger.replicate validate r1.json
     $PY -m studies.dan_zanger.replicate final r1.json

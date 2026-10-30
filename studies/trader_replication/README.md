@@ -36,7 +36,7 @@
 空头新增的默认关闭字段（单测 `tests/test_borrow.py`、`tests/test_short_targets.py`、`tests/test_shorts.py`）：`borrow_rate`（年化借券费，按前一收盘的空单市值每个交易日计提一次，计入该笔盈亏）、`short_targets` / `short_target_frac`（空单跌到前一日的某条线回补，开盘就在下方按开盘价；止损日先止损，除非开盘已在目标下方）、`short_trim_day` / `short_trim_day_frac`（入场后第 N 天收盘有盈利回补一部分）。默认关闭时所有已登记系统的结果逐位不变（2026-10-19 `compare run us,hk` 前后核对）。
 
 ```bash
-/opt/futu-opend/venv/bin/python -m unittest discover -s studies/trader_replication/tests -t .
+/opt/opend-us-options/.venv/bin/python -m unittest discover -s studies/trader_replication/tests -t .
 ```
 
 2026-10-18 通用版自测（`martin.py`，R74 配置，引擎已含下面两组新字段）：`diagnose`、三市场 `final`、`robust` 的输出与已提交的 `diagnose_r74.json`、`final_system_r74.json`、`robust_r74.json` 逐项一致（数值相对误差 < 1e−9）。
@@ -44,7 +44,7 @@
 新增默认关闭的 `Rules` 字段（执行时点单测 `tests/test_day_trim_signal_add.py`）：`trim_day` / `trim_day_frac` / `trim_day_profit` / `trim_day_breakeven`（入场后第 N 个交易日收盘减仓，可只在盈利时、可随后把止损提到成本；Qullamaggie“3–5 天卖 1/3–1/2”）；`add_signal` / `add_signal_frac` / `add_signal_max` / `add_signal_stop`（持仓出现新的买点信号时在收盘加仓，入场当天不加，止损可不动 / 提到成本 / 提到加仓日低点；Flanders“新买点加仓”）。
 
 ```bash
-PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
 $PY -m studies.trader_replication.martin diagnose r74.json && $PY -m studies.trader_replication.martin final r74.json
 $PY -m studies.trader_replication.martin robust r74.json && $PY -m studies.trader_replication.martin check
 ```

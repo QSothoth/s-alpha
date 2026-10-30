@@ -2,7 +2,7 @@
 system, this module only adapts it.  Reads studies/martin_luk/reports, writes to data/trader-replication-selftest
 (never into the Martin study).
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.martin diagnose r74.json
     $PY -m studies.trader_replication.martin final r74.json
     $PY -m studies.trader_replication.martin check            # compare with the committed R74 reports

@@ -3,11 +3,11 @@
 Read-only OpenD; no orders, no history-kline quota.  Three steps for trading day T (Mon/Wed/Fri):
 
     # any time after T-1's close and before 09:25 ET on T (~8 minutes)
-    /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.daily_list premarket --date T --out data/list-T-pre
+    /opt/opend-us-options/.venv/bin/python -m studies.us_0dte_picks.daily_list premarket --date T --out data/list-T-pre
     # 10:00-10:25 ET on T (~2 minutes)
-    /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.daily_list confirm --watchlist data/list-T-pre/watchlist.json --out data/list-T
+    /opt/opend-us-options/.venv/bin/python -m studies.us_0dte_picks.daily_list confirm --watchlist data/list-T-pre/watchlist.json --out data/list-T
     # after 16:05 ET on T: record the real outcome (5m first touch, contract close) for forward validation
-    /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.daily_list review --list data/list-T/list.json --out data/list-T-review
+    /opt/opend-us-options/.venv/bin/python -m studies.us_0dte_picks.daily_list review --list data/list-T/list.json --out data/list-T-review
 
 Rules remain p3.thrust_side and p3.signal('A4_THRUST_FOLLOW'); see reports/P5_RESULTS_CN.md.
 """

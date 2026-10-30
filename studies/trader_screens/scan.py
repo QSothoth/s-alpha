@@ -6,7 +6,7 @@ Each trader is exactly the system the research compares (same configuration, eng
 2024-01-02 with studies/trader_replication/runner.py), on the live data (studies/trader_data, filled first) or, with
 --mode frozen, on the frozen release.  The replay up to the freeze day is checked against the comparison report.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_screens.scan list
     $PY -m studies.trader_screens.scan refresh us                  # fill the live data to the newest session
     $PY -m studies.trader_screens.scan run us                      # today's board (live; fills first)

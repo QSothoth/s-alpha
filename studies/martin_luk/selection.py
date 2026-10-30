@@ -1,6 +1,6 @@
 """Point-in-time 'his scanners' selection over the broad US daily universe (3424 names).
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.selection coverage
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.selection coverage
 """
 from __future__ import annotations
 

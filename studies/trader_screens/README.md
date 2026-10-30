@@ -28,5 +28,5 @@
 跨股票共性同时展示在日报和美股开盘后 1 小时的单图中，共用 `aggregation.py`。行情标量与覆盖率保存在 `presentation.aggregation`，本机日报另输出完整的 `aggregation.json`。盘中累计量不与全天量混算，旧快照未保存的成交量保持缺失。门槛、分母、首页选择和缺失处理见[聚合口径](../../skills/trader-screens/references/AGGREGATION_CN.md)。
 
 ```bash
-nice -n 19 env OPENBLAS_NUM_THREADS=1 /opt/futu-opend/venv/bin/python -m unittest discover -s studies/trader_screens/tests -t .
+nice -n 19 env OPENBLAS_NUM_THREADS=1 /opt/opend-us-options/.venv/bin/python -m unittest discover -s studies/trader_screens/tests -t .
 ```

@@ -6,7 +6,7 @@ four expiry buckets per symbol, using subscribed current bars only (no history-k
 minute, so options go in batches. Selection uses only the expiry list, the chain and the first 1m open -
 never same-day outcomes.
 
-    nice -n 19 env PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.exec_capture \\
+    nice -n 19 env PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m studies.us_0dte_picks.exec_capture \\
         --out data/exec-capture-$(date +%F)
 """
 from __future__ import annotations

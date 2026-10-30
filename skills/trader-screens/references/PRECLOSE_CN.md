@@ -30,7 +30,7 @@ A 股、港股为北京时间，美股为美东时间（定时器按美东时区
 ## 入口与依赖
 
 - 发布：`research/trader_preclose_to_qq.py`，使用已有 QQ 发送、回执核对和单图渲染实现。
-- 计算：`research/trader_preclose_worker.py`，通过 `/opt/futu-opend/venv/bin/python` 运行；三个市场均导入主目录 `/opt/opend-us-options/`，美股仍以 `early` 动作调用 `confidence.robust_board`。结果 `source` 记录代码根目录和 worker 动作。
+- 计算：`research/trader_preclose_worker.py`，通过 `/opt/opend-us-options/.venv/bin/python` 运行；三个市场均导入主目录 `/opt/opend-us-options/`，美股仍以 `early` 动作调用 `confidence.robust_board`。结果 `source` 记录代码根目录和 worker 动作。
 - 调度：`/etc/systemd/system/trader-preclose-{cn,hk,us}.timer`、`trader-preclose@.service`、`trader-preclose-failure@.service`。
 - 状态与结果：`data/trader-screens/qq/preclose/<cn|hk|us>/<日期>/`；包括交易日历、`board.json`、图片、发布回执和失败通知回执。每个市场的面板缓存隔离在自身 `panel-cache/` 下。
 - 前一天日线由原收盘更新流程准备。缺少上一交易日时本任务拒绝运行，不在盘中自动拉全量历史。

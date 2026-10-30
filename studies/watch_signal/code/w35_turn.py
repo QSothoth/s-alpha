@@ -3,7 +3,7 @@
 Preregistration: ../notes/W35_PREREG.md. The rule is W34's `candidate()`
 unchanged; only the days (32 not used by W34) and the gates differ.
 
-    /opt/futu-opend/venv/bin/python studies/watch_signal/code/w35_turn.py
+    /opt/opend-us-options/.venv/bin/python studies/watch_signal/code/w35_turn.py
 """
 import csv
 import gzip

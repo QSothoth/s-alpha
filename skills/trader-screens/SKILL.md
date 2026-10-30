@@ -32,7 +32,7 @@ description: 交易员看板：假设研究过的交易员此刻在美股 / 港�
 
 ```bash
 cd /opt/opend-us-options
-PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
 $PY -m studies.trader_screens.scan refresh us                # 把数据补到最新收盘：us / hk / cn（us 另补 Holguin 名单的期权统计，OpenD 按需）
 $PY -m studies.trader_screens.scan run us                    # 某个市场今天的看板（终端 + Markdown；会先补数据）
 $PY -m studies.trader_screens.scan run hk
