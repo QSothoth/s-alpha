@@ -1,0 +1,310 @@
+{
+ "report": "r8.json",
+ "key": "chosen",
+ "config": {
+  "setups": [
+   "zbase"
+  ],
+  "entry": "close",
+  "base": {
+   "days": 25,
+   "depth": 25.0,
+   "vol": 3.0,
+   "chase": 0.05
+  },
+  "stop": "fill",
+  "stop_pct": 0.05,
+  "stop_min": 0.01,
+  "stop_cap": 0.0,
+  "priority": "rvol",
+  "max_new": 2,
+  "strength": "rs80",
+  "filter": "IDX50",
+  "pool": {
+   "turnover": 20000000.0,
+   "adr": 0.0,
+   "above50": true
+  },
+  "rule_opts": {
+   "risk": 0.0125,
+   "max_position": 0.5,
+   "max_gross": 2.0,
+   "max_open": 4,
+   "trail": "sma50",
+   "arm_trail_on_entry": true,
+   "exit_signal": "",
+   "nft_days": 1,
+   "trims": [],
+   "trim_frac": 0.25,
+   "unit_adr": "pct5",
+   "add_r": 2.0,
+   "add_frac": 1.0
+  }
+ },
+ "card": {
+  "per_year": [
+   104.0,
+   Infinity
+  ],
+  "source": "Traders' magazine 2003 (chartpattern.com/articles/tradermag.pdf): \"It had to have been at least 200 trades or more\" over the 23 months of 1998-2000, his own account, a floor",
+  "behaviour": {
+   "open_mean": [
+    2.0,
+    4.0
+   ],
+   "days_mean": [
+    6.0,
+    12.0
+   ],
+   "median_days_win": [
+    10.0,
+    40.0
+   ],
+   "max_days": [
+    1.0,
+    50.0
+   ]
+  },
+  "years": {}
+ },
+ "used_validate": "R1 R3 R5 R7 R8",
+ "ours": {
+  "gate": {
+   "data": true,
+   "fills": true,
+   "lookahead": true
+  },
+  "win": 0.14130434782608695,
+  "closed": 92,
+  "per_year": 33.07275320970043,
+  "behaviour": {
+   "open_mean": 2.542082738944365,
+   "days_mean": 19.369565217391305,
+   "median_days_win": 54.0,
+   "max_days": 206.0
+  },
+  "years": {},
+  "total": 1.2102693739308794,
+  "placebo_median": -0.02192094134656103,
+  "validate_total": -0.28972708631461885,
+  "validate_placebo_median": -0.0953049192527583,
+  "total_drop2": -0.21311734455372466
+ },
+ "rules": [
+  {
+   "rule": "gate",
+   "ok": true,
+   "why": "win 0.141 over 92 closed"
+  },
+  {
+   "rule": "count",
+   "ok": false,
+   "why": "33.07275320970043 a year, under 52"
+  },
+  {
+   "rule": "behaviour",
+   "ok": false,
+   "why": "outside +-30%: {'days_mean': 0.61, 'median_days_win': 0.35, 'max_days': 3.12}"
+  },
+  {
+   "rule": "years",
+   "ok": true,
+   "why": "0 of his years within"
+  },
+  {
+   "rule": "placebo",
+   "ok": true,
+   "why": "1.2102693739308794 vs median -0.02192094134656103"
+  },
+  {
+   "rule": "validate",
+   "ok": false,
+   "why": "-0.28972708631461885 vs median -0.0953049192527583"
+  },
+  {
+   "rule": "not two",
+   "ok": false,
+   "why": "without the best two -0.21311734455372466 vs median -0.02192094134656103"
+  }
+ ],
+ "passed": false,
+ "gate": {
+  "data": {
+   "ok": true,
+   "why": [],
+   "span": [
+    "2024-01-02",
+    "2026-10-16"
+   ]
+  },
+  "fills": {
+   "ok": true,
+   "executions": 206,
+   "bad": [],
+   "n_bad": 0
+  },
+  "lookahead": {
+   "ok": true,
+   "cuts": [
+    {
+     "cut": "2024-09-30",
+     "ok": true,
+     "diff": []
+    },
+    {
+     "cut": "2025-09-30",
+     "ok": true,
+     "diff": []
+    }
+   ]
+  }
+ },
+ "by_year": {
+  "2024": 0.4682373306965786,
+  "2025": 0.3544589973468488,
+  "2026": 0.1114324730302485
+ },
+ "maxdd": 0.3675570802403013,
+ "behaviour": {
+  "trades": 92,
+  "per_year": 33.07275320970043,
+  "per_day": 0.1312410841654779,
+  "win": 0.14130434782608695,
+  "avg_win": 0.6233417963589061,
+  "avg_loss": -0.0422219019939347,
+  "days_win": 80.53846153846153,
+  "days_loss": 9.30379746835443,
+  "median_days_win": 54.0,
+  "median_days_loss": 1.0,
+  "top10_share": 0.971973675981811,
+  "entry_weight_mean": 0.250711644807109,
+  "entry_weight_max": 0.26400116318630695,
+  "open_mean": 2.542082738944365,
+  "open_max": 4
+ },
+ "trades_by_year": {
+  "2024": {
+   "n": 33,
+   "wins": 6,
+   "losses": 27,
+   "win": 0.18181818181818182,
+   "avg_win": 0.4962433456744233,
+   "avg_loss": -0.03920378770710298,
+   "exp_r": 1.1630047308816707
+  },
+  "2025": {
+   "n": 37,
+   "wins": 7,
+   "losses": 30,
+   "win": 0.1891891891891892,
+   "avg_win": 0.7322833255170343,
+   "avg_loss": -0.03973486833529972,
+   "exp_r": 2.1264525559785112
+  },
+  "2026": {
+   "n": 22,
+   "wins": 0,
+   "losses": 22,
+   "win": 0.0,
+   "avg_win": null,
+   "avg_loss": -0.04931736088045769,
+   "exp_r": -0.9863472176091528
+  }
+ },
+ "why": {
+  "gap_stop": 7,
+  "no_follow": 28,
+  "stop": 35,
+  "trail": 22
+ },
+ "top": [
+  {
+   "code": "US.WDC",
+   "entry": "2025-09-05",
+   "exit": "2026-03-30",
+   "ret": 3.12631157371945,
+   "days": 141,
+   "why": "trail"
+  },
+  {
+   "code": "US.SFM",
+   "entry": "2024-02-26",
+   "exit": "2024-12-18",
+   "ret": 2.121911233461511,
+   "days": 206,
+   "why": "trail"
+  },
+  {
+   "code": "US.ALNY",
+   "entry": "2025-05-30",
+   "exit": "2025-10-30",
+   "ret": 0.743804342103333,
+   "days": 106,
+   "why": "trail"
+  },
+  {
+   "code": "US.BKD",
+   "entry": "2025-11-10",
+   "exit": "2026-03-12",
+   "ret": 0.5604719851860628,
+   "days": 83,
+   "why": "trail"
+  },
+  {
+   "code": "US.FIVE",
+   "entry": "2025-12-04",
+   "exit": "2026-05-07",
+   "ret": 0.4804760731394258,
+   "days": 105,
+   "why": "trail"
+  },
+  {
+   "code": "US.XPO",
+   "entry": "2024-02-02",
+   "exit": "2024-04-17",
+   "ret": 0.2645714784301563,
+   "days": 51,
+   "why": "trail"
+  },
+  {
+   "code": "US.THC",
+   "entry": "2024-04-30",
+   "exit": "2024-07-15",
+   "ret": 0.23207131097910133,
+   "days": 51,
+   "why": "trail"
+  },
+  {
+   "code": "US.BTSG",
+   "entry": "2025-10-21",
+   "exit": "2026-02-04",
+   "ret": 0.18661957638762733,
+   "days": 72,
+   "why": "trail"
+  },
+  {
+   "code": "US.LITE",
+   "entry": "2024-11-06",
+   "exit": "2025-01-13",
+   "ret": 0.16009605019426001,
+   "days": 44,
+   "why": "trail"
+  },
+  {
+   "code": "US.FLEX",
+   "entry": "2024-02-01",
+   "exit": "2024-04-17",
+   "ret": 0.1140451650797687,
+   "days": 52,
+   "why": "trail"
+  }
+ ],
+ "drop2": {
+  "total": -0.21311734455372466,
+  "by_year": {
+   "2024": 0.016484090251446926,
+   "2025": -0.11878680182979873,
+   "2026": -0.12152704837769102
+  }
+ }
+}

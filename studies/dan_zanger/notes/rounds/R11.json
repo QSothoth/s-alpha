@@ -1,0 +1,10 @@
+{"stage": "selection: the strongest groups instead of the stock RS floor (the upstream ceiling)",
+ "base": ["r10.json", "chosen"], "ref": "PAT_EMA10", "objective": "per_year",
+ "gates": ["placebo", "win<=0.35", "total"], "draws": 50,
+ "candidates": {
+  "GRP80": {"strength": "grp80"},
+  "GRP70": {"strength": "grp70"},
+  "RS70": {"strength": "rs70"},
+  "GRP70_NOIDX": {"strength": "grp70", "filter": ""},
+  "GRP70_EMA21": {"strength": "grp70", "rule_opts": {"trail": "ema21", "exit_signal": "zsleep10"}}
+ }}

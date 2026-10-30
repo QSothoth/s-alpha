@@ -1,0 +1,9 @@
+{"stage": "slots and holding: no daily cap, strongest held longest after the trim",
+ "base": ["r10.json", "chosen"], "ref": "PAT_EMA10", "objective": "per_year",
+ "gates": ["placebo", "win<=0.35", "total"], "draws": 50,
+ "candidates": {
+  "NOCAP": {"max_new": 0},
+  "HOLDSTRONG": {"rule_opts": {"trail_after_trim": "ema21"}},
+  "NOCAP_HOLDSTRONG": {"max_new": 0, "rule_opts": {"trail_after_trim": "ema21"}},
+  "RS70_HOLDSTRONG": {"strength": "rs70", "rule_opts": {"trail_after_trim": "ema21"}}
+ }}

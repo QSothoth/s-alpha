@@ -141,7 +141,12 @@ def all_():
             # did not beat same-pool random entry), studies/marios_stamatoudis/reports/FINAL_CN.md
             System('marios_stamatoudis', 'R1 L4 + C4B + S1 P4', 'research',
                    _study('marios_stamatoudis', 'r1.json', ('s1.json', 'P4'), {'ep_slots': 2}),
-                   registered='2026-10-20')]
+                   registered='2026-10-20'),
+            # 2026-10-30: put on the board by the user as a research version (no dated trades of his inside the data;
+            # passes success rules 1, 3, 5, 7 of seven, not 2 (61 a year vs his "at least 200" in 23 months) or 6
+            # (2026 already used)), studies/dan_zanger/notes/PROGRESS.md
+            System('dan_zanger', 'R13 NOCAP_SLEEP10', 'research', _carried('dan_zanger', 'r13.json', 'NOCAP_SLEEP10'),
+                   registered='2026-10-30')]
 
 
 def _holguin():
@@ -176,7 +181,8 @@ def get(id_):
 
 
 STYLE = {'martin_luk': '动量波段', 'christian_flanders': '动量波段', 'clement_ang': '动量波段', 'qullamaggie': '动量波段',
-         'oliver_kell': '动量波段', 'marios_stamatoudis': '动量波段', 'mark_minervini': '成长股趋势',
+         'oliver_kell': '动量波段', 'marios_stamatoudis': '动量波段', 'dan_zanger': '动量波段',
+         'mark_minervini': '成长股趋势',
          'evan_medeiros': '均值回归', 'alfredo_holguin': '卖 Put 收租'}
 
 
@@ -222,6 +228,11 @@ STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, �
                            '+3R 卖 1/4 并把止损移到成本（R 是入场到止损的距离；他说的 2.5–3 ADR 只在止损约 1 ADR 时相当），余下收盘跌破 10 日线',
                            '每笔风险 0.3%，单只 ≤ 25%，总敞口 ≤ 100%，最多 15 只，每天突破 ≤ 3 笔、EP 另计 ≤ 2 笔（C4B）；无市况过滤。'
                            '空头 S1：抛物线（连涨 ≥ 3 天，20 日涨 ≥ 300%，大票 ≥ 50%）收阴且收在昨收下方，收盘卖空，止损当日高点；指数 < 50 EMA 才开、每天 1 笔；沿用多头的 +3R 回补 1/4 与 +3R 移到成本，最多 5 天'),
+    'dan_zanger': ('R13 NOCAP_SLEEP10（研究版，无台账）',
+                   '五种形态的收盘突破：25 日底部（深 ≤ 25%）、50 日长底部（≤ 35%）、旗形（10 日旗面 ≤ 15%、之前旗杆 ≥ 30%）、上升三角（40 日平顶 + 低点抬高）、下降趋势线；收盘越过形态上沿不超过 5%、成交量 ≥ 20 日均量 3 倍；个股 RS ≥ 80。池：成交额 ≥ 2000 万、50 日线上方',
+                   '收盘买，止损成交价下方 5%；次日收盘仍低于成本就走',
+                   '+15% 卖 1/4；余下收盘跌破 10 EMA（卖出 1/4 后改 21 EMA），或收盘不高于 10 天前（“睡着了”）离场；最长 50 个交易日',
+                   '每笔风险 1.25%，+10% 加仓一倍，单只 ≤ 50%，总敞口 ≤ 200%，最多 4 只，每天不限只数；池等权指数前一日收在 50 EMA 上方才开新仓'),
     'evan_medeiros': ('ERR6 XS5TO50L1（研究版，只美股）',
                       '200 日线向上且在其上方、RSI2 首日跌破 5 或 3 日跌 10%、连跌 ≥ 3 天；HV100 15–35（按他基金的单笔赚亏倒推，原话是 ≥ 40）；池：成交额 ≥ 5000 万、价格 ≥ 5，同日波动高的先',
                       '次日限价前收 −1%（开盘已低于限价按开盘成交），20% 灾难止损',
