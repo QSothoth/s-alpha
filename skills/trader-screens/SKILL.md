@@ -1,6 +1,6 @@
 ---
 name: trader-screens
-description: 交易员看板：假设研究过的交易员此刻在美股 / 港股 / A 股里交易，每人用研究里登记的同一套系统（与横向比对表相同），今天买了什么（只有他按自己的节奏真会下单的几笔）、卖了什么、手里拿着什么、持仓的离场线在哪，以及几个人之间的交集（同一天都买、同时持有、持仓集中的行业）。目前有 Martin Luk、Christian Flanders、Clement Ang、Qullamaggie、Oliver Kell（多空一体，已冻结）、Mark Minervini（B 级基线）、Marios Stamatoudis（研究版），以及只在美股的研究版 Evan Medeiros（均值回归）和 Alfredo Holguin（每周卖 Put）；概览表按流派标注。用于“看看这些交易员今天在做什么”“更新看板”“这周他们买了什么”“几个人都在拿哪些票”；研究、逼近和冻结新交易员用 trader-replication；不做单股技术判断、不下单、不接 custody。
+description: 交易员看板：假设研究过的交易员此刻在美股 / 港股 / A 股里交易，每人用研究里登记的同一套系统（与横向比对表相同），今天买了什么（只有他按自己的节奏真会下单的几笔）、卖了什么、手里拿着什么、持仓的离场线在哪，以及几个人之间的交集（同一天都买、同时持有、持仓集中的行业）。目前有 Martin Luk、Christian Flanders、Clement Ang、Qullamaggie、Oliver Kell（多空一体，已冻结）、Mark Minervini（B 级基线）、Marios Stamatoudis、Dan Zanger（研究版），以及只在美股的研究版 Evan Medeiros（均值回归）和 Alfredo Holguin（每周卖 Put）；概览表按流派标注。用于“看看这些交易员今天在做什么”“更新看板”“这周他们买了什么”“几个人都在拿哪些票”；研究、逼近和冻结新交易员用 trader-replication；不做单股技术判断、不下单、不接 custody。
 ---
 
 # 交易员看板（trader-screens）
@@ -23,6 +23,7 @@ description: 交易员看板：假设研究过的交易员此刻在美股 / 港�
 | B 级基线 | Mark Minervini（R0b，只做多） | 台账不够，按原话的基线系统；空头基线没通过 |
 | 研究版·其他流派（2026-10-27 用户同意，未冻结，只美股） | Evan Medeiros（ERR6 XS5TO50L1，均值回归）、Alfredo Holguin（ERR7 OWN180Y，卖 Put 收租） | 选择段 2024–2025 上所有有出处的误差 ≤ 15%（笔数是硬门槛）；Evan 2026 +15.5%、跑赢随机，但邻域检查显示参数位置是样本内挑的；Holguin 用他自己的滚动名单（台账公开到 2026-05-28，名单固定，刷新要手动），2026 1–5 月 +39.5%（他 +44.5%），权利金是 v2 模型估价。不在横向比对里（`systems.new_styles()`，看板用 `systems.board(market)`）；Holguin 在开盘卖、持有到周五，盘中临时模式不跑他。报告 `studies/trader_replication/reports/ERR_ROUNDS_20261027_CN.md`、`ERR7_20261027_CN.md`、`ERR8_20261027_CN.md` |
 | 研究版（2026-10-20 用户同意放进看板，未冻结） | Marios Stamatoudis（R1 L4 + C4B + S1 P4） | B 级台账（有日期 19 笔）；只在选择段 2024–2025 逐轮选择，2026 验证段 R1 L4 + P4 −4.3%、未跑赢同池随机入场（排位 0.33），2026-10-20 加 C4B（EP 另计每天 2 笔）后 −0.4%（排位 0.52）；选择段利润约九成来自 ABVX、INBX 两笔；结论在 `studies/marios_stamatoudis/reports/FINAL_CN.md` |
+| 研究版（2026-10-30 用户同意放进看板，未冻结，只做多） | Dan Zanger（R13 NOCAP_SLEEP10） | 没有他在数据期内的交易台账，只能叫“按原话的规则”；复刻成功标准 7 条过 1、3、5、7，不过 2（61 笔 / 年，他说 1998–2000 年 23 个月“至少 200 笔”）和 6（2026 已在研究里用过，美股 −17%）；选择段 2024–2025 美股 +85%，全段美股 +53%、港股 +42%、A 股 +88%；对放量门槛敏感（2.5 / 3.5 倍差很多）；结论在 `studies/dan_zanger/notes/PROGRESS.md` |
 
 空单在看板上写成“卖空 X 价格，涨破 Y 回补”，持仓表的方向列标“空”，离场线写成“涨破 X 回补 · 收盘站上某线回补”。live 数据遇到除权会把冻结日以前的价格重新复权，回放核对可能出现 1e-9 量级的浮点差，被标成“不一致”，这不是行为变化（冻结数据上回放完全一致）。
 

@@ -13,6 +13,7 @@
 | `panels.py` | 研究用的日 K 数组，经统一数据接口 [`studies/trader_data`](../trader_data/README.md) 取得（默认冻结 Release `trader-data-v1`）；公共评测区间 `WINDOW`；`upto` 截面板供不看未来检查；`DATA_PIN.json` 固定各版本的数据摘要（`python -m studies.trader_replication.panels pin`）。规范见 [TRADER_PROTOCOL_CN](../../docs/TRADER_PROTOCOL_CN.md) |
 | `systems.py` | 登记的交易员系统：每人一份（研究模块 + 带入配置 + 版本 + 状态 + 冻结日），比对、看板、实际运行都只读这里 |
 | `runner.py` | 一个系统在一个市场上回放到最新一天：账户、当天买卖、没做的买点、持仓与引擎给出的离场线；回放截到冻结日与比对表核对。`python -m studies.trader_replication.runner us live` |
+| `success.py` | 复刻成功标准（2026-10-29 用户定，7 条全过才算成功）：门禁与胜率 ≤ 35%、每年 ≥ 52 笔且对上他宣称的笔数、公开行为 ±30%、他的年份收益对数差 ≤ 0.3、全段与验证段跑赢同池随机中位数、去掉最好两笔仍跑赢；`judge` 逐条判断，`drop_top` 给第 7 条重跑用；单测 `tests/test_success.py` |
 | `gate.py` | 工程门禁：数据版本与区间、不看未来（截面板前后决定一致）、成交价在当日区间内、胜率 ≤ 35%；单测 `tests/test_gate.py` |
 | `compare.py` | 各交易员当前配置在统一数据层上的三市场横向比对与门禁，写 `reports/compare.json`、`reports/COMPARISON_CN.md`：`python -m studies.trader_replication.compare run [us,hk,cn] [交易员 ...]` |
 | `shorts.py` | 空头（多空一体，[TRADER_PROTOCOL_CN 第 5 节](../../docs/TRADER_PROTOCOL_CN.md)）：`LongShort` 包住各人的研究模块，配置没有 `short` 时原样调用其 build（`systems.py` 一律包上）；各人的 `short_setups` 给出收盘卖空掩码，或前一日决定的限价（反抽到线）/ 开盘 / 卖空止损单（跌破），止损在上方；同一天先开多再开空；`round <交易员> S1` 跑预登记轮次（只做多 / 多空合计 / 只做空 + 同池随机做空、下跌时段按月、小盘空单单列、门禁），`gate` 跑不看未来，`render` 写 `studies/<id>/reports/SHORTS_CN.md` |

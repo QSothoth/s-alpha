@@ -1,0 +1,10 @@
+{"stage": "holding: trendline, trims, EP slot (directions from earlier traders)", "base": ["r3.json", "chosen"],
+ "base_change": {"filter": "IDX50"}, "ref": "MAIN",
+ "objective": "min_year", "gates": ["placebo", "win<=0.35", "total", "dd+0.05"], "draws": 50,
+ "candidates": {
+  "EMA21": {"rule_opts": {"trail": "ema21", "arm_trail_on_entry": true, "exit_signal": "zsleep5"}},
+  "EMA10": {"rule_opts": {"trail": "ema10", "arm_trail_on_entry": true, "exit_signal": "zsleep5"}},
+  "EPSLOT": {"setups": ["zbase", "ep"], "ep": {"rvol": 3.0}, "rule_opts": {"max_open_by_kind": {"ep": 1}}},
+  "TRIM2": {"rule_opts": {"trims": [3, 6], "trim_frac": 0.25}},
+  "REV": {"rule_opts": {"exit_signal": "zrev5"}}
+ }}
