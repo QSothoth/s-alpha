@@ -4,7 +4,7 @@
 
 ## 按 skill 组织
 
-入口统一放 `skills/<名称>/SKILL.md`，使用说明与外部资料放各自 `references/`；共享代码保留原模块路径，待完成研究留在 `studies/`，已结束研究在 `studies/archive/` 保留结论与固定 Git 版本。使用资料不在代码目录重复维护，跨技能规范留在 `docs/`。新增能力优先扩展所属 skill，不为每个脚本或失败研究单建 skill。
+入口统一放 `skills/<名称>/SKILL.md`，使用说明与外部资料放各自 `references/`；共享代码保留原模块路径，待完成研究留在 `studies/`，已结束研究在 `studies/archive/` 保留结论与固定 Git 版本。使用资料不在代码目录重复维护，跨技能规范留在 `docs/`。新增能力优先扩展所属 skill，不为每个脚本或失败研究单建 skill。`.claude/skills` 与 `.agents/skills` 是指向 `skills/` 的软链接，供 Claude Code / Codex 自动发现；新增 skill 只放 `skills/`，不在软链接目录里建文件（测试强制）。
 
 | 任务入口 | 实现规范 |
 |---|---|
@@ -22,6 +22,7 @@ Skill 是任务入口，不改变实现的成熟度、策略资格或交易权�
 
 - 交易接口（`OpenSecTradeContext`、`place_order`、`unlock_trade`、`modify_order`）只允许 `custody/broker.py` 使用（测试扫描全仓库）。
 - 密码、交易密码（`FUTU_TRADE_PASSWORD` / `FUTU_TRADE_PASSWORD_MD5`）、WxPusher SPT 等只放环境变量或未跟踪文件，不提交、不作命令行参数。
+- 首次使用 checkout 运行 `python3 scripts/install_secret_guard.py` 安装密钥检查；不绕过提交或推送钩子。检查失败先修复，诊断不得输出密钥原文。安装、误报处理与发布包检查见 [密钥提交保护](docs/SECRET_PROTECTION.md)。
 
 ## 数据
 
@@ -55,6 +56,6 @@ Skill 是任务入口，不改变实现的成熟度、策略资格或交易权�
 - 文档中文；代码、标识符、提交信息英文。运行时只用标准库（连 OpenD 的入口需 `futu-api`；研究脚本可用 numpy）。
 - 改哪里跑哪里的测试，`custody/tests` 每次都跑（含规范结构检查）：
   `python3 -m unittest discover -s custody/tests` · `python3 watch/test_watch.py` ·
-  `python3 -m unittest discover -s studies/<切片>/tests`（有 `tests/` 的切片：us_0dte_picks、auction_strength；trend_breakout、martin_luk、trader_replication 需要 numpy，用 `/opt/futu-opend/venv/bin/python`）
+  `python3 -m unittest discover -s studies/<切片>/tests`（有 `tests/` 的切片：us_0dte_picks、auction_strength；trend_breakout、martin_luk、trader_replication 需要 numpy，用项目下的 `.venv/bin/python`（不进 git））
 - 改文档前核对代码、CLI 和已提交报告；不把约定写成尚未实现的自动保证。
 - 其余文档：[README.md](README.md)（概览）、[docs/OPEND_SETUP.md](docs/OPEND_SETUP.md)（OpenD 环境）。

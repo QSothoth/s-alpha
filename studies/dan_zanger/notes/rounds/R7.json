@@ -1,0 +1,8 @@
+{"stage": "paired: tight stop x slow exit (payoff structure)", "base": ["r5.json", "chosen"], "ref": "EMA10",
+ "objective": "min_year", "gates": ["placebo", "win<=0.35", "total", "dd+0.05"], "draws": 50,
+ "candidates": {
+  "LOW_SMA50": {"stop": "low", "stop_cap": 0.05, "rule_opts": {"trail": "sma50", "exit_signal": ""}},
+  "LOW_EMA21": {"stop": "low", "stop_cap": 0.05, "rule_opts": {"trail": "ema21", "exit_signal": ""}},
+  "LOW_SLEEP20": {"stop": "low", "stop_cap": 0.05, "rule_opts": {"trail": "ema21", "exit_signal": "zsleep20"}},
+  "SMA50": {"rule_opts": {"trail": "sma50", "exit_signal": ""}}
+ }}

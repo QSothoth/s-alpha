@@ -21,7 +21,7 @@ side; without it every registered system is unchanged):
 
 Commands (one process, nice; rounds are data: studies/<id>/notes/rounds/H<n>.json with PREREG_H<n>.md):
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.human h0 [system ...]       # registered version vs the same under the limits
     $PY -m studies.trader_replication.human round <system> H1     # a pre-registered round against H0
 """

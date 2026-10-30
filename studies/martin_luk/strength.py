@@ -1,6 +1,6 @@
 """Pipeline step 2: compare definitions of 'strongest' (notes/PIPELINE_CN.md, PREREG_R13.md).
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.strength r13
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.strength r13
 """
 from __future__ import annotations
 

@@ -3,7 +3,7 @@ section I3).  The shared pieces (time, the volume model, scenario rows, the fast
 model) are in confidence.py; this module gathers the minute sessions, fits and chooses, runs the scenarios on the
 training / selection / validation days and scores them.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_screens.intraday_i3 sessions us     # minute sessions (local sets and the recent fetch) -> npz
     $PY -m studies.trader_screens.intraday_i3 days us         # training / selection / validation days
     $PY -m studies.trader_screens.intraday_i3 volume          # fit VG / VQ on US + HK, choose on the selection days

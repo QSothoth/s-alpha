@@ -7,7 +7,7 @@ and the open positions with their exit levels read straight from the engine (sto
 partial, next add).  `check` compares the replay cut at the freeze day with the comparison report (frozen release,
 same code): on live data the part up to the freeze day must not move.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.runner us [live|frozen] [system ...]
 """
 from __future__ import annotations

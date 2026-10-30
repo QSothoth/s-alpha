@@ -15,7 +15,7 @@ description: 每周收盘后扫描沪深 A 股、港股、美股全市场，按�
 
 ```bash
 cd /opt/opend-us-options
-PY="env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+PY="env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
 $PY -m studies.trend_breakout.scan refresh hk        # 按需取数，cn / hk / us / all
 $PY -m studies.trend_breakout.scan run all --capital 100000 --holding HK.00700:2026-09-01
 ```

@@ -2,7 +2,7 @@
 the same panels, window, costs, engine, placebo and benchmark for everybody, each run through the engineering gate.
 Writes studies/trader_replication/reports/compare.json and COMPARISON_CN.md; the numbers are for a person to judge.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.compare run [us,hk,cn] [trader ...]   # one process, one run at a time
     $PY -m studies.trader_replication.compare render
 """
@@ -43,6 +43,7 @@ def ew_bench(A, seg):
 SOURCES = ('studies/trader_replication/*.py', 'studies/trader_data/*.py', 'studies/christian_flanders/replicate.py',
            'studies/clement_ang/replicate.py', 'studies/qullamaggie/replicate.py', 'studies/oliver_kell/replicate.py',
            'studies/mark_minervini/replicate.py', 'studies/marios_stamatoudis/replicate.py',
+           'studies/dan_zanger/replicate.py',
            'studies/martin_luk/replicate.py', 'studies/martin_luk/luk.py',
            'studies/martin_luk/selection.py', 'studies/trader_screens/screens.py', 'studies/trader_screens/data.py',
            'studies/trader_screens/scan.py', 'studies/trader_screens/intraday.py',   # index_above, at_limit_up

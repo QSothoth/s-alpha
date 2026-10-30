@@ -7,6 +7,7 @@
 | 目录 | 归属与保留理由 |
 |---|---|
 | [daily_technical/](daily_technical/README.md) | `daily-technical-review` 的日 K 计算实现 |
+| [opportunity_events/](opportunity_events/README.md) | `opportunity-research` 的单次 OpenD 盘前发现原型与固定历史描述统计，尚无已验证交易策略 |
 | [us_0dte_picks/](us_0dte_picks/README.md) | `near-expiry-session` 的会话及共享计算 |
 | [trend_breakout/](trend_breakout/README.md) | `trend-market-scan` 的最终方案、扫描、复算与测试；同段择优、无独立样本外资格 |
 | [martin_luk/](martin_luk/README.md) | 复刻 Martin Luk 动量波段的研究（2026-10-16）及 `trader-replication` 的第一个例子（R19–R74）；区间内同段择优结论、无样本外，不接 custody、不当生产能力 |

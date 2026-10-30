@@ -68,7 +68,7 @@ def main(argv=None):
     last_minute = None
     handoff_errors = []
     try:
-        with OpenDMarket() as market, (out/'events.jsonl').open('a',buffering=1) as events:
+        with OpenDMarket() as market, (out/'events.jsonl').open('a',buffering=1, encoding='utf-8') as events:
             def record(kind, data):
                 events.write(json.dumps({'at':datetime.now(ET).isoformat(),'kind':kind,**data},ensure_ascii=False)+'\n')
             while datetime.now(ET) < cutoff:
@@ -93,13 +93,13 @@ def main(argv=None):
                         finally:
                             ledger_path = runtime/'ledger.json'
                             if ledger_path.exists():
-                                ledger = json.loads(ledger_path.read_text())
+                                ledger = json.loads(ledger_path.read_text(encoding='utf-8'))
                                 owned.update(r['unit'] for r in ledger['accepted'] if r.get('card_hash')==digest and r.get('unit'))
                 minute = now.strftime('%H:%M')
                 if minute != last_minute:
                     last_minute = minute
                     ledger_path = runtime/'ledger.json'
-                    ledger = json.loads(ledger_path.read_text()) if ledger_path.exists() else {'accepted':[]}
+                    ledger = json.loads(ledger_path.read_text(encoding='utf-8')) if ledger_path.exists() else {'accepted':[]}
                     contracts = {r['contract'] for r in ledger['accepted'] if r.get('unit') in owned}
                     jobs = [j for j in jobs_in(db) if j['request']['contract'] in contracts]
                     quotes, error = {}, None

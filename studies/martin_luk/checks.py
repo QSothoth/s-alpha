@@ -1,6 +1,6 @@
 """Pre-registered checks for one (market, candidate, segment): bootstrap of per-trade R and the placebo.
 
-    /opt/futu-opend/venv/bin/python -m studies.martin_luk.checks us C2 validate [round]
+    /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.checks us C2 validate [round]
 """
 from __future__ import annotations
 

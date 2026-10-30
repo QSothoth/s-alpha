@@ -20,12 +20,12 @@ from .session import (RUNTIME, RejectedEntryQuote, RejectedTradePlan, StaleRevie
 
 
 def load_authorization(folder, now):
-    permission = json.loads((folder/'authorization.json').read_text())
+    permission = json.loads((folder/'authorization.json').read_text(encoding='utf-8'))
     validate_authorization(permission, now)
     if permission.get('session') != str(folder.resolve()) or permission.get('ranking_sha256') != hashlib.sha256(
             (folder/'ranking.json').read_bytes()).hexdigest():
         raise ValueError('authorization is bound to a different session or frozen candidate file')
-    ready = json.loads((folder/'monitor/ready.json').read_text())
+    ready = json.loads((folder/'monitor/ready.json').read_text(encoding='utf-8'))
     if ready.get('trade_date') != permission['trade_date'] or set(ready.get('candidates', [])) != set(permission['symbols']):
         raise ValueError('ready monitor must scan exactly the authorized symbols')
     return permission
@@ -40,7 +40,7 @@ def handoff_card(folder, permission, raw, attempted, now, skipped=None):
     if not instant(card['as_of']) <= now < instant(card['valid_until']):
         return
     ledger_path = RUNTIME/permission['trade_date']/permission['mode']/'ledger.json'
-    rows = json.loads(ledger_path.read_text()).get('accepted', []) if ledger_path.exists() else []
+    rows = json.loads(ledger_path.read_text(encoding='utf-8')).get('accepted', []) if ledger_path.exists() else []
     if any(row.get('state') != 'JOB_CREATED' for row in rows):
         raise ValueError('unconfirmed existing reservation; reconcile the original custody job before new handoffs')
     reserved = {row['symbol'] for row in rows}
@@ -93,7 +93,7 @@ def main(argv=None):
               'mode': permission['mode'], 'handoffs': []}
     attempted = set()
     try:
-        with (out/'events.jsonl').open('a', buffering=1) as events:
+        with (out/'events.jsonl').open('a', buffering=1, encoding='utf-8') as events:
             while datetime.now(ET) < instant(permission['valid_until']):
                 now = datetime.now(ET)
                 # Any replacement, revocation or disappearance ends new handoffs.

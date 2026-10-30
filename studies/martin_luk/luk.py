@@ -1,6 +1,6 @@
 """Daily-bar replication of Martin Luk's long momentum swing system (see notes/PREREG_R1.md).
 
-    /opt/futu-opend/venv/bin/python -m studies.martin_luk.luk us C3 2024-05-01 2025-04-30
+    /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.luk us C3 2024-05-01 2025-04-30
 
 Everything here is long-only, one position per stock, sized by a fixed fraction of equity at risk.
 Bars are ratio-adjusted (trend_breakout.panel); price and liquidity floors use the raw close.

@@ -4,7 +4,7 @@ trader-data-v1 US list, the daily IV / HV and daily call / put volume and open i
 quota.  Output: data/trader-options-v1/us/{earnings.csv, iv/<code>.csv, stat/<code>.csv}; resumable.  The finished
 pull is frozen in the GitHub release trader-pack-20261025 (trader-options-v1.zip); unpack it rather than refetch.
 
-    PY="nice -n 19 env PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_options.fetch earnings
     $PY -m studies.trader_options.fetch underlyings
 """

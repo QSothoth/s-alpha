@@ -1,0 +1,8 @@
+{"stage": "holding: the 5-day asleep exit (binding in R5)", "base": ["r5.json", "chosen"], "ref": "EMA10",
+ "objective": "min_year", "gates": ["placebo", "win<=0.35", "total", "dd+0.05"], "draws": 50,
+ "candidates": {
+  "NOSLEEP": {"rule_opts": {"exit_signal": ""}},
+  "SLEEP10": {"rule_opts": {"exit_signal": "zsleep10"}},
+  "SLEEP10EP": {"rule_opts": {"exit_signal": "zsleep10", "max_open_by_kind": {"ep": 1}}, "setups": ["zbase", "ep"],
+                "ep": {"rvol": 3.0}}
+ }}

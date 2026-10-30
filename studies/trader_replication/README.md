@@ -13,6 +13,7 @@
 | `panels.py` | 研究用的日 K 数组，经统一数据接口 [`studies/trader_data`](../trader_data/README.md) 取得（默认冻结 Release `trader-data-v1`）；公共评测区间 `WINDOW`；`upto` 截面板供不看未来检查；`DATA_PIN.json` 固定各版本的数据摘要（`python -m studies.trader_replication.panels pin`）。规范见 [TRADER_PROTOCOL_CN](../../docs/TRADER_PROTOCOL_CN.md) |
 | `systems.py` | 登记的交易员系统：每人一份（研究模块 + 带入配置 + 版本 + 状态 + 冻结日），比对、看板、实际运行都只读这里 |
 | `runner.py` | 一个系统在一个市场上回放到最新一天：账户、当天买卖、没做的买点、持仓与引擎给出的离场线；回放截到冻结日与比对表核对。`python -m studies.trader_replication.runner us live` |
+| `success.py` | 复刻成功标准（2026-10-29 用户定，7 条全过才算成功）：门禁与胜率 ≤ 35%、每年 ≥ 52 笔且对上他宣称的笔数、公开行为 ±30%、他的年份收益对数差 ≤ 0.3、全段与验证段跑赢同池随机中位数、去掉最好两笔仍跑赢；`judge` 逐条判断，`drop_top` 给第 7 条重跑用；单测 `tests/test_success.py` |
 | `gate.py` | 工程门禁：数据版本与区间、不看未来（截面板前后决定一致）、成交价在当日区间内、胜率 ≤ 35%；单测 `tests/test_gate.py` |
 | `compare.py` | 各交易员当前配置在统一数据层上的三市场横向比对与门禁，写 `reports/compare.json`、`reports/COMPARISON_CN.md`：`python -m studies.trader_replication.compare run [us,hk,cn] [交易员 ...]` |
 | `shorts.py` | 空头（多空一体，[TRADER_PROTOCOL_CN 第 5 节](../../docs/TRADER_PROTOCOL_CN.md)）：`LongShort` 包住各人的研究模块，配置没有 `short` 时原样调用其 build（`systems.py` 一律包上）；各人的 `short_setups` 给出收盘卖空掩码，或前一日决定的限价（反抽到线）/ 开盘 / 卖空止损单（跌破），止损在上方；同一天先开多再开空；`round <交易员> S1` 跑预登记轮次（只做多 / 多空合计 / 只做空 + 同池随机做空、下跌时段按月、小盘空单单列、门禁），`gate` 跑不看未来，`render` 写 `studies/<id>/reports/SHORTS_CN.md` |
@@ -35,7 +36,7 @@
 空头新增的默认关闭字段（单测 `tests/test_borrow.py`、`tests/test_short_targets.py`、`tests/test_shorts.py`）：`borrow_rate`（年化借券费，按前一收盘的空单市值每个交易日计提一次，计入该笔盈亏）、`short_targets` / `short_target_frac`（空单跌到前一日的某条线回补，开盘就在下方按开盘价；止损日先止损，除非开盘已在目标下方）、`short_trim_day` / `short_trim_day_frac`（入场后第 N 天收盘有盈利回补一部分）。默认关闭时所有已登记系统的结果逐位不变（2026-10-19 `compare run us,hk` 前后核对）。
 
 ```bash
-/opt/futu-opend/venv/bin/python -m unittest discover -s studies/trader_replication/tests -t .
+/opt/opend-us-options/.venv/bin/python -m unittest discover -s studies/trader_replication/tests -t .
 ```
 
 2026-10-18 通用版自测（`martin.py`，R74 配置，引擎已含下面两组新字段）：`diagnose`、三市场 `final`、`robust` 的输出与已提交的 `diagnose_r74.json`、`final_system_r74.json`、`robust_r74.json` 逐项一致（数值相对误差 < 1e−9）。
@@ -43,7 +44,7 @@
 新增默认关闭的 `Rules` 字段（执行时点单测 `tests/test_day_trim_signal_add.py`）：`trim_day` / `trim_day_frac` / `trim_day_profit` / `trim_day_breakeven`（入场后第 N 个交易日收盘减仓，可只在盈利时、可随后把止损提到成本；Qullamaggie“3–5 天卖 1/3–1/2”）；`add_signal` / `add_signal_frac` / `add_signal_max` / `add_signal_stop`（持仓出现新的买点信号时在收盘加仓，入场当天不加，止损可不动 / 提到成本 / 提到加仓日低点；Flanders“新买点加仓”）。
 
 ```bash
-PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
 $PY -m studies.trader_replication.martin diagnose r74.json && $PY -m studies.trader_replication.martin final r74.json
 $PY -m studies.trader_replication.martin robust r74.json && $PY -m studies.trader_replication.martin check
 ```

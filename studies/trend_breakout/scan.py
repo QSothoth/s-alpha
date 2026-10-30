@@ -1,6 +1,6 @@
 """Whole-market weekly scan with each market's final scheme (final.py). Run after the week's last close.
 
-    PY="env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trend_breakout.scan refresh hk           # fetch ~3 years of daily bars for today's stock list
     $PY -m studies.trend_breakout.scan run hk --capital 100000 --holding HK.00700:2026-09-01
     $PY -m studies.trend_breakout.scan run all --folder data/trend-breakout-v1   # replay on any dataset

@@ -26,6 +26,7 @@ Thumbs.db
 .idea/
 .vscode/
 .claude/settings.local.json
+.claude/worktrees/
 *.swp
 *.swo
 *~
@@ -63,3 +64,27 @@ data/
 
 # HK/US multi-market research studies (tracked; distinct from ignored /research/ scratch)
 # studies/
+
+# 私钥、凭据存储与本地认证配置
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+.ssh/
+.aws/
+.azure/
+.gnupg/
+.netrc
+_netrc
+.npmrc
+.pypirc
+credentials
+credentials.json
+*service-account*.json
+*service_account*.json
+*.kdbx
+.git-credentials

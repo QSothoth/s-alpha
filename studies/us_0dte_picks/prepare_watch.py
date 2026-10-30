@@ -79,7 +79,7 @@ def prepare(out):
     def save(name, data):
         path = out / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str)+'\n')
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str)+'\n', encoding='utf-8')
 
     method = {'trade_date': day, 'started_at': now.isoformat(), 'initial_pool': CODES,
               'role': 'HUMAN_REVIEW_HEURISTIC_NOT_VALIDATED', 'expiry_policy': 'nearest',
@@ -91,7 +91,7 @@ def prepare(out):
               'budget_usd': 300, 'fee_reserve_usd': 20,
               'pool_scope': '11 named liquid technology stocks; not whole-market or biotech coverage'}
     save('method.json', method)
-    (out/'prepare_source.py').write_text(Path(__file__).read_text())
+    (out/'prepare_source.py').write_text(Path(__file__).read_text(encoding='utf-8'), encoding='utf-8')
     log, client = [], None
     try:
         with OpenDMarket() as market:
@@ -156,7 +156,7 @@ def prepare(out):
                 def fetch(code):
                     rows = get('get_cur_kline', f'{folder}/{code[3:]}.json', code, 1000, subtype, ft.AuType.QFQ)
                     if folder == 'k15':
-                        raw30 = json.loads((out/f'k30/{code[3:]}.json').read_text())
+                        raw30 = json.loads((out/f'k30/{code[3:]}.json').read_text(encoding='utf-8'))
                         bases[code] = opening_baseline(rows, raw30, day, calendar, session_types)
                     return True
                 fetched = client.subscribed(eligible, subtype, fetch, session=ft.Session.RTH)
@@ -165,7 +165,7 @@ def prepare(out):
                     raise ValueError('incomplete frozen inputs: ' + json.dumps(failures))
             snapshots = get('get_market_snapshot', 'stock_snapshot.json', eligible)
             by_code = {row['code']: row for row in snapshots}
-            rows = [rank_record(code, json.loads((out/f'k30/{code[3:]}.json').read_text()),
+            rows = [rank_record(code, json.loads((out/f'k30/{code[3:]}.json').read_text(encoding='utf-8')),
                                 by_code[code], aux[code], day, session_types) for code in eligible]
             rows.sort(key=lambda r: (-r['event_tier'], -r['score'], -(r['option_volume'] or 0), r['code']))
             for rank, row in enumerate(rows, 1):
@@ -178,7 +178,7 @@ def prepare(out):
             get('query_subscription', 'subscription_after.json', is_all_conn=True)
     finally:
         save('requests.json', {'requests': log, 'client_attempts': client.log if client else []})
-        with (out/'CHECKSUMS.sha256').open('w') as manifest:
+        with (out/'CHECKSUMS.sha256').open('w', encoding='utf-8') as manifest:
             for path in sorted(out.rglob('*')):
                 if path.is_file() and path.name != 'CHECKSUMS.sha256':
                     manifest.write(hashlib.sha256(path.read_bytes()).hexdigest()+'  '+str(path.relative_to(out))+'\n')

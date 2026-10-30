@@ -130,7 +130,7 @@ def check_risk_budget(runtime_root, permission, proposed_premium='0', now=None):
                 continue
             if path.stat().st_size > 1_048_576:
                 raise ValueError('risk budget: oversized handoff ledger')
-            entries = json.loads(path.read_text())['accepted']
+            entries = json.loads(path.read_text(encoding='utf-8'))['accepted']
             if not isinstance(entries, list) or len(entries) > 2:
                 raise ValueError('risk budget: invalid handoff ledger')
             for entry in entries:

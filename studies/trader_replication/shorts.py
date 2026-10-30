@@ -23,7 +23,7 @@ and this module turns them into engine entries with the common short execution:
 Shorts are researched on US data only (HK: only designated securities can be sold short and we have no list; A
 shares: securities lending is restricted): elsewhere the long system runs alone and the report says "not applicable".
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.shorts round martin_luk S1
     $PY -m studies.trader_replication.shorts gate martin_luk s1.json      # look-ahead gate of a round's choice
     $PY -m studies.trader_replication.shorts render martin_luk

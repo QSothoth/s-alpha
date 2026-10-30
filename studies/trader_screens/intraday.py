@@ -318,6 +318,11 @@ def run(market, now=None, provider=None, calendar=None, board=None, only=None, l
                             captured_at=captured_at, rejected_quotes=rejected, coverage=coverage,
                             snapshot_hhmm=captured.strftime('%H%M'),
                             **chk, **timing)
+    from . import aggregation, context
+    features = context.market_features(p, market, partial=True)
+    features['captured_at'] = captured_at
+    aggregation.attach(r, features)
+    stage('aggregation from original snapshot')
     return r
 
 
@@ -373,7 +378,7 @@ def diff_text(d, prov, official):
     p = prov['provisional']
     lines = [f"# 盘中临时 vs 收盘正式 · {prov['market']} {prov['last_day']}", '',
              f"临时快照 {p['now'][11:16]}（{p['hhmm']}），正式结果数据 {official.get('digest', '')[:12]}。", '']
-    for key, word in (('buys', '买入 / 卖空'), ('sells', '卖出 / 回补')):
+    for key, word in (('buys', '开多 / 开空'), ('sells', '平多 / 平空')):
         g = d[key]
         lines.append(f"## {word}：一致 {len(g['same'])}，收盘后消失 {len(g['gone'])}，尾盘漏掉 {len(g['missed'])}")
         lines.append('')

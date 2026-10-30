@@ -122,8 +122,8 @@ class RunnerShortTests(unittest.TestCase):
         self.assertFalse(h['day_trim_pending'])
         self.assertGreater(r['account']['short_exposure'], 0)
         from studies.trader_screens import board as B
-        self.assertTrue(B.exit_text(h).startswith(f"涨破 {B.px(h['stop'])} 回补"))
-        self.assertIn('卖空 T2', B.today_text(dict(r, buys=r['buys'], sells=r['sells'])))
+        self.assertTrue(B.exit_text(h).startswith(f"涨破 {B.px(h['stop'])} 平空"))
+        self.assertIn('开空 T2', B.today_text(dict(r, buys=r['buys'], sells=r['sells'])))
 
     def test_reported_short_stop_is_where_the_engine_covers_next(self):
         P = panel()

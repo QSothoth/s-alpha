@@ -1,6 +1,6 @@
 """R12 (notes/PREREG_R12.md): W2 watchlist (whole-market multi-list leaders) gating his L3 rules.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.r12
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r12
 """
 from __future__ import annotations
 

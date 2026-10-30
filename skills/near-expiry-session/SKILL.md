@@ -5,7 +5,7 @@ description: 在 opend-us-options 中协同用户完成美股最近到期期权�
 
 # 最近到期期权：筛选 → 许可 → 一分钟择时 → 持仓退出
 
-工程根目录 `/opt/opend-us-options`；连接 OpenD 用 `/opt/futu-opend/venv/bin/python`。先读根 `AGENTS.md`，再读涉及的 `studies/AGENTS.md`、`custody/AGENTS.md`。安装入口是仓库符号链接，相对链接按 `realpath` 解析。
+工程根目录 `/opt/opend-us-options`；连接 OpenD 用 `/opt/opend-us-options/.venv/bin/python`。先读根 `AGENTS.md`，再读涉及的 `studies/AGENTS.md`、`custody/AGENTS.md`。安装入口是仓库符号链接，相对链接按 `realpath` 解析。
 
 ## 两层策略
 

@@ -25,8 +25,8 @@
 ## 运行与测试
 
 ```bash
-OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.trend_breakout.run_final cn   # 或 us / hk
-PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m unittest discover -s studies/trend_breakout/tests
+OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m studies.trend_breakout.run_final cn   # 或 us / hk
+PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m unittest discover -s studies/trend_breakout/tests
 ```
 
 全市场扫描见 [trend-market-scan](../../skills/trend-market-scan/SKILL.md)：`-m studies.trend_breakout.scan refresh|run cn|hk|us|all`，`refresh` 前台按需取数（美港 OpenD 不扣历史额度，A 股新浪），不做后台采集。

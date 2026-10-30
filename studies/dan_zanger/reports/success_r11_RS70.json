@@ -1,0 +1,318 @@
+{
+ "report": "r11.json",
+ "key": "RS70",
+ "config": {
+  "setups": [
+   "zbase",
+   "zflag",
+   "ztri",
+   "zdtl",
+   "zlong"
+  ],
+  "entry": "close",
+  "base": {
+   "days": 25,
+   "depth": 25.0,
+   "vol": 3.0,
+   "chase": 0.05
+  },
+  "stop": "fill",
+  "stop_pct": 0.05,
+  "stop_min": 0.01,
+  "stop_cap": 0.0,
+  "priority": "rvol",
+  "max_new": 2,
+  "strength": "rs70",
+  "filter": "IDX50",
+  "pool": {
+   "turnover": 20000000.0,
+   "adr": 0.0,
+   "above50": true
+  },
+  "rule_opts": {
+   "risk": 0.0125,
+   "max_position": 0.5,
+   "max_gross": 2.0,
+   "max_open": 4,
+   "trail": "ema10",
+   "arm_trail_on_entry": true,
+   "exit_signal": "zsleep5",
+   "nft_days": 1,
+   "trims": [
+    3
+   ],
+   "trim_frac": 0.25,
+   "unit_adr": "pct5",
+   "add_r": 2.0,
+   "add_frac": 1.0,
+   "max_days": 50
+  }
+ },
+ "card": {
+  "per_year": [
+   104.0,
+   Infinity
+  ],
+  "source": "Traders' magazine 2003 (chartpattern.com/articles/tradermag.pdf): \"It had to have been at least 200 trades or more\" over the 23 months of 1998-2000, his own account, a floor",
+  "behaviour": {
+   "open_mean": [
+    2.0,
+    4.0
+   ],
+   "days_mean": [
+    6.0,
+    12.0
+   ],
+   "median_days_win": [
+    10.0,
+    40.0
+   ],
+   "max_days": [
+    1.0,
+    50.0
+   ]
+  },
+  "years": {}
+ },
+ "used_validate": "R1 R3 R5 R7 R8",
+ "ours": {
+  "gate": {
+   "data": true,
+   "fills": true,
+   "lookahead": true
+  },
+  "win": 0.28294573643410853,
+  "closed": 258,
+  "per_year": 92.74750356633382,
+  "behaviour": {
+   "open_mean": 1.5977175463623394,
+   "days_mean": 4.341085271317829,
+   "median_days_win": 9.0,
+   "max_days": 26.0
+  },
+  "years": {},
+  "total": 0.1620936695385029,
+  "placebo_median": -0.079947610219189,
+  "validate_total": -0.1486501498951709,
+  "validate_placebo_median": -0.07513825725634093,
+  "total_drop2": -0.1668721912053286
+ },
+ "rules": [
+  {
+   "rule": "gate",
+   "ok": true,
+   "why": "win 0.283 over 258 closed"
+  },
+  {
+   "rule": "count",
+   "ok": true,
+   "why": "93 a year vs his (104.0, inf): off 11%"
+  },
+  {
+   "rule": "behaviour",
+   "ok": true,
+   "why": "4 published measures within"
+  },
+  {
+   "rule": "years",
+   "ok": true,
+   "why": "0 of his years within"
+  },
+  {
+   "rule": "placebo",
+   "ok": true,
+   "why": "0.1620936695385029 vs median -0.079947610219189"
+  },
+  {
+   "rule": "validate",
+   "ok": false,
+   "why": "-0.1486501498951709 vs median -0.07513825725634093"
+  },
+  {
+   "rule": "not two",
+   "ok": false,
+   "why": "without the best two -0.1668721912053286 vs median -0.079947610219189"
+  }
+ ],
+ "passed": false,
+ "gate": {
+  "data": {
+   "ok": true,
+   "why": [],
+   "span": [
+    "2024-01-02",
+    "2026-10-16"
+   ]
+  },
+  "fills": {
+   "ok": true,
+   "executions": 567,
+   "bad": [],
+   "n_bad": 0
+  },
+  "lookahead": {
+   "ok": true,
+   "cuts": [
+    {
+     "cut": "2024-09-30",
+     "ok": true,
+     "diff": []
+    },
+    {
+     "cut": "2025-09-30",
+     "ok": true,
+     "diff": []
+    }
+   ]
+  }
+ },
+ "by_year": {
+  "2024": 0.07156625249717075,
+  "2025": 0.2738375413056411,
+  "2026": -0.14865014989517
+ },
+ "maxdd": 0.2572762987044719,
+ "behaviour": {
+  "trades": 258,
+  "per_year": 92.74750356633382,
+  "per_day": 0.3680456490727532,
+  "win": 0.28294573643410853,
+  "avg_win": 0.08031573119289746,
+  "avg_loss": -0.026797135581542758,
+  "days_win": 10.136986301369863,
+  "days_loss": 2.054054054054054,
+  "median_days_win": 9.0,
+  "median_days_loss": 1.0,
+  "top10_share": 0.8057758512410359,
+  "entry_weight_mean": 0.2499721012139607,
+  "entry_weight_max": 0.26206617732846027,
+  "open_mean": 1.5977175463623394,
+  "open_max": 4
+ },
+ "trades_by_year": {
+  "2024": {
+   "n": 90,
+   "wins": 31,
+   "losses": 59,
+   "win": 0.34444444444444444,
+   "avg_win": 0.051004481654613576,
+   "avg_loss": -0.021073982420753118,
+   "exp_r": 0.07506088188190807
+  },
+  "2025": {
+   "n": 98,
+   "wins": 28,
+   "losses": 70,
+   "win": 0.2857142857142857,
+   "avg_win": 0.11266829945860497,
+   "avg_loss": -0.028292639436260265,
+   "exp_r": 0.2396382906740243
+  },
+  "2026": {
+   "n": 70,
+   "wins": 14,
+   "losses": 56,
+   "win": 0.2,
+   "avg_win": 0.0805140757819682,
+   "avg_loss": -0.030957506414692092,
+   "exp_r": -0.17326379950720064
+  }
+ },
+ "why": {
+  "gap_stop": 5,
+  "no_follow": 98,
+  "signal": 86,
+  "stop": 37,
+  "trail": 32
+ },
+ "top": [
+  {
+   "code": "US.ASTS",
+   "entry": "2025-06-04",
+   "exit": "2025-06-30",
+   "ret": 0.921544290488843,
+   "days": 17,
+   "why": "signal"
+  },
+  {
+   "code": "US.WDC",
+   "entry": "2025-09-05",
+   "exit": "2025-10-07",
+   "ret": 0.4261252770927378,
+   "days": 22,
+   "why": "trail"
+  },
+  {
+   "code": "US.NET",
+   "entry": "2025-05-09",
+   "exit": "2025-06-12",
+   "ret": 0.38368947359301153,
+   "days": 23,
+   "why": "trail"
+  },
+  {
+   "code": "US.ECHO",
+   "entry": "2025-12-05",
+   "exit": "2025-12-17",
+   "ret": 0.2965334172402409,
+   "days": 8,
+   "why": "signal"
+  },
+  {
+   "code": "US.XPO",
+   "entry": "2024-02-02",
+   "exit": "2024-02-16",
+   "ret": 0.27272743644198877,
+   "days": 10,
+   "why": "signal"
+  },
+  {
+   "code": "US.LTH",
+   "entry": "2025-01-16",
+   "exit": "2025-02-21",
+   "ret": 0.24232320310629432,
+   "days": 24,
+   "why": "trail"
+  },
+  {
+   "code": "US.AIR",
+   "entry": "2026-01-06",
+   "exit": "2026-01-23",
+   "ret": 0.2169860498220685,
+   "days": 12,
+   "why": "signal"
+  },
+  {
+   "code": "US.THC",
+   "entry": "2024-04-30",
+   "exit": "2024-05-22",
+   "ret": 0.20636872387278044,
+   "days": 16,
+   "why": "signal"
+  },
+  {
+   "code": "US.SMTC",
+   "entry": "2024-11-25",
+   "exit": "2024-12-10",
+   "ret": 0.1736293725807921,
+   "days": 10,
+   "why": "trail"
+  },
+  {
+   "code": "US.GKOS",
+   "entry": "2026-07-29",
+   "exit": "2026-08-20",
+   "ret": 0.16764195710145266,
+   "days": 16,
+   "why": "signal"
+  }
+ ],
+ "drop2": {
+  "total": -0.1668721912053286,
+  "by_year": {
+   "2024": 0.07156625249717075,
+   "2025": -0.08676081165658667,
+   "2026": -0.14865014989517056
+  }
+ }
+}

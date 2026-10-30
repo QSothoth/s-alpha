@@ -36,8 +36,8 @@ class Board(unittest.TestCase):
                  day_trim_pending=False, days=0, short_trim_day_pending=True, short_trim_day=1, short_trim_day_frac=.5,
                  max_days=5)
         text = board.exit_text(h)
-        self.assertIn('第1天收盘盈利回补50%（明天）', text)
-        self.assertIn('第5天收盘回补（5天后）', text)
+        self.assertIn('第1天收盘盈利平空50%（明天）', text)
+        self.assertIn('第5天收盘平空（5天后）', text)
         h = dict(code='US.A', side=1, stop=9, trail=None, trail_name='', next_trim=None, next_add=None,
                  day_trim_pending=False, days=2, trim_signal='ext10_30', trim_signal_frac=1 / 3, breakeven=12.0,
                  max_days=0)
@@ -55,9 +55,9 @@ class Board(unittest.TestCase):
         lines = board.orders(r)
         cut = lines.index('今天盘中已在模拟里成交（开盘或盘中价位，不是尾盘要下的单）：')
         self.assertTrue(any('Y' in x for x in lines[:cut]))
-        self.assertFalse(any('X' in x and '卖空' in x for x in lines[:cut]))
+        self.assertFalse(any('X' in x and '开空' in x for x in lines[:cut]))
         self.assertTrue(any('X' in x for x in lines[cut:]))
-        self.assertIn('卖空（盘中） X', '\n'.join(board.trader(t, 1)))
+        self.assertIn('开空（盘中） X', '\n'.join(board.trader(t, 1)))
 
 
 class Overlaps(unittest.TestCase):

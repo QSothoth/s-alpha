@@ -45,7 +45,7 @@ round      notes/common_rounds/<name>.json: each candidate on every registered s
            (2024-01-02 -> 2025-12-31, US), against the registered system; the acceptance rule of the
            pre-registration (notes/COMMON_PREREG_<name>.md); reports/common_<name>.json
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.common funnel [system ...]
     $PY -m studies.trader_replication.common round C1 [system ...]
     $PY -m studies.trader_replication.common validate V1      # once: the validation segment (2026)

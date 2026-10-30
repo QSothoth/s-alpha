@@ -145,7 +145,7 @@ def authorize(folder, symbols, mode, acc_id, firm, execute, until='15:45', trade
     path = folder/'authorization.json'
     if execute:
         # An existing decision is retained; a new session needs a new explicit decision.
-        with path.open('x') as fh:
+        with path.open('x', encoding='utf-8') as fh:
             fh.write(json.dumps(permission, ensure_ascii=False, indent=2) + '\n')
     return {'executed': execute, 'authorization': permission, 'path': str(path), 'orders_submitted': False,
             'risk_budget_status': risk}
@@ -234,19 +234,19 @@ def status(folder):
     if not folder.is_dir():
         raise ValueError('session directory does not exist: ' + str(folder))
     monitor = folder/'monitor'
-    ready = json.loads((monitor/'ready.json').read_text()) if (monitor/'ready.json').exists() else None
-    service = json.loads((monitor/'service.json').read_text()) if (monitor/'service.json').exists() else {}
+    ready = json.loads((monitor/'ready.json').read_text(encoding='utf-8')) if (monitor/'ready.json').exists() else None
+    service = json.loads((monitor/'service.json').read_text(encoding='utf-8')) if (monitor/'service.json').exists() else {}
     if service:
         service['active_state'] = subprocess.run(
             ['systemctl', 'show', service['unit'], '--property=ActiveState', '--value'],
             capture_output=True, text=True, check=False).stdout.strip()
-    card = json.loads((monitor/'review_card.json').read_text()) if (monitor/'review_card.json').exists() else None
+    card = json.loads((monitor/'review_card.json').read_text(encoding='utf-8')) if (monitor/'review_card.json').exists() else None
     now = datetime.now(ET)
-    latest = json.loads((monitor/'latest.json').read_text()) if (monitor/'latest.json').exists() else {}
+    latest = json.loads((monitor/'latest.json').read_text(encoding='utf-8')) if (monitor/'latest.json').exists() else {}
     day = ready['trade_date'] if ready else now.date().isoformat()
     workers = []
     for path in sorted((RUNTIME/day).glob('*/ledger.json')):
-        ledger = json.loads(path.read_text())
+        ledger = json.loads(path.read_text(encoding='utf-8'))
         for entry in ledger.get('accepted', []):
             if entry.get('unit'):
                 entry['active_state'] = subprocess.run(
@@ -263,7 +263,7 @@ def status(folder):
                    and instant(card['as_of']) <= now < instant(card['valid_until'])
                    and card.get('trade_date') == now.date().isoformat())
     mock_path = folder/'mock/latest.json'
-    mock = json.loads(mock_path.read_text()) if mock_path.exists() else None
+    mock = json.loads(mock_path.read_text(encoding='utf-8')) if mock_path.exists() else None
     if mock is not None:
         stamp = instant(mock['as_of']) if mock.get('as_of') else None
         age = (now-stamp).total_seconds() if stamp else None
@@ -275,7 +275,7 @@ def status(folder):
     if (folder/'authorization.json').exists():
         permission = {}
         try:
-            permission = json.loads((folder/'authorization.json').read_text())
+            permission = json.loads((folder/'authorization.json').read_text(encoding='utf-8'))
             validate_authorization(permission, now)
             authorization = {**permission, 'active': True}
             risk = check_risk_budget(RUNTIME, permission, now=now)
@@ -284,7 +284,7 @@ def status(folder):
                              'active': False, 'error': str(exc)}
     auto_final = folder/'auto/final.json'
     auto_path = auto_final if auto_final.exists() else folder/'auto/latest.json'
-    auto = json.loads(auto_path.read_text()) if auto_path.exists() else None
+    auto = json.loads(auto_path.read_text(encoding='utf-8')) if auto_path.exists() else None
     if auto is not None:
         stamp = instant(auto['as_of']) if auto.get('as_of') else None
         age = (now-stamp).total_seconds() if stamp else None
@@ -305,7 +305,7 @@ def status(folder):
 def check_handoff_authorization(folder, permission, action, mode, acc_id, firm, trade_action, now):
     """Recheck a persisted automatic permission at each slow preflight boundary."""
     validate_authorization(permission, now)
-    if (json.loads((folder/'authorization.json').read_text()) != permission
+    if (json.loads((folder/'authorization.json').read_text(encoding='utf-8')) != permission
             or permission['session'] != str(folder.resolve())
             or permission['ranking_sha256'] != hashlib.sha256((folder/'ranking.json').read_bytes()).hexdigest()
             or action['symbol'] not in permission['symbols']
@@ -319,7 +319,7 @@ def accept(folder, contract, mode, acc_id, firm, execute, trade_action='round_tr
     # A manual or mock handoff must not bypass a persisted human decision.
     permission_path = folder/'authorization.json'
     if authorization is None and permission_path.exists():
-        authorization = json.loads(permission_path.read_text())
+        authorization = json.loads(permission_path.read_text(encoding='utf-8'))
     path = folder/'monitor/review_card.json'
     raw = path.read_bytes()
     card = json.loads(raw)
@@ -356,11 +356,11 @@ def accept(folder, contract, mode, acc_id, firm, execute, trade_action='round_tr
     if mode == 'live' and not any(os.environ.get(key) for key in ('FUTU_TRADE_PASSWORD', 'FUTU_TRADE_PASSWORD_MD5')):
         raise ValueError('live requires trade password in the environment')
     runtime.mkdir(parents=True, exist_ok=True)
-    with (runtime/'handoff.lock').open('a') as lock:
+    with (runtime/'handoff.lock').open('a', encoding='utf-8') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         recheck_review()
         ledger_path = runtime/'ledger.json'
-        ledger = json.loads(ledger_path.read_text()) if ledger_path.exists() else {'accepted': []}
+        ledger = json.loads(ledger_path.read_text(encoding='utf-8')) if ledger_path.exists() else {'accepted': []}
         reserve(ledger, action)  # Check the session budget before any preflight.
         preflight_db = runtime/f'preflight-{digest}-{contract}.sqlite'
         preflight = custody_command(action, entry_until, preflight_db, trade_action=trade_action) + ['--once']
@@ -368,8 +368,8 @@ def accept(folder, contract, mode, acc_id, firm, execute, trade_action='round_tr
         environment.setdefault('HOME', pwd.getpwuid(os.getuid()).pw_dir)
         environment.pop('CUSTODY_WXPUSHER_SPT', None)
         result = subprocess.run(preflight, cwd=ROOT, capture_output=True, text=True,
-                                timeout=45, env=environment)
-        (runtime/f'preflight-{digest}-{contract}.log').write_text(result.stdout + result.stderr)
+                                encoding='utf-8', timeout=45, env=environment)
+        (runtime/f'preflight-{digest}-{contract}.log').write_text(result.stdout + result.stderr, encoding='utf-8')
         jobs = jobs_in(preflight_db)
         if result.returncode or len(jobs) != 1 or jobs[0]['position_qty'] != 1:
             raise ValueError('dryrun did not confirm a simulated entry; inspect preflight log')
@@ -455,7 +455,7 @@ def main(argv=None):
         elif args.command == 'authorize':
             if not args.symbols:
                 parser.error('authorize requires --symbols')
-            plan = json.loads(args.plan_json.read_text()) if args.plan_json else None
+            plan = json.loads(args.plan_json.read_text(encoding='utf-8')) if args.plan_json else None
             if args.plan_json and not isinstance(plan, dict):
                 raise ValueError('--plan-json must contain a per-symbol object')
             risk = None
@@ -470,7 +470,7 @@ def main(argv=None):
                                risk_budget=risk)
         elif args.command == 'revoke':
             path = args.session/'authorization.json'
-            permission = json.loads(path.read_text())
+            permission = json.loads(path.read_text(encoding='utf-8'))
             if args.execute:
                 permission['revoked_at'] = datetime.now(ET).isoformat()
                 write_json_atomic(path, permission)

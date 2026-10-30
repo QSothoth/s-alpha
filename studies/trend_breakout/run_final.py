@@ -1,6 +1,6 @@
 """Replay the final scheme of one market and list its state at the data end.
 
-    OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.trend_breakout.run_final cn
+    OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m studies.trend_breakout.run_final cn
 
 Writes reports/final_<market>.json. Expected (2026-10 research, local data to 2026-10-09):
 cn +113.0% / -16.5%, us +55.9% / -7.7%, hk +166.2% / -15.7%.

@@ -1,6 +1,6 @@
 """R8 single-pass results (notes/PREREG_R8.md); the in-period checks run through r3.py with LUK_DATA=r8new.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.r8 new|all
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r8 new|all
 """
 from __future__ import annotations
 

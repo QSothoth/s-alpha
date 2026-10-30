@@ -1,0 +1,10 @@
+{"stage": "R9 phase 2 (look like him): windows / trigger", "base": {"from": "R8"}, "draws": 100,
+ "objective": "fidelity", "ledger": ["0000", "2026-05-31"],
+ "fid_gates": {"stop_med_max": 20, "hold_max": 5, "min_quarter_ret": 0},
+ "candidates": {
+  "M930": {"windows": [[540, 630]]},
+  "M930PM": {"windows": [[540, 630], [780, 945]]},
+  "MO930": {"trig": "macd+open", "windows": [[540, 630]]},
+  "MO930F": {"trig": "macd+open", "windows": [[540, 630]], "stop_pts": 15, "be_at": 0.5},
+  "M930F": {"windows": [[540, 630]], "stop_pts": 15, "be_at": 0.5}
+}}

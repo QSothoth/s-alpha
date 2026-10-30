@@ -1,6 +1,6 @@
 """R3 in-period checks (notes/PREREG_R3.md) for one candidate on the 5-minute universe.
 
-    /opt/futu-opend/venv/bin/python -m studies.martin_luk.r3 J4 [causal]
+    /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r3 J4 [causal]
 """
 from __future__ import annotations
 

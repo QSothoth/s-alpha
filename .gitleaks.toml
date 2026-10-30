@@ -1,0 +1,36 @@
+title = "Repository secret protection"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "wxpusher-token"
+description = "WxPusher SPT or application token"
+regex = '''\b(?:SPT|AT)_[A-Za-z0-9]{12,}\b'''
+keywords = ["SPT_", "AT_"]
+
+[[rules]]
+id = "futu-trade-password"
+description = "Literal Futu trading password or password digest"
+regex = '''(?i)(?:FUTU_TRADE_PASSWORD(?:_MD5)?|trade_password(?:_md5)?)["']?\s*[:=]\s*["']([^"'\r\n]{1,})["']'''
+secretGroup = 1
+keywords = ["futu_trade_password", "trade_password"]
+[[rules.allowlists]]
+regexTarget = "secret"
+regexes = ['''^(?:secret|example|placeholder|changeme|<[^>]+>)$''']
+
+[[rules]]
+id = "futu-trade-password-unquoted"
+description = "Unquoted Futu trading password or password digest"
+regex = '''(?im)^\s*(?:export\s+)?FUTU_TRADE_PASSWORD(?:_MD5)?\s*=\s*([^\s"'$`#][^\s#]*)'''
+secretGroup = 1
+keywords = ["futu_trade_password"]
+[[rules.allowlists]]
+regexTarget = "secret"
+regexes = ['''^(?:example|placeholder|changeme|<[^>]+>)$''']
+
+[[rules]]
+id = "generic-api-key"
+[[rules.allowlists]]
+regexTarget = "match"
+regexes = ['''(?i)case_keys_sha256"\s*:\s*"[a-f0-9]{64}"''']

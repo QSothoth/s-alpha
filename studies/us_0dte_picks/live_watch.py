@@ -63,7 +63,7 @@ def reference_summary(raw, code, session, boundary):
 def write_json_atomic(path, value):
     text = json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + '\n'
     temporary = path.with_suffix(path.suffix + '.tmp')
-    temporary.write_text(text)
+    temporary.write_text(text, encoding='utf-8')
     temporary.replace(path)
 
 
@@ -305,8 +305,8 @@ def main(argv=None):
     cutoff=datetime.fromisoformat(day+'T'+args.until).replace(tzinfo=ET)
     if not started<cutoff<=started.replace(hour=15,minute=45,second=0,microsecond=0):
         parser.error('cutoff must be later today and no later than 15:45 ET')
-    ranking=json.loads(args.candidates.read_text())
-    bases=json.loads(args.baselines.read_text())
+    ranking=json.loads(args.candidates.read_text(encoding='utf-8'))
+    bases=json.loads(args.baselines.read_text(encoding='utf-8'))
     args.out.mkdir(parents=True,exist_ok=False)
     (args.out/'inputs').mkdir()
     source_root = Path(__file__).resolve().parents[2]
@@ -446,9 +446,9 @@ def main(argv=None):
                         'market_context':context,
                         'review_card':review_card,'errors':errors}
                 (args.out/'inputs'/(boundary.strftime('%H%M')+'.json')).write_text(
-                    json.dumps(inputs,ensure_ascii=False,default=str)+'\n')
+                    json.dumps(inputs,ensure_ascii=False,default=str)+'\n', encoding='utf-8')
                 text=json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+'\n'
-                (args.out/(boundary.strftime('%H%M')+'.json')).write_text(text)
+                (args.out/(boundary.strftime('%H%M')+'.json')).write_text(text, encoding='utf-8')
                 write_json_atomic(args.out/'latest.json',result)
                 write_json_atomic(args.out/'review_card.json',review_card)
                 print(json.dumps({'as_of':result['as_of'],'review_card':review_card,

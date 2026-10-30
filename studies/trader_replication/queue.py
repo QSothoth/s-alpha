@@ -1,6 +1,6 @@
 """One background process that runs every trader's rounds in order, loading the home panel once.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.queue            # runs until the queue stays empty for `idle` minutes
 
 The queue is $TR_QUEUE_DIR/queue.txt (default data/trader-replication-queue), one job a line: `<study id> <action> <args...>`, the same

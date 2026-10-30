@@ -208,9 +208,12 @@ test ! -e data/custody-0dte-v6.zip.sha256
 cp -r data/custody-0dte-work data/custody-0dte-v6
 python3 -m custody check --dataset data/custody-0dte-v6      # 必须 "ok": true（含 CALL/PUT 两边齐全）
 sha256sum data/custody-0dte-v6/CHECKSUMS.sha256
-(cd data && python3 -m zipfile -c custody-0dte-v6.zip custody-0dte-v6 && sha256sum custody-0dte-v6.zip > custody-0dte-v6.zip.sha256)
+python3 -m custody.release --dataset data/custody-0dte-v6 --out data/custody-0dte-v6.zip
+(cd data && sha256sum custody-0dte-v6.zip > custody-0dte-v6.zip.sha256)
 cat data/custody-0dte-v6.zip.sha256
 ```
+
+安全打包器只接受登记的 CSV 行情及规定的文本元数据，拒绝额外文件、二进制文件和符号链接，在临时副本上重新验证数据并扫描密钥。含 Parquet 副本的目录需另备 CSV 发布目录并更新校验清单，不修改原数据。工具缺失或扫描失败不会生成发布包。首次使用先按 [密钥提交保护](SECRET_PROTECTION.md) 安装检查工具。
 
 核对检查结果、窗口、标的、case 数和上面两个 SHA256，将它们填写到发布说明后再执行发布：
 
@@ -326,6 +329,10 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 - 用途：2024–2025 选择、**2020–2023 验证**（用户同意）、2026 已用过；期权定价只能从 2023-06 起。
 - 名单偏差：2020–2022 的“当日前 N”只能在这 81 只里取，会漏掉当时大、后来变小的股票。
 - live：`data/trader-live-hourly/trader-hourly-v1/`（订阅接口只追加，未发布）。
+
+### David Trullás 复刻：QQQ 1 分钟（本机，未发布）
+
+`data/trullas-qqq-k1/QQQ_k1_raw.csv.gz`：QQQ 1 分钟 K（含盘前盘后 04:00–20:00 ET，不复权，time 为 OpenD 的 K 线结束时刻），2024-01-02 → 2026-10-27，708 个交易日、678,600 根，8.5 MB，SHA256 `ed0286a1d3a1ee1cae4e7205ab8acb8e85a3456104eb55d610e97f02e20de0a7`。2026-10-28 `python -m studies.david_trullas.fetch` 取得：QQQ 当天已被 custody 扣过额度，历史 K 线额度前后 109 / 191 未变。用途：代替纳指期货（OpenD 无美股期货行情权限）；2025 选择、2026 Q1–Q3 已评过一次（见 [报告](../studies/david_trullas/reports/REPLICATION_CN.md)），2024 只作指标预热。`k1.npz` 是可重建的缓存。尚未发布 Release。
 
 ### 期权统计的 live 叠加层（未发布）
 

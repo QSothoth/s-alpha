@@ -1,7 +1,7 @@
 """Christian Flanders through skills/trader-replication: his stages as masks on the research daily panels, the
 configuration a round JSON changes, and the generic loop of studies.trader_replication.study.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.christian_flanders.replicate round R1
     $PY -m studies.christian_flanders.replicate diagnose r1.json
     $PY -m studies.christian_flanders.replicate three r1.json

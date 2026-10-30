@@ -66,6 +66,27 @@ class Base(unittest.TestCase):
 
 
 class ProvisionalTests(Base):
+    def test_aggregation_replaces_scenario_metrics_with_original_snapshot(self):
+        from studies.trader_screens import aggregation, context
+        quotes = {c: quote(LAST[c] + 1, LAST[c]) for c in CODES}
+        seen = []
+
+        def scenario_board(*args, **kwargs):
+            result = fake_board(seen)(*args, **kwargs)
+            q = dict(kwargs['panel'], digest='modeled-volume')
+            q['volume'] = q['volume'] * 100
+            aggregation.attach(result, context.market_features(q, 'us', partial=True))
+            result['early'] = dict(kept=[], dropped=[])
+            return result
+
+        result = I.run('us', now=ny(TODAY, 15, 50), provider=Fake(SESS, snap=quotes),
+                       calendar=calendar(), board=scenario_board, log=lambda *_: None)
+        c = result['presentation']['aggregation']
+        self.assertEqual(c['basis'], 'snapshot')
+        self.assertEqual(c['digest'], seen[0]['digest'])
+        self.assertNotEqual(c['digest'], 'modeled-volume')
+        self.assertEqual(c['captured_at'], result['provisional']['captured_at'])
+
     def test_order_table_distinguishes_signal_fill_from_snapshot_quote(self):
         from studies.trader_screens import board
         result = self.run_at(ny(TODAY, 15, 50))

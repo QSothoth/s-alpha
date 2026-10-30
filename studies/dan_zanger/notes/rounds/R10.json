@@ -1,0 +1,13 @@
+{"stage": "his other patterns x his holding words (count and holding are one gap: 4 slots)",
+ "base": ["r8.json", "chosen"], "base_change": {"rule_opts": {"max_days": 50}},
+ "ref": "CAP50", "objective": "per_year", "gates": ["placebo", "win<=0.35", "total"], "draws": 50,
+ "candidates": {
+  "PAT": {"setups": ["zbase", "zflag", "ztri", "zdtl", "zlong"]},
+  "PAT_EMA10": {"setups": ["zbase", "zflag", "ztri", "zdtl", "zlong"],
+                "rule_opts": {"trail": "ema10", "exit_signal": "zsleep5", "trims": [3]}},
+  "PAT_EMA21": {"setups": ["zbase", "zflag", "ztri", "zdtl", "zlong"],
+                "rule_opts": {"trail": "ema21", "exit_signal": "zsleep10"}},
+  "PAT_SLEEP": {"setups": ["zbase", "zflag", "ztri", "zdtl", "zlong"], "rule_opts": {"exit_signal": "zsleep10"}},
+  "PAT_EP": {"setups": ["zbase", "zflag", "ztri", "zdtl", "zlong", "ep"], "ep": {"rvol": 3.0},
+             "rule_opts": {"max_open_by_kind": {"ep": 1}}}
+ }}

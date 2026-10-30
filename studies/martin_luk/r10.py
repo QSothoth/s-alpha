@@ -1,6 +1,6 @@
 """R10 (notes/PREREG_R10.md): his selection (S2 on the whole market) gating his L3 rules.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.r10
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r10
 """
 from __future__ import annotations
 

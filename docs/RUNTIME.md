@@ -50,13 +50,13 @@
 
 ```bash
 # 当日只买；使用真实行情本地模拟，不发券商订单
-/opt/futu-opend/venv/bin/python -m custody dryrun --strategy open_hold_v3 \
+/opt/opend-us-options/.venv/bin/python -m custody dryrun --strategy open_hold_v3 \
   --symbol US.AAPL --direction LONG --contract '<最近到期CALL>' \
   --expiry-policy nearest --trade-action buy_only --max-qty 1 \
   --max-entry-premium 280 --stream-only --db data/retained-dryrun.sqlite
 
 # 后续交易日仅管理上面保留的同一合约，不重复导入或再买
-/opt/futu-opend/venv/bin/python -m custody dryrun --strategy open_hold_v3 \
+/opt/opend-us-options/.venv/bin/python -m custody dryrun --strategy open_hold_v3 \
   --symbol US.AAPL --direction LONG --contract '<原持仓CALL>' \
   --trade-action sell_only --max-qty 1 --db data/retained-dryrun.sqlite
 
@@ -109,18 +109,18 @@ python3 -m custody stop --db data/retained-dryrun.sqlite --job '<只卖任务ID>
 
 ```bash
 # 10:30–11:30 之间按剧本二版买 2 张 0DTE，11:30 前一定买到；单票 300 美元、当天 600 美元上限
-/opt/futu-opend/venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action buy_only \
+/opt/opend-us-options/.venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action buy_only \
   --contract '<合约>' --max-qty 2 --start-at 10:30 --end-at 11:30 --playbook v2 \
   --max-entry-premium 300 --daily-premium-cap-usd 600 --db data/smart-paper.sqlite
 
 # 同一合约挂两张卖单：1 张 13:00 前卖（止盈），1 张到 15:45 前卖；两张都从上面买到的 2 张里预留
-/opt/futu-opend/venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action sell_only \
+/opt/opend-us-options/.venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action sell_only \
   --contract '<合约>' --max-qty 1 --end-at 13:00 --name tp --db data/smart-paper.sqlite
-/opt/futu-opend/venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action sell_only \
+/opt/opend-us-options/.venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action sell_only \
   --contract '<合约>' --max-qty 1 --end-at 15:45 --name rest --db data/smart-paper.sqlite
 
 # 默认（不用剧本）：一开始就从中间价追价买入
-/opt/futu-opend/venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action buy_only \
+/opt/opend-us-options/.venv/bin/python -m custody run --mode paper --acc-id <模拟账户> --manual --trade-action buy_only \
   --contract '<周权>' --end-at 15:30 \
   --max-entry-premium 300 --daily-premium-cap-usd 600 --db data/smart-paper.sqlite
 ```

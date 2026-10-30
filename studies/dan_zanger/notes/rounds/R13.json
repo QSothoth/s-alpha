@@ -1,0 +1,9 @@
+{"stage": "holding: the length of 'goes to sleep' (binding since R5)",
+ "base": ["r12.json", "chosen"], "ref": "HOLDSTRONG", "objective": "per_year",
+ "gates": ["placebo", "win<=0.35", "total"], "draws": 50,
+ "candidates": {
+  "SLEEP10": {"rule_opts": {"exit_signal": "zsleep10"}},
+  "NOCAP_SLEEP10": {"max_new": 0, "rule_opts": {"exit_signal": "zsleep10"}},
+  "RS70_SLEEP10": {"strength": "rs70", "rule_opts": {"exit_signal": "zsleep10"}},
+  "RS70_EMA21": {"strength": "rs70", "rule_opts": {"trail": "ema21", "exit_signal": "zsleep10"}}
+ }}

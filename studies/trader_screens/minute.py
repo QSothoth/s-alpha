@@ -7,7 +7,7 @@ foreground fetch per market, never scheduled, no historical K-line quota.
     A-shares  Sina CN_MarketData.getKLineData scale=5 datalen=1023 (unadjusted): about 21 sessions, 09:35 .. 15:00,
               volume in shares, no turnover (estimated as volume x the bar's typical price)
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_screens.minute fetch hk          # data/trader-screens/k5/hk_<day>.csv.gz
 
 aggregate(stream(path), cuts) turns every (code, session) into the daily bar known at each cut (HH:MM, bars ending

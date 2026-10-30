@@ -2,7 +2,7 @@
 
 2026-10-02工程新增一次许可协调器：`session authorize`预览/保存，`auto_watch`按范围接受新鲜卡；精确步骤及撤销见[WORKFLOW_CN](WORKFLOW_CN.md)。预检后重查授权，最晚入场取卡片/许可的较早截止；协调器失败不停止已有custody管理。 `STOPPED_REQUIRES_REVIEW`返回命令行退出码1，许可正常到期返回0，具体原因查看`auto/final.json`。TS1–TS67均未通过（见[失败记录](../../../studies/archive/us_0dte_picks/FAILED_TRIALS.md)），不得以工程测试替代收益证据。
 
-工程根目录是 `/opt/opend-us-options`。所有模块命令在该目录执行；连接 OpenD 使用 `/opt/futu-opend/venv/bin/python`。先读根 `AGENTS.md`，按任务读 `studies/AGENTS.md` 或 `custody/AGENTS.md`。
+工程根目录是 `/opt/opend-us-options`。所有模块命令在该目录执行；连接 OpenD 使用 `/opt/opend-us-options/.venv/bin/python`。先读根 `AGENTS.md`，按任务读 `studies/AGENTS.md` 或 `custody/AGENTS.md`。
 
 本文为交互 skill 的运行细则；按实际任务查对应章节。
 
@@ -74,7 +74,7 @@ python3 -m studies.us_0dte_picks.session status --session SESSION
 已获有限期 mock 授权且当日只读 monitor 有效时，可以运行：
 
 ```bash
-/opt/futu-opend/venv/bin/python -m studies.us_0dte_picks.mock_watch --session SESSION --until 16:05
+/opt/opend-us-options/.venv/bin/python -m studies.us_0dte_picks.mock_watch --session SESSION --until 16:05
 ```
 
 它在 15:45 前自动接受每张新鲜卡上的动作（与评测口径"全部接受"一致），只调用 dryrun；需要新的 `mock/` 输出目录。截止时间必须仍在当天未来且不晚于 16:10。需要后台运行时沿用项目 systemd 方式，明确 `User`、工作目录、UTF-8、内存与时限，unit 名写入 session 目录（如 `mock-service.json`）以便追踪；不要新建无限重试守护进程。结束时它停止自己拥有的 dryrun worker，并记录未完成任务，不能把 `finished` 当作全部平仓。

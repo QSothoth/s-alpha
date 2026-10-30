@@ -6,11 +6,11 @@
     <out>/<market>/actions.csv.gz     code,ex_date,factor_a,factor_b (price before -> a * price + b)
     <out>/<market>/progress.json      finished codes and failures; a rerun resumes from it
 
-Run from the repository root, one market at a time (US / HK need /opt/futu-opend/venv/bin/python):
+Run from the repository root, one market at a time (US / HK need /opt/opend-us-options/.venv/bin/python):
 
-    PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.trend_breakout.fetch us --out data/trend-breakout-v1
+    PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m studies.trend_breakout.fetch us --out data/trend-breakout-v1
     PYTHONUTF8=1 python3 -m studies.trend_breakout.fetch cn --out data/trend-breakout-v1
-    PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.trend_breakout.fetch hk --actions-only --out ...
+    PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m studies.trend_breakout.fetch hk --actions-only --out ...
     python3 -m studies.trend_breakout.fetch checksums --out data/trend-breakout-v1
 
 ``--shares-only`` (A-shares) writes shares.csv.gz with Sina's total-share history for point-in-time market caps;

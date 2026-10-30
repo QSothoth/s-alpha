@@ -223,6 +223,8 @@ class CustodyService:
         existing = self._existing_job(request, fingerprint, slot)
         if existing is not None:
             return existing
+        if callable(position):   # a restart must not need a broker read: open sells make the snapshot refuse
+            position = position()
         if request.entry_valid_until and now >= instant(request.entry_valid_until):
             raise ValueError('entry review card expired')
         if now.astimezone(ET).date().isoformat() != request.trade_date:

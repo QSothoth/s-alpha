@@ -1,0 +1,770 @@
+{
+ "name": "R2",
+ "stage": "stock selection",
+ "base": [
+  "r1.json",
+  "chosen"
+ ],
+ "configs": {
+  "PRICE50": {
+   "setups": [
+    "zbase"
+   ],
+   "entry": "close",
+   "base": {
+    "days": 20,
+    "depth": 25.0,
+    "vol": 3.0,
+    "chase": 0.05
+   },
+   "stop": "fill",
+   "stop_pct": 0.05,
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "rvol",
+   "max_new": 2,
+   "strength": "rs80",
+   "filter": "",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": true,
+    "price": 50.0
+   },
+   "rule_opts": {
+    "risk": 0.0125,
+    "max_position": 0.5,
+    "max_gross": 2.0,
+    "max_open": 4,
+    "trail": "",
+    "arm_trail_on_entry": false,
+    "exit_signal": "zexit5",
+    "nft_days": 1,
+    "trims": [
+     3
+    ],
+    "trim_frac": 0.25,
+    "unit_adr": "pct5",
+    "add_r": 1.0,
+    "add_frac": 1.0
+   }
+  },
+  "RS90": {
+   "setups": [
+    "zbase"
+   ],
+   "entry": "close",
+   "base": {
+    "days": 20,
+    "depth": 25.0,
+    "vol": 3.0,
+    "chase": 0.05
+   },
+   "stop": "fill",
+   "stop_pct": 0.05,
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "rvol",
+   "max_new": 2,
+   "strength": "rs90",
+   "filter": "",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.0125,
+    "max_position": 0.5,
+    "max_gross": 2.0,
+    "max_open": 4,
+    "trail": "",
+    "arm_trail_on_entry": false,
+    "exit_signal": "zexit5",
+    "nft_days": 1,
+    "trims": [
+     3
+    ],
+    "trim_frac": 0.25,
+    "unit_adr": "pct5",
+    "add_r": 1.0,
+    "add_frac": 1.0
+   }
+  },
+  "NEARHI": {
+   "setups": [
+    "zbase"
+   ],
+   "entry": "close",
+   "base": {
+    "days": 20,
+    "depth": 25.0,
+    "vol": 3.0,
+    "chase": 0.05
+   },
+   "stop": "fill",
+   "stop_pct": 0.05,
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "rvol",
+   "max_new": 2,
+   "strength": "rs80",
+   "filter": "",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.0125,
+    "max_position": 0.5,
+    "max_gross": 2.0,
+    "max_open": 4,
+    "trail": "",
+    "arm_trail_on_entry": false,
+    "exit_signal": "zexit5",
+    "nft_days": 1,
+    "trims": [
+     3
+    ],
+    "trim_frac": 0.25,
+    "unit_adr": "pct5",
+    "add_r": 1.0,
+    "add_frac": 1.0
+   },
+   "near_high": 0.15
+  },
+  "BASE25": {
+   "setups": [
+    "zbase"
+   ],
+   "entry": "close",
+   "base": {
+    "days": 25,
+    "depth": 25.0,
+    "vol": 3.0,
+    "chase": 0.05
+   },
+   "stop": "fill",
+   "stop_pct": 0.05,
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "rvol",
+   "max_new": 2,
+   "strength": "rs80",
+   "filter": "",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.0125,
+    "max_position": 0.5,
+    "max_gross": 2.0,
+    "max_open": 4,
+    "trail": "",
+    "arm_trail_on_entry": false,
+    "exit_signal": "zexit5",
+    "nft_days": 1,
+    "trims": [
+     3
+    ],
+    "trim_frac": 0.25,
+    "unit_adr": "pct5",
+    "add_r": 1.0,
+    "add_frac": 1.0
+   }
+  },
+  "BASE15": {
+   "setups": [
+    "zbase"
+   ],
+   "entry": "close",
+   "base": {
+    "days": 15,
+    "depth": 25.0,
+    "vol": 3.0,
+    "chase": 0.05
+   },
+   "stop": "fill",
+   "stop_pct": 0.05,
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "rvol",
+   "max_new": 2,
+   "strength": "rs80",
+   "filter": "",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.0125,
+    "max_position": 0.5,
+    "max_gross": 2.0,
+    "max_open": 4,
+    "trail": "",
+    "arm_trail_on_entry": false,
+    "exit_signal": "zexit5",
+    "nft_days": 1,
+    "trims": [
+     3
+    ],
+    "trim_frac": 0.25,
+    "unit_adr": "pct5",
+    "add_r": 1.0,
+    "add_frac": 1.0
+   }
+  },
+  "LEAD": {
+   "setups": [
+    "zbase"
+   ],
+   "entry": "close",
+   "base": {
+    "days": 20,
+    "depth": 25.0,
+    "vol": 3.0,
+    "chase": 0.05
+   },
+   "stop": "fill",
+   "stop_pct": 0.05,
+   "stop_min": 0.01,
+   "stop_cap": 0.0,
+   "priority": "rvol",
+   "max_new": 2,
+   "strength": "rs80",
+   "filter": "",
+   "pool": {
+    "turnover": 20000000.0,
+    "adr": 0.0,
+    "above50": true
+   },
+   "rule_opts": {
+    "risk": 0.0125,
+    "max_position": 0.5,
+    "max_gross": 2.0,
+    "max_open": 4,
+    "trail": "",
+    "arm_trail_on_entry": false,
+    "exit_signal": "zexit5",
+    "nft_days": 1,
+    "trims": [
+     3
+    ],
+    "trim_frac": 0.25,
+    "unit_adr": "pct5",
+    "add_r": 1.0,
+    "add_frac": 1.0
+   }
+  }
+ },
+ "full": {
+  "PRICE50": {
+   "total": -0.13102952030385517,
+   "cagr": -0.06807490296908247,
+   "maxdd": 0.18556020636576265,
+   "trades": 98,
+   "per_year": 49.19521912350598,
+   "win": 0.25510204081632654,
+   "avg_win": 0.07274132885122277,
+   "avg_loss": -0.031689962040432625,
+   "exp_r": -0.10098653217775756,
+   "days_win": 9.2,
+   "days_loss": 2.506849315068493,
+   "by_year": {
+    "2024": -0.030626052584428187,
+    "2025": -0.10357557884355217
+   },
+   "ci_r": [
+    -0.37237017952228096,
+    0.216355187310827
+   ],
+   "placebo": {
+    "real": -0.13102952030385517,
+    "median": -0.06398705570732582,
+    "p90": 0.23760170710212064,
+    "rank": 0.16
+   },
+   "behaviour": {
+    "trades": 98,
+    "per_year": 49.19521912350598,
+    "per_day": 0.1952191235059761,
+    "win": 0.25510204081632654,
+    "avg_win": 0.07274132885122277,
+    "avg_loss": -0.031689962040432625,
+    "days_win": 9.2,
+    "days_loss": 2.506849315068493,
+    "median_days_win": 7.0,
+    "median_days_loss": 1.0,
+    "top10_share": 0.8238418390804767,
+    "entry_weight_mean": 0.24987492886847432,
+    "entry_weight_max": 0.2561295488957923,
+    "open_mean": 0.8227091633466136,
+    "open_max": 4
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 0.0,
+    "mean": 0.24302788844621515
+   },
+   "min_year": -0.10357557884355217,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": null,
+   "behaviour_parts": {},
+   "year_gap": null
+  },
+  "RS90": {
+   "total": -0.009407774843335215,
+   "cagr": -0.004733743389678136,
+   "maxdd": 0.1380774933412574,
+   "trades": 58,
+   "per_year": 29.115537848605577,
+   "win": 0.22413793103448276,
+   "avg_win": 0.10179949705295949,
+   "avg_loss": -0.02919985137565312,
+   "exp_r": 0.003241430960028512,
+   "days_win": 10.307692307692308,
+   "days_loss": 2.2,
+   "by_year": {
+    "2024": -0.012330874306266337,
+    "2025": 0.0029595938426019153
+   },
+   "ci_r": [
+    -0.3760060642835384,
+    0.4805298219003182
+   ],
+   "placebo": {
+    "real": -0.009407774843335215,
+    "median": -0.04674929516784743,
+    "p90": 0.138377179734216,
+    "rank": 0.66
+   },
+   "behaviour": {
+    "trades": 58,
+    "per_year": 29.115537848605577,
+    "per_day": 0.11553784860557768,
+    "win": 0.22413793103448276,
+    "avg_win": 0.10179949705295949,
+    "avg_loss": -0.02919985137565312,
+    "days_win": 10.307692307692308,
+    "days_loss": 2.2,
+    "median_days_win": 9.0,
+    "median_days_loss": 1.0,
+    "top10_share": 0.8396206494515901,
+    "entry_weight_mean": 0.25014648368638664,
+    "entry_weight_max": 0.2627223596110676,
+    "open_mean": 0.4641434262948207,
+    "open_max": 4
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 0.0,
+    "mean": 0.1294820717131474
+   },
+   "min_year": -0.012330874306266337,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": null,
+   "behaviour_parts": {},
+   "year_gap": null
+  },
+  "NEARHI": {
+   "total": 0.08626962590628162,
+   "cagr": 0.04241441153940295,
+   "maxdd": 0.19808431170844065,
+   "trades": 131,
+   "per_year": 65.7609561752988,
+   "win": 0.2824427480916031,
+   "avg_win": 0.0798166235404579,
+   "avg_loss": -0.026564283337220617,
+   "exp_r": 0.06964464691575636,
+   "days_win": 9.945945945945946,
+   "days_loss": 2.6914893617021276,
+   "by_year": {
+    "2024": 0.2333587651305904,
+    "2025": -0.11925900507038167
+   },
+   "ci_r": [
+    -0.17441963838590444,
+    0.3493931483493756
+   ],
+   "placebo": {
+    "real": 0.08626962590628162,
+    "median": -0.05870011425224858,
+    "p90": 0.2787148696416068,
+    "rank": 0.74
+   },
+   "behaviour": {
+    "trades": 131,
+    "per_year": 65.7609561752988,
+    "per_day": 0.26095617529880477,
+    "win": 0.2824427480916031,
+    "avg_win": 0.0798166235404579,
+    "avg_loss": -0.026564283337220617,
+    "days_win": 9.945945945945946,
+    "days_loss": 2.6914893617021276,
+    "median_days_win": 9.0,
+    "median_days_loss": 1.0,
+    "top10_share": 0.8055090752527049,
+    "entry_weight_mean": 0.25018432069477076,
+    "entry_weight_max": 0.26013171433026494,
+    "open_mean": 1.2370517928286853,
+    "open_max": 4
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 0.0,
+    "mean": 0.3426294820717131
+   },
+   "min_year": -0.11925900507038167,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": null,
+   "behaviour_parts": {},
+   "year_gap": null
+  },
+  "BASE25": {
+   "total": 0.17416475306156753,
+   "cagr": 0.08393545505379718,
+   "maxdd": 0.22992423175512777,
+   "trades": 122,
+   "per_year": 61.243027888446214,
+   "win": 0.27049180327868855,
+   "avg_win": 0.09855893798251124,
+   "avg_loss": -0.02752664234060286,
+   "exp_r": 0.13156947296872382,
+   "days_win": 10.363636363636363,
+   "days_loss": 2.741573033707865,
+   "by_year": {
+    "2024": 0.4041002991308722,
+    "2025": -0.16376005774775004
+   },
+   "ci_r": [
+    -0.13547899478404835,
+    0.44863909390519985
+   ],
+   "placebo": {
+    "real": 0.17416475306156753,
+    "median": 0.0015650204399418888,
+    "p90": 0.24802836192882238,
+    "rank": 0.83
+   },
+   "behaviour": {
+    "trades": 122,
+    "per_year": 61.243027888446214,
+    "per_day": 0.24302788844621515,
+    "win": 0.27049180327868855,
+    "avg_win": 0.09855893798251124,
+    "avg_loss": -0.02752664234060286,
+    "days_win": 10.363636363636363,
+    "days_loss": 2.741573033707865,
+    "median_days_win": 9.0,
+    "median_days_loss": 1.0,
+    "top10_share": 0.8134162049169038,
+    "entry_weight_mean": 0.25013895306597955,
+    "entry_weight_max": 0.2695559209856647,
+    "open_mean": 1.1673306772908367,
+    "open_max": 4
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 0.0,
+    "mean": 0.3207171314741036
+   },
+   "min_year": -0.16376005774775004,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": null,
+   "behaviour_parts": {},
+   "year_gap": null,
+   "placebo_screen": {
+    "real": 0.17416475306156753,
+    "median": 0.028071322552007283,
+    "p90": 0.40289920245546146,
+    "rank": 0.78
+   }
+  },
+  "BASE15": {
+   "total": -0.14779815943892438,
+   "cagr": -0.077146269132501,
+   "maxdd": 0.22704865836902288,
+   "trades": 157,
+   "per_year": 78.81274900398407,
+   "win": 0.24203821656050956,
+   "avg_win": 0.0815956203829307,
+   "avg_loss": -0.03034412974372232,
+   "exp_r": -0.06500864521676325,
+   "days_win": 9.894736842105264,
+   "days_loss": 2.689075630252101,
+   "by_year": {
+    "2024": -0.07985916721469444,
+    "2025": -0.07383542801657406
+   },
+   "ci_r": [
+    -0.291359997567846,
+    0.18048568083659025
+   ],
+   "placebo": {
+    "real": -0.14779815943892438,
+    "median": -0.11091015600025622,
+    "p90": 0.141735481450187,
+    "rank": 0.36
+   },
+   "behaviour": {
+    "trades": 157,
+    "per_year": 78.81274900398407,
+    "per_day": 0.31274900398406374,
+    "win": 0.24203821656050956,
+    "avg_win": 0.0815956203829307,
+    "avg_loss": -0.03034412974372232,
+    "days_win": 9.894736842105264,
+    "days_loss": 2.689075630252101,
+    "median_days_win": 9.0,
+    "median_days_loss": 1.0,
+    "top10_share": 0.8198926826644498,
+    "entry_weight_mean": 0.24978794593780193,
+    "entry_weight_max": 0.25802351784855915,
+    "open_mean": 1.3864541832669324,
+    "open_max": 4
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 0.0,
+    "mean": 0.4203187250996016
+   },
+   "min_year": -0.07985916721469444,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": null,
+   "behaviour_parts": {},
+   "year_gap": null
+  },
+  "LEAD": {
+   "total": 0.04565646391710243,
+   "cagr": 0.0226643972225562,
+   "maxdd": 0.22112805864743923,
+   "trades": 134,
+   "per_year": 67.26693227091633,
+   "win": 0.27611940298507465,
+   "avg_win": 0.0798179101262585,
+   "avg_loss": -0.027315601024015302,
+   "exp_r": 0.04532080228986251,
+   "days_win": 9.945945945945946,
+   "days_loss": 2.6288659793814433,
+   "by_year": {
+    "2024": 0.2176411493674577,
+    "2025": -0.14124414696374066
+   },
+   "ci_r": [
+    -0.19788347340501364,
+    0.3175119710435212
+   ],
+   "placebo": {
+    "real": 0.04565646391710243,
+    "median": -0.008034036433950897,
+    "p90": 0.30711433773265184,
+    "rank": 0.64
+   },
+   "behaviour": {
+    "trades": 134,
+    "per_year": 67.26693227091633,
+    "per_day": 0.26693227091633465,
+    "win": 0.27611940298507465,
+    "avg_win": 0.0798179101262585,
+    "avg_loss": -0.027315601024015302,
+    "days_win": 9.945945945945946,
+    "days_loss": 2.6288659793814433,
+    "median_days_win": 9.0,
+    "median_days_loss": 1.0,
+    "top10_share": 0.8054960912427649,
+    "entry_weight_mean": 0.25000425674416643,
+    "entry_weight_max": 0.26013171433026494,
+    "open_mean": 1.2410358565737052,
+    "open_max": 4
+   },
+   "fidelity": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "bought": {
+    "select": [
+     0,
+     0
+    ],
+    "validate": [
+     0,
+     0
+    ]
+   },
+   "signals_per_day": {
+    "median": 0.0,
+    "mean": 0.3545816733067729
+   },
+   "min_year": -0.14124414696374066,
+   "min_2024_2025": -9.0,
+   "behaviour_gap": null,
+   "behaviour_parts": {},
+   "year_gap": null
+  }
+ },
+ "objective": "total",
+ "gates": [
+  "placebo",
+  "win<=0.35"
+ ],
+ "market": "us",
+ "chosen": "BASE25",
+ "chosen_config": {
+  "setups": [
+   "zbase"
+  ],
+  "entry": "close",
+  "base": {
+   "days": 25,
+   "depth": 25.0,
+   "vol": 3.0,
+   "chase": 0.05
+  },
+  "stop": "fill",
+  "stop_pct": 0.05,
+  "stop_min": 0.01,
+  "stop_cap": 0.0,
+  "priority": "rvol",
+  "max_new": 2,
+  "strength": "rs80",
+  "filter": "",
+  "pool": {
+   "turnover": 20000000.0,
+   "adr": 0.0,
+   "above50": true
+  },
+  "rule_opts": {
+   "risk": 0.0125,
+   "max_position": 0.5,
+   "max_gross": 2.0,
+   "max_open": 4,
+   "trail": "",
+   "arm_trail_on_entry": false,
+   "exit_signal": "zexit5",
+   "nft_days": 1,
+   "trims": [
+    3
+   ],
+   "trim_frac": 0.25,
+   "unit_adr": "pct5",
+   "add_r": 1.0,
+   "add_frac": 1.0
+  }
+ },
+ "failed_gates": {
+  "PRICE50": [
+   "placebo"
+  ],
+  "RS90": [],
+  "NEARHI": [],
+  "BASE25": [],
+  "BASE15": [
+   "placebo"
+  ]
+ }
+}
