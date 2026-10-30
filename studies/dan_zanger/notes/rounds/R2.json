@@ -1,0 +1,9 @@
+{"stage": "stock selection", "base": ["r1.json", "chosen"], "ref": "LEAD",
+ "objective": "total", "gates": ["placebo", "win<=0.35"], "draws": 50,
+ "candidates": {
+  "PRICE50": {"pool": {"price": 50.0}},
+  "RS90": {"strength": "rs90"},
+  "NEARHI": {"near_high": 0.15},
+  "BASE25": {"base": {"days": 25}},
+  "BASE15": {"base": {"days": 15}}
+ }}

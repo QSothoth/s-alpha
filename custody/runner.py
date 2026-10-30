@@ -50,7 +50,7 @@ def _push_notify(title, body, *, wxpusher_spt=None):
     """Best-effort WxPusher phone push. Never raises.
 
     ``GET https://wxpusher.zjiecode.com/api/send/message/{SPT}/{urlencoded text}``.
-    The SPT is a secret supplied via ``--wxpusher-spt`` or ``CUSTODY_WXPUSHER_SPT``;
+    The SPT is a secret supplied via ``CUSTODY_WXPUSHER_SPT``;
     it is never persisted or logged.
     """
     if not wxpusher_spt:
@@ -357,7 +357,6 @@ def build_argument_parser(command):
     parser.add_argument('--ticks', type=int, default=None, help='stop after N polls (default: until the job is done)')
     parser.add_argument('--once', action='store_true', help='run a single poll')
     parser.add_argument('--no-subscribe', action='store_true', help='snapshot/history polling only')
-    parser.add_argument('--wxpusher-spt', default=None, help='WxPusher SPT for order pushes (or CUSTODY_WXPUSHER_SPT)')
     manual = parser.add_argument_group(
         'smart order (--manual: no strategy; any unexpired contract; live allowed). '
         '--trade-action buy_only = smart buy, sell_only = smart sell (only what is held)')
@@ -473,8 +472,8 @@ def main(command, argv=None):
             payload['ticket'] = ticket_from_args(args, datetime.now(ET))
         position = None
         if args.trade_action == 'sell_only' and broker is not None:
-            # Read only when a new job is created; existing jobs resume from their own durable fills.
-            position = broker.position_snapshot(args.contract, datetime.now(ET))
+            # Called only when a new job is created; existing jobs resume from their own durable fills.
+            position = lambda: broker.position_snapshot(args.contract, datetime.now(ET))
         job = service.create_job(payload, datetime.now(ET), position=position)
         underlying = 'US.' + normalize_symbol(args.symbol)
         if not args.no_subscribe:
@@ -491,7 +490,7 @@ def main(command, argv=None):
             frame_source = None if args.trade_action == 'sell_only' else StrategyFrameSource(
                 history, max_age_seconds=service.policy.frame_max_age_seconds)
         runner = Runner(service, market, job['id'], broker=broker, frame_source=frame_source,
-                        interval=args.interval, wxpusher_spt=args.wxpusher_spt,
+                        interval=args.interval,
                         simulate_fills=command == 'dryrun' and not args.intent_only)
         _json_logger('start', command=command, mode=mode, account=service.account, db=service.path, job_id=job['id'],
                      strategy_version=args.strategy_version, strategy_mode=args.strategy_mode,

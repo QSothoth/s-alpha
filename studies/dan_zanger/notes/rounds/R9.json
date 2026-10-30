@@ -1,0 +1,8 @@
+{"stage": "pairs of R8 changes", "base": ["r8.json", "chosen"], "ref": "NOTRIM",
+ "objective": "min_year", "gates": ["placebo", "win<=0.35", "total", "dd+0.10"], "draws": 50,
+ "candidates": {
+  "N_LOW3": {"stop": "low", "stop_cap": 0.03},
+  "N_ADDTWO": {"rule_opts": {"add_levels": [2, 4], "add_frac": 0.5}},
+  "N_LOW3_ADDTWO": {"stop": "low", "stop_cap": 0.03, "rule_opts": {"add_levels": [2, 4], "add_frac": 0.5}},
+  "N_LOW5": {"stop": "low", "stop_cap": 0.05}
+ }}

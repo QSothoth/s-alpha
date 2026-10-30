@@ -1,0 +1,9 @@
+{"stage": "holding: exits, trims, adds", "base": ["r2.json", "chosen"], "ref": "BASE25",
+ "objective": "total", "gates": ["placebo", "win<=0.35"], "draws": 50,
+ "candidates": {
+  "SLEEP10": {"rule_opts": {"exit_signal": "zexit10"}},
+  "REV": {"rule_opts": {"exit_signal": "zrev5"}},
+  "NFT0": {"rule_opts": {"nft_days": 0}},
+  "TRIM20": {"rule_opts": {"trims": [4], "trim_frac": 0.30}},
+  "ADD2": {"rule_opts": {"add_r": 2.0}}
+ }}

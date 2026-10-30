@@ -1,6 +1,6 @@
 # 盘中单图发布（尾盘信号、美股开盘精选）
 
-用户于 2026-10-22 授权的盘中发布任务（A 股、港股尾盘），2026-10-23 加美股开盘后 1 小时。A 股、港股使用主目录的盘中快照实现和系统配置，与手动 live 一致；美股开盘精选仍使用 `intraday-board` 工作树独有的情景模型，尚未迁移。行情只在内存中追加到前一交易日的面板，不写入正式日线或收盘看板。
+用户于 2026-10-22 授权的盘中发布任务（A 股、港股尾盘），2026-10-23 加美股开盘后 1 小时。三个市场均使用主目录的盘中快照实现和系统配置；美股开盘精选调用已合入主目录的情景模型。行情只在内存中追加到前一交易日的面板，不写入正式日线或收盘看板。
 
 ## 时间与内容
 
@@ -17,7 +17,7 @@ A 股、港股为北京时间，美股为美东时间（定时器按美东时区
 
 港股按连续交易时段的 16:00 / 半日 12:00 提前十五分钟，之后仍有收市竞价，见 [港交所交易时段](https://www.hkex.com.hk/Services/Trading-hours-and-Severe-Weather-Arrangements/Trading-Hours/Securities-Market?sc_lang=en)。
 
-图中保留市场、日期、行情取得时间和“盘中”，逐股列交易员、动作、价格、开仓比例及止损。买入红色、卖空蓝色、卖出橙色、回补紫色。A 股涨停买入不列为可执行信号，显示跳过笔数。没有买卖时仍发一张空信号图。盘中信号可能在收盘时变化；正式日报仍由原 `trader-board-qq.timer` 在次日 08:30 发布。
+图中保留市场、日期、行情取得时间和“盘中”，逐股列交易员、动作、价格、开仓比例及止损。开多红色、开空蓝色、平多橙色、平空紫色；平空表示买回股票、结束或减少空头仓位（回补），部分平仓明确标注。股票下方列当前快照情形的模拟持仓，共同新开、共同退出及持仓分歧与正式日报共用 `focus.stock_groups`。A 股涨停买入不列为可执行信号，显示跳过笔数。没有买卖时仍发一张空信号图。盘中信号可能在收盘时变化；正式日报仍由原 `trader-board-qq.timer` 在次日 08:30 发布。
 
 **美股开盘精选**只做美股（用户 2026-10-23 要求），走同一个发布服务（`trader-preclose@us`），单图标题“美股开盘精选”。
 - 规则（`confidence.robust_board`，预登记 `studies/trader_screens/notes/INTRADAY_I4_PREREG_CN.md`）：开盘后 1 小时的临时 K 线做 5 个收盘情形（价格不变，量取 q50 全天量；价格上下各移 0.5 × ADR × √剩余时间；量取 q10 / q90），7 个系统各跑一遍，5 个情形都出现的买卖才列出。看板本身按“价格不变、量 q50”那一情形算仓位与止损。没有可调参数，对所有交易员通用。
@@ -25,15 +25,17 @@ A 股、港股为北京时间，美股为美东时间（定时器按美东时区
 - 效果：开盘后 1 小时，现有直接跑的买入只有约一半到收盘仍成立（I2、I3）。这条规则的验证见 `studies/trader_screens/reports/INTRADAY_CN.md` 第 5 节。
 - 一次约 2 分钟（重算 7 个系统 × 5 个情形），峰值内存约 1.7 GB；服务实例 `trader-preclose@us` 的内存上限另设为 2000 MB（`trader-preclose@us.service.d/memory.conf`）。
 
+美股单图同时展示跨股票共性：行业 / 概念、交易状态、风险特征，持仓与新开、加仓、减仓、平仓分列；共性要求至少两位交易员、两只股票。量价特征在情形筛选完成后从原始快照计算，盘中累计量只与前 20 个完整日均量比较，不用推演全天量，不把缺量填成模拟值。持仓仍是中位量情形的模拟结果，新动作仅取五情形都成立的部分。门槛与缺失处理见[聚合口径](AGGREGATION_CN.md)。
+
 ## 入口与依赖
 
 - 发布：`research/trader_preclose_to_qq.py`，使用已有 QQ 发送、回执核对和单图渲染实现。
-- 计算：`research/trader_preclose_worker.py`，通过 `/opt/futu-opend/venv/bin/python` 运行；A 股、港股导入主目录，只有美股开盘精选导入 `/opt/opend-us-options/.claude/worktrees/intraday-board/`。结果 `source` 记录代码根目录和 worker 动作。
+- 计算：`research/trader_preclose_worker.py`，通过 `/opt/futu-opend/venv/bin/python` 运行；三个市场均导入主目录 `/opt/opend-us-options/`，美股仍以 `early` 动作调用 `confidence.robust_board`。结果 `source` 记录代码根目录和 worker 动作。
 - 调度：`/etc/systemd/system/trader-preclose-{cn,hk,us}.timer`、`trader-preclose@.service`、`trader-preclose-failure@.service`。
 - 状态与结果：`data/trader-screens/qq/preclose/<cn|hk|us>/<日期>/`；包括交易日历、`board.json`、图片、发布回执和失败通知回执。每个市场的面板缓存隔离在自身 `panel-cache/` 下。
 - 前一天日线由原收盘更新流程准备。缺少上一交易日时本任务拒绝运行，不在盘中自动拉全量历史。
 
-美股开盘精选仍依赖该工作树，必须保留。所有结果带有 `captured_at`、`coverage` 等行情验证元数据。更换工作树或移除代码前先更新发布入口并验证。`research/` 脚本及运行数据按现有约定留在本机，不进入 Git。
+美股情景模型已在 2026-10-27 合入主目录；发布入口于 2026-10-29 移除对旧工作树的依赖。所有结果带有 `captured_at`、`coverage` 等行情验证元数据。更换工作树或移除代码前先更新发布入口并验证。`research/` 脚本及运行数据按现有约定留在本机，不进入 Git。
 
 ```bash
 systemctl status trader-preclose-cn.timer trader-preclose-hk.timer trader-preclose-us.timer
@@ -60,5 +62,5 @@ python3 -m unittest research.test_trader_preclose research.test_trader_board_sch
 
 - 删除可用内存预检，保留 systemd 的内存和 swap 上限。
 - 先查已有发送回执，再查行情日历。已有回执恢复不依赖 OpenD，也不重算、不重发。失败通知先核对发送回执，已确认补发时修正状态、不再告警。
-- A 股、港股切回主目录，避免旧工作树遗漏行情校验和系统更新；美股情景模型继续单独记录来源，不宣称三地已经完全共用代码。
+- 当时 A 股、港股切回主目录，美股仍使用旧工作树；2026-10-29 已将美股发布入口也切回主目录。
 - 手工补发后通过 `run cn`（或对应市场）核对原回执并恢复任务状态；已有回执时只读远端，不补发第二帖。超窗无回执仍拒绝自动发布。

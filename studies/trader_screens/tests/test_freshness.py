@@ -12,6 +12,12 @@ from studies.trader_screens import scan
 
 
 class FreshnessTests(unittest.TestCase):
+    def setUp(self):
+        refresh = mock.patch('studies.trader_options.live.refresh',
+                             return_value=dict(codes=0, rows=0, earnings=0, errors=[]))
+        refresh.start()
+        self.addCleanup(refresh.stop)
+
     def test_live_json_preserves_calendar_verified_update_status(self):
         freshness = dict(market='us', last_before='2026-10-16', missing=['2026-10-19'],
                          method='snapshot', rows=3, actions=0, expected_last_day='2026-10-19',

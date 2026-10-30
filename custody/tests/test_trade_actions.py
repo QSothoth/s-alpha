@@ -120,6 +120,8 @@ class TradeActionTests(unittest.TestCase):
         self.assertEqual(state['orders'][0]['side'], 'SELL_CLOSE')
         self.assertEqual(state['orders'][0]['quantity'], 2)
         self.assertEqual(service.create_job(request, now)['id'], job['id'])
+        restart = service.create_job(request, now, lambda: self.fail('restart read the broker position'))
+        self.assertEqual(restart['id'], job['id'])
 
     def test_broker_takeover_refuses_competing_orders(self):
         context = FakeTradeContext()

@@ -22,8 +22,8 @@ DEFAULT_PYTHON = Path('/opt/futu-opend/venv/bin/python')
 def validate_launch(candidates, baselines, out, until, budget, fee_reserve, now, symbols=None):
     if out.exists():
         raise ValueError('output directory already exists')
-    ranking = json.loads(candidates.read_text())
-    json.loads(baselines.read_text())
+    ranking = json.loads(candidates.read_text(encoding='utf-8'))
+    json.loads(baselines.read_text(encoding='utf-8'))
     if ranking.get('trade_date') != now.date().isoformat():
         raise ValueError('candidate file must be for today')
     select_candidates(ranking.get('top10', []), symbols)
@@ -59,7 +59,7 @@ def wait_ready(unit, ready, timeout):
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         if ready.exists():
-            return json.loads(ready.read_text())
+            return json.loads(ready.read_text(encoding='utf-8'))
         state = subprocess.run(
             ['systemctl', 'show', unit, '--property=ActiveState', '--value'],
             check=False, capture_output=True, text=True).stdout.strip()
@@ -99,7 +99,7 @@ def main(argv=None):
         return 0
     subprocess.run(command, check=True)
     summary['readiness'] = wait_ready(unit, args.out/'ready.json', args.startup_timeout)
-    (args.out/'service.json').write_text(json.dumps({'unit': unit, 'cutoff': cutoff.isoformat()}) + '\n')
+    (args.out/'service.json').write_text(json.dumps({'unit': unit, 'cutoff': cutoff.isoformat()}) + '\n', encoding='utf-8')
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
 

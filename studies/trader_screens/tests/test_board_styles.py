@@ -30,7 +30,7 @@ class BoardStyles(unittest.TestCase):
         self.assertIn('| 交易员 | 流派 | 版本 |', md)
         self.assertIn('| Alfredo Holguin | 卖 Put 收租 |', md)
         self.assertIn('卖 Put（开盘） TSLA Tesla：执行价 400.00（低于现价 9%），10-30 到期', md)
-        self.assertIn('卖 Put TSLA', board.today_text(t))
+        self.assertIn('卖 Put（偏多期权） TSLA', board.today_text(t))
         self.assertIn('权利金是估算值', md)
 
     def test_puts_are_not_overlaps_and_holdings_read_strike_and_expiry(self):

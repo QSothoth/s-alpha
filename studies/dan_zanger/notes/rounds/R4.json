@@ -1,0 +1,9 @@
+{"stage": "entry / stop / setups (directions from earlier traders)", "base": ["r3.json", "chosen"], "ref": "ADD2",
+ "objective": "min_year", "gates": ["placebo", "win<=0.35"], "draws": 50,
+ "candidates": {
+  "STOPLOW": {"stop": "low", "stop_cap": 0.05},
+  "EP": {"setups": ["zbase", "ep"], "ep": {"rvol": 3.0}},
+  "ADR3": {"pool": {"adr": 3.0}},
+  "IDX50": {"filter": "IDX50"},
+  "ADDSIG": {"rule_opts": {"add_signal": "sig_all", "add_signal_frac": 0.5, "add_signal_profit": true}}
+ }}

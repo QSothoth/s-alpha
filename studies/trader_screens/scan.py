@@ -33,7 +33,7 @@ from contextlib import nullcontext
 
 import numpy as np
 
-from . import board, data, screens as S
+from . import aggregation, board, context, data, focus, screens as S
 
 WANTED_N = 8
 
@@ -116,6 +116,7 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
                   if intraday.at_limit_up(code, nm.get(code, ''), p['raw_close'][-1, j], prev[j], last)}
     tail_days, tail_close = p['days'][-61:].copy(), p['close'][-61:].copy()
     market_curve = runner.bounded_history(p['days'], pool_index(F), last)
+    features = context.market_features(p, market) if panel is None else None
     del p, F
     traders = []
     with intraday.shared(panel, market) if panel is not None else nullcontext():
@@ -148,9 +149,11 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
         name, industry = nm.get(code, ''), inds.get(code, '')
         description = f'{name}，所属行业为{industry}。' if name and industry else ''
         stocks[code] = dict(history, description=description)
-    return dict(market=market, mode=mode, data=ds.id, digest=digest, last_day=last, days=days, names=len(codes),
-                state=state, traders=traders, common=overlaps(traders, inds),
-                presentation=dict(window=60, market_curve=market_curve, stocks=stocks))
+    result = dict(market=market, mode=mode, data=ds.id, digest=digest, last_day=last, days=days, names=len(codes),
+                  state=state, traders=traders, common=overlaps(traders, inds),
+                  presentation=dict(window=60, market_curve=market_curve, stocks=stocks))
+    aggregation.attach(result, features)
+    return result
 
 
 def pct(x):
@@ -166,6 +169,18 @@ def show(r):
     span = '今天' if r['days'] == 1 else f"近 {r['days']} 个交易日"
     print(f"\n== {data.NAMES[r['market']]} {r['last_day']} 交易员看板（{r['mode']}）；股票池等权指数"
           f"{'站上' if st['above_ema20'] else '跌破'} 20 EMA、{'站上' if st['above_ema50'] else '跌破'} 50 EMA")
+    print(focus.LEGEND)
+    print('\n== 跨股票共性与分歧')
+    for group in aggregation.groups(r)[:4]:
+        print(f"  {aggregation.title(group)}｜{' · '.join(group['labels'])}｜"
+              + '；'.join(aggregation.lines(group)))
+    print('\n== 共识与分歧')
+    groups = [g for g in focus.stock_groups(r) if g['focus']]
+    for g in groups:
+        print(f"  {board.stock(g)}｜{' · '.join(g['labels'])}｜{focus.holding_text(g)}"
+              f"｜新开/加仓：{focus.event_text(g, True)}｜退出/减仓：{focus.event_text(g, False)}")
+    if not groups:
+        print('  本期没有多人重合或方向分歧。')
     for t in r['traders']:
         a = t['account']
         gate = '' if t['gate_today'] is None else ('；今天市况允许开新仓' if t['gate_today'] else '；今天市况不许开新仓')
@@ -177,24 +192,24 @@ def show(r):
         f = t['forward']
         if f['days']:
             print(f"  冻结日之后 {f['days']} 个交易日：{pct(f['ret'])}，回撤 {f['maxdd']:.0%}，新开 {f['trades']} 笔")
-        print(f"  {span}买入：" + ('无' if not t['buys'] else ''))
+        print(f"  {span}开仓 / 加仓：" + ('无' if not t['buys'] else ''))
         for b in t['buys']:
             if b.get('option'):
                 print(f"    {board.option_buy(b)}")
                 continue
             short = b.get('side', 1) < 0
-            stop = (f" 涨破 {px(b['stop'])} 回补（{(b['stop'] - b['price']) / b['price']:.1%}）" if short else
+            stop = (f" 涨破 {px(b['stop'])} 平空（{(b['stop'] - b['price']) / b['price']:.1%}）" if short else
                     f" 止损 {px(b['stop'])}（{(b['price'] - b['stop']) / b['price']:.1%}）") if b['stop'] else ''
-            print(f"    {b['code']} {b['name'][:10]} {b['setup']} {'卖空' if short else '买'} {px(b['price'])}{stop} "
+            print(f"    {b['code']} {b['name'][:10]} {b['setup']} {focus.action(b, True)} {px(b['price'])}{stop} "
                   f"仓位 {b['weight']:.0%} {b['industry']}" + ('｜涨停，收盘买不到，跳过' if b.get('limit_up') else ''))
         if t['wanted_n']:
             print(f"  另有 {t['wanted_n']} 个买点没做：" + '、'.join(x['code'] for x in t['wanted']))
-        print(f"  {span}卖出：" + ('无' if not t['sells'] else ''))
+        print(f"  {span}平仓 / 减仓：" + ('无' if not t['sells'] else ''))
         for x in t['sells']:
             if x.get('option'):
                 print(f"    {board.option_sell(x)}")
                 continue
-            print(f"    {x['code']} {x['name'][:10]} {board.WHY.get(x['why'], x['why'])}{'' if x['full'] else '（部分）'} {px(x['price'])}，"
+            print(f"    {x['code']} {x['name'][:10]} {focus.action(x, False)} {board.WHY.get(x['why'], x['why'])} {px(x['price'])}，"
                   f"{'空单盈亏' if x.get('side', 1) < 0 else '相对买价'} {pct(x['ret'])}")
         print(f"  持仓 {len(t['holdings'])} 只：" + ('空仓' if not t['holdings'] else ''))
         for h in t['holdings']:
@@ -205,15 +220,6 @@ def show(r):
                   f"{px(h['fill'])} → {px(h['close'])}"
                   f"（{pct(h['ret'])}）仓位 {h['weight']:.0%}，" + board.exit_text(h) + f" {h['industry']}")
     c = r['common']
-    print('\n== 交集')
-    for key, title in (('bought', f'{span}被多人买入'), ('held', '被多人同时持有'), ('shorted', f'{span}被多人卖空'),
-                       ('held_short', '被多人同时做空')):
-        rows = c.get(key, [])
-        print(f"{title}：" + ('无' if not rows else ''))
-        for x in rows[:15]:
-            when = '' if r['days'] == 1 or key.startswith('held') else \
-                '（' + '；'.join(f"{n} {'、'.join(d[5:] for d in ds)}" for n, ds in x.get('days', {}).items()) + '）'
-            print(f"  {x['code']} {x['industry']}：{'、'.join(x['traders'])}{when}")
     print('持仓行业：' + '、'.join(f'{k}({v})' for k, v in c['industries_held']))
     if c['in_cash']:
         print('空仓的：' + '、'.join(c['in_cash']))
@@ -247,7 +253,9 @@ def main(argv=None):
         for m in ('us', 'hk', 'cn'):
             got = sorted(out.glob(f'{m}_*_{args.days}d.json'))
             if got:
-                runs.append(json.loads(got[-1].read_text(encoding='utf-8')))
+                report = json.loads(got[-1].read_text(encoding='utf-8'))
+                context.enrich_cached(report)
+                runs.append(report)
         md = board.render(runs)
         latest = out / 'board.md'
         dated = out / f"board_{max(r['last_day'] for r in runs)}.md"

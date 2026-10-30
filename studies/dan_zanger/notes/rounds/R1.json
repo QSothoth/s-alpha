@@ -1,0 +1,9 @@
+{"stage": "end-to-end draft: stop / volume / exit / leaders / market", "base": ["", "base"], "ref": "base",
+ "objective": "total", "gates": ["placebo", "win<=0.35"], "draws": 50,
+ "candidates": {
+  "PIVOT3": {"stop": "pivot", "stop_pct": 0.03},
+  "VOL15": {"base": {"vol": 1.5}},
+  "NOSLEEP": {"rule_opts": {"exit_signal": "zexit0"}},
+  "LEAD": {"strength": "rs80"},
+  "FAILPASS": {"rule_opts": {"feedback": 3, "risk_low": 0.004}}
+ }}
