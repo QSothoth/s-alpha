@@ -178,6 +178,23 @@ class SecretGuardTests(unittest.TestCase):
         (release / 'outside').symlink_to('/dev/null')
         self.assert_blocked(self.guard('directory', str(release)))
 
+    def test_only_the_skill_links_may_be_staged_as_symlinks(self):
+        (self.repo / 'skills').mkdir()
+        (self.repo / '.claude').mkdir()
+        (self.repo / '.claude' / 'skills').symlink_to('../skills')
+        self.git('add', '.claude/skills')
+        result = self.guard('staged')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.git('rm', '-q', '--cached', '.claude/skills')
+        (self.repo / '.claude' / 'skills').unlink()
+        (self.repo / '.claude' / 'skills').symlink_to('/etc')
+        self.git('add', '.claude/skills')
+        self.assert_blocked(self.guard('staged'))
+        self.git('rm', '-q', '--cached', '.claude/skills')
+        (self.repo / 'other').symlink_to('skills')
+        self.git('add', 'other')
+        self.assert_blocked(self.guard('staged'))
+
     def test_binary_and_zip_blobs_are_blocked_even_after_deletion(self):
         import io
         import zipfile

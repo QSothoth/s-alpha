@@ -31,6 +31,13 @@ class DocsTests(unittest.TestCase):
                 continue
             self.assertNotIn(old, path.read_text(encoding='utf-8'), name)
 
+    def test_agent_skill_dirs_link_to_skills(self):
+        """Claude Code and Codex discover skills through committed relative
+        symlinks to the single skills/ tree."""
+        for link in (ROOT / '.claude' / 'skills', ROOT / '.agents' / 'skills'):
+            self.assertTrue(link.is_symlink(), link)
+            self.assertEqual(str(link.readlink()), '../skills', link)
+
     def test_standard_document_matches_the_code_constants(self):
         text = (ROOT / 'docs' / 'STANDARD.md').read_text(encoding='utf-8')
         for needle in ('%d%%' % round(100 * ev.PRIMARY_FILL.slippage_fraction), '$%.2f' % ev.PRIMARY_FILL.fee_per_contract,

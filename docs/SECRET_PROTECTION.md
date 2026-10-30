@@ -23,6 +23,7 @@ python3 scripts/install_secret_guard.py
 - 新分支检查全部可达历史。删除远端引用不扫描内容。
 - `.env.example` 只豁免文件名限制，仍检查内容。
 - 只接受可扫描的文本文件，拒绝二进制及压缩文件，避免扫描器静默跳过内容。
+- 拒绝软链接；唯一例外是 `.claude/skills`、`.agents/skills` 两条指向 `../skills` 的技能发现链接，路径和目标都要完全一致（`ALLOWED_LINKS`）。
 - 工具缺失、版本不符、Git 错误或扫描失败都会阻止操作。
 - 诊断只报告规则和位置，不输出密钥原文。
 

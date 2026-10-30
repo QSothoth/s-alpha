@@ -4,7 +4,7 @@
 
 ## 按 skill 组织
 
-入口统一放 `skills/<名称>/SKILL.md`，使用说明与外部资料放各自 `references/`；共享代码保留原模块路径，待完成研究留在 `studies/`，已结束研究在 `studies/archive/` 保留结论与固定 Git 版本。使用资料不在代码目录重复维护，跨技能规范留在 `docs/`。新增能力优先扩展所属 skill，不为每个脚本或失败研究单建 skill。
+入口统一放 `skills/<名称>/SKILL.md`，使用说明与外部资料放各自 `references/`；共享代码保留原模块路径，待完成研究留在 `studies/`，已结束研究在 `studies/archive/` 保留结论与固定 Git 版本。使用资料不在代码目录重复维护，跨技能规范留在 `docs/`。新增能力优先扩展所属 skill，不为每个脚本或失败研究单建 skill。`.claude/skills` 与 `.agents/skills` 是指向 `skills/` 的软链接，供 Claude Code / Codex 自动发现；新增 skill 只放 `skills/`，不在软链接目录里建文件（测试强制）。
 
 | 任务入口 | 实现规范 |
 |---|---|
