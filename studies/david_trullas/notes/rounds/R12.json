@@ -1,0 +1,10 @@
+{"stage": "R12 tight entry, far target on the bigger leg, 80/20 split", "base": {"from": "R8"}, "draws": 100,
+ "objective": "fidelity", "select_by": "return", "ledger": ["0000", "2026-05-31"],
+ "fid_gates": {"stop_med_max": 30, "hold_min": 3, "target_min": 40, "min_quarter_ret": 0},
+ "candidates": {
+  "LEG66": {"leg_bars": 120, "be_at": 1.0},
+  "LEG66P": {"leg_bars": 120, "part_frac": 0.8},
+  "LEG50P": {"leg_bars": 120, "leg_frac": 0.5, "part_frac": 0.8},
+  "LEG66P60": {"leg_bars": 60, "part_frac": 0.8},
+  "LEG66PB": {"leg_bars": 120, "part_frac": 0.8, "be_at": 0.5}
+}}

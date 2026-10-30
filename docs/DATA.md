@@ -330,6 +330,10 @@ ZIP SHA256 `94b137be27757635c4271a299c59d14b0750580610435d7b6ccb8ae29c2488e7`；
 - 名单偏差：2020–2022 的“当日前 N”只能在这 81 只里取，会漏掉当时大、后来变小的股票。
 - live：`data/trader-live-hourly/trader-hourly-v1/`（订阅接口只追加，未发布）。
 
+### David Trullás 复刻：QQQ 1 分钟（本机，未发布）
+
+`data/trullas-qqq-k1/QQQ_k1_raw.csv.gz`：QQQ 1 分钟 K（含盘前盘后 04:00–20:00 ET，不复权，time 为 OpenD 的 K 线结束时刻），2024-01-02 → 2026-10-27，708 个交易日、678,600 根，8.5 MB，SHA256 `ed0286a1d3a1ee1cae4e7205ab8acb8e85a3456104eb55d610e97f02e20de0a7`。2026-10-28 `python -m studies.david_trullas.fetch` 取得：QQQ 当天已被 custody 扣过额度，历史 K 线额度前后 109 / 191 未变。用途：代替纳指期货（OpenD 无美股期货行情权限）；2025 选择、2026 Q1–Q3 已评过一次（见 [报告](../studies/david_trullas/reports/REPLICATION_CN.md)），2024 只作指标预热。`k1.npz` 是可重建的缓存。尚未发布 Release。
+
 ### 期权统计的 live 叠加层（未发布）
 
 `data/trader-options-live/us/{iv,stat}/<code>.csv` 与 `earnings.csv`：冻结的期权统计（`data/trader-options-v1/us`，到 2026-10-23，取数说明见 `studies/trader_options/fetch.py`）之后的日子，只为看板上的期权交易员（Holguin 名单约 140 只）补。`python -m studies.trader_screens.scan refresh us`（以及 `run us` 的 live 模式）按需调用 `studies/trader_options/live.py`，走 OpenD、不扣 K 线额度、不定时；读取时先用冻结数据，只从这里补缺的日子。

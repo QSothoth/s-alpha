@@ -1,0 +1,10 @@
+{"stage": "R11 holding time and target size like his", "base": {"from": "R8"}, "draws": 100,
+ "objective": "fidelity", "select_by": "return", "ledger": ["0000", "2026-05-31"],
+ "fid_gates": {"stop_med_max": 30, "hold_min": 3, "target_min": 40, "min_quarter_ret": 0},
+ "candidates": {
+  "BIG100": {"min_range": 100},
+  "BIG150": {"min_range": 150},
+  "TF2": {"tf": 2, "piv": 1, "min_range": 100},
+  "TF5": {"tf": 5, "piv": 1, "min_range": 60},
+  "R35": {"min_range": 60, "tgt": "r", "tgt_r": 3.5}
+}}
