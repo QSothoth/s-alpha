@@ -13,5 +13,5 @@
 | `tests/` | 执行时点与不看未来的单测（合成数据） |
 
 ```sh
-/opt/futu-opend/venv/bin/python -m unittest discover -s studies/david_trullas/tests -t .
+/opt/opend-us-options/.venv/bin/python -m unittest discover -s studies/david_trullas/tests -t .
 ```

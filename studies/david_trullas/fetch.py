@@ -4,7 +4,7 @@ OpenD has no US-futures quote permission here, so NQ/MNQ cannot be fetched. QQQ 
 history quota within 30 days (custody freeze), so re-fetching it costs no new quota: `fetch` refuses to run
 otherwise. Output: data/trullas-qqq-k1/QQQ_k1_raw.csv.gz (time ET, open, high, low, close, volume), unadjusted.
 
-    /opt/futu-opend/venv/bin/python -m studies.david_trullas.fetch 2024-01-02 2026-10-27
+    /opt/opend-us-options/.venv/bin/python -m studies.david_trullas.fetch 2024-01-02 2026-10-27
 """
 import csv
 import gzip

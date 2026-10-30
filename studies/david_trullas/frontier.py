@@ -2,7 +2,7 @@
 +-10 minutes, selection ledger <= 2026-05-31 and validation ledger after) next to its seven quarterly returns.
 Report only, never used to choose. Writes reports/frontier.json.
 
-    /opt/futu-opend/venv/bin/python -m studies.david_trullas.frontier
+    /opt/opend-us-options/.venv/bin/python -m studies.david_trullas.frontier
 """
 import json
 import os

@@ -1,6 +1,6 @@
 """David Trullas replication driver (see notes/RULES_CN.md, notes/PREREG_R*.md).
 
-    PY=/opt/futu-opend/venv/bin/python
+    PY=/opt/opend-us-options/.venv/bin/python
     $PY -m studies.david_trullas.replicate three  [round-json]   # three-layer comparison on his ledger
     $PY -m studies.david_trullas.replicate round R2              # one pre-registered round (selection quarters)
     $PY -m studies.david_trullas.replicate validate R6           # chosen config of a round, 2026 quarters, once
