@@ -20,7 +20,7 @@ def action(row, opening):
 
 def trader_name(name):
     return {'Martin Luk': 'Martin', 'Christian Flanders': 'Flanders', 'Clement Ang': 'Clement',
-            'Oliver Kell': 'Kell', 'Mark Minervini': 'Minervini', 'Marios Stamatoudis': 'Marios',
+            'Oliver Kell': 'Kell', 'Mark Minervini': 'Minervini', 'Marios Stamatoudis': 'Marios', 'Dan Zanger': 'Zanger',
             'Evan Medeiros': 'Evan', 'Alfredo Holguin': 'Holguin'}.get(name, name)
 
 
