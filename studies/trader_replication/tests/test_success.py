@@ -1,4 +1,4 @@
-"""The seven success rules on hand-made facts, and the top-two removal on a tiny entry list."""
+"""The success rules on hand-made facts, and the top-two removal on a tiny entry list."""
 import unittest
 
 import numpy as np
@@ -32,10 +32,20 @@ class SuccessTests(unittest.TestCase):
     def test_one_trade_a_week_floor(self):
         self.assertFalse(verdict(dict(CARD, per_year=40), per_year=40)['count'])
 
-    def test_count_needs_a_source_and_his_number(self):
-        self.assertFalse(verdict(dict(CARD, source=''))['count'])
-        self.assertFalse(verdict(per_year=140)['count'])                  # 40% over his 100
-        self.assertTrue(verdict(dict(CARD, per_year=(80, 150)), per_year=140)['count'])
+    def test_his_count_is_only_reported(self):
+        self.assertTrue(verdict(dict(CARD, source=''))['count'])
+        self.assertTrue(verdict(per_year=140)['count'])                   # 40% over his 100
+        why = dict((r, w) for r, _, w in S.judge(CARD, dict(OURS, per_year=140)))['count']
+        self.assertIn('off 40%', why)
+
+    def test_only_a_worse_edge_fails_behaviour(self):
+        card = dict(CARD, behaviour=dict(avg_win=.10, avg_loss=-.02, days_win=10.0))
+        base = dict(avg_win=.10, avg_loss=-.02, days_win=10.0)
+        self.assertTrue(verdict(card, behaviour=dict(base, avg_win=.40))['behaviour'])
+        self.assertFalse(verdict(card, behaviour=dict(base, avg_win=.05))['behaviour'])
+        self.assertTrue(verdict(card, behaviour=dict(base, avg_loss=-.01))['behaviour'])
+        self.assertFalse(verdict(card, behaviour=dict(base, avg_loss=-.04))['behaviour'])
+        self.assertFalse(verdict(card, behaviour=dict(base, days_win=20.0))['behaviour'])   # holding has no better side
 
     def test_his_year_within_log_point_three(self):
         self.assertTrue(verdict(years={'2024': .5})['years'])          # log(2 / 1.5) = 0.29
@@ -43,7 +53,7 @@ class SuccessTests(unittest.TestCase):
 
     def test_validation_and_best_two(self):
         self.assertFalse(verdict(validate_total=-.2)['validate'])
-        self.assertFalse(verdict(total_drop2=.05)['not two'])
+        self.assertTrue(verdict(total_drop2=.05)['not two'])              # reported only
 
     def test_drop_top_removes_the_two_best_entries(self):
         A = dict(days=np.array(['2024-01-02', '2024-01-03']), codes=np.array(['US.A', 'US.B', 'US.C']))

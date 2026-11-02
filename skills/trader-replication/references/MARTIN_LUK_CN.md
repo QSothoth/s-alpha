@@ -2,6 +2,8 @@
 
 USIC 2024 +283%、2025 +969.8% 的香港交易员，美股动量波段，紧止损、低胜率（2025 年 209 胜 731 负）。完整过程与数字见 [REPLICATION_CN](../../../studies/martin_luk/reports/REPLICATION_CN.md)，逐轮记录见 [ROUNDS_CN](../../../studies/martin_luk/notes/ROUNDS_CN.md)，R1–R18 的旧结论见 [FINAL_CN](../../../studies/martin_luk/reports/FINAL_CN.md)。
 
+> 2026-11-01 起，这个例子按 skill v2 的“大赢家优先”继续，反思见 [METHOD_CN 第 10 节](METHOD_CN.md)。下面记录的是 v1 阶段的做法和结果。
+
 ## 运行
 
 ```bash
@@ -71,6 +73,8 @@ $PY -m unittest studies.martin_luk.tests.test_replicate
 | 系统实际买到他的票 | 5/42、0/40 | |
 
 ## 学到的，换下一个交易员时用
+
+以下是这个例子的线索，换人时先重新量，不当规则搬用。
 
 1. 先建台账再优化：没有台账时 R11–R18 优化出来的流程只命中他 5% 的买入，收益检验看不出来。
 2. 宽度上限要从他的工作量推（扫描几百只、名单几十只、每天三四笔），第一次定窄了两轮都没有候选可选。
