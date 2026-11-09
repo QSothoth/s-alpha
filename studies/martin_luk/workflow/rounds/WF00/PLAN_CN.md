@@ -48,6 +48,18 @@
 
 以上都配合成数据单测。原有 G0–G6 函数保留；`allowed_actions` 改为 G0、G1 仍阻断，G2、G3 不再阻断下游。旧轮次兼容逻辑不变。
 
+### 1.4 `datasets.py`：数据集白名单
+
+- `check(config)`：对 `config.datasets` 登记的每个数据集逐项核对，任一不符返回失败并写明原因：
+  - 本地路径存在；
+  - `CHECKSUMS.sha256` 本身的 SHA 与登记值相同，且其中每个文件逐个校验通过；
+  - schema 一致：文件清单、各文件列名与类型（读 csv/csv.gz 表头和前若干行推断）、市场、日期范围、标的数。
+- `scan(config, files | git_diff)`：静态扫描给定代码或本轮 git diff 里出现的 `data/<名字>` 路径，不在白名单、也不是 `studies.trader_data` 派生缓存的，判失败。
+- CLI：`.venv/bin/python -m studies.trader_replication.datasets check|scan --config <路径> [--git-diff]`。
+- 单测（合成数据）需覆盖四种情况：改一个字节、删一列、多一个文件、引用未登记路径，都必须被拦下。
+- **起草白名单**：用 `sys.addaudithook` 记录 `open` 事件，重放第 3 节注册表里的全部系统，列出它们实际读到的 `data/` 下文件，按数据集归并。预计是 trader-data-v1、trader-options-v1、trader-hourly-v1、martin-luk-benchmarks-v1，再加 `studies.trader_data` 的派生缓存；超出这四个的单独列出并写明是哪个系统读的。
+- 据此写 `config.datasets` 草案，含 schema 与 SHA，`approved_by_user: null`。**不许为了凑白名单改数据、补数据或新建数据集**；评测输入（`notes/trades.csv`、`notes/legs_frozen.json`）也登记 SHA，并标明只给评测用。
+
 ## 2. 分行情配置
 
 - 在 `config.py` 中，各线配置支持 `common` + `by_state.<状态>` 两部分。
@@ -68,6 +80,7 @@
   - 2026-11-08：可以放入单看是负向、但更像他的人性条件；
   - 2026-11-05：一套画像套所有行情不算拟合，要分行情，并且对得上他的原话、作为策略讲得通；
   - 2026-11-09：选股和交易要拆开各自做成立，再合并。
+- `datasets`：按 1.4 起草，等用户确认后由用户填 `approved_by_user`；
 - `hard_lines`：每年不亏、胜率 ≤35%、每年 ≥52 笔、行为 ±20%、收益 |log| ≤0.3。
 - `accept`：各线接受条件（+3 段等）。
 - `checkpoint`：检查点规则（每次运行跑几轮由 workflow 参数定，不写在这里）。
