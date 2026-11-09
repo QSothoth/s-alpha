@@ -270,6 +270,28 @@ def cross_stock(run):
     return lines + ['', '</details>', '']
 
 
+def candidate_stock(row):
+    name = (row.get('name') or '名称未缓存').strip()
+    industry = row.get('industry') or '行业未缓存'
+    return f"{name}（{ticker(row['code'])}；{industry}）"
+
+
+def research_candidates(run):
+    pool = run.get('martin_candidates')
+    if not pool:
+        return []
+    lines = ['### Martin Luk 候选池 · 研究观察版、未验证', '',
+             f"观察日期 {pool['asof']}；共 {pool['count']} 只，展开前 {min(5, pool['count'])} 只。"
+             '完整名单及因子数值见附带 JSON 的 martin_candidates。', '', pool['note'], '']
+    for row in pool['candidates'][:5]:
+        lines += [f"- **{candidate_stock(row)}**｜研究观察版、未验证｜排名参考 {row['rank']}："
+                  f"{row['ranking_reason']}。{row['reason']}"]
+    if not pool['candidates']:
+        lines += ['当晚没有可展示的候选。' if pool['status'] != 'unavailable'
+                  else '输入不足，未生成完整候选名单。']
+    return lines + ['']
+
+
 def market(r):
     days = r['days']
     st = r['state']
@@ -298,6 +320,7 @@ def market(r):
     if r.get('provisional'):
         lines += ['<details><summary>盘中动作、价格与执行时点</summary>', '']
         lines += orders(r) + confidence(r) + ['</details>', '']
+    lines += research_candidates(r)
     lines += [f"<details><summary>交易员账户概览（{len(r['traders'])} 位）</summary>", '']
     lines += table(['交易员', '流派', '版本', '仓位', '市况', '账户', '冻结后', '今天' if days == 1 else f'近 {days} 天'], [
         [t['name'], t.get('style') or '—', f"{t['version']}（{STATUS[t['status']]}）", pct(t['account']['exposure'], False), gate_text(t),

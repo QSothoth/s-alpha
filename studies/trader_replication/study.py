@@ -1,8 +1,9 @@
 """The generic replication loop of skills/trader-replication, shared by every trader study.
 
-A trader's study module defines a `Study` subclass with its own stage masks and one `build(A, cfg, trace)` that
-turns a configuration dict into (entries, rules, signal mask, placebo pool) on a market's daily arrays `A`; rounds
-are data (notes/rounds/R*.json).  Everything else is here and the same for everybody:
+A new trader implements arrays, universe, ordered nightly signal and trade; shared build composes entries,
+regime and allocation. Existing build overrides remain legacy. Both return (entries, rules, mask, pool).
+Rounds are data (notes/rounds/R*.json); new files validate their layer and upstream gate evidence before loading
+market data. Random-entry results remain diagnostics; frozen legacy rounds retain their historical selectors:
 
     round      run notes/rounds/<name>.json: candidates on top of a base configuration, each against same-pool
                random entry, ledger fidelity (signal-day hits and trades actually bought) and his behaviour; the
@@ -21,13 +22,15 @@ first case; `studies.trader_replication.martin` adapts it and checks this module
 """
 from __future__ import annotations
 
-from dataclasses import replace
+from dataclasses import fields, replace
 import json
 from pathlib import Path
 
 import numpy as np
 
 from . import fidelity as F, ledger as L, negations as N, system as Y
+from . import allocation, regime as RG
+from .config import Config, plain, validate_switch
 
 STEPS = ('no_signal', 'no_entry', 'market_filter', 'daily_cap', 'no_room', 'traded')
 COSTS = {'us': (.0005, .0005), 'hk': (.0016, .0016), 'cn': (.00076, .00126)}
@@ -131,7 +134,7 @@ def gap(ours, his):
 
 
 class Study:
-    """One trader.  Subclasses set the paths and implement arrays() and build()."""
+    """One trader's market-only facade. Existing build overrides remain legacy."""
     id = ''
     name = ''
     ledger: Path = None              # notes/trades.csv
@@ -151,10 +154,124 @@ class Study:
         live (default: TRADER_DATA_MODE)."""
         raise NotImplementedError
 
-    def build(self, A, cfg, trace=None):
-        """(entries, rules, mask, pool); trace (a dict) receives the entries after the stop rule ('raw'), the
-        market filter ('filtered') and the daily cap ('capped'), plus any named stage masks for diagnose."""
+    allocation_defaults = dict(cooldown=10, daily_cap='fills')
+    entry_timing = 'next_open'
+    config_layers = {}
+
+    @property
+    def legacy(self):
+        return type(self).build is not Study.build
+
+    def universe(self, A, cfg):
+        """Day x stock eligibility, known before the session; traders normally override."""
+        return lag(np.isfinite(A['close']) & (A['close'] > 0))
+
+    def signal(self, A, pool, cfg):
+        """Ordered codes for EVERY calendar night (including empty nights and warmup)."""
         raise NotImplementedError
+
+    def entries(self, A, picks, cfg):
+        """Default long execution: next open with the prior night's low, or same-night close.
+
+        Intraday stop touches are conservative same-day exits. No next-day low
+        determines an opening stop. Overrides consume these exact nominations.
+        """
+        options = cfg['trade']
+        timing = options.get('entry', self.entry_timing)
+        if timing not in ('next_open', 'close'):
+            raise ValueError('entry must be next_open or close')
+        col = {str(code): j for j, code in enumerate(A['codes'])}
+        out = [[] for _ in A['days']]
+        for night, codes in picks.items():
+            day = night+1 if timing == 'next_open' else night
+            if day >= len(out):
+                continue
+            for rank, code in enumerate(codes):
+                j = col[code]
+                fill = float(A['open' if timing == 'next_open' else 'close'][day, j])
+                stop = float(A['low'][night, j])
+                if options.get('stop_pct') is not None:
+                    stop = fill*(1-options['stop_pct'])
+                if not (np.isfinite(fill) and fill > 0 and np.isfinite(stop) and 0 < stop < fill):
+                    continue
+                out[day].append((rank, j, 1, fill, stop, 'signal',
+                    stop if timing == 'next_open' and A['low'][day, j] <= stop else None))
+        return out
+
+    def trade(self, cfg):
+        options = plain(cfg['trade'])
+        known = {f.name for f in fields(Y.Rules)}
+        values = {k: v for k, v in options.items() if k in known}
+        values.update(options.get('rule_opts', {}))
+        buy_cost, sell_cost = COSTS[options.get('_market', 'us')]
+        values.setdefault('buy_cost', buy_cost)
+        values.setdefault('sell_cost', sell_cost)
+        if options.get('entry', self.entry_timing) == 'next_open':
+            values.setdefault('intraday_kinds', ('signal',))
+        return Y.Rules(**values)
+
+    def regime(self, A, cfg):
+        switch = cfg['switch']
+        if A.get('market') not in self.home or not ('spec' in switch or switch.get('controls')):
+            return None
+        A['_regime_spec'] = plain(switch.get('spec', {}))
+        return RG.states(A, A['_regime_spec'])
+
+    def signal_mask(self, A, picks):
+        mask = np.zeros(A['close'].shape, bool)
+        col = {str(code): j for j, code in enumerate(A['codes'])}
+        for night, codes in picks.items():
+            for code in codes:
+                mask[night, col[code]] = True
+        return mask
+
+    def allocate(self, A, picks, cfg, *, entries, rules):
+        options = dict(self.allocation_defaults, **plain(cfg['allocate']))
+        selected = allocation.nominations(picks, cooldown=options['cooldown'])
+        timing = cfg['trade'].get('entry', self.entry_timing)
+        col = {str(code): j for j, code in enumerate(A['codes'])}
+        admitted = {t: {col[c] for c in cs} for t, cs in selected.items()}
+        entries = [[e for e in row if e[1] in admitted.get(d-(timing == 'next_open'), set())]
+                   for d, row in enumerate(entries)]
+        switch = cfg['switch']
+        controls = switch.get('controls', ()) if 'regime' in A else ()
+        if controls:
+            validate_switch(switch, (self.root/'notes/RULES_CN.md').read_text())
+            entries = allocation.switch_entries(A, entries, controls)
+        if options['daily_cap'] == 'offers':
+            entries = allocation.offers(entries, options.get('max_new', 0))
+        return entries, allocation.policy(rules, options)
+
+    def build(self, A, cfg, trace=None):
+        """Compose the facade; signal is the only source of ordered nominations."""
+        cfg = Config(cfg, self.config_layers)
+        runtime = plain(cfg)
+        runtime['trade']['_market'] = A.get('market', 'us')
+        cfg = Config(runtime, self.config_layers)
+        for key in ('_regime_spec', 'regime', 'allocation_max_open', 'allocation_rotate', '_facade_trace'):
+            A.pop(key, None)
+        pool = self.universe(A, cfg)
+        if pool.shape != A['close'].shape or pool.dtype != bool:
+            raise ValueError('universe must be a day x stock boolean array')
+        picks = self.signal(A, pool, cfg)
+        if set(picks) != set(range(len(A['days']))):
+            raise ValueError('signal must contain every calendar night, including empty nights')
+        known = set(map(str, A['codes']))
+        for row in picks.values():
+            if not isinstance(row, (list, tuple)) or len(set(row)) != len(row) or set(row)-known:
+                raise ValueError('signal must return ordered, unique, known codes')
+        states = self.regime(A, cfg)
+        if states is not None:
+            A['regime'] = states['label']
+            A['regime'] = self.named(A, pool, 'regime')
+        entries, rules, mask = self.entries(A, picks, cfg), self.trade(cfg), self.signal_mask(A, picks)
+        if trace is not None:
+            trace.update(raw=entries, filtered=entries, picks={t: list(row) for t, row in picks.items()})
+            trace.update(A.get('_facade_trace', {}))
+        entries, rules = self.allocate(A, picks, cfg, entries=entries, rules=rules)
+        if trace is not None:
+            trace['capped'] = entries
+        return entries, rules, mask, pool
 
     def market_gate(self, A, cfg):
         """Per day: whether the market filter lets new longs in that day (None: no filter)."""
@@ -162,6 +279,7 @@ class Study:
 
     daily_cap = 'engine'             # 'engine': the engine counts successful new longs (Rules.max_new_long);
                                      # 'build': build() keeps the day's first max_new entries (Martin R74)
+    trail_always_active = False      # the named exit signal enforces the displayed trail before engine arming
 
     def ep_mask(self, A, cfg):
         """Days x codes: his EP signal, for studies whose entries do not carry the kind 'ep' (None: by kind)."""
@@ -186,6 +304,10 @@ class Study:
 
     def named(self, A, pool, name):
         """Day arrays the engine reads by name (exit / trim signals, risk scales) that A does not hold."""
+        if name == 'regime':
+            if name in A:
+                return A[name]
+            return RG.states(A, A['_regime_spec'])['label']
         raise KeyError(name)
 
     def pool_dependent(self, name):
@@ -248,7 +370,8 @@ class Study:
 
     def px(self, A):
         return dict(open=A['open'], high=A['high'], low=A['low'], close=A['close'], dates=A['days'], codes=A['codes'],
-                    kind_pools=A.get('kind_pools'))
+                    kind_pools=A.get('kind_pools'),
+                    **{k: A[k] for k in ('allocation_max_open', 'allocation_rotate') if k in A})
 
     def ema_inputs(self, A, pool, rules):
         """Every array the rules read by name, built on demand through named()."""
@@ -257,7 +380,9 @@ class Study:
                  rules.risk_scale, rules.trail_alt_days, rules.unit_adr}
         names |= {o.get('trail', '') for o in rules.management_by_kind.values()}
         names |= set(rules.short_targets)
-        names |= {getattr(rules, k, '') for k in ('add_signal', 'trim_day_signal')}
+        names |= {getattr(rules, k, '') for k in ('add_signal', 'trim_day_signal', 'proof_add_signal',
+                                                'proof_confirm_signal', 'rotate_score')}
+        names |= {k for k in ('regime', 'allocation_max_open', 'allocation_rotate') if k in A}
         for k in names:
             if k and (k not in A or self.pool_dependent(k)):
                 A[k] = self.named(A, pool, k)
@@ -363,19 +488,39 @@ class Study:
         """Run notes/rounds/<name>.json: {"stage", "base": [report, key | "chosen"], "ref", "objective",
         "gates", "candidates": {key: changes}, "market"}; results in reports/<name lower-case>.json.  Candidates
         that fail a gate or score below the reference go into the negation register."""
-        spec = json.loads((self.rounds / f'{name}.json').read_text(encoding='utf-8'))
+        from . import pipeline
+        path = self.rounds / f'{name}.json'
+        spec = json.loads(path.read_text(encoding='utf-8'))
         report, key = spec['base']
-        base = merged(self.config(report, key), spec.get('base_change', {}))   # a declared correction of the base
-        cfgs = {k: merged(base, v) for k, v in spec['candidates'].items()}
+        original = self.config(report, key)
+        legacy_paths = json.loads(Path(__file__).with_name('legacy_rounds.json').read_text())
+        relative = str(path.resolve().relative_to(Path(__file__).resolve().parents[2])) \
+            if path.resolve().is_relative_to(Path(__file__).resolve().parents[2]) else ''
+        legacy = legacy_paths.get(relative) == pipeline.sha(path) and 'layer' not in spec
+        gate_results = None
+        if not legacy:
+            pipeline.validate_round(spec, original)
+            if not spec.get('pipeline'):
+                raise ValueError('new round requires a pipeline evidence JSON path')
+            gate_results = json.loads((self.root/spec['pipeline']).read_text())
+            original = plain(Config(original, self.config_layers))
+        validation = pipeline.validate_round(spec, original, legacy=legacy, gates=gate_results)
+        merge = merged if legacy else pipeline._merge
+        base = merge(original, spec.get('base_change', {}))   # a declared correction of the base
+        cfgs = {k: merge(base, v) for k, v in spec['candidates'].items()}
         ref = spec['ref']
         cfgs[ref] = base
         objective = spec.get('objective', 'min_2024_2025')
-        gates = spec.get('gates', ['placebo', 'hits'])
+        gates = spec.get('gates', ['placebo', 'hits'] if legacy else ['hits'])
+        if not legacy and 'placebo' in gates:
+            raise ValueError('random baselines are diagnostics, not new-round vetoes')
         market = spec.get('market', self.home[0])
         A = self.arrays(market)
         ls, lv = self.ledger_sets(A)
         out = dict(name=name, stage=spec.get('stage', ''), base=spec['base'], configs=cfgs, full={},
                    objective=objective, gates=gates, market=market)
+        if not legacy:
+            out['pipeline'] = validation
         draws = spec.get('draws', self.screen_draws)
         for k, cfg in cfgs.items():
             st, _ = self.evaluate(A, cfg, ls, lv, placebo=draws)

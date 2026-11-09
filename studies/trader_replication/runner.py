@@ -7,7 +7,7 @@ and the open positions with their exit levels read straight from the engine (sto
 partial, next add).  `check` compares the replay cut at the freeze day with the comparison report (frozen release,
 same code): on live data the part up to the freeze day must not move.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.runner us [live|frozen] [system ...]
 """
 from __future__ import annotations
@@ -64,7 +64,7 @@ def forward(curve, dates, trades, freeze):
 def reference(system, market):
     """The comparison report's numbers for this system, when they were made with the same configuration and the
     same code (compare.code_digest); otherwise None (no reference: the check is 'missing', never 'passed')."""
-    path = OUT / 'compare.json'
+    path = getattr(system, 'comparison', None) or OUT / 'compare.json'
     if not path.exists():
         return None
     from .compare import code_digest, config_digest
@@ -145,15 +145,17 @@ def run(system, market, mode=None, days=1, A=None):
         s, j = t['state'], col[t['code']]
         seen = np.flatnonzero(np.isfinite(A['close'][:T + 1, j]))   # the engine's valuation: the last close it has
         close = float(A['close'][seen[-1], j]) if len(seen) else t['fill']
-        line = ema.get(s['trail']) if s['trail'] else None
+        trail_name = '' if s.get('stop_ema_only') else s['trail']
+        line = ema.get(trail_name) if trail_name else None
         R = abs(t['fill'] - t['stop'])
         sd = t['side']
         holdings.append(dict(code=t['code'], entry_day=t['entry'], setup=t['kind'], side=sd, fill=t['fill'],
                              close=close, close_day=str(dates[seen[-1]]) if len(seen) else t['entry'],
                              tradable=bool(np.isfinite(A['close'][T, j])), ret=sd * (close / t['fill'] - 1),
                              r_now=sd * (close - t['fill']) / R if R else None,
-                             stop=s['stop'], trail=float(line[T, j]) if line is not None and s['armed'] else None,
-                             trail_name=s['trail'], next_trim=s['next_trim'], trim_frac=s['trim_frac'],
+                             stop=s['stop'], trail=float(line[T, j]) if line is not None and
+                             (s['armed'] or st.trail_always_active) else None,
+                             trail_name=trail_name, next_trim=s['next_trim'], trim_frac=s['trim_frac'],
                              next_add=s['next_add'], day_trim_pending=s['day_trim_pending'] and sd > 0,
                              trim_day=s['trim_day'], trim_day_frac=s['trim_day_frac'],
                              trim_day_profit=s['trim_day_profit'], next_target=s.get('next_target'),
@@ -194,7 +196,9 @@ def main(argv):
     market = argv[1]
     mode = argv[2] if len(argv) > 2 else None
     names = argv[3:]
-    for x in SY.all_():
+    for x in SY.all_(versions=True):
+        if market not in x.markets:
+            continue
         if names and x.id not in names:
             continue
         r = run(x, market, mode)

@@ -3,7 +3,7 @@ research module with the longs of a research report, on the selection segment on
 unopened until the single validation).  Same evaluation, gates (v2) and negation register as the registered
 traders' short rounds; nothing is written to systems.py.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.sean_ryan.shorts_round S1
 """
 from __future__ import annotations

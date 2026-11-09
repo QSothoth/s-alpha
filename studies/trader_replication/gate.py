@@ -90,16 +90,23 @@ def decisions(study, A, cfg, k):
     """Everything the engine consumes up to row k: the entries in their order with every field, the account
     rules, the arrays the rules read by name, the signal mask and the placebo pools (the whole and each kind's)."""
     import dataclasses
-    entries, rules, mask, pool = study.build(A, cfg)
+    trace = {}
+    entries, rules, mask, pool = study.build(A, cfg, trace)
     ema = study.ema_inputs(A, pool, rules)
     ent = [[_norm(tuple(e)) for e in lst] for lst in entries[:k + 1]]
     kinds = A.get('kind_pools') or {}
     ema = dict(ema, **{f'kind_pool:{n}': v for n, v in kinds.items()})      # each kind's placebo pool
+    if 'picks' in trace:
+        ema['signal_order'] = np.array([repr(trace['picks'][d]) for d in range(len(A['days']))])
     return ent, _norm(dataclasses.asdict(rules)), {n: v[:k + 1] for n, v in ema.items()}, mask[:k + 1], pool[:k + 1]
 
 
 def check_lookahead(study, cfg, market, full=None, cuts=CUTS):
-    """Decisions up to each cut day with the full panel vs with the panel cut after that day."""
+    """Compare decisions with the full panel and the study's `upto` panel.
+
+    With the shared daily loader, `upto` slices after forward adjustment; this does not test
+    whether later corporate actions change earlier adjusted prices or decisions.
+    """
     A = full if full is not None else study.arrays(market)
     out = []
     for cut in cuts:

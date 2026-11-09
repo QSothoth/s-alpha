@@ -6,7 +6,7 @@ USIC 2024 +283%、2025 +969.8% 的香港交易员，美股动量波段，紧止�
 
 ```bash
 cd /opt/opend-us-options
-PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
 # 第一阶段（逐环节像不像 + 超额）与第二阶段前半（带入规则）：按顺序，后一轮读前一轮报告里的 chosen
 for r in r19 r20 r21 r21b r22 r22b r23 r23b r23c r24 r24b r25 r26 r27 r27b r28 \
          r29 r30 r31 r32 r33 r34 r35 r36 r37 r38 r39 r40 r41; do
@@ -81,3 +81,14 @@ $PY -m unittest studies.martin_luk.tests.test_replicate
 7. 最终数字要做稳健性：本例 2024 年的 +288% 主要来自 1–2 月开的三笔，晚两三个月开始跑只剩 +6%～+25%；每天笔数差一笔，全区间差几倍。
 8. 在一个市场调出来的高杠杆结构不能直接搬到别的市场（港股、A 股都亏）。
 9. 前期（R1–R28）一再得出“他的策略不行”，是方法的问题，不是他的问题：没量保真度就下结论，用平均收益和每笔 R 显著性去否决凸性策略，环节脱离上下文单测，只审查好结果。第二阶段补齐各环节后才逼近他的 2024 年。立场与做法已写进根 AGENTS.md 和 METHOD_CN 第 0 节。
+
+## 选股阶段（IE1–IE42，2026-11-02～05）
+
+R74 之后转为只做选股：每晚从过滤池（约 67 只，全市场约 1045 只）挑最多 3 只新名，看能不能在他的大赢家主升浪里点到他的票。研究在 gap-review 工作区（`studies/martin_luk/notes/PREREG_IE*_CN.md`、`studies/trader_replication/reports/gap_review/strong_continue_ie*_CN.md`）。下面是 METHOD_CN 第 11.6 节保留的历史**信号层**口径，不能当作真实账户成绩。
+
+- 过滤池已经装得下他的票（2026 年 17 段全进过池），差距在“从池里挑哪 3 只、什么时候挑”。
+- IE42（统一指标库 v1.1 117 项、共同画像 7 项 + 回调期 2–3 项修正，只拟合 2024–25，拟合目标仍是旧窗口）：主升浪覆盖 2024 7/9、2025 12/16，2026 验证 9/17，底版 IE9 是 11/17。
+- 精度（买后 60 日涨过 30% 的比例）45.8%，与过滤池平均 46.0% 持平：画像还没有挑出比池子更好的票。
+- 2024–25 拟合越高、2026 往往越差（IE35 拟合 93% 时 2026 最差）；画像里区间锯齿、讲不通的项多半是在背那两年。
+
+2026-11-07 起按结果复刻：主尺子是 METHOD_CN 第 11.0–11.5 节的真实成交、资金占用、窗口内利润与 lot 加权 capture。唯一段表是 `studies/martin_luk/notes/legs_frozen.json`（48 段，9/22/17；旧 42/46 与非交易日锚点差异见表及报告）。master 选股作为正式结果基准。六组 IE47/master × C062/S1/K2 的重算、H/O 两本账与“只保留 H”的描述反事实见 `studies/martin_luk/reports/Y1_CN.md`，工件在 `reports/y1_work/`。这次只建立尺子和基准，没有修改画像、执行、R74+S7 登记或看板；未来峰值只用于评测。

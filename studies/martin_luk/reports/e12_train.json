@@ -1,0 +1,4483 @@
+{
+ "preregistered_sha256": "559b61ffc4c0d47c00e1135ac3282efcd706ed66313b632231814d4391c6dc1a",
+ "source_sha256": {
+  "studies/martin_luk/notes/PREREG_E12_CN.md": "559b61ffc4c0d47c00e1135ac3282efcd706ed66313b632231814d4391c6dc1a",
+  "studies/martin_luk/reports/ie47_profile.json": "aef5f0a685c12e5fc12ce0708676f331bf14995a5a056f90a489375017524d1a",
+  "studies/martin_luk/ie47_e1.py": "c17546781e288e1837877259945f9e70f608225cc8a5acddf49436e5cbcabaed",
+  "studies/martin_luk/e10_research.py": "20c03beb8cceeab970efdda4660288b44a475c19a5e0c12883e202a2abfe2f00",
+  "studies/martin_luk/e12_research.py": "1eda9396e7fc198e91ddc8f607bf65eefcdabc9a564cfe8810924547dd6cd8eb",
+  "studies/trader_replication/system.py": "c82f67c85ed46f46ce1b35be76b879ad4a9bc0304ea3f311c649c247cb1e23b6",
+  "studies/martin_luk/e1_research.py": "cc76c6f7e51e1741fb923f381a319a1ad7e18bca01f694c695609d44ff612cd9"
+ },
+ "span": [
+  "2024-01-02",
+  "2025-12-31"
+ ],
+ "runs": {
+  "K2": {
+   "total": 0.5964217284491817,
+   "cagr": 0.26410402665994925,
+   "maxdd": 0.28683357455708003,
+   "by_year": {
+    "2024": 0.3904087346401628,
+    "2025": 0.14816721779465447
+   },
+   "trades": 913,
+   "open_at_end": 1,
+   "per_year": 457.4393004115226,
+   "win": 0.15005476451259583,
+   "avg_win": 0.3165680341718474,
+   "avg_loss": -0.044442059277326654,
+   "payoff": 7.1231630423874925,
+   "days_win": 11.562043795620438,
+   "days_loss": 1.8801546391752577,
+   "median_days_win": 10.0,
+   "pnl_top10": 0.9766196904516424,
+   "stop_width": 0.03067734212347343,
+   "entry_weight": 0.06366756195769346,
+   "open_mean": 6.075697211155378,
+   "candidates_day": 2.0,
+   "mean_days": 3.3329682365826945,
+   "annual": {
+    "2024": {
+     "n": 456,
+     "wins": 68,
+     "losses": 388,
+     "win": 0.14912280701754385,
+     "avg_win": 0.12586709670079094,
+     "avg_loss": -0.031095929281049525,
+     "exp_r": 0.2584885608398198,
+     "opened": 456,
+     "mean_days": 3.4649122807017543,
+     "days_win": 12.191176470588236,
+     "days_loss": 1.9355670103092784,
+     "maxdd": 0.1456636866525438,
+     "ret": 0.3904087346401628,
+     "gap": 0.23232356145819694,
+     "gap_parts": {
+      "per_year": 0.07512063046810812,
+      "avg_win": 0.1754087319141825,
+      "avg_loss": 0.03587953767144008,
+      "win": 0.6428853457790571
+     },
+     "avg_win_first_shares": 0.2514829960528234,
+     "avg_loss_first_shares": -0.03899279937355446
+    },
+    "2025": {
+     "n": 457,
+     "wins": 69,
+     "losses": 388,
+     "win": 0.15098468271334792,
+     "avg_win": 0.18069613707010887,
+     "avg_loss": -0.03910681579567854,
+     "exp_r": 0.30064281123567665,
+     "opened": 458,
+     "mean_days": 3.201312910284464,
+     "days_win": 10.942028985507246,
+     "days_loss": 1.824742268041237,
+     "maxdd": 0.20964879653073565,
+     "ret": 0.14816721779465447,
+     "gap": 0.513065051642753,
+     "gap_parts": {
+      "per_year": 0.7211964843698448,
+      "avg_win": 0.2480569294049522,
+      "avg_loss": 0.6217743311014764,
+      "win": 0.4612324616947383
+     },
+     "avg_win_first_shares": 0.38070981086885664,
+     "avg_loss_first_shares": -0.04989131918109884
+    }
+   },
+   "behaviour_gap": 0.372694306550475,
+   "year_gap": 1.6226719198276625,
+   "mechanism": {
+    "by_why": {
+     "gap_stop": {
+      "n": 194,
+      "mean_r": -0.9639211352936875,
+      "sum_r": -187.0007002469754,
+      "pnl": -0.2970429464931442
+     },
+     "stop": {
+      "n": 719,
+      "mean_r": 0.6151116115780773,
+      "sum_r": 442.2652487246378,
+      "pnl": 0.9045833093395598
+     }
+    },
+    "by_added": {
+     "False": {
+      "n": 506,
+      "mean_r": -1.2601994507219176,
+      "sum_r": -637.6609220652905,
+      "pnl": -1.4046808989163038
+     },
+     "True": {
+      "n": 407,
+      "mean_r": 2.1939200750441095,
+      "sum_r": 892.9254705429533,
+      "pnl": 2.0122212617627198
+     }
+    },
+    "survival": {
+     "1": 1.0,
+     "2": 0.5235487404162102,
+     "3": 0.29901423877327493,
+     "4": 0.22234392113910187,
+     "5": 0.18400876232201532,
+     "6": 0.15772179627601315,
+     "7": 0.13472070098576122,
+     "8": 0.11610076670317634,
+     "9": 0.09748083242059145,
+     "10": 0.08762322015334063
+    },
+    "funnel": {
+     "signals": 1569,
+     "opened": 914,
+     "account_rejected": 655,
+     "derived": {}
+    },
+    "runs": {
+     "<5%": {
+      "n": 114,
+      "win": 0.008771929824561403,
+      "mean": -0.0392611430874479
+     },
+     "5-15%": {
+      "n": 151,
+      "win": 0.046357615894039736,
+      "mean": -0.029468024527458787
+     },
+     "15-33%": {
+      "n": 230,
+      "win": 0.1565217391304348,
+      "mean": -0.02323710976900677
+     },
+     ">=33%": {
+      "n": 418,
+      "win": 0.22248803827751196,
+      "mean": 0.019278249297147613
+     }
+    },
+    "big_capture": {
+     "share_positive": 0.22248803827751196,
+     "median_ret_positive": 0.1350305528150823
+    },
+    "gap": {
+     "share": 0.21248630887185105,
+     "mean_r": -0.9639211352936875
+    },
+    "top10_share": 0.39801684590901226,
+    "winners20": 36,
+    "paired": {
+     "n": 0,
+     "median_dr": null
+    },
+    "exposure": {
+     "gross": 0.6451550894749001,
+     "open": 6.075697211155378,
+     "margin": 0.011303132329058892
+    },
+    "by_kind": {
+     "ie47_close_pdh": {
+      "n": 913,
+      "mean_r": 0.27958877160751594,
+      "sum_r": 255.26454847766206,
+      "pnl": 0.6075403628464154
+     }
+    },
+    "stop_width_median": 0.03067734212347343,
+    "add_squeezed_share": 0.19912472647702406,
+    "added_share": 0.4457831325301205,
+    "retest_after": {},
+    "entry_off_low": 0.0554196834564209
+   },
+   "his": {
+    "n": 43,
+    "bought": 10,
+    "won": 4,
+    "fired": 0,
+    "by_year": {
+     "2024": {
+      "n": 13,
+      "bought": 6,
+      "won": 3,
+      "fired": 0
+     },
+     "2025": {
+      "n": 30,
+      "bought": 4,
+      "won": 1,
+      "fired": 0
+     }
+    },
+    "rows": [
+     {
+      "id": "I01",
+      "code": "US.SMCI",
+      "day": "2024-01-05",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.030592944919681186,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "I02",
+      "code": "US.COIN",
+      "day": "2024-02-07",
+      "setup": "pullback",
+      "bought": true,
+      "won": true,
+      "rel": 0,
+      "ret": 0.7415470008339965,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "I03",
+      "code": "US.GME",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I04",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I05",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I06",
+      "code": "US.SOFI",
+      "day": "2024-11-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I07",
+      "code": "US.COIN",
+      "day": "2024-11-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I08",
+      "code": "US.LMND",
+      "day": "2024-11-19",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.04096745881634777,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "I09",
+      "code": "US.SOUN",
+      "day": "2024-11-21",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I10",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": true,
+      "won": true,
+      "rel": 0,
+      "ret": 0.17567994511574841,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "I11",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": true,
+      "won": true,
+      "rel": 0,
+      "ret": 0.17567994511574841,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "I12",
+      "code": "US.SMTC",
+      "day": "2024-06-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I13",
+      "code": "US.CLSK",
+      "day": "2024-06-20",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": -2,
+      "ret": -0.052110735309018746,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "I17",
+      "code": "US.UPST",
+      "day": "2025-05-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I18",
+      "code": "US.QS",
+      "day": "2025-01-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I19",
+      "code": "US.CRCL",
+      "day": "2025-07-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I21",
+      "code": "US.SOFI",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I22",
+      "code": "US.OKLO",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I23",
+      "code": "US.OPEN",
+      "day": "2025-12-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I26",
+      "code": "US.CSIQ",
+      "day": "2025-11-28",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I27",
+      "code": "US.BBAI",
+      "day": "2025-02-04",
+      "setup": "ep",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.050975,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "I28",
+      "code": "US.TQQQ",
+      "day": "2025-04-07",
+      "setup": "parabolic_long",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I29",
+      "code": "US.HOOD",
+      "day": "2025-05-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I30",
+      "code": "US.OKLO",
+      "day": "2025-05-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I31",
+      "code": "US.FUTU",
+      "day": "2025-07-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I32",
+      "code": "US.SMR",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I33",
+      "code": "US.PL",
+      "day": "2025-09-08",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I34",
+      "code": "US.IONQ",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I35",
+      "code": "US.RGTI",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I36",
+      "code": "US.RGTI",
+      "day": "2025-10-02",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I37",
+      "code": "US.QBTS",
+      "day": "2025-09-08",
+      "setup": "pullback",
+      "bought": true,
+      "won": true,
+      "rel": 1,
+      "ret": 0.45191152466739565,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "I38",
+      "code": "US.TSLA",
+      "day": "2025-09-10",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I39",
+      "code": "US.AMPX",
+      "day": "2025-09-11",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I40",
+      "code": "US.ACHR",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I41",
+      "code": "US.AMD",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I42",
+      "code": "US.ASTS",
+      "day": "2025-10-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I43",
+      "code": "US.TEM",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "O01",
+      "code": "US.RCAT",
+      "day": "2025-10-03",
+      "setup": "ep",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.050974999999999916,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     },
+     {
+      "id": "S01",
+      "code": "US.RIVN",
+      "day": "2025-11-25",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S02",
+      "code": "US.TSLA",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S03",
+      "code": "US.LMND",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S04",
+      "code": "US.ONDS",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "J01",
+      "code": "US.IONQ",
+      "day": "2025-05-08",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": 0,
+      "ret": -0.04329066050569762,
+      "kind": "ie47_close_pdh",
+      "fired": false
+     }
+    ]
+   },
+   "per_night": {
+    "mean": 2.239043824701195,
+    "median": 2.0,
+    "p90": 5.0,
+    "zero_share": 0.22709163346613545
+   }
+  },
+  "C1": {
+   "total": -0.2665775014070273,
+   "cagr": -0.1438722195041947,
+   "maxdd": 0.4649653871387124,
+   "by_year": {
+    "2024": 0.10932056989042627,
+    "2025": -0.3388543235384007
+   },
+   "trades": 1362,
+   "open_at_end": 4,
+   "per_year": 682.4012345679013,
+   "win": 0.14831130690161526,
+   "avg_win": 0.20704889097173898,
+   "avg_loss": -0.04071658875723136,
+   "payoff": 5.085123712260071,
+   "days_win": 10.925742574257425,
+   "days_loss": 1.8836206896551724,
+   "median_days_win": 9.5,
+   "pnl_top10": 0.9672659849638435,
+   "stop_width": 0.02609785494985956,
+   "entry_weight": 0.07026761644460806,
+   "open_mean": 8.826693227091633,
+   "candidates_day": 5.0,
+   "mean_days": 3.2246696035242293,
+   "annual": {
+    "2024": {
+     "n": 696,
+     "wins": 99,
+     "losses": 597,
+     "win": 0.14224137931034483,
+     "avg_win": 0.11554216583234883,
+     "avg_loss": -0.028388753847633806,
+     "exp_r": 0.04272817133101209,
+     "opened": 696,
+     "mean_days": 3.317528735632184,
+     "days_win": 11.444444444444445,
+     "days_loss": 1.9698492462311559,
+     "maxdd": 0.24013362544424954,
+     "ret": 0.10932056989042627,
+     "gap": 0.3780916301735674,
+     "gap_parts": {
+      "per_year": 0.4979774812881416,
+      "avg_win": 0.26099975861547925,
+      "avg_loss": 0.055204306200746366,
+      "win": 0.6981849745899023
+     },
+     "avg_win_first_shares": 0.23728959697295413,
+     "avg_loss_first_shares": -0.03681162664898339
+    },
+    "2025": {
+     "n": 666,
+     "wins": 103,
+     "losses": 563,
+     "win": 0.15465465465465467,
+     "avg_win": 0.0878304659827134,
+     "avg_loss": -0.0351849100893399,
+     "exp_r": -0.28487100458525816,
+     "opened": 670,
+     "mean_days": 3.1276276276276276,
+     "days_win": 10.427184466019417,
+     "days_loss": 1.7921847246891651,
+     "maxdd": 0.3455887318125467,
+     "ret": -0.3388543235384007,
+     "gap": 0.44173019764526134,
+     "gap_parts": {
+      "per_year": 0.3445902047236605,
+      "avg_win": 0.47335145695583397,
+      "avg_loss": 0.5160948623227722,
+      "win": 0.43288426657877865
+     },
+     "avg_win_first_shares": 0.1779825813200856,
+     "avg_loss_first_shares": -0.04485737450967194
+    }
+   },
+   "behaviour_gap": 0.40991091390941437,
+   "year_gap": 2.01157094568259,
+   "mechanism": {
+    "by_why": {
+     "gap_stop": {
+      "n": 246,
+      "mean_r": -1.5815017802058846,
+      "sum_r": -389.0494379306475,
+      "pnl": -0.5906487199324598
+     },
+     "stop": {
+      "n": 1116,
+      "mean_r": 0.20525462018212376,
+      "sum_r": 229.06415612325063,
+      "pnl": 0.3313954804210767
+     }
+    },
+    "by_added": {
+     "False": {
+      "n": 763,
+      "mean_r": -1.2021094655714333,
+      "sum_r": -917.2095222310029,
+      "pnl": -1.583224581503339
+     },
+     "True": {
+      "n": 599,
+      "mean_r": 1.264147312894167,
+      "sum_r": 757.2242404236063,
+      "pnl": 1.3239713419919572
+     }
+    },
+    "survival": {
+     "1": 1.0,
+     "2": 0.5190895741556535,
+     "3": 0.30983847283406757,
+     "4": 0.2290748898678414,
+     "5": 0.18869309838472834,
+     "6": 0.15418502202643172,
+     "7": 0.13509544787077826,
+     "8": 0.11674008810572688,
+     "9": 0.09544787077826726,
+     "10": 0.07709251101321586
+    },
+    "funnel": {
+     "signals": 3246,
+     "opened": 1366,
+     "account_rejected": 1880,
+     "derived": {}
+    },
+    "runs": {
+     "<5%": {
+      "n": 200,
+      "win": 0.0,
+      "mean": -0.03367666561954965
+     },
+     "5-15%": {
+      "n": 277,
+      "win": 0.07942238267148015,
+      "mean": -0.025209847935344688
+     },
+     "15-33%": {
+      "n": 363,
+      "win": 0.1652892561983471,
+      "mean": -0.01738569751328956
+     },
+     ">=33%": {
+      "n": 522,
+      "win": 0.22988505747126436,
+      "mean": 0.007198258976265869
+     }
+    },
+    "big_capture": {
+     "share_positive": 0.22988505747126436,
+     "median_ret_positive": 0.1077854160716601
+    },
+    "gap": {
+     "share": 0.18061674008810572,
+     "mean_r": -1.5815017802058846
+    },
+    "top10_share": 0.32539060396327607,
+    "winners20": 31,
+    "paired": {
+     "n": 0,
+     "median_dr": null
+    },
+    "exposure": {
+     "gross": 0.9780871173448823,
+     "open": 8.826693227091633,
+     "margin": 0.029338786836439607
+    },
+    "by_kind": {
+     "e12_D0": {
+      "n": 1362,
+      "mean_r": -0.11746349618751654,
+      "sum_r": -159.98528180739766,
+      "pnl": -0.25925323951138324
+     }
+    },
+    "stop_width_median": 0.02609785494985956,
+    "add_squeezed_share": 0.3096632503660322,
+    "added_share": 0.4397944199706314,
+    "retest_after": {},
+    "entry_off_low": 0.04507261514663696
+   },
+   "his": {
+    "n": 43,
+    "bought": 10,
+    "won": 2,
+    "fired": 25,
+    "by_year": {
+     "2024": {
+      "n": 13,
+      "bought": 6,
+      "won": 0,
+      "fired": 9
+     },
+     "2025": {
+      "n": 30,
+      "bought": 4,
+      "won": 2,
+      "fired": 16
+     }
+    },
+    "rows": [
+     {
+      "id": "I01",
+      "code": "US.SMCI",
+      "day": "2024-01-05",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.030592944919681193,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "I02",
+      "code": "US.COIN",
+      "day": "2024-02-07",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I03",
+      "code": "US.GME",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.17404161286965378,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "I04",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I05",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I06",
+      "code": "US.SOFI",
+      "day": "2024-11-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I07",
+      "code": "US.COIN",
+      "day": "2024-11-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I08",
+      "code": "US.LMND",
+      "day": "2024-11-19",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.04096745881634788,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "I09",
+      "code": "US.SOUN",
+      "day": "2024-11-21",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I10",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.15410447976450023,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "I11",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.15410447976450023,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "I12",
+      "code": "US.SMTC",
+      "day": "2024-06-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I13",
+      "code": "US.CLSK",
+      "day": "2024-06-20",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": -2,
+      "ret": -0.05211073530901883,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "I17",
+      "code": "US.UPST",
+      "day": "2025-05-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I18",
+      "code": "US.QS",
+      "day": "2025-01-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I19",
+      "code": "US.CRCL",
+      "day": "2025-07-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I21",
+      "code": "US.SOFI",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I22",
+      "code": "US.OKLO",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I23",
+      "code": "US.OPEN",
+      "day": "2025-12-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I26",
+      "code": "US.CSIQ",
+      "day": "2025-11-28",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I27",
+      "code": "US.BBAI",
+      "day": "2025-02-04",
+      "setup": "ep",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.05097499999999987,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "I28",
+      "code": "US.TQQQ",
+      "day": "2025-04-07",
+      "setup": "parabolic_long",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I29",
+      "code": "US.HOOD",
+      "day": "2025-05-07",
+      "setup": "breakout",
+      "bought": true,
+      "won": true,
+      "rel": -1,
+      "ret": 0.3621182578122354,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "I30",
+      "code": "US.OKLO",
+      "day": "2025-05-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I31",
+      "code": "US.FUTU",
+      "day": "2025-07-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I32",
+      "code": "US.SMR",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I33",
+      "code": "US.PL",
+      "day": "2025-09-08",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I34",
+      "code": "US.IONQ",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I35",
+      "code": "US.RGTI",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I36",
+      "code": "US.RGTI",
+      "day": "2025-10-02",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I37",
+      "code": "US.QBTS",
+      "day": "2025-09-08",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I38",
+      "code": "US.TSLA",
+      "day": "2025-09-10",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I39",
+      "code": "US.AMPX",
+      "day": "2025-09-11",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I40",
+      "code": "US.ACHR",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I41",
+      "code": "US.AMD",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I42",
+      "code": "US.ASTS",
+      "day": "2025-10-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I43",
+      "code": "US.TEM",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "O01",
+      "code": "US.RCAT",
+      "day": "2025-10-03",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "S01",
+      "code": "US.RIVN",
+      "day": "2025-11-25",
+      "setup": "pullback",
+      "bought": true,
+      "won": true,
+      "rel": -1,
+      "ret": 0.11420365544078573,
+      "kind": "e12_D0",
+      "fired": true
+     },
+     {
+      "id": "S02",
+      "code": "US.TSLA",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S03",
+      "code": "US.LMND",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "S04",
+      "code": "US.ONDS",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "J01",
+      "code": "US.IONQ",
+      "day": "2025-05-08",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": 0,
+      "ret": -0.04329066050569742,
+      "kind": "e12_D0",
+      "fired": true
+     }
+    ]
+   },
+   "per_night": {
+    "mean": 4.53386454183267,
+    "median": 5.0,
+    "p90": 5.0,
+    "zero_share": 0.029880478087649404
+   },
+   "watch_list": {
+    "median": 112.0
+   },
+   "fires": {
+    "D0": 11170
+   }
+  },
+  "C2": {
+   "total": 0.10022206159366176,
+   "cagr": 0.04901778153798109,
+   "maxdd": 0.3150352020184629,
+   "by_year": {
+    "2024": 0.13790161771857612,
+    "2025": -0.033113193213012204
+   },
+   "trades": 1316,
+   "open_at_end": 9,
+   "per_year": 659.3539094650206,
+   "win": 0.18161094224924013,
+   "avg_win": 0.12282877859889643,
+   "avg_loss": -0.025143773081522085,
+   "payoff": 4.88505755284445,
+   "days_win": 11.401673640167363,
+   "days_loss": 1.9545032497678738,
+   "median_days_win": 11.0,
+   "pnl_top10": 0.9381734160863491,
+   "stop_width": 0.016512184213360356,
+   "entry_weight": 0.09995098563311464,
+   "open_mean": 9.754980079681275,
+   "candidates_day": 5.0,
+   "mean_days": 3.6702127659574466,
+   "annual": {
+    "2024": {
+     "n": 648,
+     "wins": 121,
+     "losses": 527,
+     "win": 0.1867283950617284,
+     "avg_win": 0.06210645448194732,
+     "avg_loss": -0.017156197094421503,
+     "exp_r": 0.22569815065663185,
+     "opened": 648,
+     "mean_days": 3.8348765432098766,
+     "days_win": 12.066115702479339,
+     "days_loss": 1.9449715370018976,
+     "maxdd": 0.1616979210558388,
+     "ret": 0.13790161771857612,
+     "gap": 0.5599848829849263,
+     "gap_parts": {
+      "per_year": 0.4265185173059967,
+      "avg_win": 0.8817853736505246,
+      "avg_loss": 0.5588379267066724,
+      "win": 0.3727977142765113
+     },
+     "avg_win_first_shares": 0.11618126542548302,
+     "avg_loss_first_shares": -0.0218873027440077
+    },
+    "2025": {
+     "n": 668,
+     "wins": 118,
+     "losses": 550,
+     "win": 0.17664670658682635,
+     "avg_win": 0.06587613920346204,
+     "avg_loss": -0.02153273543000388,
+     "exp_r": -0.096894943366656,
+     "opened": 677,
+     "mean_days": 3.5104790419161676,
+     "days_win": 10.720338983050848,
+     "days_loss": 1.9636363636363636,
+     "maxdd": 0.22971292571298263,
+     "ret": -0.033113193213012204,
+     "gap": 0.35029862250375093,
+     "gap_parts": {
+      "per_year": 0.34159170172740383,
+      "avg_win": 0.7609835902549826,
+      "avg_loss": 0.025051917603040985,
+      "win": 0.2735672804295761
+     },
+     "avg_win_first_shares": 0.1296452963445153,
+     "avg_loss_first_shares": -0.028264063750376777
+    }
+   },
+   "behaviour_gap": 0.45514175274433866,
+   "year_gap": 1.8087982555269417,
+   "mechanism": {
+    "by_why": {
+     "gap_stop": {
+      "n": 214,
+      "mean_r": -1.0634476039693173,
+      "sum_r": -227.57778724943392,
+      "pnl": -0.33170362430374983
+     },
+     "stop": {
+      "n": 1102,
+      "mean_r": 0.2804939806769557,
+      "sum_r": 309.1043667060051,
+      "pnl": 0.4559272182120532
+     }
+    },
+    "by_added": {
+     "False": {
+      "n": 657,
+      "mean_r": -1.1901624279108676,
+      "sum_r": -781.9367151374405,
+      "pnl": -1.4034661281052327
+     },
+     "True": {
+      "n": 659,
+      "mean_r": 1.3102629660000171,
+      "sum_r": 863.4632945940111,
+      "pnl": 1.5276897220135364
+     }
+    },
+    "survival": {
+     "1": 1.0,
+     "2": 0.5911854103343465,
+     "3": 0.3472644376899696,
+     "4": 0.2454407294832827,
+     "5": 0.20440729483282674,
+     "6": 0.1770516717325228,
+     "7": 0.1534954407294833,
+     "8": 0.14285714285714285,
+     "9": 0.12082066869300911,
+     "10": 0.10790273556231003
+    },
+    "funnel": {
+     "signals": 3028,
+     "opened": 1325,
+     "account_rejected": 1703,
+     "derived": {}
+    },
+    "runs": {
+     "<5%": {
+      "n": 233,
+      "win": 0.017167381974248927,
+      "mean": -0.020183607635196346
+     },
+     "5-15%": {
+      "n": 427,
+      "win": 0.16159250585480095,
+      "mean": -0.012540327422345857
+     },
+     "15-33%": {
+      "n": 399,
+      "win": 0.2506265664160401,
+      "mean": -0.003508437150711661
+     },
+     ">=33%": {
+      "n": 257,
+      "win": 0.25680933852140075,
+      "mean": 0.022806660990421255
+     }
+    },
+    "big_capture": {
+     "share_positive": 0.25680933852140075,
+     "median_ret_positive": 0.09916990069558201
+    },
+    "gap": {
+     "share": 0.16261398176291794,
+     "mean_r": -1.0634476039693173
+    },
+    "top10_share": 0.2972357873801497,
+    "winners20": 16,
+    "paired": {
+     "n": 0,
+     "median_dr": null
+    },
+    "exposure": {
+     "gross": 1.3955518615496738,
+     "open": 9.754980079681275,
+     "margin": 0.07442264446477824
+    },
+    "by_kind": {
+     "e12_D1a": {
+      "n": 968,
+      "mean_r": 0.1299373262151728,
+      "sum_r": 125.77933177628721,
+      "pnl": 0.17611067743871756
+     },
+     "e12_D1b": {
+      "n": 174,
+      "mean_r": -0.16613638603219158,
+      "sum_r": -28.90773116960131,
+      "pnl": -0.01938009815074429
+     },
+     "e12_D1c": {
+      "n": 174,
+      "mean_r": -0.08818977672479698,
+      "sum_r": -15.345021150114695,
+      "pnl": -0.0325069853796705
+     }
+    },
+    "stop_width_median": 0.016512184213360356,
+    "add_squeezed_share": 0.7018867924528301,
+    "added_share": 0.5007598784194529,
+    "retest_after": {},
+    "entry_off_low": 0.02835184335708618
+   },
+   "his": {
+    "n": 43,
+    "bought": 4,
+    "won": 1,
+    "fired": 9,
+    "by_year": {
+     "2024": {
+      "n": 13,
+      "bought": 0,
+      "won": 0,
+      "fired": 1
+     },
+     "2025": {
+      "n": 30,
+      "bought": 4,
+      "won": 1,
+      "fired": 8
+     }
+    },
+    "rows": [
+     {
+      "id": "I01",
+      "code": "US.SMCI",
+      "day": "2024-01-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I02",
+      "code": "US.COIN",
+      "day": "2024-02-07",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I03",
+      "code": "US.GME",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I04",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I05",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I06",
+      "code": "US.SOFI",
+      "day": "2024-11-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I07",
+      "code": "US.COIN",
+      "day": "2024-11-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I08",
+      "code": "US.LMND",
+      "day": "2024-11-19",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I09",
+      "code": "US.SOUN",
+      "day": "2024-11-21",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I10",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I11",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I12",
+      "code": "US.SMTC",
+      "day": "2024-06-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I13",
+      "code": "US.CLSK",
+      "day": "2024-06-20",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I17",
+      "code": "US.UPST",
+      "day": "2025-05-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I18",
+      "code": "US.QS",
+      "day": "2025-01-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I19",
+      "code": "US.CRCL",
+      "day": "2025-07-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I21",
+      "code": "US.SOFI",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I22",
+      "code": "US.OKLO",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I23",
+      "code": "US.OPEN",
+      "day": "2025-12-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I26",
+      "code": "US.CSIQ",
+      "day": "2025-11-28",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I27",
+      "code": "US.BBAI",
+      "day": "2025-02-04",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I28",
+      "code": "US.TQQQ",
+      "day": "2025-04-07",
+      "setup": "parabolic_long",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I29",
+      "code": "US.HOOD",
+      "day": "2025-05-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I30",
+      "code": "US.OKLO",
+      "day": "2025-05-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I31",
+      "code": "US.FUTU",
+      "day": "2025-07-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I32",
+      "code": "US.SMR",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I33",
+      "code": "US.PL",
+      "day": "2025-09-08",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I34",
+      "code": "US.IONQ",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I35",
+      "code": "US.RGTI",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": true,
+      "won": true,
+      "rel": 0,
+      "ret": 1.5999700553360867,
+      "kind": "e12_D1a",
+      "fired": true
+     },
+     {
+      "id": "I36",
+      "code": "US.RGTI",
+      "day": "2025-10-02",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I37",
+      "code": "US.QBTS",
+      "day": "2025-09-08",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I38",
+      "code": "US.TSLA",
+      "day": "2025-09-10",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": -3,
+      "ret": -0.018513984058685557,
+      "kind": "e12_D1b",
+      "fired": true
+     },
+     {
+      "id": "I39",
+      "code": "US.AMPX",
+      "day": "2025-09-11",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I40",
+      "code": "US.ACHR",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I41",
+      "code": "US.AMD",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.01735472017203016,
+      "kind": "e12_D1a",
+      "fired": true
+     },
+     {
+      "id": "I42",
+      "code": "US.ASTS",
+      "day": "2025-10-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I43",
+      "code": "US.TEM",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "O01",
+      "code": "US.RCAT",
+      "day": "2025-10-03",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S01",
+      "code": "US.RIVN",
+      "day": "2025-11-25",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S02",
+      "code": "US.TSLA",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S03",
+      "code": "US.LMND",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S04",
+      "code": "US.ONDS",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "J01",
+      "code": "US.IONQ",
+      "day": "2025-05-08",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": 0,
+      "ret": -0.04329066050569747,
+      "kind": "e12_D1b",
+      "fired": true
+     }
+    ]
+   },
+   "per_night": {
+    "mean": 4.211155378486056,
+    "median": 5.0,
+    "p90": 5.0,
+    "zero_share": 0.01195219123505976
+   },
+   "watch_list": {
+    "median": 360.0
+   },
+   "fires": {
+    "D1a": 4299,
+    "D1b": 692,
+    "D1c": 18656
+   }
+  },
+  "C3": {
+   "total": 0.0806791878347477,
+   "cagr": 0.03964019335642832,
+   "maxdd": 0.34125174517862755,
+   "by_year": {
+    "2024": 0.18461302474235186,
+    "2025": -0.08773653061109077
+   },
+   "trades": 1322,
+   "open_at_end": 9,
+   "per_year": 662.3600823045267,
+   "win": 0.1815431164901664,
+   "avg_win": 0.12633167437275356,
+   "avg_loss": -0.025648771785966203,
+   "payoff": 4.92544732461132,
+   "days_win": 11.425,
+   "days_loss": 1.9463955637707948,
+   "median_days_win": 11.0,
+   "pnl_top10": 0.9351953508723374,
+   "stop_width": 0.016668755289228995,
+   "entry_weight": 0.0985656965409045,
+   "open_mean": 9.790836653386455,
+   "candidates_day": 5.0,
+   "mean_days": 3.6671709531013614,
+   "annual": {
+    "2024": {
+     "n": 646,
+     "wins": 123,
+     "losses": 523,
+     "win": 0.19040247678018576,
+     "avg_win": 0.0657749736055342,
+     "avg_loss": -0.017440540920192902,
+     "exp_r": 0.2769020622821768,
+     "opened": 646,
+     "mean_days": 3.869969040247678,
+     "days_win": 12.048780487804878,
+     "days_loss": 1.9464627151051626,
+     "maxdd": 0.15210440512758994,
+     "ret": 0.18461302474235186,
+     "gap": 0.5347519902027663,
+     "gap_parts": {
+      "per_year": 0.4234273247363239,
+      "avg_win": 0.8243958684541424,
+      "avg_loss": 0.5423999475962032,
+      "win": 0.3487848200243957
+     },
+     "avg_win_first_shares": 0.12421990784521128,
+     "avg_loss_first_shares": -0.022240955702920538
+    },
+    "2025": {
+     "n": 676,
+     "wins": 117,
+     "losses": 559,
+     "win": 0.17307692307692307,
+     "avg_win": 0.0654302509237552,
+     "avg_loss": -0.02211871937268518,
+     "exp_r": -0.1274653638818017,
+     "opened": 685,
+     "mean_days": 3.473372781065089,
+     "days_win": 10.76923076923077,
+     "days_loss": 1.9463327370304115,
+     "maxdd": 0.2800020864362064,
+     "ret": -0.08773653061109077,
+     "gap": 0.361918248366555,
+     "gap_parts": {
+      "per_year": 0.32968679922108546,
+      "avg_win": 0.7677751865083798,
+      "avg_loss": 0.0519018427106876,
+      "win": 0.2983091650260672
+     },
+     "avg_win_first_shares": 0.12855173661965696,
+     "avg_loss_first_shares": -0.028837122074754896
+    }
+   },
+   "behaviour_gap": 0.44833511928466063,
+   "year_gap": 1.8177594117800941,
+   "mechanism": {
+    "by_why": {
+     "gap_stop": {
+      "n": 215,
+      "mean_r": -1.0363118389434973,
+      "sum_r": -222.80704537285192,
+      "pnl": -0.32984906760761257
+     },
+     "stop": {
+      "n": 1107,
+      "mean_r": 0.2850218533180128,
+      "sum_r": 315.5191916230403,
+      "pnl": 0.43412295486993013
+     }
+    },
+    "by_added": {
+     "False": {
+      "n": 662,
+      "mean_r": -1.1932212344718065,
+      "sum_r": -789.9124572203361,
+      "pnl": -1.4155778455882948
+     },
+     "True": {
+      "n": 660,
+      "mean_r": 1.33731000525837,
+      "sum_r": 882.6246034705244,
+      "pnl": 1.5198517328506105
+     }
+    },
+    "survival": {
+     "1": 1.0,
+     "2": 0.5907715582450832,
+     "3": 0.34568835098335854,
+     "4": 0.2443267776096823,
+     "5": 0.20499243570347958,
+     "6": 0.1762481089258699,
+     "7": 0.15204236006051436,
+     "8": 0.14145234493192133,
+     "9": 0.11951588502269289,
+     "10": 0.10741301059001512
+    },
+    "funnel": {
+     "signals": 3035,
+     "opened": 1331,
+     "account_rejected": 1704,
+     "derived": {}
+    },
+    "runs": {
+     "<5%": {
+      "n": 233,
+      "win": 0.017167381974248927,
+      "mean": -0.0202882783599604
+     },
+     "5-15%": {
+      "n": 428,
+      "win": 0.1588785046728972,
+      "mean": -0.013005185514342972
+     },
+     "15-33%": {
+      "n": 395,
+      "win": 0.2481012658227848,
+      "mean": -0.0035777924262746304
+     },
+     ">=33%": {
+      "n": 266,
+      "win": 0.2631578947368421,
+      "mean": 0.022430490027654914
+     }
+    },
+    "big_capture": {
+     "share_positive": 0.2631578947368421,
+     "median_ret_positive": 0.09917018354266381
+    },
+    "gap": {
+     "share": 0.16263237518910742,
+     "mean_r": -1.0363118389434973
+    },
+    "top10_share": 0.29644779392745535,
+    "winners20": 17,
+    "paired": {
+     "n": 0,
+     "median_dr": null
+    },
+    "exposure": {
+     "gross": 1.387933892368885,
+     "open": 9.790836653386455,
+     "margin": 0.07312020122426516
+    },
+    "by_kind": {
+     "e12_D1a": {
+      "n": 970,
+      "mean_r": 0.12417798139827288,
+      "sum_r": 120.45264195632468,
+      "pnl": 0.16060343227136942
+     },
+     "e12_D1b": {
+      "n": 170,
+      "mean_r": -0.23430459286677238,
+      "sum_r": -39.83178078735133,
+      "pnl": -0.05036926017870793
+     },
+     "e12_D1c": {
+      "n": 155,
+      "mean_r": 0.0933767114873577,
+      "sum_r": 14.473390280540436,
+      "pnl": -0.00029555089577388075
+     },
+     "e12_EP": {
+      "n": 27,
+      "mean_r": -0.08822611849353963,
+      "sum_r": -2.38210519932557,
+      "pnl": -0.0056647339345695
+     }
+    },
+    "stop_width_median": 0.016668755289228995,
+    "add_squeezed_share": 0.6829451540195342,
+    "added_share": 0.49924357034795763,
+    "retest_after": {},
+    "entry_off_low": 0.028815090656280518
+   },
+   "his": {
+    "n": 43,
+    "bought": 4,
+    "won": 1,
+    "fired": 17,
+    "by_year": {
+     "2024": {
+      "n": 13,
+      "bought": 0,
+      "won": 0,
+      "fired": 7
+     },
+     "2025": {
+      "n": 30,
+      "bought": 4,
+      "won": 1,
+      "fired": 10
+     }
+    },
+    "rows": [
+     {
+      "id": "I01",
+      "code": "US.SMCI",
+      "day": "2024-01-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I02",
+      "code": "US.COIN",
+      "day": "2024-02-07",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I03",
+      "code": "US.GME",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I04",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I05",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I06",
+      "code": "US.SOFI",
+      "day": "2024-11-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I07",
+      "code": "US.COIN",
+      "day": "2024-11-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I08",
+      "code": "US.LMND",
+      "day": "2024-11-19",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I09",
+      "code": "US.SOUN",
+      "day": "2024-11-21",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I10",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I11",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I12",
+      "code": "US.SMTC",
+      "day": "2024-06-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I13",
+      "code": "US.CLSK",
+      "day": "2024-06-20",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I17",
+      "code": "US.UPST",
+      "day": "2025-05-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I18",
+      "code": "US.QS",
+      "day": "2025-01-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I19",
+      "code": "US.CRCL",
+      "day": "2025-07-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I21",
+      "code": "US.SOFI",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I22",
+      "code": "US.OKLO",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I23",
+      "code": "US.OPEN",
+      "day": "2025-12-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I26",
+      "code": "US.CSIQ",
+      "day": "2025-11-28",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I27",
+      "code": "US.BBAI",
+      "day": "2025-02-04",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I28",
+      "code": "US.TQQQ",
+      "day": "2025-04-07",
+      "setup": "parabolic_long",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I29",
+      "code": "US.HOOD",
+      "day": "2025-05-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I30",
+      "code": "US.OKLO",
+      "day": "2025-05-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I31",
+      "code": "US.FUTU",
+      "day": "2025-07-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I32",
+      "code": "US.SMR",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I33",
+      "code": "US.PL",
+      "day": "2025-09-08",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I34",
+      "code": "US.IONQ",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I35",
+      "code": "US.RGTI",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": true,
+      "won": true,
+      "rel": 0,
+      "ret": 1.5999700553360874,
+      "kind": "e12_D1a",
+      "fired": true
+     },
+     {
+      "id": "I36",
+      "code": "US.RGTI",
+      "day": "2025-10-02",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I37",
+      "code": "US.QBTS",
+      "day": "2025-09-08",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I38",
+      "code": "US.TSLA",
+      "day": "2025-09-10",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": -3,
+      "ret": -0.018513984058685685,
+      "kind": "e12_D1b",
+      "fired": true
+     },
+     {
+      "id": "I39",
+      "code": "US.AMPX",
+      "day": "2025-09-11",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I40",
+      "code": "US.ACHR",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I41",
+      "code": "US.AMD",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.01735472017203025,
+      "kind": "e12_D1a",
+      "fired": true
+     },
+     {
+      "id": "I42",
+      "code": "US.ASTS",
+      "day": "2025-10-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I43",
+      "code": "US.TEM",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "O01",
+      "code": "US.RCAT",
+      "day": "2025-10-03",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S01",
+      "code": "US.RIVN",
+      "day": "2025-11-25",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S02",
+      "code": "US.TSLA",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S03",
+      "code": "US.LMND",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S04",
+      "code": "US.ONDS",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "J01",
+      "code": "US.IONQ",
+      "day": "2025-05-08",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": 0,
+      "ret": -0.04329066050569745,
+      "kind": "e12_D1b",
+      "fired": true
+     }
+    ]
+   },
+   "per_night": {
+    "mean": 4.221115537848606,
+    "median": 5.0,
+    "p90": 5.0,
+    "zero_share": 0.01195219123505976
+   },
+   "watch_list": {
+    "median": 360.0
+   },
+   "fires": {
+    "D1a": 4299,
+    "D1b": 692,
+    "D1c": 18656,
+    "EP": 221
+   }
+  },
+  "C4": {
+   "total": -0.11429663320499794,
+   "cagr": -0.05899936254869309,
+   "maxdd": 0.4228711057911041,
+   "by_year": {
+    "2024": -0.06784305771990595,
+    "2025": -0.04983450037014647
+   },
+   "trades": 1399,
+   "open_at_end": 11,
+   "per_year": 700.9393004115226,
+   "win": 0.17512508934953538,
+   "avg_win": 0.12870708450229174,
+   "avg_loss": -0.02630309533358808,
+   "payoff": 4.893229594082699,
+   "days_win": 10.995918367346938,
+   "days_loss": 1.9471403812824957,
+   "median_days_win": 10.0,
+   "pnl_top10": 0.9412547928842523,
+   "stop_width": 0.016972745303439334,
+   "entry_weight": 0.09590629482721273,
+   "open_mean": 9.974103585657371,
+   "candidates_day": 5.0,
+   "mean_days": 3.5318084345961402,
+   "annual": {
+    "2024": {
+     "n": 700,
+     "wins": 126,
+     "losses": 574,
+     "win": 0.18,
+     "avg_win": 0.06065528037643685,
+     "avg_loss": -0.018256764551442577,
+     "exp_r": 0.04322200789987424,
+     "opened": 700,
+     "mean_days": 3.6028571428571428,
+     "days_win": 11.23015873015873,
+     "days_loss": 1.9285714285714286,
+     "maxdd": 0.22011078639439285,
+     "ret": -0.06784305771990595,
+     "gap": 0.5808834165152053,
+     "gap_parts": {
+      "per_year": 0.5037081559971267,
+      "avg_win": 0.9054285994054999,
+      "avg_loss": 0.4966617099582154,
+      "win": 0.4177352006999788
+     },
+     "avg_win_first_shares": 0.11452402359160327,
+     "avg_loss_first_shares": -0.02332360146930294
+    },
+    "2025": {
+     "n": 699,
+     "wins": 119,
+     "losses": 580,
+     "win": 0.17024320457796852,
+     "avg_win": 0.07227976135580674,
+     "avg_loss": -0.02251360917125751,
+     "exp_r": -0.06942860192013497,
+     "opened": 710,
+     "mean_days": 3.4606580829756797,
+     "days_win": 10.747899159663865,
+     "days_loss": 1.9655172413793103,
+     "maxdd": 0.2980742951398181,
+     "ret": -0.04983450037014647,
+     "gap": 0.3380701592859844,
+     "gap_parts": {
+      "per_year": 0.2962291330302393,
+      "avg_win": 0.668215726322475,
+      "avg_loss": 0.06959754069356336,
+      "win": 0.31823823709765997
+     },
+     "avg_win_first_shares": 0.14372444311360894,
+     "avg_loss_first_shares": -0.029251766847553026
+    }
+   },
+   "behaviour_gap": 0.4594767879005948,
+   "year_gap": 1.9172408647763826,
+   "mechanism": {
+    "by_why": {
+     "gap_stop": {
+      "n": 227,
+      "mean_r": -1.2046485215278302,
+      "sum_r": -273.45521438681743,
+      "pnl": -0.36486088872232575
+     },
+     "stop": {
+      "n": 1172,
+      "mean_r": 0.21773039861310162,
+      "sum_r": 255.18002717455536,
+      "pnl": 0.26198474229310076
+     }
+    },
+    "by_added": {
+     "False": {
+      "n": 718,
+      "mean_r": -1.1973358346231662,
+      "sum_r": -859.6871292594335,
+      "pnl": -1.2781212543429128
+     },
+     "True": {
+      "n": 681,
+      "mean_r": 1.2355535125509118,
+      "sum_r": 841.4119420471709,
+      "pnl": 1.1752451079136896
+     }
+    },
+    "survival": {
+     "1": 1.0,
+     "2": 0.5775553967119371,
+     "3": 0.33738384560400286,
+     "4": 0.24017155110793423,
+     "5": 0.19799857040743388,
+     "6": 0.16869192280200143,
+     "7": 0.14653323802716225,
+     "8": 0.13152251608291637,
+     "9": 0.1093638313080772,
+     "10": 0.09792709077912795
+    },
+    "funnel": {
+     "signals": 3119,
+     "opened": 1410,
+     "account_rejected": 1709,
+     "derived": {}
+    },
+    "runs": {
+     "<5%": {
+      "n": 251,
+      "win": 0.0199203187250996,
+      "mean": -0.02107086843863471
+     },
+     "5-15%": {
+      "n": 445,
+      "win": 0.15056179775280898,
+      "mean": -0.013574951283132384
+     },
+     "15-33%": {
+      "n": 415,
+      "win": 0.23132530120481928,
+      "mean": -0.0049649412170028875
+     },
+     ">=33%": {
+      "n": 288,
+      "win": 0.2673611111111111,
+      "mean": 0.02116900229535443
+     }
+    },
+    "big_capture": {
+     "share_positive": 0.2673611111111111,
+     "median_ret_positive": 0.0939288643891662
+    },
+    "gap": {
+     "share": 0.16225875625446748,
+     "mean_r": -1.2046485215278302
+    },
+    "top10_share": 0.3129318312612714,
+    "winners20": 18,
+    "paired": {
+     "n": 0,
+     "median_dr": null
+    },
+    "exposure": {
+     "gross": 1.371270421431989,
+     "open": 9.974103585657371,
+     "margin": 0.05926641045286635
+    },
+    "by_kind": {
+     "e12_D1a": {
+      "n": 960,
+      "mean_r": 0.11697125456637854,
+      "sum_r": 112.29240438372355,
+      "pnl": 0.13465954566290603
+     },
+     "e12_D1b": {
+      "n": 177,
+      "mean_r": -0.2546098246143518,
+      "sum_r": -45.06593895674029,
+      "pnl": -0.04629007211853429
+     },
+     "e12_D1c": {
+      "n": 22,
+      "mean_r": -0.4914423559089051,
+      "sum_r": -10.811731829995914,
+      "pnl": -0.02452333982784382
+     },
+     "e12_EP": {
+      "n": 25,
+      "mean_r": -0.28347639337780156,
+      "sum_r": -7.086909834445037,
+      "pnl": -0.019696402100105273
+     },
+     "e12_PB": {
+      "n": 215,
+      "mean_r": -0.3144326091851374,
+      "sum_r": -67.6030109748045,
+      "pnl": -0.14702587804564804
+     }
+    },
+    "stop_width_median": 0.016972745303439334,
+    "add_squeezed_share": 0.6695035460992907,
+    "added_share": 0.4867762687634024,
+    "retest_after": {},
+    "entry_off_low": 0.028421998023986816
+   },
+   "his": {
+    "n": 43,
+    "bought": 6,
+    "won": 1,
+    "fired": 18,
+    "by_year": {
+     "2024": {
+      "n": 13,
+      "bought": 2,
+      "won": 0,
+      "fired": 7
+     },
+     "2025": {
+      "n": 30,
+      "bought": 4,
+      "won": 1,
+      "fired": 11
+     }
+    },
+    "rows": [
+     {
+      "id": "I01",
+      "code": "US.SMCI",
+      "day": "2024-01-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I02",
+      "code": "US.COIN",
+      "day": "2024-02-07",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I03",
+      "code": "US.GME",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I04",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I05",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I06",
+      "code": "US.SOFI",
+      "day": "2024-11-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I07",
+      "code": "US.COIN",
+      "day": "2024-11-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I08",
+      "code": "US.LMND",
+      "day": "2024-11-19",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I09",
+      "code": "US.SOUN",
+      "day": "2024-11-21",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I10",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.1541044797645,
+      "kind": "e12_EP",
+      "fired": true
+     },
+     {
+      "id": "I11",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.1541044797645,
+      "kind": "e12_EP",
+      "fired": true
+     },
+     {
+      "id": "I12",
+      "code": "US.SMTC",
+      "day": "2024-06-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I13",
+      "code": "US.CLSK",
+      "day": "2024-06-20",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I17",
+      "code": "US.UPST",
+      "day": "2025-05-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I18",
+      "code": "US.QS",
+      "day": "2025-01-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I19",
+      "code": "US.CRCL",
+      "day": "2025-07-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I21",
+      "code": "US.SOFI",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I22",
+      "code": "US.OKLO",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I23",
+      "code": "US.OPEN",
+      "day": "2025-12-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I26",
+      "code": "US.CSIQ",
+      "day": "2025-11-28",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I27",
+      "code": "US.BBAI",
+      "day": "2025-02-04",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I28",
+      "code": "US.TQQQ",
+      "day": "2025-04-07",
+      "setup": "parabolic_long",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I29",
+      "code": "US.HOOD",
+      "day": "2025-05-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I30",
+      "code": "US.OKLO",
+      "day": "2025-05-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I31",
+      "code": "US.FUTU",
+      "day": "2025-07-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I32",
+      "code": "US.SMR",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I33",
+      "code": "US.PL",
+      "day": "2025-09-08",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I34",
+      "code": "US.IONQ",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I35",
+      "code": "US.RGTI",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": true,
+      "won": true,
+      "rel": 0,
+      "ret": 1.5999700553360872,
+      "kind": "e12_D1a",
+      "fired": true
+     },
+     {
+      "id": "I36",
+      "code": "US.RGTI",
+      "day": "2025-10-02",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I37",
+      "code": "US.QBTS",
+      "day": "2025-09-08",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I38",
+      "code": "US.TSLA",
+      "day": "2025-09-10",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": -3,
+      "ret": -0.01851398405868551,
+      "kind": "e12_D1b",
+      "fired": true
+     },
+     {
+      "id": "I39",
+      "code": "US.AMPX",
+      "day": "2025-09-11",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I40",
+      "code": "US.ACHR",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I41",
+      "code": "US.AMD",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.01735472017203029,
+      "kind": "e12_D1a",
+      "fired": true
+     },
+     {
+      "id": "I42",
+      "code": "US.ASTS",
+      "day": "2025-10-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I43",
+      "code": "US.TEM",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "O01",
+      "code": "US.RCAT",
+      "day": "2025-10-03",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S01",
+      "code": "US.RIVN",
+      "day": "2025-11-25",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S02",
+      "code": "US.TSLA",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S03",
+      "code": "US.LMND",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S04",
+      "code": "US.ONDS",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "J01",
+      "code": "US.IONQ",
+      "day": "2025-05-08",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": 0,
+      "ret": -0.04329066050569751,
+      "kind": "e12_D1b",
+      "fired": true
+     }
+    ]
+   },
+   "per_night": {
+    "mean": 4.362549800796812,
+    "median": 5.0,
+    "p90": 5.0,
+    "zero_share": 0.00597609561752988
+   },
+   "watch_list": {
+    "median": 360.0
+   },
+   "fires": {
+    "D1a": 4299,
+    "D1b": 692,
+    "D1c": 18656,
+    "EP": 221,
+    "PB": 6517
+   }
+  },
+  "C5": {
+   "total": -0.37863503924735853,
+   "cagr": -0.2121187350705861,
+   "maxdd": 0.48087406571156854,
+   "by_year": {
+    "2024": -0.23070955471154886,
+    "2025": -0.1922882123933619
+   },
+   "trades": 1407,
+   "open_at_end": 10,
+   "per_year": 704.9475308641975,
+   "win": 0.1656005685856432,
+   "avg_win": 0.11824753307031671,
+   "avg_loss": -0.026476380408831143,
+   "payoff": 4.466151764116347,
+   "days_win": 11.145922746781116,
+   "days_loss": 1.9684838160136287,
+   "median_days_win": 10.0,
+   "pnl_top10": 0.9522584344662273,
+   "stop_width": 0.017112015379610847,
+   "entry_weight": 0.09569526254754654,
+   "open_mean": 9.902390438247012,
+   "candidates_day": 5.0,
+   "mean_days": 3.488272921108742,
+   "annual": {
+    "2024": {
+     "n": 707,
+     "wins": 121,
+     "losses": 586,
+     "win": 0.17114568599717114,
+     "avg_win": 0.05528139577066183,
+     "avg_loss": -0.018529632293082004,
+     "exp_r": -0.09328927774319758,
+     "opened": 707,
+     "mean_days": 3.55021216407355,
+     "days_win": 11.214876033057852,
+     "days_loss": 1.9675767918088738,
+     "maxdd": 0.29391754859885344,
+     "ret": -0.23070955471154886,
+     "gap": 0.6181501233606791,
+     "gap_parts": {
+      "per_year": 0.5136584868502948,
+      "avg_win": 0.9981988658481086,
+      "avg_loss": 0.48182618543215133,
+      "win": 0.4789169553121617
+     },
+     "avg_win_first_shares": 0.10668462843335416,
+     "avg_loss_first_shares": -0.02372610527035152
+    },
+    "2025": {
+     "n": 700,
+     "wins": 112,
+     "losses": 588,
+     "win": 0.16,
+     "avg_win": 0.06545706182088856,
+     "avg_loss": -0.02258395257487842,
+     "exp_r": -0.18664206287343174,
+     "opened": 710,
+     "mean_days": 3.4257142857142857,
+     "days_win": 11.071428571428571,
+     "days_loss": 1.969387755102041,
+     "maxdd": 0.30239721787401164,
+     "ret": -0.1922882123933619,
+     "gap": 0.3818609760486699,
+     "gap_parts": {
+      "per_year": 0.294799540220645,
+      "avg_win": 0.7673655074196105,
+      "avg_loss": 0.07271715328216767,
+      "win": 0.39256170327225637
+     },
+     "avg_win_first_shares": 0.1307395996870352,
+     "avg_loss_first_shares": -0.029217300869968994
+    }
+   },
+   "behaviour_gap": 0.5000055497046745,
+   "year_gap": 2.0944726079308635,
+   "mechanism": {
+    "by_why": {
+     "gap_stop": {
+      "n": 243,
+      "mean_r": -1.333030590162273,
+      "sum_r": -323.9264334094323,
+      "pnl": -0.37479523980708884
+     },
+     "stop": {
+      "n": 1164,
+      "mean_r": 0.10938270621442392,
+      "sum_r": 127.32147003358948,
+      "pnl": 0.03360138538276111
+     }
+    },
+    "by_added": {
+     "False": {
+      "n": 735,
+      "mean_r": -1.2201594773308644,
+      "sum_r": -896.8172158381855,
+      "pnl": -1.157879672587935
+     },
+     "True": {
+      "n": 672,
+      "mean_r": 1.0419825185451526,
+      "sum_r": 700.2122524623416,
+      "pnl": 0.8166858181636083
+     }
+    },
+    "survival": {
+     "1": 1.0,
+     "2": 0.5735607675906184,
+     "3": 0.3269367448471926,
+     "4": 0.24164889836531628,
+     "5": 0.19758351101634683,
+     "6": 0.1670220326936745,
+     "7": 0.14498933901918976,
+     "8": 0.12864250177683015,
+     "9": 0.10376687988628287,
+     "10": 0.08884150675195451
+    },
+    "funnel": {
+     "signals": 3232,
+     "opened": 1417,
+     "account_rejected": 1815,
+     "derived": {}
+    },
+    "runs": {
+     "<5%": {
+      "n": 253,
+      "win": 0.019762845849802372,
+      "mean": -0.022352948953595103
+     },
+     "5-15%": {
+      "n": 456,
+      "win": 0.13157894736842105,
+      "mean": -0.014849108458011651
+     },
+     "15-33%": {
+      "n": 422,
+      "win": 0.22748815165876776,
+      "mean": -0.00387852578142976
+     },
+     ">=33%": {
+      "n": 276,
+      "win": 0.2608695652173913,
+      "mean": 0.014296154334388656
+     }
+    },
+    "big_capture": {
+     "share_positive": 0.2608695652173913,
+     "median_ret_positive": 0.07669494033014196
+    },
+    "gap": {
+     "share": 0.17270788912579957,
+     "mean_r": -1.333030590162273
+    },
+    "top10_share": 0.3046582232289105,
+    "winners20": 14,
+    "paired": {
+     "n": 0,
+     "median_dr": null
+    },
+    "exposure": {
+     "gross": 1.347560942813524,
+     "open": 9.902390438247012,
+     "margin": 0.05054877860870891
+    },
+    "by_kind": {
+     "e12_D1a": {
+      "n": 944,
+      "mean_r": 0.0234220217445916,
+      "sum_r": 22.11038852689462,
+      "pnl": -0.08208022791262341
+     },
+     "e12_D1b": {
+      "n": 187,
+      "mean_r": -0.6086483252032658,
+      "sum_r": -113.81723681301071,
+      "pnl": -0.0935809474929716
+     },
+     "e12_D1c": {
+      "n": 25,
+      "mean_r": 0.08305183615942788,
+      "sum_r": 2.076295903985703,
+      "pnl": -0.0036374941448286714
+     },
+     "e12_EP": {
+      "n": 28,
+      "mean_r": -0.3091940404731924,
+      "sum_r": -8.657433133249384,
+      "pnl": -0.019365847888749108
+     },
+     "e12_PB": {
+      "n": 223,
+      "mean_r": -0.44088330879131377,
+      "sum_r": -98.31697786046296,
+      "pnl": -0.14252933698515483
+     }
+    },
+    "stop_width_median": 0.017112015379610847,
+    "add_squeezed_share": 0.6725476358503881,
+    "added_share": 0.47761194029850745,
+    "retest_after": {},
+    "entry_off_low": 0.029015660285949707
+   },
+   "his": {
+    "n": 43,
+    "bought": 3,
+    "won": 0,
+    "fired": 18,
+    "by_year": {
+     "2024": {
+      "n": 13,
+      "bought": 2,
+      "won": 0,
+      "fired": 7
+     },
+     "2025": {
+      "n": 30,
+      "bought": 1,
+      "won": 0,
+      "fired": 11
+     }
+    },
+    "rows": [
+     {
+      "id": "I01",
+      "code": "US.SMCI",
+      "day": "2024-01-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I02",
+      "code": "US.COIN",
+      "day": "2024-02-07",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I03",
+      "code": "US.GME",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I04",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I05",
+      "code": "US.AMC",
+      "day": "2024-05-13",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I06",
+      "code": "US.SOFI",
+      "day": "2024-11-05",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I07",
+      "code": "US.COIN",
+      "day": "2024-11-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I08",
+      "code": "US.LMND",
+      "day": "2024-11-19",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I09",
+      "code": "US.SOUN",
+      "day": "2024-11-21",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I10",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.1541044797645001,
+      "kind": "e12_EP",
+      "fired": true
+     },
+     {
+      "id": "I11",
+      "code": "US.QUBT",
+      "day": "2024-12-16",
+      "setup": "breakout",
+      "bought": true,
+      "won": false,
+      "rel": 1,
+      "ret": -0.1541044797645001,
+      "kind": "e12_EP",
+      "fired": true
+     },
+     {
+      "id": "I12",
+      "code": "US.SMTC",
+      "day": "2024-06-06",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I13",
+      "code": "US.CLSK",
+      "day": "2024-06-20",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I17",
+      "code": "US.UPST",
+      "day": "2025-05-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I18",
+      "code": "US.QS",
+      "day": "2025-01-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I19",
+      "code": "US.CRCL",
+      "day": "2025-07-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I21",
+      "code": "US.SOFI",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I22",
+      "code": "US.OKLO",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I23",
+      "code": "US.OPEN",
+      "day": "2025-12-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I26",
+      "code": "US.CSIQ",
+      "day": "2025-11-28",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I27",
+      "code": "US.BBAI",
+      "day": "2025-02-04",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I28",
+      "code": "US.TQQQ",
+      "day": "2025-04-07",
+      "setup": "parabolic_long",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I29",
+      "code": "US.HOOD",
+      "day": "2025-05-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I30",
+      "code": "US.OKLO",
+      "day": "2025-05-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I31",
+      "code": "US.FUTU",
+      "day": "2025-07-07",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I32",
+      "code": "US.SMR",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I33",
+      "code": "US.PL",
+      "day": "2025-09-08",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I34",
+      "code": "US.IONQ",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I35",
+      "code": "US.RGTI",
+      "day": "2025-09-09",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I36",
+      "code": "US.RGTI",
+      "day": "2025-10-02",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I37",
+      "code": "US.QBTS",
+      "day": "2025-09-08",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I38",
+      "code": "US.TSLA",
+      "day": "2025-09-10",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I39",
+      "code": "US.AMPX",
+      "day": "2025-09-11",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I40",
+      "code": "US.ACHR",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "I41",
+      "code": "US.AMD",
+      "day": "2025-10-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I42",
+      "code": "US.ASTS",
+      "day": "2025-10-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": true
+     },
+     {
+      "id": "I43",
+      "code": "US.TEM",
+      "day": "2025-01-01",
+      "setup": "breakout",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "O01",
+      "code": "US.RCAT",
+      "day": "2025-10-03",
+      "setup": "ep",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S01",
+      "code": "US.RIVN",
+      "day": "2025-11-25",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S02",
+      "code": "US.TSLA",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S03",
+      "code": "US.LMND",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "S04",
+      "code": "US.ONDS",
+      "day": "2025-12-01",
+      "setup": "pullback",
+      "bought": false,
+      "won": false,
+      "rel": null,
+      "ret": null,
+      "kind": null,
+      "fired": false
+     },
+     {
+      "id": "J01",
+      "code": "US.IONQ",
+      "day": "2025-05-08",
+      "setup": "pullback",
+      "bought": true,
+      "won": false,
+      "rel": 0,
+      "ret": -0.04329066050569775,
+      "kind": "e12_D1b",
+      "fired": true
+     }
+    ]
+   },
+   "per_night": {
+    "mean": 4.54183266932271,
+    "median": 5.0,
+    "p90": 5.0,
+    "zero_share": 0.00597609561752988
+   },
+   "watch_list": {
+    "median": 360.0
+   },
+   "fires": {
+    "D1a": 4300,
+    "D1b": 692,
+    "D1c": 18656,
+    "EP": 221,
+    "PB": 6517
+   }
+  }
+ },
+ "eligible": [
+  "C2",
+  "C3",
+  "C4"
+ ],
+ "chosen": "C2"
+}

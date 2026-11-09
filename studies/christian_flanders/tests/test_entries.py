@@ -137,3 +137,44 @@ class DraftTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class KindStrengthTests(unittest.TestCase):
+    def test_only_the_named_kind_is_narrowed_and_on_the_day_before(self):
+        rows = [(10, 10.2, 9.8, 10)] * 260 + [(19, 20.5, 19, 20.4)]     # 52-week low 9.8; up 108% on the last day
+        A = panel(rows)
+        ok = np.ones(A['F'].c.shape, bool)
+        cfg = dict(R.DRAFT, strength_by_kind={'vcp': ['up100']})
+        m_vcp = R.STUDY.kind_strength(A, cfg, 'vcp', ok)
+        self.assertTrue(R.STUDY.kind_strength(A, cfg, 'hi52', ok).all())         # other kinds untouched
+        self.assertFalse(m_vcp[-1, 0])                                           # day t's own close is not used
+        A2 = panel(rows + [(20.4, 20.6, 20.2, 20.5)])
+        self.assertTrue(R.STUDY.kind_strength(A2, cfg, 'vcp', np.ones(A2['F'].c.shape, bool))[-1, 0])
+
+
+class BreakoutVolumeTests(unittest.TestCase):
+    def masks(self, rows, vol_last, **o):
+        A = panel(rows)
+        A['F'].turnover[-1, 0] = vol_last                # name 0's last-day turnover (others 5e7 a day)
+        cfg = dict(R.DRAFT, setups=['brkv'], brkv=o, pool={'adr': 0.0})
+        return R.STUDY.setups(A, cfg)['brkv']
+
+    @staticmethod
+    def rising(n):                                       # a slow climb (above its 50-day), ADR about 4%
+        return [(10 + .001 * i, 10.2 + .001 * i, 9.8 + .001 * i, 10 + .001 * i) for i in range(n)]
+
+    def test_a_wide_up_day_on_heavy_volume_over_the_prior_high(self):
+        rows = self.rising(260) + [(10.3, 11.3, 10.3, 11.2)]
+        m, level, stop = self.masks(rows, 2e8)
+        self.assertTrue(m[-1, 0])
+        self.assertAlmostEqual(level[-1, 0], 10.2 + .259)  # the prior high, known the day before
+        self.assertFalse(self.masks(rows, 5e7)[0][-1, 0])  # ordinary volume: no
+        quiet = self.rising(260) + [(10.3, 10.6, 10.3, 10.55)]
+        self.assertFalse(self.masks(quiet, 2e8)[0][-1, 0])  # +2% under 1 ADR: no
+
+    def test_listing_uses_the_high_since_listing(self):
+        rows = self.rising(60) + [(10.1, 11.0, 10.1, 10.9)]
+        self.assertFalse(self.masks(rows, 2e8)[0][-1, 0])  # no 252-day high yet: the plain rule cannot fire
+        m, level, _ = self.masks(rows, 2e8, listing=True)
+        self.assertTrue(m[-1, 0])                         # the high since listing stands in
+        self.assertAlmostEqual(level[-1, 0], 10.2 + .059)

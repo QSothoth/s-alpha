@@ -5,7 +5,7 @@ the 10 / 20 EMA, in on the reclaim of the daily 10 EMA) and the base breakout (a
 buyers defend, in on the break of its top, stop under the base); out when price is extended from the 10 EMA (the end
 of a leg), at two targets at most, or when the 20 EMA / the setup's floor breaks.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.emanuela_elias.swing round E1
     $PY -m studies.emanuela_elias.swing ledger e1.json          # her dated trades: did we have the signal?
 

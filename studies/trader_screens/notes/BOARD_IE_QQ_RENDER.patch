@@ -1,0 +1,43 @@
+--- a/research/trader_board_cards.py
++++ b/research/trader_board_cards.py
+@@ -807,0 +808,3 @@
++    for run in runs:
++        if run.get('martin_candidates'):
++            content.append(candidate_html(run['martin_candidates']))
+@@ -864 +867 @@
+-def post_body(runs, panels, assets_by_trader, front_assets=()):
++def post_body(runs, panels, assets_by_trader, front_assets=(), *, research_assets=()):
+@@ -894,0 +898,4 @@
++    if research_assets:
++        lines += ['## Martin Luk 候选池 · 研究观察版、未验证', '', '观察名单与排名参考；不计入今天的买卖。', '']
++        lines += [line for index in range(len(research_assets))
++                  for line in (f'[(0,{len(front_assets) + len(panels) + index})](@img)', '')]
+@@ -1126,0 +1134,15 @@
++def candidate_html(pool):
++    content = [f'<main class="page"><header class="masthead"><h1>Martin Luk 候选池</h1>'
++               '<div class="version">研究观察版、未验证</div></header>'
++               f'<p>{esc(pool["asof"])} · 共 {pool["count"]} 只 · 前5仅作排名参考</p>'
++               f'<p class="quiet">{esc(pool["note"])}</p>']
++    for row in pool['candidates'][:5]:
++        content.append(f'<section class="stock-block" style="overflow-wrap:anywhere">'
++                       f'<b>{esc(board.candidate_stock(row))}</b>'
++                       f'<div>研究观察版、未验证 · 排名参考 {row["rank"]}</div>'
++                       f'<p>{esc(row["reason"])}</p><p>{esc(row["ranking_reason"])}</p></section>')
++    if not pool['candidates']:
++        content.append('<p>当晚没有可展示的候选；输入缺失不以旧数据顶替。</p>')
++    return ''.join(content) + '<footer class="footer">完整名单见附带 JSON；只供观察，未验证。</footer></main>'
++
++
+@@ -1145 +1167,7 @@
+-    body = post_body(runs, [], {}, images)
++    research_assets = []
++    for run in runs:
++        if run.get('martin_candidates'):
++            research_assets.extend(render_card('martin_candidates', 'Martin Luk 候选池 · 研究观察版、未验证',
++                                              style + candidate_html(run['martin_candidates']), output_dir))
++    body = post_body(runs, [], {}, images, research_assets=research_assets)
++    images.extend(research_assets)
+@@ -1155,0 +1184,3 @@
++    (output_dir / 'martin_candidates.json').write_text(json.dumps(dict(martin_candidates=[
++        r['martin_candidates'] for r in runs if r.get('martin_candidates')]),
++        ensure_ascii=False, indent=2, allow_nan=False), encoding='utf-8')

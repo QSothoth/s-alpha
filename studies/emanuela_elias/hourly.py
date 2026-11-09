@@ -2,7 +2,7 @@
 a retest of it, out at the next level / 2R / three sessions.  Bars come only from the data interface
 (studies.trader_data.load_hourly, release trader-hourly-v1).
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.emanuela_elias.hourly round H1
     $PY -m studies.emanuela_elias.hourly validate h1.json
 

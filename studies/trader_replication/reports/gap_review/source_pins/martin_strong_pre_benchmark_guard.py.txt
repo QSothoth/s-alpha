@@ -1,0 +1,317 @@
+"""STRONG rounds: pick the names that are strong in their own period, from cached daily bars only.
+studies/martin_luk/notes/PREREG_STRONG.md
+
+    $PY -m studies.trader_replication.martin_strong s1
+"""
+from __future__ import annotations
+
+import csv
+import sys
+from pathlib import Path
+
+import numpy as np
+
+from . import review as RV, systems as SY, ticket_t4 as T4, watchlist as WL
+from .martin_list import ema
+
+ROOT = Path(__file__).resolve().parents[2]
+BENCH = ROOT / 'data' / 'martin-luk-benchmarks-v1'
+CUT = '2025-12-31'
+TOPS = (4, 10, 20, 50)
+
+
+def lag(x, n=1):
+    return np.vstack([np.full((n,) + x.shape[1:], np.nan, dtype=x.dtype), x[:-n]])
+
+
+def roll_ext(x, n, fn):
+    o = np.full(x.shape, np.nan, dtype=np.float32)
+    for i in range(n - 1, len(x)):
+        o[i] = fn(x[i - n + 1:i + 1], axis=0)
+    return o
+
+
+def pct(x, U):
+    """Within-day percentile among U, 0 weakest, 1 strongest; NaN outside U."""
+    v = np.where(U, x, np.nan)
+    out = np.full(v.shape, np.nan, dtype=np.float32)
+    for d in range(len(v)):
+        ok = np.flatnonzero(np.isfinite(v[d]))
+        if len(ok) > 10:
+            out[d, ok] = np.argsort(np.argsort(v[d, ok])) / (len(ok) - 1)
+    return out
+
+
+def bench(days, code):
+    """Benchmark close on the panel's days, carried over any gap."""
+    px = {}
+    with open(BENCH / f'US.{code}.csv', encoding='utf-8') as f:
+        for r in csv.DictReader(f):
+            px[r['time_key'][:10]] = float(r['close'])
+    out = np.full(len(days), np.nan)
+    last = np.nan
+    for i, d in enumerate(days):
+        last = px.get(str(d), last)
+        out[i] = last
+    return out
+
+
+class Data:
+    def __init__(self):
+        self.W, self.cfg = SY.get('martin_luk').load()
+        self.base = getattr(self.W, 'base', self.W)
+        self.A = A = self.base.arrays('us')
+        self.reg, self.rules, _, self.pool = self.W.build(A, self.cfg)
+        self.rk = T4.ranks(A, self.pool)
+        self.days = [str(d) for d in A['days']]
+        self.di = {d: i for i, d in enumerate(self.days)}
+        self.o, self.h, self.l, self.c, self.t = (A[k].astype(np.float32) for k in ('open', 'high', 'low', 'close', 'turnover'))
+        self.raw = A['raw'].astype(np.float32)
+        with np.errstate(all='ignore'):
+            self.adr = WL.roll_mean(self.h / self.l - 1, 20).astype(np.float32)
+            self.to20 = WL.roll_mean(self.t, 20).astype(np.float32)
+            self.U = lag(np.nan_to_num(self.raw) >= 2) & lag(np.nan_to_num(self.to20) >= 1e7)
+            self.U[0] = False
+            H = np.where(np.isfinite(self.h), self.h, -np.inf)
+            f = np.full(self.c.shape, np.nan, dtype=np.float32)
+            for i in range(len(H) - 20):
+                f[i] = H[i + 1:i + 21].max(0)
+            f[~np.isfinite(f)] = np.nan
+            self.fwd = f / self.c - 1
+        self.fp = np.full(self.c.shape, np.nan, dtype=np.float32)
+        for d in range(len(self.c)):
+            ok = np.flatnonzero(np.isfinite(self.fwd[d]))
+            if len(ok) > 100:
+                self.fp[d, ok] = np.argsort(np.argsort(self.fwd[d, ok])) / (len(ok) - 1)
+        seen, self.his = set(), []
+        for t, j, a, z in self.base.located(A, self.base.trades()):
+            if t.side != 'long' or not t.dated or t.entry_date < '2024-01-02' or t.entry_date not in self.di or (j, t.entry_date) in seen:
+                continue
+            seen.add((j, t.entry_date))
+            self.his.append((self.di[t.entry_date], j, t.ticker, t.setup, t.entry_date))
+        self.big = [x for x in self.his if np.nan_to_num(self.fwd[x[0], x[1]]) >= .5]
+        self.window = [d for d, x in enumerate(self.days) if '2024-01-02' <= x and d + 20 < len(self.days)]
+
+
+def factors(D):
+    """Everything is known at the close of its own row."""
+    c, h, l, t, adr = D.c, D.h, D.l, D.t, D.adr
+    F = {}
+    with np.errstate(all='ignore'):
+        back = lambda n: lag(c, n)
+        F['g1'] = c / back(1) - 1
+        F['g21'] = c / back(21) - 1
+        F['g63'] = c / back(63) - 1
+        e21 = ema(c.astype(float), 21).astype(np.float32)
+        F['ext21'] = (c / e21 - 1) / adr
+        F['range10'] = (roll_ext(h, 10, np.nanmax) / roll_ext(l, 10, np.nanmin) - 1) / adr
+        F['money'] = np.log(D.to20)
+        F['gain'] = (c / back(1) - 1) / lag(adr)
+        F['cpos'] = (c - l) / (h - l)
+        F['rvol'] = t / lag(D.to20)
+    return F, e21
+
+
+def score(D, F, spec):
+    """Equal-weight sum of within-U percentiles; a missing value is neutral."""
+    s = np.zeros(D.c.shape, dtype=np.float32)
+    for k, sign in spec:
+        x = F[k] if sign > 0 else -F[k]
+        s += np.nan_to_num(pct(x, D.U) - .5)
+    return np.where(D.U, s, np.nan)
+
+
+def places(S, rows):
+    out = []
+    for x in rows:
+        d, j = x[0], x[1]
+        v = S[d]
+        out.append(int((v > v[j]).sum()) if np.isfinite(v[j]) else None)
+    return out
+
+
+def hits(p, n):
+    return sum(1 for x in p if x is not None and x < n)
+
+
+def seg(rows, f):
+    return [x for x in rows if f(x[4])]
+
+
+def rate(D, S, name):
+    """Hits on his names and the strength of the daily top 4, both parts."""
+    res = dict(name=name)
+    parts = (('p1', lambda d: d <= CUT), ('p2', lambda d: d > CUT))
+    for tag, rows in (('all', D.his), ('big', D.big)):
+        res[tag] = {p: dict(n=len(seg(rows, f)), **{str(n): hits(places(S, seg(rows, f)), n) for n in TOPS}) for p, f in parts}
+    for p, f in parts:
+        fp, gain = [], []
+        for d in D.window:
+            if not f(D.days[d]):
+                continue
+            v = np.nan_to_num(S[d], nan=-1e9)
+            top = np.argsort(-v)[:4]
+            top = top[v[top] > -1e8]
+            fp += D.fp[d, top].tolist()
+            gain += D.fwd[d, top].tolist()
+        fp, gain = np.array(fp), np.array(gain)
+        res[p] = dict(strength=round(float(np.nanmedian(fp) * 100), 1), big=round(float(np.nanmean(gain >= .5)) * 100, 1), gain=round(float(np.nanmedian(gain)) * 100, 1))
+    a, b = res['all'], res['big']
+    print(f"{name:10s} all 4/10/20/50 {a['p1']['4']}/{a['p1']['10']}/{a['p1']['20']}/{a['p1']['50']} of {a['p1']['n']} | {a['p2']['4']}/{a['p2']['10']}/{a['p2']['20']}/{a['p2']['50']} of {a['p2']['n']}"
+          f"  big {b['p1']['4']}/{b['p1']['10']}/{b['p1']['20']}/{b['p1']['50']} of {b['p1']['n']} | {b['p2']['4']}/{b['p2']['10']}/{b['p2']['20']}/{b['p2']['50']} of {b['p2']['n']}"
+          f"  top4 strength {res['p1']['strength']} / {res['p2']['strength']}  >=50% {res['p1']['big']} / {res['p2']['big']}  gain {res['p1']['gain']} / {res['p2']['gain']}", flush=True)
+    return res
+
+
+def baselines(D):
+    A = D.A
+    dr = np.where(D.rk < 10 ** 6, -D.rk.astype(np.float32), np.nan)
+    m1 = np.load(ROOT / 'data' / 'martin-luk-cache' / 'm1_score.npy').astype(np.float32)
+    out = [rate(D, np.where(D.U, dr, np.nan), 'dollar_rng')]
+    combo = np.where(np.isfinite(m1), m1 + 100, dr / 1000)
+    out.append(rate(D, np.where(D.U, combo, np.nan), 'm1_list'))
+    return out
+
+
+S1 = dict(A0=(('g21', 1),),
+          A1=(('g21', 1), ('ext21', -1)),
+          A2=(('g21', 1), ('g63', 1), ('ext21', -1), ('range10', -1)),
+          A3=(('g21', 1), ('g63', 1), ('ext21', -1), ('range10', -1), ('money', 1)),
+          A4=(('g21', 1), ('g63', 1), ('ext21', -1), ('range10', -1), ('money', 1), ('gain', 1), ('cpos', 1), ('rvol', 1)))
+
+
+def s1():
+    D = Data()
+    print('days', len(D.days), 'U median', int(np.median(D.U[D.window].sum(1))), 'his', len(D.his), 'big', len(D.big), 'in U', sum(D.U[x[0], x[1]] for x in D.his), flush=True)
+    res = dict(base=baselines(D))
+    F, _ = factors(D)
+    for k, spec in S1.items():
+        s = score(D, F, spec)
+        evening = lag(s)                  # read before the day opens
+        res[k] = rate(D, evening if k != 'A4' else s, k)
+        if k not in ('A4',):
+            res[k + 'c'] = rate(D, s, k + '_close')
+    RV.write('strong_s1.json', res)
+
+
+def bars_since(flag):
+    """Days since the flag was last true at each row, 999 before the first."""
+    out = np.full(flag.shape, 999.0, dtype=np.float32)
+    run = np.full(flag.shape[1], 999.0, dtype=np.float32)
+    for i in range(len(flag)):
+        run = np.where(flag[i], 0, np.minimum(run + 1, 999))
+        out[i] = run
+    return out
+
+
+def library(D):
+    """A wide set of daily-bar measures, each known at the close of its own row."""
+    c, h, l, o, t, adr = D.c, D.h, D.l, D.o, D.t, D.adr
+    q = bench(D.days, 'QQQ').astype(np.float32)
+    F = {}
+    with np.errstate(all='ignore'):
+        r = c / lag(c) - 1
+        qr = np.concatenate([[np.nan], q[1:] / q[:-1] - 1]).astype(np.float32)[:, None]
+        for n in (1, 5, 10, 21, 63, 126):
+            F[f'g{n}'] = c / lag(c, n) - 1
+        e9, e21, e50 = (ema(c.astype(float), n).astype(np.float32) for n in (9, 21, 50))
+        hi20, lo20, hi60, lo60, hi250, lo250 = (roll_ext(x, n, f) for x, n, f in ((h, 20, np.nanmax), (l, 20, np.nanmin), (h, 60, np.nanmax), (l, 60, np.nanmin), (h, 250, np.nanmax), (l, 250, np.nanmin)))
+        F['pos20'], F['pos60'], F['pos250'] = (c - lo20) / (hi20 - lo20), (c - lo60) / (hi60 - lo60), (c - lo250) / (hi250 - lo250)
+        F['ext9'], F['ext21'], F['ext50'] = (c / e9 - 1) / adr, (c / e21 - 1) / adr, (c / e50 - 1) / adr
+        F['spread'], F['squeeze'] = (e9 / e50 - 1) / adr, np.abs(e9 / e21 - 1) / adr
+        F['stack'] = (e9 > e21).astype(np.float32) + (e21 > e50).astype(np.float32)
+        hi5, lo5, hi10, lo10 = roll_ext(h, 5, np.nanmax), roll_ext(l, 5, np.nanmin), roll_ext(h, 10, np.nanmax), roll_ext(l, 10, np.nanmin)
+        F['range5'], F['range10'], F['range20'] = (hi5 / lo5 - 1) / adr, (hi10 / lo10 - 1) / adr, (hi20 / lo20 - 1) / adr
+        F['adr'] = adr
+        F['vc5'] = WL.roll_mean(h / l - 1, 5) / adr
+        F['money'], F['money5'] = np.log(D.to20), np.log(WL.roll_mean(t, 5))
+        F['to5_20'], F['to1_20'] = WL.roll_mean(t, 5) / D.to20, t / lag(D.to20)
+        F['to20_120'] = D.to20 / WL.roll_mean(t, 120)
+        F['act5'] = np.log(WL.roll_mean(t, 5) * WL.roll_mean(h / l - 1, 5))
+        F['act20'] = np.log(D.to20 * adr)
+        F['act20_60'] = F['act20'] - np.log(WL.roll_mean(t, 60) * WL.roll_mean(h / l - 1, 60))
+        rs = np.log(c) - np.log(q)[:, None]
+        rhi, rlo = roll_ext(rs, 250, np.nanmax), roll_ext(rs, 250, np.nanmin)
+        rhi60, rlo60 = roll_ext(rs, 60, np.nanmax), roll_ext(rs, 60, np.nanmin)
+        F['rs_pos'], F['rs_pos60'] = (rs - rlo) / (rhi - rlo), (rs - rlo60) / (rhi60 - rlo60)
+        F['rs_lead'] = F['rs_pos60'] - F['pos60']
+        dn = (qr < 0).astype(np.float32)
+        ex = np.nan_to_num(r - qr)
+        F['dn20'] = WL.roll_mean(ex * dn, 20) / WL.roll_mean(dn * np.ones_like(ex), 20) / adr
+        F['dn60'] = WL.roll_mean(ex * dn, 60) / WL.roll_mean(dn * np.ones_like(ex), 60) / adr
+        F['ddrel20'] = ((c / hi20 - 1) - (q / np.array(roll_ext(q[:, None], 20, np.nanmax)[:, 0]) - 1)[:, None]) / adr
+        F['since_hi20'] = bars_since(h >= hi20)
+        F['since_hi60'] = bars_since(h >= hi60)
+        lead = (e9 > e21) & (e21 > e50)
+        F['since_lead'] = bars_since(lead & ~lag(lead.astype(np.float32)).astype(bool))
+        big = r / lag(adr)
+        bmax = roll_ext(big, 60, np.nanmax)
+        F['since_big'] = bars_since((big >= bmax) & (big > 1))
+        F['bigup20'] = WL.roll_mean(((big > 1) & (t > 1.5 * lag(D.to20))).astype(np.float32), 20)
+        F['upday20'] = WL.roll_mean((r > 0).astype(np.float32), 20)
+        F['updn20'] = WL.roll_mean(np.where(r > 0, t, 0), 20) / WL.roll_mean(np.where(r < 0, t, 0), 20)
+        F['gain'], F['cpos'], F['gap'] = big, (c - l) / (h - l), (o / lag(c) - 1) / lag(adr)
+        F['opgain'] = (c / o - 1) / lag(adr)
+        F['overpdh'] = (c / lag(h) - 1) / lag(adr)
+        F['lowe9'], F['lowe21'] = (l / e9 - 1) / adr, (l / e21 - 1) / adr
+        F['cross_e9'] = ((c > e9) & (lag(c) <= lag(e9))).astype(np.float32)
+        F['inside'] = ((h <= lag(h)) & (l >= lag(l))).astype(np.float32)
+        F['nr'] = (h / l - 1) / adr
+    for k in list(F):
+        F[k] = F[k].astype(np.float32)
+    return F
+
+
+def in_list(v, names, y):
+    x = v[names]
+    ok = np.isfinite(x)
+    if not ok[y] or ok.sum() < 10:
+        return None
+    return float((x[ok] < x[y]).mean() + .5 * ((x[ok] == x[y]).mean() - 1 / ok.sum()))
+
+
+def self_pct(x, d, j, n=120):
+    a = x[max(0, d - n):d, j]
+    a = a[np.isfinite(a)]
+    return float((a < x[d, j]).mean()) if len(a) >= 40 and np.isfinite(x[d, j]) else None
+
+
+def s2():
+    """Scan: his names against the same day's active list and against their own past 120 days, both parts, at the close of the day
+    and the evening before."""
+    D = Data()
+    L = 300
+    print('rk<100', sum(D.rk[x[0], x[1]] < 100 for x in D.his), 'rk<200', sum(D.rk[x[0], x[1]] < 200 for x in D.his), 'rk<300', sum(D.rk[x[0], x[1]] < L for x in D.his), 'of', len(D.his), flush=True)
+    F = library(D)
+    print('factors', len(F), flush=True)
+    rows = []
+    for k, x in F.items():
+        rec = {}
+        for tag, shift in (('c', 0), ('e', 1)):
+            for p, f in (('p1', lambda s: s <= CUT), ('p2', lambda s: s > CUT)):
+                a, b = [], []
+                for h in seg(D.his, f):
+                    d, j = h[0] - shift, h[1]
+                    names = np.flatnonzero(D.rk[h[0]] < L)
+                    w = np.flatnonzero(names == j)
+                    if len(w):
+                        u = in_list(x[d], names, int(w[0]))
+                        if u is not None:
+                            a.append(u)
+                    v = self_pct(x, d, j)
+                    if v is not None:
+                        b.append(v)
+                rec[f'{tag}x_{p}'] = float(np.mean(a))
+                rec[f'{tag}s_{p}'] = float(np.mean(b)) if b else .5
+        rows.append((k, rec))
+    fmt = lambda r, a: f"{r[a + '_p1']:.2f}/{r[a + '_p2']:.2f}"
+    key = lambda r, a: min(abs(r[a + '_p1'] - .5), abs(r[a + '_p2'] - .5)) if (r[a + '_p1'] - .5) * (r[a + '_p2'] - .5) > 0 else 0
+    for a, title in (('cx', 'close, against the list'), ('ex', 'evening, against the list'), ('cs', 'close, against itself'), ('es', 'evening, against itself')):
+        print('==', title, flush=True)
+        for k, r in sorted(rows, key=lambda kv: -key(kv[1], a))[:14]:
+            print(f'  {k:10s} {fmt(r, a)}', flush=True)
+    RV.write('strong_s2.json', dict(rows))
+
+
+if __name__ == '__main__':
+    globals()[sys.argv[1]]()

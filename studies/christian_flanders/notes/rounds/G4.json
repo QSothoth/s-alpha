@@ -1,0 +1,10 @@
+{"stage": "EP pool and same-day order (stale R2 decision retested)",
+ "base": "registered",
+ "ref": "REG",
+ "candidates": {
+   "G4A": {"ep_pool": {"turnover": 20000000.0, "price": 5.0}},
+   "G4B": {"priority": "turnover"},
+   "G4C": {"ep_pool": {"turnover": 20000000.0, "price": 5.0}, "priority": "turnover"},
+   "G4D": {"ep_pool": {"turnover": 20000000.0, "price": 5.0}, "priority": "turnover", "setups": ["brkv", "ep"], "brkv": {"listing": true}},
+   "G4E": {"priority": "turnover", "setups": ["brkv", "ep"], "brkv": {"listing": true}}
+ }}

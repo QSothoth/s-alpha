@@ -1,6 +1,6 @@
 """RB1 (notes/PREREG_RB1.md): the breakeven step of the registered P1B on the fixed engine, compare.one metrics.
 
-    nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python -m studies.qullamaggie.rb1
+    nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python -m studies.qullamaggie.rb1
 """
 import gc
 import json

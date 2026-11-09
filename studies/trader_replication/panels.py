@@ -16,6 +16,7 @@ the look-ahead gate compares what a system decides on days <= upto with and with
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -59,6 +60,7 @@ def arrays(market, upto=None, mode=None):
     from studies.trader_screens import screens as S
     p = load(market, upto, mode)
     F = S.Feat(p, market)
+    F.listing = os.environ.get('TRADER_LISTING') == '1'
     A = dict(days=p['days'], codes=p['codes'], market=market, F=F,
              open=F.o, high=F.h, low=F.l, close=F.c, turnover=F.turnover, raw=F.raw, volume=F.v)
     A['to20'] = F.to20

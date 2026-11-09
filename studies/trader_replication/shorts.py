@@ -23,7 +23,7 @@ and this module turns them into engine entries with the common short execution:
 Shorts are researched on US data only (HK: only designated securities can be sold short and we have no list; A
 shares: securities lending is restricted): elsewhere the long system runs alone and the report says "not applicable".
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.shorts round martin_luk S1
     $PY -m studies.trader_replication.shorts gate martin_luk s1.json      # look-ahead gate of a round's choice
     $PY -m studies.trader_replication.shorts render martin_luk
@@ -226,6 +226,10 @@ def short_rules(rules, sc, kinds):
 
 
 def split_cfg(cfg):
+    from .config import Config, SECTIONS, plain
+    if any(k in cfg for k in SECTIONS):
+        parts = plain(Config(cfg))
+        return parts, parts['trade'].pop('short', None)
     return {k: v for k, v in cfg.items() if k != 'short'}, cfg.get('short')
 
 
@@ -275,6 +279,10 @@ class LongShort:
         masks = {k: dict(m, armed=m['armed'] & ok[:, None]) if isinstance(m, dict) else m & ok[:, None]
                  for k, m in masks.items()}
         se = short_entries(A, masks, sc)
+        if not getattr(self.base, 'legacy', True) and 'regime' in A:
+            from . import allocation
+            from .config import Config
+            se = allocation.switch_entries(A, se, Config(cfg)['switch'].get('controls', ()))
         if sc.get('max_new'):
             se = [sorted(lst, key=lambda e: e[0])[:sc['max_new']] for lst in se]
         if trace is not None:

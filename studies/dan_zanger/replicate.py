@@ -1,7 +1,7 @@
 """Dan Zanger through skills/trader-replication, on the Flanders machinery (entries, pools, the generic loop); only
 his base breakout, stop and exits are his own.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.dan_zanger.replicate round R1
     $PY -m studies.dan_zanger.replicate validate r1.json
     $PY -m studies.dan_zanger.replicate final r1.json
@@ -287,10 +287,9 @@ class Zanger(CF.Flanders):
         self.write(f'final_{self.tag(report, key)}.json', out)
 
     def success(self, report, key='chosen'):
-        """The seven success rules (skills/trader-replication) for one configuration on the US window: the gate's
-        data / look-ahead / fill checks, the win rate, the count and his behaviour (CARD), the window and 2026
-        against same-pool random entry (2026 already used: a reference only), and the window rerun without the two
-        best trades' entries.  reports/success_<tag>.json."""
+        """Current P1 success checks. Same-pool random and drop-two replays are diagnostics;
+        historical reports retain their original verdicts. reports/success_<tag>.json.
+        """
         from studies.trader_replication import gate as G, panels, success as SU
         cfg = self.config(report, key)
         A = self.arrays('us')
@@ -359,7 +358,9 @@ def facts(st, tr, val, drop, gate):
     b = dict(st['behaviour'], days_mean=float(np.mean(days)) if days else None,
              max_days=float(max(days)) if days else None)
     return dict(gate=dict(gate), win=float((ret > 0).mean()) if len(ret) else None, closed=len(closed),
-                per_year=b['per_year'], behaviour={k: b.get(k) for k in CARD['behaviour']}, years={},
+                per_year=b['per_year'], behaviour={k: b.get(k) for k in CARD['behaviour']},
+                years=st.get('by_year', {}),
+                counts={y: sum(t['entry'].startswith(y) for t in tr) for y in st.get('by_year', {})},
                 total=st['total'], placebo_median=st['placebo']['median'], validate_total=val['total'],
                 validate_placebo_median=val['placebo']['median'], total_drop2=drop['total'])
 

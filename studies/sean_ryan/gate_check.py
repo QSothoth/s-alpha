@@ -2,7 +2,7 @@
 proposed for registration: no look-ahead at the protocol's cut days, every fill inside the day's range and the
 win-rate ceiling over the common window.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.sean_ryan.gate_check r7.json
 """
 from __future__ import annotations

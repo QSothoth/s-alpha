@@ -6,7 +6,7 @@ minute sets (US k5 union, HK 1m; a subset of the list: only those names get a pr
 predicts y = log(our daily volume / volume up to the cut) from what is known at the cut; it is fitted on the local
 sets' 2024-01-02 .. 2026-06-30 (US, HK) or, for A-shares (no local set), on the sessions before each test day.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_screens.intraday_i2 days us        # the 20 test days
     $PY -m studies.trader_screens.intraday_i2 model us       # fit E0..E4, choose on the training data, predict the test days
     $PY -m studies.trader_screens.intraday_i2 run us         # the systems on every test day (resumable)

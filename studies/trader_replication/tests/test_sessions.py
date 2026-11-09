@@ -70,7 +70,7 @@ class SessionTests(unittest.TestCase):
         p=panel([(10,10,10,10)]*3,[0,0,1],[False,True,True])
         entries=[[(0,0,1,10.,9.,'a',9.)],[(0,0,1,10.,9.,'b',9.)],[(0,0,1,10.,9.,'c')]]
         rules=Y.Rules(trail='',trims=(),feedback=1,feedback_opened=True,risk=.01,
-                      risk_low=.005,risk_high=.02,buy_cost=0,sell_cost=0,margin_rate=0)
+                      risk_low=.005,risk_high=.02,intraday_kinds=('a','b'),buy_cost=0,sell_cost=0,margin_rate=0)
         _,_,tr=Y.simulate(p,{},rules,entries,p['dates'][0],p['dates'][-1],audit=True)
         self.assertAlmostEqual(tr[0]['executions'][0]['shares'],.01)
         self.assertAlmostEqual(tr[1]['executions'][0]['shares'],.0099)
@@ -101,7 +101,7 @@ class SessionTests(unittest.TestCase):
     def test_successful_cap_counts_same_day_stop_and_resets_only_next_session(self):
         p=panel([(10,10,10,10)]*3,[0,0,1],[False,True,True])
         e=[[(0,0,1,10.,9.5,'x',9.5)]]*3
-        rules=Y.Rules(trail='',trims=(),max_new_long=1)
+        rules=Y.Rules(trail='',trims=(),max_new_long=1,intraday_kinds=('x',))
         _,_,tr=Y.simulate(p,{},rules,e,p['dates'][0],p['dates'][-1])
         self.assertEqual([t['entry'] for t in tr],[p['dates'][0],p['dates'][2]])
 

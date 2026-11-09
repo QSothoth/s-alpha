@@ -17,11 +17,30 @@
 | `selection.py`、`r10.py`、`r12.py` | R9/R11 全市场日 K 按当时条件的选股检验，R10/R12 选股 + 交易规则 |
 | `strength.py`、`r16.py`、`r17.py` | R13–R18 逐环节优化（强度定义、名单、形态、题材、止损、收盘确认完整系统） |
 | `scale.py` | 股票池宽度的影响，以及把单笔优势放大到他的笔数后的量级对账 |
+| `ie47_e1.py` | IE47 固定画像与 E1–E5 执行共用的 `Study`；数据只经 `trader_data`，研究、比对和看板共用 |
+| `ie47_audit.py` | 恢复现有画像的完整精度参数；逐晚一致性、七个指标、四个过滤条件、三把尺子与截断检查，不重新拟合 |
+| `e1_research.py` | 按 [E1 任务书](notes/PLAN_E1_CN.md) 与[预登记](notes/PREREG_E1_CN.md)择优、仅评估挑中者的 2026、三层对照及规定测试；已有选择和验证结果不覆盖 |
+| `e1_board_smoke.py` | 只读现有 frozen / live 数据的单系统看板冒烟，禁止网络取数与工作区外写入；结果留在工作区，不发布或推送 |
+| `e5_research.py` | [E5 预登记](notes/PREREG_E5_CN.md)的单一收盘确认候选：说明段、一次验证、独立比较记录、看板及测试；保护 E1–E4 旧结果 |
+
+2026-11-05 研究版登记为 `martin_luk_ie47`（属于 `martin_luk`），按 [E5 任务书](notes/PLAN_E5_CN.md)改为 `IE47 + E5`：三日观察内首次收盘高于昨高，收盘买入，买入日低点止损，宽于 min(5%、前一收盘半个 ADR) 跳过，从次日起管理。原 E3 选择与 E1–E4 结果仍保留，见 [E1 报告](reports/E1_CN.md)；E5 完整结果见 [E5 报告](reports/E5_CN.md)。画像在 `reports/ie47_profile.json`，逐晚移植核对在 `reports/e1_selection.json`。新研究版尚未冻结，也没有替换 R74 + S7；默认整板沿用原登记，指定新编号才查看此版。live 补充数据有缺口时如实拒绝，冻结期复放不等于实盘成功。
+
+```bash
+PY="nice -n 10 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
+# E5 比较记录在 reports/e5_compare.json；登记看板直接与该记录核对，不覆盖 E3 旧比较表
+$PY -m studies.trader_screens.scan run us --mode frozen --traders martin_luk_ie47
+$PY -m studies.trader_screens.scan run us --traders martin_luk_ie47
+$PY -m studies.trader_screens.scan run us --traders martin_luk_ie47 --provisional
+# E5 已存结果只读查看；train / validate 有不可覆盖的启动标记，不能重复评价验证段
+$PY -m studies.martin_luk.e5_research preserved
+$PY -m studies.martin_luk.e5_research checks
+# 首次研究顺序：e5_research train、validate、board；board 只读现有数据，不补数、不发布
+```
 
 数据缓存在 `data/martin-luk-cache/`（不进 git，可由原始数据重建）。只读研究，不接 custody、不产生交易许可。
 
 ```bash
-PY="nice -n 19 /opt/futu-opend/venv/bin/python"
+PY="nice -n 19 /opt/opend-us-options/.venv/bin/python"
 $PY -m unittest studies.martin_luk.tests.test_luk studies.martin_luk.tests.test_intraday studies.martin_luk.tests.test_replicate
 $PY -m studies.martin_luk.replicate r19   # 之后按顺序：r20 … r28（第一阶段）、r29 … r41（第二阶段前半）
 $PY -m studies.martin_luk.replicate round R42   # R42 … R74：读 notes/rounds/R*.json，写 reports/r42.json …

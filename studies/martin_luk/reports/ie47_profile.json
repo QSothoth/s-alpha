@@ -1,0 +1,216 @@
+{
+ "version": "IE47",
+ "fit_years": [
+  "2024",
+  "2025"
+ ],
+ "library": "standard_indicators v1.1",
+ "first_signal": "2023-12-29",
+ "cooldown": 10,
+ "max_picks": 3,
+ "gates": [
+  {
+   "name": "h4_history",
+   "cutoff": 0.6,
+   "missing_pass": true
+  },
+  {
+   "name": "adr20",
+   "cutoff": 0.7,
+   "missing_pass": false
+  },
+  {
+   "name": "option_volume",
+   "cutoff": 0.8,
+   "missing_pass": false
+  },
+  {
+   "name": "low20",
+   "cutoff": 0.5,
+   "missing_pass": false
+  }
+ ],
+ "regime_rule": "weak: QQQ < EMA50; pullback: QQQ <= 1.01*EMA21; up: otherwise; target regime = night before entry",
+ "missing_score": 0,
+ "stable_ties": "code ascending",
+ "tables": {
+  "shared": [
+   {
+    "name": "low252_distance_pct",
+    "bins": 5,
+    "weight": 1,
+    "edges": [
+     43.25926208496094,
+     85.55799102783203,
+     148.96031188964852,
+     289.9674377441406
+    ],
+    "scores": [
+     -1.7917594909667969,
+     -0.6984302401542664,
+     -0.5736950635910034,
+     0.35313937067985535,
+     0.8539547920227051,
+     0.0
+    ],
+    "targets": 21
+   },
+   {
+    "name": "perf5_pct",
+    "bins": 10,
+    "weight": 1,
+    "edges": [
+     -7.301867485046387,
+     -3.061229705810547,
+     -0.2659572064876519,
+     1.9898381233215332,
+     4.070474624633789,
+     6.209484100341798,
+     8.816326141357424,
+     12.617080688476562,
+     19.85793685913086
+    ],
+    "scores": [
+     -1.4472603797912598,
+     -2.397895336151123,
+     -2.397895336151123,
+     -0.3004484474658966,
+     -0.30072635412216187,
+     0.21912047266960144,
+     -0.2077222466468811,
+     0.4741131067276001,
+     0.028480296954512596,
+     1.2263798713684082,
+     0.0
+    ],
+    "targets": 21
+   },
+   {
+    "name": "weekly_rsi14",
+    "bins": 3,
+    "weight": 0.5,
+    "edges": [
+     52.11852900187174,
+     62.80361684163411
+    ],
+    "scores": [
+     -0.7672551274299622,
+     0.19415602087974548,
+     0.2787134051322937,
+     0.0
+    ],
+    "targets": 21
+   },
+   {
+    "name": "weinstein_stage",
+    "bins": 10,
+    "weight": 1,
+    "edges": [
+     2.0,
+     3.0,
+     4.0
+    ],
+    "scores": [
+     -0.3683379888534546,
+     0.25276413559913635,
+     0.16202710568904877,
+     -1.6094379425048828,
+     0.0
+    ],
+    "targets": 21
+   },
+   {
+    "name": "chan_weekly_buy",
+    "bins": 3,
+    "weight": 0.5,
+    "edges": [
+     0.5
+    ],
+    "scores": [
+     0.014307836070656776,
+     -1.0986123085021973,
+     0.0
+    ],
+    "targets": 21
+   }
+  ],
+  "up": [
+   {
+    "name": "avwap_big_gap_adr",
+    "bins": 3,
+    "weight": 1,
+    "edges": [
+     -0.12593995034694674,
+     1.3208579619725545
+    ],
+    "scores": [
+     -0.21599002182483673,
+     -0.051472265273332596,
+     0.15567775070667267,
+     0.0
+    ],
+    "targets": 19
+   },
+   {
+    "name": "chan_weekly_buy",
+    "bins": 3,
+    "weight": 1,
+    "edges": [
+     0.5
+    ],
+    "scores": [
+     0.014756751246750355,
+     -1.0986123085021973,
+     0.0
+    ],
+    "targets": 19
+   }
+  ],
+  "pullback": [
+   {
+    "name": "smc_low_sweep",
+    "bins": 3,
+    "weight": 1,
+    "edges": [
+     0.5
+    ],
+    "scores": [
+     0.02257893607020378,
+     -1.0986123085021973,
+     0.0
+    ],
+    "targets": 7
+   },
+   {
+    "name": "chan_weekly_buy",
+    "bins": 3,
+    "weight": 1,
+    "edges": [
+     0.5
+    ],
+    "scores": [
+     0.012137123383581638,
+     -1.0986123085021973,
+     0.0
+    ],
+    "targets": 7
+   }
+  ]
+ },
+ "source_sha256": {
+  "studies/trader_replication/martin_profile_ie29.py": "1d28826f57c8beb150d3408832d491e170df0c7de6e174a50e48f2ce3e0ebb1e",
+  "studies/trader_replication/martin_profile_ie42.py": "c6e713fcde4b80034559535aa49d02d05491086a7cf8bfefc9da0b1dca2fb92e",
+  "studies/trader_replication/standard_indicators.py": "c1c529c36b01b53ea1f6503a37894f9edcced57cbc96c5eef58261187e7539f8",
+  "studies/trader_replication/martin_continue_ie5.py": "948e943e07b0c77bda81fd1e9c1a4a11be71c9d14e37e314b3327e3ceddf6e3b",
+  "studies/trader_replication/martin_continue_ie9.py": "262e68753072c1c7e7c7025beec3f0c9c60ddf2e2802a9e1e64f222639dc8d56",
+  "studies/trader_replication/mainleg.py": "ef9ab736f33a36de15864a89a1bb88f6edd4c0cae022bdfaa67c7fd2fe7400f5",
+  "studies/trader_replication/reports/gap_review/ie47_work/fit.json": "29f83603d0b05af07f5c79bf7066d78f587bc56af6bb5aad772fcc5d80255b6e",
+  "studies/trader_replication/reports/gap_review/ie47_work/agree.json": "f65befe76feb6ee21535f3d445c9b0681502d46dc6de32f435601d70ecfea8eb",
+  "studies/trader_replication/reports/gap_review/ie47_work/scorecard.json": "33b4fd92f718b359323996eb306627e91ab4306a8341e81e43b0c051b355073d",
+  "studies/trader_replication/reports/gap_review/ie5_work/prepared.json": "23b471362e21c890b678266196b10b215b07b8ec4d5b30a36cecde0df4fbccf9",
+  "studies/trader_replication/reports/gap_review/ie40_work/pool_standard_v1_1.npz": "a0717a9be2ff8bd0d6d4e56f39acf726371d64bec542c071ca380abd9e768037"
+ },
+ "matrix_signature": "3700ec0f8cc149eaa554e4630d63618f77716ad0ab4464c94c5d1dee256dd1d3",
+ "original_library_sha256": "c0274546d58b8b817cee7c34a977ffbd4bb8f24fcd32bdf56ecd671342961569",
+ "dataset_digest": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158"
+}

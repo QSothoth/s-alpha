@@ -1,7 +1,7 @@
 """Oliver Kell through skills/trader-replication, on the same machinery as the Flanders study (entries, stop modes,
 pools, the generic loop); only his stages and numbers differ.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.oliver_kell.replicate round R1
 
 The starting point (DRAFT) is the board's draft (studies/trader_screens/screens.py OliverKell + its book): the Wedge
@@ -63,7 +63,7 @@ class Kell(CF.Flanders):
         out = super().setups(A, dict(cfg, setups=[s for s in cfg.get('setups', [])
                                                   if s in ('ep', 'brk52', 'pp', 'vcp', 'pb')]))
         names = cfg.get('setups', ['pop', 'cross'])
-        st = S.OliverKell().run(F)['setups']
+        st = S.OliverKell().run(F, cfg.get('screen', {}).get('adr', 3))['setups']
         if 'pop' in names:                               # bought at the close that reclaims the higher EMA
             x = [s for s in st if s.name == 'Wedge Pop'][0]
             line = np.fmax(F.ema(10), F.ema(20))
@@ -81,7 +81,9 @@ class Kell(CF.Flanders):
                 out['ib2'] = (m, np.fmax(F.o, lag(mother)), F.l)
             if 'ur' in names:                            # undercut and rally: yesterday closed below the 20 EMA
                 e20 = F.ema(20)                          # after an up cycle, today closes back above it
-                m = pool & lag(F.c < e20) & (F.c > e20) & lag(F.ema(10) > e20, 3) & (F.c > F.sma(50))
+                m = pool & lag(F.c < e20) & (F.c > e20) & lag(F.ema(10) > e20, 3)
+                if not cfg.get('no50'):
+                    m &= F.c > F.sma(50)
                 out['ur'] = (m, e20, F.l)
         return out
 
@@ -93,7 +95,7 @@ class Kell(CF.Flanders):
         with np.errstate(invalid='ignore'):
             for k in ('pop', 'cross'):
                 if k in kinds:
-                    out[k] = lag(F.liquid(20e6) & (F.adr >= 3))
+                    out[k] = lag(F.liquid(20e6) & (F.adr >= cfg.get('screen', {}).get('adr', 3)))
         return out
 
     def intraday_kinds(self, cfg, kinds):

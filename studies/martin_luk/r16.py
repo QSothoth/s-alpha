@@ -1,6 +1,6 @@
 """R16 (notes/PREREG_R16.md): stop placement for W2-gated trades on the unbiased R8 subset.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.r16
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r16
 """
 from __future__ import annotations
 

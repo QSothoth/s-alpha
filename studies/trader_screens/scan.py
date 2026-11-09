@@ -117,10 +117,15 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
     tail_days, tail_close = p['days'][-61:].copy(), p['close'][-61:].copy()
     market_curve = runner.bounded_history(p['days'], pool_index(F), last)
     features = context.market_features(p, market) if panel is None else None
-    del p, F
+    del F
+    candidates = None
+    if market == 'us' and panel is None and (not only or 'martin_luk' in only):
+        from . import martin_candidates
+        candidates = martin_candidates.build(p, ds, mode, names=nm)
+    del p
     traders = []
     with intraday.shared(panel, market) if panel is not None else nullcontext():
-        for x in SY.board(market):
+        for x in SY.board(market, versions=bool(only)):
             if (only and x.id not in only) or (panel is not None and getattr(x, 'board_run', None)):   # Holguin sells at the open
                 continue
             t0 = time.perf_counter()
@@ -152,6 +157,8 @@ def run(market, mode='live', days=1, only=None, panel=None, seconds=None):
     result = dict(market=market, mode=mode, data=ds.id, digest=digest, last_day=last, days=days, names=len(codes),
                   state=state, traders=traders, common=overlaps(traders, inds),
                   presentation=dict(window=60, market_curve=market_curve, stocks=stocks))
+    if candidates is not None:
+        result['martin_candidates'] = candidates
     aggregation.attach(result, features)
     return result
 
@@ -223,6 +230,8 @@ def show(r):
     print('持仓行业：' + '、'.join(f'{k}({v})' for k, v in c['industries_held']))
     if c['in_cash']:
         print('空仓的：' + '、'.join(c['in_cash']))
+    for line in board.research_candidates(r):
+        print(line)
 
 
 def main(argv=None):
@@ -244,7 +253,7 @@ def main(argv=None):
     from studies import trader_data as TD
     if args.action == 'list':
         from studies.trader_replication import systems as SY
-        for x in SY.board():
+        for x in SY.board(versions=True):
             print(f"{x.id}: {x.name}｜{x.style}｜{x.label}｜{'/'.join(x.markets)}｜冻结日 {x.freeze}")
         return
     if args.action == 'board':                      # one page with the newest daily run of every market
@@ -325,7 +334,8 @@ def with_confidence(market, mode, days, only, panel=None, seconds=None):
         return r
     t0 = time.perf_counter()
     hhmm = intraday.market_now(market).strftime('%H:%M')
-    systems = [x for x in SY.board(market) if not getattr(x, 'board_run', None) and (not only or x.id in only)]
+    systems = [x for x in SY.board(market, versions=bool(only))
+               if not getattr(x, 'board_run', None) and (not only or x.id in only)]
     try:
         c = CF.live(panel, market, hhmm, model, systems=systems)
     except Exception as e:                          # the direct board stands on its own

@@ -27,6 +27,8 @@ class System:
     markets: tuple = ('us', 'hk', 'cn')  # the markets the board runs it on
     wrap: bool = True                 # False: the study's own `short` key is its own short side, not a short round
     board_run: object = field(default=None, repr=False)  # a non-stock engine's runner (runner.run's result shape)
+    trader: str = ''                  # another registered version of this trader; comparison name selects both
+    comparison: Path | None = None   # independent research record, preserving earlier versions' saved results
 
     @property
     def style(self):
@@ -112,9 +114,16 @@ def _carried(module, report, key, fix=None):
     return load
 
 
-def all_():
+def _martin_ie47():
+    from studies.martin_luk.ie47_e1 import STUDY
+    selected = json.loads((STUDY.reports / 'e5_selected.json').read_text(encoding='utf-8'))
+    return STUDY, selected['config']
+
+
+def all_(versions=False):
+    """Carried systems; versions=True also lists the separate, US-only IE47 research version."""
     # 2026-10-19: long-short versions frozen by the user (gate v2, studies/<id>/notes/SHORTS_CONCLUSION_CN.md)
-    return [System('martin_luk', 'R74 + S7', 'frozen', _martin(('s7.json', 'S7C')), registered='2026-10-19'),
+    result = [System('martin_luk', 'R74 + S7', 'frozen', _martin(('s7.json', 'S7C')), registered='2026-10-19'),
             # 2026-10-20: + the common-gap version validated on 2026 (user approved, reports/COMMON_RESULTS_CN.md)
             System('christian_flanders', 'R15 C4 + C1C + S4', 'frozen',
                    _study('christian_flanders', 'r15.json', ('s4.json', 'F4A'), {'rank': 'ep_own'}),
@@ -147,6 +156,11 @@ def all_():
             # (2026 already used)), studies/dan_zanger/notes/PROGRESS.md
             System('dan_zanger', 'R13 NOCAP_SLEEP10', 'research', _carried('dan_zanger', 'r13.json', 'NOCAP_SLEEP10'),
                    registered='2026-10-30')]
+    if versions:
+        result.append(System('martin_luk_ie47', 'IE47 + E5', 'research', _martin_ie47,
+                             registered='2026-11-05', markets=('us',), wrap=False, trader='martin_luk',
+                             comparison=ROOT/'studies/martin_luk/reports/e5_compare.json'))
+    return result
 
 
 def _holguin():
@@ -171,22 +185,31 @@ def new_styles():
                    markets=('us',), wrap=False, board_run=_holguin_run)]
 
 
-def board(market=None):
-    """Every system the trader-screens board shows (on `market`): the comparison set plus the other styles."""
-    return [x for x in all_() + new_styles() if market is None or market in getattr(x, 'markets', ('us', 'hk', 'cn'))]
+def board(market=None, versions=False):
+    """The board's carried systems; explicit version selection additionally exposes independent research versions."""
+    return [x for x in all_(versions) + new_styles() if market is None or market in getattr(x, 'markets', ('us', 'hk', 'cn'))]
 
 
 def get(id_):
-    return next(x for x in board() if x.id == id_)
+    return next(x for x in board(versions=True) if x.id == id_)
 
 
-STYLE = {'martin_luk': '动量波段', 'christian_flanders': '动量波段', 'clement_ang': '动量波段', 'qullamaggie': '动量波段',
+STYLE = {'martin_luk': '动量波段', 'martin_luk_ie47': '动量波段',
+         'christian_flanders': '动量波段', 'clement_ang': '动量波段', 'qullamaggie': '动量波段',
          'oliver_kell': '动量波段', 'marios_stamatoudis': '动量波段', 'dan_zanger': '动量波段',
          'mark_minervini': '成长股趋势',
          'evan_medeiros': '均值回归', 'alfredo_holguin': '卖 Put 收租'}
 
 
 STRATEGY = {        # (source label, 选股与形态, 入场与止损, 离场, 仓位与市况); hand-written from each configuration
+    'martin_luk_ie47': ('IE47 + E5（研究版）',
+                        'IE47 固定画像，保留 IE9 四个过滤条件（H4 历史组缺失放行）；每晚最多 3 只，10 晚内不重复',
+                        '入选次日起 3 个交易日内首次收盘高于昨高，按收盘价买；止损在买入日低点、至少 1%；'
+                        '宽于 min(5%、前一收盘半个 ADR) 不买，首次确认未成交不顺延',
+                        '从次日起管理：3R、5R 各卖原始仓位 15%；收盘首次跌破 9 EMA 清仓；'
+                        '盘中模式沿用收盘前 10–15 分钟的临时日 K 信号约定',
+                        '每笔风险 0.5%，单只 ≤25%，总仓位 ≤280%，最多 11 只，每日最多新开 4 笔；'
+                        '不加 QQQ 市况过滤；研究版，未冻结，保留 R74 + S7；用 --traders martin_luk_ie47 单独查看'),
     'martin_luk': ('R74 + S7（已冻结）',
                    '流动池里 1 / 3 / 6 月涨幅前 10%（近 5 天出现过）进观察名单；突破、内包、周线突破、基底路径，加 EP 跳空（≥ max(5%, 1 ADR)、2 倍量、收在开盘上方）',
                    '收盘买，当日低点止损，宽度 1% ~ min(5%, 0.5 ADR)，宽了就上移到上限',

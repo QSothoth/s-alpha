@@ -2,6 +2,8 @@
 
 使用说明见 [skills/trader-screens](../../skills/trader-screens/SKILL.md)。只读，不接 custody。看板上每位交易员就是 [`studies/trader_replication/systems.py`](../trader_replication/systems.py) 登记的系统，由 [`runner.py`](../trader_replication/runner.py) 运行，和横向比对表是同一份实现；数据经 [`studies/trader_data`](../trader_data/README.md)（默认 live）。
 
+Martin 的 IE47 研究版另登记为 `martin_luk_ie47`（`IE47 + E5`，未冻结），用 `scan run us --traders martin_luk_ie47` 或加 `--provisional` 单独运行；`scan list` 同时列出它和原 R74 + S7。E5 在三日观察内首次收盘高于昨高时收盘买入，从次日起管理；盘中模式沿用收盘前 10–15 分钟的临时日 K 信号约定。冻结期回放直接核对独立 `martin_luk/reports/e5_compare.json`，保留 E3 的旧比较结果。默认整板继续使用原版本，避免同一人的两个版本被计作两位交易员的共同买入。选股移植记录见 [E1 报告](../martin_luk/reports/E1_CN.md)，E5 结果、门禁及 live 数据缺口见 [E5 报告](../martin_luk/reports/E5_CN.md)。
+
 当前七套策略的方法论、执行及证据审查见 [2026-10-25 审查报告](reports/STRATEGY_REVIEW_20261025_CN.md)，附可复跑的微型用例与冻结美股候选核查；报告记录问题，不代表已修复。
 
 | 文件 | 内容 |
@@ -17,11 +19,14 @@
 | `focus.py` | Markdown、本机 HTML 和图片共用的逐股聚合：以已有持仓和成交记录计算共同持有、同日多人新开、新开加入老持仓、退出与持有并存、多空分歧；不取数、不改策略 |
 | `aggregation.py` | 跨股票行业、概念、入场形态、量价与风险特征的关系判定；两人两股门槛、阶段与方向分列、成员去重、证据与覆盖率 |
 | `context.py` | 复用已有面板的有界窗口特征；日报用收盘，盘中用原始快照；补充旧日报仅允许数据摘要一致的本地面板，不取数 |
+| `martin_candidates.py` | Martin 研究观察版候选池：IE8 固定四条过滤条件、IE9 等权排名；仅正式美股日报，完整名单与覆盖率写入独立的 `martin_candidates` JSON 字段，不参加账户、买卖或交集 |
 | `board.py` | 把一个或多个市场的结果写成 Markdown 看板（`board.md`）：先按股票比较，再展开交易员账户与持仓明细；盘中价格与执行时点单独折叠 |
 | `screens.py` | 共用日 K 特征（只用当天及以前）和按原话写的买点定义（研究模块引用），以及档案里的账户规则记录 `book` |
 | `data.py` | OpenD 行业名缓存；旧的按目录取数与面板函数（委托给 `studies/trader_data`） |
 
 日报 JSON 同时提供图表输入。每位交易员的 `equity_history` 是同一次账户回放的日净值；`presentation.market_curve` 是与市况判断相同的股票池等权指数；`presentation.stocks` 按代码提供相关标的的收盘价和现有名称、行业简介。曲线只保留截至日报日期的最近 61 个收盘点，用于计算近 60 个交易日变化；窗口内缺价时返回空曲线。展示程序直接消费这些字段，无需另行回放账户或维护标的名单。
+
+Martin 候选池单列“研究观察版、未验证”，Markdown 仅展开前 5 只并标“排名参考”，完整名单留在 JSON。计算只读取已有 frozen / live 日 K、原始行情及期权统计，不补数；期权量必须是当晚值，缺失不通过并披露覆盖率。现有 live 期权更新只覆盖 Holguin 名单，不能据此把缺失较多的部分结果当成完整候选池。接入结果、最新真实示例及本机 QQ 渲染补丁见[交付记录](notes/BOARD_IE_CANDIDATES_CN.md)。
 
 本机图片入口 `research/trader_board_cards.py` 读取同一份日报，生成逐股摘要与明细图片，并输出可折叠的 `board.html`、`board.md` 和逐股聚合结果 `comparison.json`。聚合结果保留对应交易员、原始持仓 / 动作和标签，方便逐项核对；不把未执行候选当作新开仓。HTML 和 Markdown 内的“共性怎么筛选”列明判定条件与排序口径。
 

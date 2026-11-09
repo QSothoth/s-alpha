@@ -1,0 +1,195 @@
+{
+ "frozen": {
+  "status": "passed",
+  "last_day": "2026-10-16",
+  "check": {
+   "ok": true,
+   "status": "passed",
+   "replay": {
+    "2024": 0.24314165115356445,
+    "2025": -0.41967393693348476,
+    "2026": -0.35900589455403353
+   },
+   "research": {
+    "2024": 0.24314165115356445,
+    "2025": -0.41967393693348476,
+    "2026": -0.35900589455403353
+   }
+  },
+  "buys": [
+   {
+    "code": "US.PINS",
+    "day": "2026-10-16",
+    "setup": "ie47_pdh",
+    "side": 1,
+    "price": 22.844999313354492,
+    "stop": 22.400329312986884,
+    "weight": 0.24976713328985428,
+    "stage": "intraday",
+    "name": "Pinterest",
+    "industry": "互联网内容与信息"
+   },
+   {
+    "code": "US.SNAP",
+    "day": "2026-10-16",
+    "setup": "ie47_pdh",
+    "side": 1,
+    "price": 6.449999809265137,
+    "stop": 6.282321706950298,
+    "weight": 0.19215365610608096,
+    "stage": "intraday",
+    "name": "Snap Inc",
+    "industry": "互联网内容与信息"
+   }
+  ],
+  "sells": [
+   {
+    "code": "US.PINS",
+    "day": "2026-10-16",
+    "why": "当天止损",
+    "side": 1,
+    "stage": "intraday",
+    "price": 22.400329312986884,
+    "ret": -0.019464653698092582,
+    "full": true,
+    "name": "Pinterest",
+    "industry": "互联网内容与信息"
+   },
+   {
+    "code": "US.SNAP",
+    "day": "2026-10-16",
+    "why": "当天止损",
+    "side": 1,
+    "stage": "intraday",
+    "price": 6.282321706950298,
+    "ret": -0.025996605778805915,
+    "full": true,
+    "name": "Snap Inc",
+    "industry": "互联网内容与信息"
+   }
+  ],
+  "holdings": [
+   {
+    "code": "US.MRNA",
+    "entry_day": "2026-10-08",
+    "setup": "ie47_pdh",
+    "side": 1,
+    "fill": 197.69000244140625,
+    "close": 218.00999450683594,
+    "close_day": "2026-10-16",
+    "tradable": true,
+    "ret": 0.10278715066257527,
+    "r_now": 3.4262383554191627,
+    "stop": 191.75930236816404,
+    "trail": 215.2418560892185,
+    "trail_name": "e9",
+    "next_trim": null,
+    "trim_frac": 0.15,
+    "next_add": null,
+    "day_trim_pending": false,
+    "trim_day": 0,
+    "trim_day_frac": 0.0,
+    "trim_day_profit": true,
+    "next_target": null,
+    "target_name": "",
+    "max_days": 0,
+    "short_trim_day_pending": false,
+    "short_trim_day": 0,
+    "short_trim_day_frac": 0.0,
+    "trim_signal": "",
+    "trim_signal_frac": 0.15,
+    "breakeven": null,
+    "weight": 0.13839689527286944,
+    "days": 6,
+    "name": "Moderna",
+    "industry": "生物技术"
+   }
+  ],
+  "inventory": {
+   "mode": "frozen",
+   "last_day": "2026-10-16",
+   "stocks": 3433,
+   "scope": 1259,
+   "qqq_missing": [],
+   "qqq_sources": {
+    "data/martin-luk-benchmarks-v1/US.QQQ.csv": "cb28714aab4b77cb7509afc897aa5d23d3d6a6ad6d780829fe3e44c9e404cb30"
+   },
+   "option_available": 1250,
+   "option_missing": 9,
+   "option_files": 3433,
+   "daily_digest": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158"
+  },
+  "output": "studies/martin_luk/reports/e1_work/board_frozen.json",
+  "network": false,
+  "published": false
+ },
+ "live": {
+  "status": "unavailable",
+  "error": "IE47 live QQQ closes missing on 13 sessions, first 2026-10-19; existing data only, no stale-price substitution",
+  "inventory": {
+   "mode": "live",
+   "last_day": "2026-11-04",
+   "stocks": 3433,
+   "scope": 1289,
+   "qqq_missing": [
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-26",
+    "2026-10-27",
+    "2026-10-28",
+    "2026-10-29",
+    "2026-10-30",
+    "2026-11-02",
+    "2026-11-03",
+    "2026-11-04"
+   ],
+   "qqq_sources": {
+    "data/martin-luk-benchmarks-v1/US.QQQ.csv": "cb28714aab4b77cb7509afc897aa5d23d3d6a6ad6d780829fe3e44c9e404cb30"
+   },
+   "option_available": 140,
+   "option_missing": 1149,
+   "option_files": 3574,
+   "daily_digest": "f5e57f833b57a3a9939a5c75d3b65928464da8d40a9ae494bc977a579a5d9e64"
+  },
+  "network": false,
+  "published": false
+ },
+ "provisional": {
+  "status": "skipped",
+  "reason": "当前盘前，未读取今日真实快照；QQQ 缺 13 个交易日，最新比较范围期权量覆盖 140/1289",
+  "now": "2026-11-05T08:43:38.715007-05:00",
+  "input_inventory": {
+   "mode": "live",
+   "last_day": "2026-11-04",
+   "stocks": 3433,
+   "scope": 1289,
+   "qqq_missing": [
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-26",
+    "2026-10-27",
+    "2026-10-28",
+    "2026-10-29",
+    "2026-10-30",
+    "2026-11-02",
+    "2026-11-03",
+    "2026-11-04"
+   ],
+   "qqq_sources": {
+    "data/martin-luk-benchmarks-v1/US.QQQ.csv": "cb28714aab4b77cb7509afc897aa5d23d3d6a6ad6d780829fe3e44c9e404cb30"
+   },
+   "option_available": 140,
+   "option_missing": 1149,
+   "option_files": 3574,
+   "daily_digest": "f5e57f833b57a3a9939a5c75d3b65928464da8d40a9ae494bc977a579a5d9e64"
+  },
+  "network": false,
+  "published": false
+ }
+}

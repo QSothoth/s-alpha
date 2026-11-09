@@ -1,0 +1,198 @@
+"""BV: replay fixed Martin accounts on either existing frozen universe."""
+from collections import Counter
+import gc
+import hashlib
+import json
+import os
+from pathlib import Path
+
+import numpy as np
+
+from . import panels, system, ticket_t4, watchlist
+from studies.martin_luk import replicate as martin_rules
+from .martin_continue_a import required_fields
+from .martin_continue_bq import _ROLL_MEAN, activity_ranks, chunked_roll_mean
+from .martin_continue_bt import fidelity
+from .martin_strong import Data, pct
+from .martin_strong_scan import HOLD, active, f1_rules, hold_sim, longs, name_score, nl_rules, pool_book2, u1_entries
+from . import compare
+
+
+def selected_families(A, w):
+    """The configured four families, calculated by the existing formulas only."""
+    s = martin_rules.setups(A)
+    o, h, l, c = A['open'], A['high'], A['low'], A['close']
+    ph, pc, e9p = martin_rules.prev(h), martin_rules.prev(c), martin_rules.prev(A['e9'])
+    with np.errstate(invalid='ignore', divide='ignore'):
+        near = martin_rules.prev(np.abs(c / A['e9'] - 1) <= .03)
+        handshake = (o > pc * 1.01) & (l <= np.fmax(ph, e9p)) & (c > np.fmin(ph, e9p))
+    return {'E11': {'E11': handshake}, 'E10': {'E2': s['E1'] & near, 'E4': s['E4'] & near},
+            'E2': {'E2': s['E2']}, 'EW1': {'E2': martin_rules.weekly_cached(A)['EW1']}}
+
+
+def past_any_columns(x, days):
+    out = np.empty(x.shape, dtype=bool)
+    for start in range(0, x.shape[1], 64):
+        out[:, start:start + 64] = martin_rules.S._past_any(x[:, start:start + 64], days)
+    return out
+
+
+def level_z15(A, pool):
+    c, e21 = A['close'], A['e21']
+    top = np.zeros(c.shape, dtype=bool)
+    with np.errstate(all='ignore'):
+        for day in range(1, len(c)):
+            r = np.where(pool[day], c[day] / c[day - 1] - 1, np.nan)
+            if not np.isnan(r).all():
+                top[day] = (r >= np.nanquantile(r, .98)) & pool[day]
+        k9 = past_any_columns(((A['pr21'] >= .9) & A['rank_pool']) | top, 5)
+        leader = past_any_columns(k9, 40)
+        under = np.zeros(c.shape, dtype=bool)
+        under[2:] = (c[1:-1] < e21[1:-1]) & (e21[1:-1] < e21[:-2])
+    return {'armed': pool & leader & under, 'level': martin_rules.prev(e21)}
+
+
+def selected_shorts(A, sc):
+    if sc.get('setups') != ['Z15']:
+        raise ValueError('configured short setup changed; audit before compact replay')
+    pool = martin_rules.pool_for(A, sc.get('pool'))
+    return {'Z15': level_z15(A, pool)}, pool
+
+
+def prune_then_rank(A, pool):
+    for key in ('pr21', 'pr63', 'pr126', 'rank_pool', 'stack', 'tight'):
+        A.pop(key, None)
+    return activity_ranks(A, pool)
+
+
+def daily_name_score(fields, mask, groups):
+    out = np.full(mask.shape, np.nan, dtype=np.float32)
+    empty = np.full((1, mask.shape[1]), np.nan, dtype=np.float32)
+    for day in range(len(mask)):
+        total = np.zeros(mask.shape[1], dtype=np.float32)
+        for group in groups:
+            part = np.zeros(mask.shape[1], dtype=np.float32)
+            for key in group:
+                value = fields[key][day - 1:day] if day else empty
+                part += np.nan_to_num(pct(value, mask[day:day + 1])[0] - .5)
+            total += part / len(group)
+        out[day] = np.where(mask[day], total, np.nan)
+    return out
+
+
+def extra_names(trades, reference):
+    out = {}
+    for year in ('2024', '2025', '2026'):
+        rows = [t for t in trades if t['entry'].startswith(year) and t['code'] not in reference]
+        closed = [t for t in rows if t['why'] != 'end']
+        opened = [t for t in rows if t['why'] == 'end']
+        out[year] = {'entries': len(rows), 'closed': len(closed), 'open_at_end': len(opened),
+                     'closed_pnl': float(sum(t['pnl'] for t in closed)),
+                     'open_mark_pnl': float(sum(t['pnl'] for t in opened)),
+                     'kinds': dict(Counter(t['kind'] for t in rows))}
+    return out
+
+
+def main():
+    tag = os.environ.get('TRADER_DATA_TAG')
+    if os.environ.get('TRADER_DATA_MODE') != 'frozen' or tag not in ('trader-data-v1', 'trader-data-v2'):
+        raise ValueError('explicit frozen mode and an existing v1 or v2 tag are required')
+    root = Path(__file__).resolve().parents[2]
+    reference = {r['code'] for r in json.loads((root / 'data/trader-data-v1/us/universe.json').read_text())['stocks']}
+    pins = json.loads((root / 'studies/trader_replication/DATA_PIN.json').read_text())
+    old, old_families, old_shorts = ticket_t4.ranks, martin_rules.setup_families, martin_rules.short_setups
+    try:
+        ticket_t4.ranks = prune_then_rank
+        watchlist.roll_mean = chunked_roll_mean
+        martin_rules.setup_families = selected_families
+        martin_rules.short_setups = selected_shorts
+        D = Data()
+    finally:
+        ticket_t4.ranks = old
+        watchlist.roll_mean = _ROLL_MEAN
+        martin_rules.setup_families = old_families
+        martin_rules.short_setups = old_shorts
+    if D.cfg.get('setup') != 'E11+E10+E2+EW1':
+        raise ValueError('configured setup changed; audit the compact families first')
+    if D.A['digest'] != pins[tag]['us']:
+        raise ValueError('loaded dataset does not match the registered tag digest')
+    print('panel', tag, D.c.shape, D.days[0], D.days[-1], flush=True)
+    del D.fp, D.fwd, D.raw
+    rules_to_check = (D.rules, f1_rules(D, 6, (1, 3)), nl_rules(D, 6))
+    for rules in rules_to_check:
+        names = {rules.trail, rules.trail_after_trim, rules.trail_alt, rules.exit_signal,
+                 rules.short_exit_signal, rules.trim_signal, rules.trim_signal2, rules.risk_scale,
+                 rules.trail_alt_days, rules.unit_adr, getattr(rules, 'add_signal', ''),
+                 getattr(rules, 'trim_day_signal', '')}
+        names.update(rules.short_targets)
+        names.update(x.get('trail', '') for x in rules.management_by_kind.values())
+        if {'e50', 'to20'} & names:
+            raise ValueError('configured rule requires a pruned field')
+    D.A.pop('e50', None)
+    D.A.pop('to20', None)
+    D.A.pop('raw', None)
+    D.A.pop('turnover', None)
+    for key in ('pr21', 'pr63', 'pr126', 'rank_pool', 'stack', 'tight'):
+        D.A.pop(key, None)
+    D.rk = D.rk.astype(np.int32)
+    gc.collect()
+    try:
+        watchlist.roll_mean = chunked_roll_mean
+        fields = required_fields(D)
+    finally:
+        watchlist.roll_mean = _ROLL_MEAN
+    mask = active(D, fields)
+    score = daily_name_score(fields, mask, HOLD['H3'])
+    if tag == 'trader-data-v1':
+        reference_score = name_score(D, fields, mask, HOLD['H3'])
+        if not np.array_equal(score, reference_score, equal_nan=True):
+            raise AssertionError('daily H3 score differs from the original')
+        del reference_score
+    holding = hold_sim(score, 12, 36)
+    u1 = u1_entries(D, fields, holding, score)
+    raw = pool_book2(D, fields, holding, score, True, 8.0, None, False)
+    sat = [[((2.0,) + (e[0] if isinstance(e[0], tuple) else (e[0],)),) + tuple(e[1:6])
+            for e in row] for row in raw]
+    reg6 = longs(D.reg)
+    del fields, mask, score, holding, raw
+    gc.collect()
+    px = D.base.px(D.A)
+    cases = {'R74': (D.reg, D.rules), 'U1': (u1, f1_rules(D, 6, (1, 3))),
+             'REG6': (reg6, nl_rules(D, 6)), 'SAT6': (sat, nl_rules(D, 6))}
+    results = {}
+    start = int(np.searchsorted(D.A['days'], panels.WINDOW[0]))
+    end = int(np.searchsorted(D.A['days'], panels.WINDOW[1], side='right'))
+    for name, (book, rules) in cases.items():
+        print('account', name, flush=True)
+        em = D.base.ema_inputs(D.A, D.pool, rules)
+        track = {}
+        curve, dates, trades = system.simulate(px, em, rules, book, *panels.WINDOW, audit=True, track=track)
+        metrics = compare.metrics(curve, dates, trades, book, start, end)
+        metrics['entries_by_year'] = {y: sum(t['entry'].startswith(y) for t in trades)
+                                      for y in ('2024', '2025', '2026')}
+        metrics['max_close_positions'] = max(track['open'])
+        results[name] = {'metrics': metrics, 'fidelity': fidelity(D, trades),
+                         'v2_only': extra_names(trades, reference)}
+    if tag == 'trader-data-v1':
+        previous = {'R74': json.loads((root / 'studies/trader_replication/reports/gap_review/strong_s7.json').read_text())['REG']['by_year'],
+                    'U1': json.loads((root / 'studies/trader_replication/reports/gap_review/strong_continue_bt.json').read_text())['results']['U1']['metrics']['by_year'],
+                    'REG6': json.loads((root / 'studies/trader_replication/reports/gap_review/strong_s59.json').read_text())['REG6']['by_year'],
+                    'SAT6': json.loads((root / 'studies/trader_replication/reports/gap_review/strong_s59.json').read_text())['SAT6']['by_year']}
+        for name, years in previous.items():
+            for year, value in years.items():
+                if abs(results[name]['metrics']['by_year'][year] - value) > 1e-10:
+                    raise AssertionError(f'{name} {year} does not reproduce its prior baseline')
+    paths = ('studies/trader_replication/martin_continue_bv.py', 'studies/trader_replication/martin_continue_a.py',
+             'studies/trader_replication/martin_continue_bq.py', 'studies/trader_replication/martin_continue_bt.py',
+             'studies/trader_replication/martin_strong.py', 'studies/trader_replication/martin_strong_scan.py',
+             'studies/trader_replication/system.py')
+    out = {'tag': tag, 'dataset_digest': D.A['digest'], 'shape': list(D.c.shape),
+           'window': list(panels.WINDOW), 'results': results,
+           'code_sha256': {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in paths}}
+    target = root / f'studies/trader_replication/reports/gap_review/strong_continue_bv_{tag}.json'
+    target.write_text(json.dumps(out, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
+    print(json.dumps(out, ensure_ascii=False, indent=2, allow_nan=False), flush=True)
+
+
+if __name__ == '__main__':
+    main()

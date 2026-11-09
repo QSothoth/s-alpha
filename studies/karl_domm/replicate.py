@@ -3,7 +3,7 @@ near-week strangle that expires before the report and buy two of the same strike
 it; out within days, before the report (his 2025 Schwab statements, notes/trades_karl.csv; 2025 account +321%,
 USIC 2026 to September +46.2%).
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.karl_domm.replicate calibrate
     $PY -m studies.karl_domm.replicate round R1
     $PY -m studies.karl_domm.replicate validate r1.json

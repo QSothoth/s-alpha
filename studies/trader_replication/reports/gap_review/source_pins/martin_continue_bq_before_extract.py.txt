@@ -1,0 +1,200 @@
+"""BQ: embargoed historical-label model versus H3 on the same S61 candidates."""
+from dataclasses import replace
+import gc
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+
+from . import compare, system, ticket_t4, watchlist
+from .martin_continue_a import required_fields
+from .martin_continue_b import support_book
+from .martin_list import ema
+from .martin_strong import Data, pct
+from .martin_strong_scan import (HOLD, active, candidates, fit_logit, hold_sim, longs,
+                                  merge, name_score, nl_rules, pool_book2, pool_book3, walk)
+
+_ROLL_MEAN = watchlist.roll_mean
+
+FOLDS = (('2025-01-01', '2025-06-30'), ('2025-07-01', '2025-12-31'),
+         ('2026-01-01', '2026-06-30'), ('2026-07-01', '2026-12-31'))
+
+
+def chunked_roll_mean(x, n):
+    """Run the existing rolling formula in bounded, independent stock columns."""
+    out = np.empty(x.shape, dtype=float)
+    for start in range(0, x.shape[1], 64):
+        out[:, start:start + 64] = _ROLL_MEAN(x[:, start:start + 64], n)
+    return out
+
+
+def activity_ranks(A, pool):
+    """Compute the same T4 rank without materializing unrelated watchlist measures."""
+    if getattr(pool, 'shape', None) != A['close'].shape:
+        pool = np.isfinite(A['close'])
+    with np.errstate(all='ignore'):
+        rng = watchlist.roll_mean(A['high'].astype(float) / A['low'].astype(float) - 1, 20)
+        turnover = watchlist.roll_mean(A['turnover'].astype(float), 20)
+        measure = np.log(turnover * rng)
+    v = np.vstack([np.full((1, measure.shape[1]), np.nan), measure[:-1]])
+    prior = np.vstack([np.zeros((1, pool.shape[1]), bool), pool[:-1]])
+    v = np.where(prior, v, np.nan)
+    order = np.argsort(np.argsort(-np.where(np.isfinite(v), v, -np.inf), axis=1), axis=1)
+    return np.where(np.isfinite(v), order, 10 ** 6)
+
+
+def training_mask(entry_days, labels, start, horizon=120):
+    return (entry_days + horizon < start) & np.isfinite(labels)
+
+
+def forward_scores(X, entry_days, labels, days):
+    scores = np.full(len(entry_days), np.nan, dtype=np.float32)
+    fits = []
+    candidate_dates = np.asarray(days)[entry_days]
+    for a, b in FOLDS:
+        start = int(np.searchsorted(days, a))
+        train = training_mask(entry_days, labels, start)
+        selected = (candidate_dates >= a) & (candidate_dates <= b)
+        if not np.any(selected):
+            continue
+        if not np.any(train) or len(np.unique(labels[train])) != 2:
+            raise ValueError(f'insufficient historical labels for {a}')
+        w, intercept = fit_logit(X[train], labels[train], 300.0)
+        scores[selected] = X[selected] @ w
+        latest = int(entry_days[train].max())
+        fits.append(dict(start=a, first_session=str(days[start]), n=int(train.sum()),
+                         positive=int(labels[train].sum()), latest_entry=str(days[latest]),
+                         latest_possible_label=str(days[latest + 120]),
+                         weights=[float(x) for x in w], intercept=float(intercept)))
+    return scores, fits
+
+
+def candidate_book(days_count, d, j, fill, stop, score):
+    out = [[] for _ in range(days_count)]
+    for day in np.unique(d):
+        idx = np.flatnonzero((d == day) & np.isfinite(score))
+        order = idx[np.argsort(-score[idx], kind='stable')[:8]]
+        out[day] = [((1.0, -float(score[i])), int(j[i]), 1, float(fill[i]),
+                     float(stop[i]), 'cand') for i in order]
+    return out
+
+
+def fidelity(D, trades, start, end):
+    actual = {(t['code'], t['entry']) for t in trades if t['side'] > 0}
+    his = [x for x in D.base.located(D.A, D.base.trades())
+           if x[0].side == 'long' and x[0].dated and start <= x[0].entry_date <= end]
+    def hits(rows):
+        return sum(any((str(D.A['codes'][j]), str(D.A['days'][d])) in actual
+                       for d in range(a, z + 1)) for t, j, a, z in rows)
+    exact = {}
+    for y in ('2025', '2026'):
+        rows = [x for x in his if x[0].entry_date.startswith(y)]
+        exact[y] = dict(hits=hits(rows), total=len(rows))
+    board = {}
+    for d, j, _, _, date in D.big:
+        if not start <= date <= end:
+            continue
+        peak = d + 1 + int(np.nanargmax(D.h[d + 1:d + 21, j]))
+        held = any(t['code'] == str(D.A['codes'][j]) and t['side'] > 0
+                   and D.di[t['entry']] <= peak and D.di[t['exit']] >= d for t in trades)
+        board.setdefault(date[:4], []).append(bool(held))
+    return dict(strict=exact, big={y: dict(held=sum(v), total=len(v)) for y, v in board.items()})
+
+
+def run(D, book, rules, start, end):
+    px = D.base.px(D.A)
+    em = D.base.ema_inputs(D.A, D.pool, rules)
+    curve, dates, trades = system.simulate(px, em, rules, book, start, end, audit=True)
+    a = int(np.searchsorted(D.A['days'], start))
+    b = int(np.searchsorted(D.A['days'], end, side='right'))
+    result = compare.metrics(curve, dates, trades, book, a, b)
+    result['entries_by_year'] = {y: sum(t['entry'].startswith(y) for t in trades) for y in ('2025', '2026')}
+    return dict(metrics=result, fidelity=fidelity(D, trades, start, end))
+
+
+def main():
+    original_ranks = ticket_t4.ranks
+    try:
+        ticket_t4.ranks = activity_ranks
+        D = Data()
+    finally:
+        ticket_t4.ranks = original_ranks
+    print('panel ready', D.c.shape, flush=True)
+    del D.fp, D.fwd, D.raw
+    for key in ('pr21', 'pr63', 'pr126', 'rank_pool', 'stack', 'tight'):
+        D.A.pop(key, None)
+    D.rk = D.rk.astype(np.int32)
+    gc.collect()
+    try:
+        watchlist.roll_mean = chunked_roll_mean
+        F = required_fields(D)
+    finally:
+        watchlist.roll_mean = _ROLL_MEAN
+    print('H3 fields ready', flush=True)
+    M = active(D, F)
+    hscore = name_score(D, F, M, HOLD['H3'])
+    print('H3 score ready', flush=True)
+    d, j, fill, stop = candidates(D, F, M)
+    keys = sorted({k for group in HOLD['H3'] for k in group})
+    X = np.empty((len(d), len(keys)), dtype=np.float32)
+    for col, key in enumerate(keys):
+        X[:, col] = np.nan_to_num(pct(F[key], M)[d, j] - .5)
+    h = hscore[d, j].copy()
+    H = hold_sim(hscore, 12, 36)
+    d1 = pool_book3(D, F, H, hscore, 8.0, False, .03)
+    broad = pool_book2(D, F, H, hscore, True, 8.0, None, False)
+    limit, _ = support_book(D, broad, d1)
+    b2 = merge(d1, limit)
+    reg = longs(D.reg)
+    del F, M, hscore, H, d1, broad, limit
+    gc.collect()
+    print('candidates', len(d), 'features', keys, flush=True)
+    e21 = ema(D.c.astype(float), 21).astype(np.float32)
+    outcomes = np.array([walk(D, e21, int(a), int(b), float(x), float(y))
+                         for a, b, x, y in zip(d, j, fill, stop)])
+    ret, duration, fast = outcomes.T
+    labels = ((ret >= .30) | ((fast > 0) & (fast <= 20))).astype(np.float32)
+    labels[~np.isfinite(ret)] = np.nan
+    score, fits = forward_scores(X, d, labels, D.A['days'])
+    print('fitted', [(x['start'], x['n']) for x in fits], flush=True)
+    model = candidate_book(len(D.c), d, j, fill, stop, score)
+    baseline = candidate_book(len(D.c), d, j, fill, stop, np.where(np.isfinite(score), h, np.nan))
+    end = '2026-10-16'
+    cases = {'MODEL': (model, nl_rules(D, 6)), 'H3': (baseline, nl_rules(D, 6)),
+             'REG6': (reg, nl_rules(D, 6)),
+             'B2': (b2, replace(nl_rules(D, 6, trail='e9'),
+                                  intraday_kinds=tuple(nl_rules(D, 6).intraday_kinds) + ('lim',)))}
+    result = {}
+    for name, (book, rules) in cases.items():
+        print('account', name, flush=True)
+        result[name] = {'continuous': run(D, book, rules, '2025-01-02', end),
+                        'fresh_2025': run(D, book, rules, '2025-01-02', '2025-12-31'),
+                        'fresh_2026': run(D, book, rules, '2026-01-02', end)}
+    tail = {}
+    for name, scores in (('MODEL', score), ('H3', np.where(np.isfinite(score), h, np.nan))):
+        pick = []
+        for day in np.unique(d):
+            ix = np.flatnonzero((d == day) & np.isfinite(scores))
+            pick.extend(ix[np.argsort(-scores[ix], kind='stable')[:6]])
+        ix = np.array(pick, dtype=int)
+        tail[name] = {}
+        for year in ('2025', '2026'):
+            p = ix[(np.asarray(D.days)[d[ix]].astype('U4') == year) &
+                   (d[ix] + 120 < len(D.days)) & np.isfinite(ret[ix])]
+            tail[name][year] = dict(n=len(p), mean=float(np.mean(ret[p])) if len(p) else None,
+                                    positive=float(np.mean(ret[p] > 0)) if len(p) else None,
+                                    big_or_quick=float(np.mean(labels[p])) if len(p) else None)
+    root = Path(__file__).resolve().parents[2]
+    paths = ('studies/trader_replication/martin_continue_bq.py', 'studies/trader_replication/martin_continue_a.py',
+             'studies/trader_replication/martin_continue_b.py', 'studies/trader_replication/martin_strong.py',
+             'studies/trader_replication/martin_strong_scan.py', 'studies/trader_replication/system.py')
+    out = dict(dataset_digest=D.A['digest'], feature_keys=keys, fits=fits, tail=tail, results=result,
+               code_sha256={p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in paths})
+    target = root / 'studies/trader_replication/reports/gap_review/strong_continue_bq.json'
+    target.write_text(json.dumps(out, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
+    print(json.dumps(out, ensure_ascii=False, indent=2, allow_nan=False), flush=True)
+
+
+if __name__ == '__main__':
+    main()

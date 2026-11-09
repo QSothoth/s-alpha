@@ -52,6 +52,56 @@ class SystemTests(unittest.TestCase):
         expect = .15 * 1.5 + .15 * 2.5 + .70 * 1.1     # per original share
         self.assertAlmostEqual(tr[0]['r'], expect / .5)
 
+    def test_confirmed_trail_exits_at_next_open_only_when_enabled(self):
+        rows = [(10, 10, 10, 10), (10.5, 11, 10.2, 11), (10.8, 10.9, 10.0, 10.1),
+                (9.8, 10.0, 9.7, 9.9)]
+        ema = [10, 10.5, 10.5, 10.4]
+        entries = one(4, 0, 1, 10.0, 9.5)
+        old_curve, _, old = self.run_(rows, entries, ema=ema, trims=())
+        curve, _, trades = self.run_(rows, entries, ema=ema, trims=(), trail_next_open=True)
+        self.assertEqual((old[0]['why'], old[0]['exit']), ('trail', '2025-01-03'))
+        self.assertEqual((trades[0]['why'], trades[0]['exit']), ('trail_open', '2025-01-04'))
+        self.assertAlmostEqual(trades[0]['ret'], -.02)
+        np.testing.assert_allclose(curve[:3], old_curve[:3])
+        changed = rows[:3] + [(10.5, 10.6, 10.4, 10.5)]
+        later, _, _ = self.run_(changed, entries, ema=ema, trims=(), trail_next_open=True)
+        np.testing.assert_allclose(curve[:3], later[:3])
+
+    def test_pending_trail_waits_for_valid_open_and_respects_gap_stop(self):
+        rows = [(10, 10, 10, 10), (10.5, 11, 10.2, 11), (10.8, 10.9, 10, 10.1),
+                (np.nan, 10.2, 9.9, 10.0), (9.7, 10, 9.6, 9.9)]
+        ema = [10, 10.5, 10.5, 10.5, 10.5]
+        entries = one(5, 0, 1, 10.0, 9.5)
+        _, _, trades = self.run_(rows, entries, ema=ema, trims=(), trail_next_open=True)
+        self.assertEqual((trades[0]['why'], trades[0]['exit']), ('trail_open', '2025-01-05'))
+        rows[-1] = (9.0, 9.2, 8.9, 9.1)
+        _, _, trades = self.run_(rows, entries, ema=ema, trims=(), trail_next_open=True)
+        self.assertEqual((trades[0]['why'], trades[0]['exit']), ('gap_stop', '2025-01-05'))
+        self.assertAlmostEqual(trades[0]['ret'], -.1)
+
+    def test_pending_trail_frees_slot_before_new_open_orders(self):
+        rows = [(10, 10, 10, 10), (10.5, 11, 10.2, 11), (10.8, 10.9, 10, 10.1),
+                (9.8, 10, 9.7, 9.9)]
+        p = px(rows)
+        for key in ('open', 'high', 'low', 'close'):
+            p[key] = np.column_stack((p[key], np.full(4, 10.0)))
+        p['codes'] = np.array(['US.AAA', 'US.BBB'])
+        ema = {'e9': np.column_stack(([10, 10.5, 10.5, 10.4], [9, 9, 9, 9]))}
+        entries = one(4, 0, 1, 10, 9.5)
+        entries[3].append((0, 1, 1, 10, 9.5, 'open'))
+        rules = Y.Rules(trail='e9', trail_next_open=True, trims=(), max_open=1,
+                        intraday_kinds=('open',), **NOCOST)
+        _, _, trades = Y.simulate(p, ema, rules, entries, p['dates'][0], p['dates'][-1])
+        self.assertEqual([(t['code'], t['why']) for t in trades], [('US.AAA', 'trail_open'), ('US.BBB', 'end')])
+
+    def test_pending_trail_is_visible_when_the_sample_ends(self):
+        p = px([(10, 10, 10, 10), (10.5, 11, 10.2, 11), (10.8, 10.9, 10, 10.1)])
+        ema = {'e9': np.array([[10], [10.5], [10.5]])}
+        rules = Y.Rules(trail='e9', trail_next_open=True, trims=(), **NOCOST)
+        _, _, trades = Y.simulate(p, ema, rules, one(3, 0, 1, 10, 9.5), p['dates'][0], p['dates'][-1], audit=True)
+        self.assertEqual((trades[0]['why'], trades[0]['trail_signal']), ('end', '2025-01-03'))
+        self.assertTrue(trades[0]['state']['trail_pending'])
+
     def test_stop_wins_a_same_day_tie_unless_the_open_is_past_the_trim(self):
         rows = [(10, 10, 10, 10), (10.2, 11.6, 9.4, 9.6)]
         _, _, tr = self.run_(rows, one(2, 0, 1, 10.0, 9.5), trims=(3,))
@@ -91,6 +141,28 @@ class SystemTests(unittest.TestCase):
         self.assertEqual(tr[0]['why'], 'stop_day0')
         self.assertEqual(tr[0]['days'], 0)
         self.assertAlmostEqual(tr[0]['r'], -1.0)
+
+    def test_day_zero_stop_cannot_free_a_slot_for_another_open_order(self):
+        p = {'open': np.array([[10., 10., 10.]]), 'high': np.array([[10.5, 10.5, 10.5]]),
+             'low': np.array([[9.4, 10., 10.]]), 'close': np.array([[10., 10., 10.]]),
+             'dates': np.array(['2025-01-01']), 'codes': np.array(['A', 'B', 'C'])}
+        entries = [[(0, 0, 1, 10., 9.5, 'open', 9.5),
+                    (1, 1, 1, 10., 9.5, 'open'), (2, 2, 1, 10., 9.5, 'close')]]
+        limits = ({'max_open': 1}, {'risk': .1, 'max_position': 1., 'max_gross': 1.})
+        for limit in limits:
+            with self.subTest(limit=limit):
+                rules = Y.Rules(trail='', intraday_kinds=('open',), **limit, **NOCOST)
+                _, _, trades = Y.simulate(p, {}, rules, entries, p['dates'][0], p['dates'][0])
+                self.assertEqual([(t['code'], t['why']) for t in trades], [('A', 'stop_day0'), ('C', 'end')])
+
+    def test_same_day_stop_cannot_be_attached_to_a_close_entry(self):
+        p = px([(10., 10.5, 9.4, 10.)])
+        entries = [[(0, 0, 1, 10., 9.5, 'open', 9.5)]]
+        with self.assertRaisesRegex(ValueError, 'intraday entry'):
+            Y.simulate(p, {}, Y.Rules(trail='', **NOCOST), entries, p['dates'][0], p['dates'][0])
+        rules = Y.Rules(trail='', intraday_kinds=('open',), **NOCOST)
+        _, _, trades = Y.simulate(p, {}, rules, entries, p['dates'][0], p['dates'][0])
+        self.assertEqual(trades[0]['why'], 'stop_day0')
 
     def test_no_follow_through_exits_at_the_next_close(self):
         rows = [(10, 10, 10, 10), (10.1, 10.3, 9.7, 9.8), (9.8, 11, 9.8, 11)]

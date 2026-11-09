@@ -3,7 +3,7 @@ parabolic move, entered at a fixed time, hard stop, out the same day (Chat With 
 notes/RULES_CN.md).  His numbers: about 400 round trips a year, five or fewer a day, 2019 +800%, 2020 -> 2.2M,
 2022-2023 "basically a wash", 2024 "up like 100%" (October 2024).
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.sam_miesse.replicate round R1
     $PY -m studies.sam_miesse.replicate validate r1.json
 

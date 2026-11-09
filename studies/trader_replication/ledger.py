@@ -38,6 +38,11 @@ class Trade:
         return self.precision in ('exact', 'chart')
 
 
+def market(ticker):
+    """The market a ledger ticker trades in: five digits HK, six digits A-shares, anything else US."""
+    return {5: 'hk', 6: 'cn'}.get(len(ticker), 'us') if ticker.isdigit() else 'us'
+
+
 def _num(s):
     return float(s) if s not in ('', None) else None
 

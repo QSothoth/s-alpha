@@ -1,6 +1,6 @@
 """R17 (notes/PREREG_R17.md): whole-market daily system, W2 watchlist + close-confirmed entries, three markets.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.r17
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r17
 """
 from __future__ import annotations
 

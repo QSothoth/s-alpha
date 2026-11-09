@@ -1,0 +1,12 @@
+ts	phase	decision	why	evidence	result
+2026-11-06T14:17:00Z	frame	按 E18 任务书执行且不读取候选结论	先核对实现可避免用错误实现选择	studies/martin_luk/notes/PLAN_E18_CN.md	进行中
+2026-11-06T14:20:14.894155+00:00	audit	源代码复核发现同晚优先键遗漏名次	引擎会按代码排序而偏离预登记	studies/martin_luk/e16_research.py:76	单测复现 A,Z 与 Z,A 不符
+2026-11-06T14:20:14.894155+00:00	preserve	现有 E18 自行结束后保存全部原始结果	错误实现和修正版必须可分开复核	studies/martin_luk/reports/e16_work/e18_review/pre_fix/	16 组目录和三个汇总已保存
+2026-11-06T14:22:41.900665+00:00	fix	优先键保留 born 并加入同晚名次	兑现预登记且兼容 C062 的观察日索引	studies/martin_luk/e16_research.py:76	排序单测先失败后通过
+2026-11-06T14:22:41.900665+00:00	rerun	顺序重算 14 个受影响的 L/Q/R 候选	旧结果完整保留且 BASE/N0 不受该函数影响	studies/martin_luk/reports/e16_work/e18_review/train_fixed.log	单进程 CPUQuota=80% 运行中
+2026-11-06T14:26:32.998615+00:00	selection	五个 R 候选均不合格，不测 2026 和全段	严格保留年度收益、50% 回撤、12 段中点门槛	studies/martin_luk/reports/e16_work/e18_review/selection.json	R2 收益达标但中点 11 小于 12
+2026-11-06T14:26:32.998615+00:00	verify	实际台账类型上限通过，BASE 逐位一致，两套测试通过	按真实持仓核验而非只核对配置	studies/martin_luk/reports/e16_work/e18_review/checks.json	14 和 237 项测试通过
+2026-11-06T14:30:29.002992+00:00	report	按原报告前缀追加第6节并保存完整诊断	保留历史结论和修正前后证据，下一轮仅建议四项	studies/martin_luk/reports/E16_CN.md:53	全部 R 均未入选，2026/全段/截断均未运行
+2026-11-06T14:32:22.251305+00:00	coverage	补齐旧汇总漏掉的九条窗口多头并与34条有日期旧口径分列	本人覆盖诊断须保留全部43条，宽窗口不能冒充确切日期复刻	studies/martin_luk/reports/E16_CN.md#66-本人交易主升浪与利润集中度	选择门槛不变，窗口盈利 BASE 3/43、R2 4/43
+2026-11-06T14:32:22.251305+00:00	accounting	明确缺失底版表含一笔期末估值，分年利润表只计实际平仓	两种金额口径必须分清，避免混成已实现利润	studies/martin_luk/reports/e16_work/e18_review/diagnostics.json	报告已明确说明
+2026-11-06T14:33:33.454197+00:00	review	独立复核通过，补齐审计记录缺口后无遗留问题	Prove It Works 实查台账，Build the Lever 保留复算脚本	studies/martin_luk/reports/e16_work/e18_review/checks.json	gpt-6-astra 独立复算与最终复核通过

@@ -2,7 +2,7 @@
 research module with the longs of a research report, on the selection segment only (the 2026 segment stays unopened
 until the single validation); nothing is written to systems.py.  Same runner as studies/sean_ryan/shorts_round.py.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.marios_stamatoudis.shorts_round S1 r1.json
 """
 from __future__ import annotations

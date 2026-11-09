@@ -2,7 +2,7 @@
 his stages are the "second wave": a name that went sideways, shot up on big volume (the first wave), held the new
 price and tightened into a small base, bought through the base's top line.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.sean_ryan.replicate round R1
 
 Everything on day t uses bars up to t; the pivot is the top of the last `base` sessions before t, so the fill is

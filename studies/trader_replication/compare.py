@@ -2,7 +2,7 @@
 the same panels, window, costs, engine, placebo and benchmark for everybody, each run through the engineering gate.
 Writes studies/trader_replication/reports/compare.json and COMPARISON_CN.md; the numbers are for a person to judge.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.compare run [us,hk,cn] [trader ...]   # one process, one run at a time
     $PY -m studies.trader_replication.compare render
 """
@@ -29,7 +29,7 @@ FLOORS = {'us': (5.0, 20e6), 'hk': (1.0, 50e6), 'cn': (3.0, 200e6)}   # common b
 def traders():
     """name -> (study, configuration, version label): the registered systems (systems.py)."""
     from . import systems
-    return {x.id: (x.study, x.config, x.label) for x in systems.all_()}
+    return {x.id: (x.study, x.config, x.label) for x in systems.all_(versions=True)}
 
 
 def ew_bench(A, seg):
@@ -46,6 +46,7 @@ SOURCES = ('studies/trader_replication/*.py', 'studies/trader_data/*.py', 'studi
            'studies/dan_zanger/replicate.py',
            'studies/martin_luk/replicate.py', 'studies/martin_luk/luk.py',
            'studies/martin_luk/selection.py', 'studies/trader_screens/screens.py', 'studies/trader_screens/data.py',
+           'studies/martin_luk/ie47_e1.py', 'studies/martin_luk/reports/ie47_profile.json',
            'studies/trader_screens/scan.py', 'studies/trader_screens/intraday.py',   # index_above, at_limit_up
            'studies/trend_breakout/panel.py')
 
@@ -214,10 +215,14 @@ def run(names=None, markets=MARKETS):
     res['_meta'] = dict(data=panels.TAG, window=list(panels.WINDOW), draws=DRAWS, gate=dict(
         max_win=G.MAX_WIN, min_trades=G.MIN_TRADES, cuts=G.CUTS))
     all_ = traders()
+    from . import systems
+    registered = {x.id: x for x in systems.all_(versions=True)}
     code = code_digest()
     for m in markets:
         for name, (st, cfg, src) in all_.items():
-            if names and name not in names:
+            if names and name not in names and registered[name].trader not in names:
+                continue
+            if m not in registered[name].markets:
                 continue
             row = res.setdefault(name, {})
             row.update(name=st.name, his=st.his, his_behaviour=st.his_behaviour)

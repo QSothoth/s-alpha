@@ -1,0 +1,38 @@
+--- system_before_ie5_add_gap.py
++++ system.py
+@@ -162,7 +162,7 @@
+ 
+ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit=False, track=None,
+              preopen=False, preopen_gap_moc=False, preopen_fill_stop_pct_by_kind=None,
+-             preopen_fill_stop_hit=True):
++             preopen_fill_stop_hit=True, preopen_add_stop_gap=False):
+     """Run between ISO dates; return (equity array, dates, trades).
+ 
+     px: dict of (days x codes) 'open', 'high', 'low', 'close' and 'dates', 'codes';  ema: dict name -> array;
+@@ -177,6 +177,7 @@
+     preopen: opt into the research-only fixed-share opening-limit reservation model.
+     preopen_gap_moc: defer gap-through entries to an assumed same-day market-on-close exit.
+     preopen_fill_stop_pct_by_kind: set a protective stop after the opening fill for specified kinds.
++    preopen_add_stop_gap: after an opening add, execute an already-breached raised stop at that open.
+     """
+     o, h, l, c, dates = px['open'], px['high'], px['low'], px['close'], px['dates']
+     session = px.get('session', np.arange(len(dates)))
+@@ -199,6 +200,8 @@
+         raise ValueError('unsupported preopen account configuration')
+     if preopen_gap_moc and not preopen:
+         raise ValueError('gap market-on-close requires preopen mode')
++    if preopen_add_stop_gap and not preopen:
++        raise ValueError('opening add stop gaps require preopen mode')
+     fill_stop_pct = preopen_fill_stop_pct_by_kind or {}
+     if fill_stop_pct and not preopen:
+         raise ValueError('fill-relative stops require preopen mode')
+@@ -715,6 +718,9 @@
+                                    gross_after=float(gross_open(d) / opening_equity) if opening_equity > 0 else None)
+                     add_event(q, d, status, opening)
+                     q.add_pending = None
++                    if (preopen_add_stop_gap and status == 'preopen_filled'
++                            and (opening - q.stop) * q.side <= 0):
++                        close_part(q, q.size, opening, d, 'add_stop_open')
+                     continue
+                 if not np.isfinite(opening) or opening <= 0:
+                     add_event(q, d, 'missing_open', opening)

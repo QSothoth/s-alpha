@@ -2,7 +2,7 @@
 of daily ATRs under the price, held to the weekly expiry (holguintrades.com; his 1,417 published trades,
 notes/trades_holguin.csv, and his weekly returns, notes/weeks_holguin.csv; USIC 2025 +100.2%).
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.alfredo_holguin.replicate round R1
     $PY -m studies.alfredo_holguin.replicate validate r1.json
 

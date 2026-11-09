@@ -1,0 +1,131 @@
+"""BT: exclude list entries whose unchanged initial stop exceeds three percent."""
+from collections import Counter
+import gc
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+
+from . import compare, panels, system, ticket_t4, watchlist
+from .martin_continue_a import required_fields
+from .martin_continue_bh import window_held
+from .martin_continue_bq import _ROLL_MEAN, activity_ranks, chunked_roll_mean
+from .martin_strong import Data
+from .martin_strong_scan import (HOLD, active, f1_rules, hold_sim, name_score, nl_rules,
+                                  pool_book2, u1_entries)
+
+
+def narrow(book):
+    return [[e for e in row if e[5] != 'list' or 1 - e[4] / e[3] <= .03 + 1e-12]
+            for row in book]
+
+
+def fidelity(D, trades):
+    actual = {(t['code'], t['entry']) for t in trades if t['side'] > 0}
+    his = [x for x in D.base.located(D.A, D.base.trades())
+           if x[0].side == 'long' and x[0].dated and x[0].entry_date >= panels.WINDOW[0]]
+    def hit(rows):
+        return sum(any((str(D.A['codes'][j]), str(D.A['days'][d])) in actual
+                       for d in range(a, z + 1)) for t, j, a, z in rows)
+    selected = [x for x in his if x[0].entry_date <= '2025-12-31']
+    validation = [x for x in his if x[0].entry_date > '2025-12-31']
+    board = 0
+    for day, j, _, _, _ in D.big:
+        peak = day + 1 + int(np.nanargmax(D.h[day + 1:day + 21, j]))
+        board += any(t['code'] == str(D.A['codes'][j]) and t['side'] > 0 and
+                     D.di[t['entry']] <= peak and D.di[t['exit']] >= day for t in trades)
+    return {'strict': hit(selected), 'of': len(selected), 'strict26': hit(validation),
+            'of26': len(validation), 'board': board, 'board_total': len(D.big),
+            'prepeak_ten_day': window_held(D, trades)}
+
+
+def simulate(D, book, rules):
+    px, em = D.base.px(D.A), D.base.ema_inputs(D.A, D.pool, rules)
+    track = {}
+    curve, dates, trades = system.simulate(px, em, rules, book, *panels.WINDOW, audit=True, track=track)
+    start = int(np.searchsorted(D.A['days'], panels.WINDOW[0]))
+    end = int(np.searchsorted(D.A['days'], panels.WINDOW[1], side='right'))
+    metrics = compare.metrics(curve, dates, trades, book, start, end)
+    metrics['entries_by_year'] = {y: sum(t['entry'].startswith(y) for t in trades)
+                                  for y in ('2024', '2025', '2026')}
+    metrics['average_close_positions'] = float(np.mean(track['open']))
+    metrics['max_close_positions'] = max(track['open'])
+    return {'metrics': metrics, 'fidelity': fidelity(D, trades)}
+
+
+def main():
+    original = ticket_t4.ranks
+    try:
+        ticket_t4.ranks = activity_ranks
+        D = Data()
+    finally:
+        ticket_t4.ranks = original
+    del D.fp, D.fwd, D.raw
+    for k in ('pr21', 'pr63', 'pr126', 'rank_pool', 'stack', 'tight'):
+        D.A.pop(k, None)
+    D.rk = D.rk.astype(np.int32)
+    gc.collect()
+    try:
+        watchlist.roll_mean = chunked_roll_mean
+        fields = required_fields(D)
+    finally:
+        watchlist.roll_mean = _ROLL_MEAN
+    mask = active(D, fields)
+    score = name_score(D, fields, mask, HOLD['H3'])
+    holding = hold_sim(score, 12, 36)
+    u1 = u1_entries(D, fields, holding, score)
+    sat_raw = pool_book2(D, fields, holding, score, True, 8.0, None, False)
+    sat = [[((2.0,) + (e[0] if isinstance(e[0], tuple) else (e[0],)),) + tuple(e[1:6])
+            for e in row] for row in sat_raw]
+    counts = Counter()
+    daily = {}
+    for day, row in enumerate(u1):
+        if not panels.WINDOW[0] <= D.days[day] <= panels.WINDOW[1]:
+            continue
+        y = D.days[day][:4]
+        daily.setdefault(y, []).append((sum(e[5] == 'list' for e in row),
+                                        sum(e[5] == 'list' and 1 - e[4] / e[3] > .03 + 1e-12 for e in row)))
+        for e in row:
+            if e[5] == 'list':
+                y = D.days[day][:4]
+                counts[y + ':all'] += 1
+                counts[y + (':removed' if 1 - e[4] / e[3] > .03 + 1e-12 else ':retained')] += 1
+    del fields, mask, score, holding, sat_raw
+    gc.collect()
+    cases = {'U1': (u1, f1_rules(D, 6, (1, 3))),
+             'U1_3': (narrow(u1), f1_rules(D, 6, (1, 3))),
+             'SAT6': (sat, nl_rules(D, 6)),
+             'SAT6_3': (narrow(sat), nl_rules(D, 6))}
+    result = {}
+    for name, (book, rules) in cases.items():
+        print('account', name, flush=True)
+        result[name] = simulate(D, book, rules)
+    root = Path(__file__).resolve().parents[2]
+    old_u1 = json.loads((root / 'studies/trader_replication/reports/gap_review/strong_continue_bp.json').read_text())['results']['U1']['metrics']['by_year']
+    old_sat = json.loads((root / 'studies/trader_replication/reports/gap_review/strong_s59.json').read_text())['SAT6']['by_year']
+    for name, expected in (('U1', old_u1), ('SAT6', old_sat)):
+        for year, value in expected.items():
+            if abs(result[name]['metrics']['by_year'][year] - value) > 1e-10:
+                raise AssertionError(f'{name} {year} baseline differs from recorded output')
+    paths = ('studies/trader_replication/martin_continue_bt.py', 'studies/trader_replication/martin_continue_a.py',
+             'studies/trader_replication/martin_continue_bq.py', 'studies/trader_replication/martin_continue_bh.py',
+             'studies/trader_replication/martin_strong.py', 'studies/trader_replication/martin_strong_scan.py',
+             'studies/trader_replication/system.py')
+    candidate_daily = {}
+    for year, values in daily.items():
+        a = np.asarray(values, dtype=int)
+        candidate_daily[year] = {'sessions': len(a), 'all_median': float(np.median(a[:, 0])),
+                                 'removed_median': float(np.median(a[:, 1])),
+                                 'retained_median': float(np.median(a[:, 0] - a[:, 1])),
+                                 'zero_retained_sessions': int(np.sum(a[:, 0] == a[:, 1]))}
+    out = {'dataset_digest': D.A['digest'], 'window': list(panels.WINDOW),
+           'candidate_counts': dict(counts), 'candidate_daily': candidate_daily, 'results': result,
+           'code_sha256': {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in paths}}
+    target = root / 'studies/trader_replication/reports/gap_review/strong_continue_bt.json'
+    target.write_text(json.dumps(out, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
+    print(json.dumps(out, ensure_ascii=False, indent=2, allow_nan=False), flush=True)
+
+
+if __name__ == '__main__':
+    main()

@@ -1,9 +1,10 @@
-{
- "stage": "shared G3 (every trader on his carried version): progressive exposure (scale up after winning, down after losing), a drawdown brake",
- "base": ["h5.json", "H5A"],
- "draws": 50,
+{"stage": "setup + capacity (paired)",
+ "base": "registered",
+ "ref": "REG",
  "candidates": {
-  "G3A": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}], "rule_opts": {"feedback": 5, "risk_low": 0.0025, "risk_high": 0.0075}}},
-  "G3B": {"human": {"tiers": [{"when": ["ep", "near52<=0"], "risk": 3, "cap": 0.5}, {"when": ["strength>=0.98"], "risk": 2, "cap": 0.5}], "rule_opts": {"dd_risk": 0.1, "dd_risk_mult": 0.5}}}
- }
-}
+   "G3A": {"rule_opts": {"max_open": 12}},
+   "G3B": {"rule_opts": {"max_open": 12, "max_gross": 2.0}},
+   "G3C": {"setups": ["brkv", "ep"], "brkv": {"listing": true}, "rule_opts": {"max_open": 12}},
+   "G3D": {"setups": ["brkv", "ep"], "brkv": {"listing": true}, "rule_opts": {"max_open": 12, "max_gross": 2.0}},
+   "G3E": {"setups": ["hi52", "ep", "brkv"], "brkv": {"listing": true}, "rule_opts": {"max_open": 12, "max_gross": 2.0}}
+ }}

@@ -1,6 +1,6 @@
 """R8 follow-up: placebo + bootstrap for L3 on the new names, and a minimum-stop sensitivity on both name sets.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.r8_checks
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.r8_checks
 """
 from __future__ import annotations
 

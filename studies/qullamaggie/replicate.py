@@ -1,7 +1,7 @@
 """Qullamaggie (Kristjan Kullamägi) through skills/trader-replication, on the same machinery as the Flanders study
 (entries, stop modes, pools, the generic loop); only his stages and numbers differ.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.qullamaggie.replicate round R1
 
 The starting point (DRAFT) is the board's draft (studies/trader_screens/screens.py Qullamaggie + its book): leaders

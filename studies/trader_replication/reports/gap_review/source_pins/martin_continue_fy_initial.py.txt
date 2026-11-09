@@ -1,0 +1,132 @@
+"""FY: compare same-day candidates by prior 126-session strength."""
+from collections import defaultdict
+from itertools import groupby
+import bisect
+import json
+import math
+from pathlib import Path
+
+import numpy as np
+from studies import trader_data
+from studies.trader_replication import panels
+from studies.trader_replication import martin_continue_fj as fj
+from studies.trader_replication.martin_continue_du import REPORTS
+from studies.trader_replication.martin_continue_dq import sha
+
+SEED = 20261104
+
+
+def momentum(market_days, day_index, stock_rows, actions, signal_days):
+    """As-of 126-market-session adjusted returns, using no later action."""
+    dates = [x[0] for x in stock_rows]
+    close = [x[1][3] for x in stock_rows]
+    by_day = {day: i for i, day in enumerate(dates)}
+    steps = np.ones(len(dates), dtype=np.float64)
+    for day, a, b in actions:
+        i = bisect.bisect_left(dates, day)
+        if 0 < i < len(dates):
+            prev = close[i - 1]
+            factor = (a * prev + b) / prev if np.isfinite(prev) and prev > 0 else float('nan')
+            if not np.isfinite(factor) or factor <= 0:
+                factor = float('nan')
+            steps[i] *= factor
+    prefix = np.cumprod(steps)
+    result = {}
+    for day in signal_days:
+        index = day_index.get(day, -1)
+        prev_day = market_days[index - 126] if index >= 126 else None
+        i, j = by_day.get(day), by_day.get(prev_day)
+        value = None
+        if i is not None and j is not None and j < i:
+            c, old, p, q = close[i], close[j], prefix[i], prefix[j]
+            if all(np.isfinite(x) and x > 0 for x in (c, old, p, q)):
+                value = float(c / (old * p / q) - 1)
+                if not np.isfinite(value):
+                    value = None
+        result[day] = value
+    return result
+
+
+def label_group(rows):
+    """Rank all known candidates before filtering any outcomes."""
+    known = sorted((r for r in rows if r['momentum126'] is not None),
+                   key=lambda r: (-r['momentum126'], r['code']))
+    top = math.ceil(len(known) / 3)
+    for i, row in enumerate(known):
+        row['strength_high'] = i < top
+    return len(known), top
+
+
+def main():
+    ref_path = REPORTS / 'strong_continue_fj.json'
+    ref = json.loads(ref_path.read_text())
+    if ref['script_sha256'] != sha(Path(fj.__file__)):
+        raise ValueError('FJ source differs')
+    ds = trader_data.dataset('us', mode='frozen', version='trader-data-v1')
+    if ds.digest() != ref['dataset_digest']:
+        raise ValueError('dataset differs')
+    rows = ref['rows']
+    del ref
+    if len(rows) != 57269:
+        raise ValueError('candidate count differs')
+    stocks = {s['code'] for s in ds.stocks()}
+    market_days = sorted({day for code, day, _ in ds.rows() if code in stocks and day <= panels.WINDOW[1]})
+    day_index = {day: i for i, day in enumerate(market_days)}
+    signals = defaultdict(set)
+    for row in rows:
+        if day_index.get(row['signal_day']) != row['day_index']:
+            raise ValueError('FJ calendar differs')
+        signals[row['code']].add(row['signal_day'])
+    actions, features, seen = ds.actions(), {}, set()
+    for code, group in groupby(ds.rows(), key=lambda r: r[0]):
+        if code not in signals:
+            continue
+        seen.add(code)
+        stock_rows = [(day, values) for _, day, values in group if day <= panels.WINDOW[1]]
+        for day, value in momentum(market_days, day_index, stock_rows, actions.get(code, []), signals[code]).items():
+            features[(code, day)] = value
+    if seen != set(signals):
+        raise ValueError('missing candidate symbol')
+    days = defaultdict(list)
+    for row in rows:
+        row['momentum126'] = features[(row['code'], row['signal_day'])]
+        row['strength_high'] = None
+        days[row['signal_day']].append(row)
+    rank_counts = [label_group(day_rows) for day_rows in days.values()]
+    if sum(x[0] for x in rank_counts) != sum(r['momentum126'] is not None for r in rows):
+        raise AssertionError('ranking population differs')
+    for row in rows:
+        original_selected = row['selected']
+        row['selected'] = row['strength_high']
+        if row['adr_bin'] is not None:
+            row['adr_bin'] += 3 * int(original_selected)
+        row['turnover_top4'] = original_selected
+    rng = np.random.default_rng(SEED)
+    output = {}
+    for year in ('2024', '2025', '2026'):
+        year_days = [i for i in range(len(market_days) - 1)
+                     if panels.WINDOW[0] <= market_days[i + 1] <= panels.WINDOW[1]
+                     and market_days[i + 1].startswith(year)]
+        annual = [r for r in rows if r['year'] == year]
+        known = [r for r in annual if r['strength_high'] is not None]
+        result = {'candidates': len(annual), 'feature_unknown': len(annual) - len(known), 'samples': {}}
+        for sample in ('all', 'spaced'):
+            subset = [r for r in known if sample == 'all' or r['spaced']]
+            result['samples'][sample] = {}
+            for mode, conditional in (('per_preselected', False), ('per_filled', True)):
+                result['samples'][sample][mode] = {
+                    'groups': fj.group_summary(subset, conditional),
+                    'matched': {metric: fj.matched(subset, year_days, metric, conditional, rng)
+                                for metric in ('hit3', 'hit5')}}
+        output[year] = result
+    result = {'dataset_digest': ds.digest(), 'fj_sha256': sha(ref_path),
+              'script_sha256': sha(Path(__file__)), 'seed': SEED, 'results': output,
+              'rows': [{'signal_day': r['signal_day'], 'code': r['code'], 'momentum126': r['momentum126'],
+                        'strength_high': r['strength_high']} for r in rows]}
+    target = REPORTS / 'strong_continue_fy.json'
+    target.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':'), allow_nan=False) + '\n')
+    print('wrote', target, 'rows', len(rows), flush=True)
+
+
+if __name__ == '__main__':
+    main()

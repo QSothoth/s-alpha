@@ -1,0 +1,17 @@
+{
+  "layer": "signal",
+  "sections_changed": ["signal"],
+  "upper_bound": 1.0,
+  "base": {"universe": {}, "signal": {"merge": "none", "native_max": 5}, "allocate": {}, "trade": {}, "switch": {"mode": "single"}},
+  "candidates": {
+    "B1_NATIVE_ZIP": {"signal": {"merge": "native_zip"}},
+    "B2_RAW_IE9": {"signal": {"merge": "raw_ie9"}},
+    "B3_RAW_ZIP": {"signal": {"merge": "raw_zip"}},
+    "B4_THEME_FIRST": {"signal": {"merge": "theme_first"}},
+    "B5_AGREEMENT": {"signal": {"merge": "agreement"}}
+  },
+  "selection": "max min(K3 coverage 2024,2025); width <=5; tie lower unlimited mean new names, then listed order",
+  "holdout": "2026 historical holdout*; reveal after chosen.json",
+  "executor": "signal-only facade; never Study.round/build/allocate/trade",
+  "G2": "failed stability; explicit PLAN_P2 fallback to single state; do not mark passed"
+}

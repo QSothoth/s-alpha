@@ -2,7 +2,7 @@
 system, this module only adapts it.  Reads studies/martin_luk/reports, writes to data/trader-replication-selftest
 (never into the Martin study).
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.martin diagnose r74.json
     $PY -m studies.trader_replication.martin final r74.json
     $PY -m studies.trader_replication.martin check            # compare with the committed R74 reports
@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 
 from . import study
+from .config import flat
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -52,13 +53,44 @@ class Martin(study.Study):
         return self.R.market_arrays(market)
 
     def market_gate(self, A, cfg):
+        cfg = flat(cfg)
         if cfg.get('filter') in (None, '', 'NONE'):
             return None
         pool, w, _ = self.R.system_signals(A, cfg)
         return self.R.market_ok(A, pool, w, cfg['filter'])
 
-    def build(self, A, cfg, trace=None):
-        return self.R.build_system(A, cfg, trace)
+    entry_timing = 'close'
+    allocation_defaults = dict(cooldown=0, daily_cap='offers')  # frozen R74 never cooled nominations
+
+    def universe(self, A, cfg):
+        return self.R.pool_for(A, cfg.get('pool'))
+
+    def signal(self, A, pool, cfg):
+        trace = {}
+        entries, mask, pool = self.R.system_nominations(A, flat(cfg), trace, pool)
+        picks = {d: [str(A['codes'][e[1]]) for e in sorted(row, key=lambda e: e[0])]
+                 for d, row in enumerate(entries)}
+        A['_martin_nominations'] = picks, entries, mask
+        A['_facade_trace'] = trace
+        return picks
+
+    def entries(self, A, picks, cfg):
+        original, entries, _ = A['_martin_nominations']
+        if picks != original:
+            raise ValueError('Martin execution must consume signal nominations')
+        return entries
+
+    def signal_mask(self, A, picks):
+        return A['_martin_nominations'][2]  # preserve the historical pre-stop diagnostic mask
+
+    def trade(self, cfg):
+        return self.R.system_rules(flat(cfg), cfg['_market'])
+
+    def allocate(self, A, picks, cfg, *, entries, rules):
+        entries, rules = super().allocate(A, picks, cfg, entries=entries, rules=rules)
+        if cfg.get('shorts'):
+            entries = self.R.system_legacy_shorts(A, flat(cfg), entries, self.universe(A, cfg))
+        return entries, rules
 
     daily_cap = 'build'             # build_system keeps the day's first max_new entries before the engine
 
@@ -86,6 +118,8 @@ class Martin(study.Study):
         return self.R.short_setups(A, sc)
 
     def named(self, A, pool, name):
+        if name == 'regime':
+            return super().named(A, pool, name)
         if name == 'w9':
             return self.R.weekly_ema(A['close'], A['days'], 9)
         return self.R.named_signal(A, pool, name)

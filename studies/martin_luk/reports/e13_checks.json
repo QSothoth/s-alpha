@@ -1,0 +1,189 @@
+{
+ "tests": {
+  "custody": {
+   "ok": true,
+   "returncode": 0,
+   "log": "studies/martin_luk/reports/e13_work/test_custody.log",
+   "summary": [
+    ".............................................................................................................................................................................................................................................",
+    "----------------------------------------------------------------------",
+    "Ran 237 tests in 56.042s",
+    "",
+    "OK"
+   ],
+   "cumulative_peak_child_rss_mib": 63.4609375
+  },
+  "trader_replication": {
+   "ok": true,
+   "returncode": 0,
+   "log": "studies/martin_luk/reports/e13_work/test_trader_replication.log",
+   "summary": [
+    "............x......PATH FINAL true empty 1 {'hits': {'5': 1}, 'n': 1} True",
+    "..............................................................................................................................................................................................................................................................................................................",
+    "----------------------------------------------------------------------",
+    "Ran 1018 tests in 109.717s",
+    "",
+    "OK (expected failures=1)"
+   ],
+   "cumulative_peak_child_rss_mib": 125.37109375
+  },
+  "martin_luk": {
+   "ok": true,
+   "returncode": 0,
+   "log": "studies/martin_luk/reports/e13_work/test_martin_luk.log",
+   "summary": [
+    "  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]",
+    "....................",
+    "----------------------------------------------------------------------",
+    "Ran 138 tests in 0.346s",
+    "",
+    "OK"
+   ],
+   "cumulative_peak_child_rss_mib": 125.37109375
+  }
+ },
+ "real_truncation": {
+  "ok": true,
+  "events_full": 2571,
+  "events_cut": 2571,
+  "first_difference": null,
+  "cut": "2025-06-30",
+  "picks_different": [],
+  "n_nights_different": 0,
+  "books_bitwise": true,
+  "scope": "panels.load(upto): rebuild selection, EMA, ADR, retries, proof arrays and portfolio"
+ },
+ "gate_lookahead": {
+  "ok": true,
+  "cuts": [
+   {
+    "cut": "2024-09-30",
+    "ok": true,
+    "diff": []
+   },
+   {
+    "cut": "2025-09-30",
+    "ok": true,
+    "diff": []
+   }
+  ]
+ },
+ "corporate_action_basis": {
+  "cut": "2025-06-30",
+  "raw_rows_cut_before_adjustment": true,
+  "future_action_codes": 1805,
+  "earlier_price_codes_changed": 1755,
+  "max_relative_scale_error": 1.1697940716093314e-07,
+  "invariant_prices": false,
+  "limitation": "shared panels.load(upto) adjusts with future actions before slicing; raw-asof prices may use a different basis; the event check above does not certify action availability"
+ },
+ "audit_resources": {
+  "memory": {
+   "MemTotal_kib": 4022024,
+   "MemAvailable_kib": 1589436,
+   "SwapTotal_kib": 2359288,
+   "SwapFree_kib": 750716,
+   "peak_rss_mib": 603.37890625
+  },
+  "address_space_limit": 1900000000
+ },
+ "k2_bitwise": {
+  "ok": true,
+  "references": {
+   "e10": {
+    "ok": true,
+    "diff": [],
+    "reference_sha256": "4917ef60df5f397d90683a3a409f8c6746af6752561c8de376b41b0e5b2c8d8b",
+    "trades_sha256": "eb3c591428d559bb89aab9527f6bfa66b25b9c746525260e26287ababdcd7ad0",
+    "raw_trades": 914
+   },
+   "e11": {
+    "ok": true,
+    "diff": [],
+    "reference_sha256": "701c5dfc1a7f31d6afc740fb75aaf851bbd1a8b1f81718b9975648d3f5fbfe04",
+    "trades_sha256": "eb3c591428d559bb89aab9527f6bfa66b25b9c746525260e26287ababdcd7ad0",
+    "raw_trades": 914
+   }
+  }
+ },
+ "train_resources": {
+  "memory": {
+   "MemTotal_kib": 4022024,
+   "MemAvailable_kib": 1827212,
+   "SwapTotal_kib": 2359288,
+   "SwapFree_kib": 749232,
+   "peak_rss_mib": 355.60546875
+  },
+  "address_space_limit": 1900000000
+ },
+ "validation_policy": {
+  "selected": null,
+  "measured": false,
+  "reason": "no candidate meets both annual floors"
+ },
+ "real_execution_risk": {
+  "K2": {
+   "ok": true,
+   "trades": 914,
+   "risk_checked_adds": 0,
+   "max_planned_loss_u": null
+  },
+  "F1": {
+   "ok": true,
+   "trades": 981,
+   "risk_checked_adds": 1003,
+   "max_planned_loss_u": 1.0000000000000313
+  },
+  "F2": {
+   "ok": true,
+   "trades": 1097,
+   "risk_checked_adds": 882,
+   "max_planned_loss_u": 1.000000000000041
+  },
+  "F3": {
+   "ok": true,
+   "trades": 885,
+   "risk_checked_adds": 882,
+   "max_planned_loss_u": 1.0000000000000266
+  },
+  "F4": {
+   "ok": true,
+   "trades": 902,
+   "risk_checked_adds": 0,
+   "max_planned_loss_u": null
+  },
+  "F5": {
+   "ok": true,
+   "trades": 1002,
+   "risk_checked_adds": 984,
+   "max_planned_loss_u": 1.000000000000029
+  }
+ },
+ "default_engine_bitwise": {
+  "ok": true,
+  "synthetic_unit_cases": 3,
+  "before_sha256": "c82f67c85ed46f46ce1b35be76b879ad4a9bc0304ea3f311c649c247cb1e23b6",
+  "scope": "long/short cash, adds, fees, close stops, EMA, trims; full curves and trade dictionaries"
+ },
+ "artifact_integrity": {
+  "ok": true,
+  "source_fingerprints_unchanged": true,
+  "preregistration_unchanged": true,
+  "train_digest_matches": true,
+  "chosen": null,
+  "validation_not_started": true,
+  "his_legs": 36,
+  "pool_legs": 833,
+  "focused_tests": 29
+ },
+ "resource_policy": {
+  "research_address_space_limit": 1900000000,
+  "single_research_process": true,
+  "column_block": 64,
+  "tests_address_space_exception": "existing Go/WASM gitleaks cannot start at 1.9GB AS; tests retain inherited AS, sequential suites, actual child RSS recorded"
+ },
+ "report_artifact": {
+  "path": "studies/martin_luk/reports/E13_CN.md",
+  "sha256": "c0a0e56fc517133e1fd705c1bc5783a4cd875092c0fa2bb4acb529e08b32589c"
+ }
+}

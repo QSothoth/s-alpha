@@ -1,0 +1,662 @@
+"""IE24: nested conditional ranking and causal genetic expressions, offline."""
+import argparse
+from collections import defaultdict
+from datetime import datetime, timezone
+import gc
+import hashlib
+import json
+import mmap
+import os
+from pathlib import Path
+import resource
+import shutil
+import sys
+import time
+
+import numpy as np
+
+from studies.trader_replication import martin_continue_ie23 as prior
+from studies.trader_replication import ie_factor_models as models
+from studies.trader_replication import ie24_formulas as gp
+
+ROOT, REPORTS = prior.ROOT, prior.REPORTS
+WORK = REPORTS / 'ie24_work'
+PREFIX = 'strong_continue_ie24_'
+PLAN = ROOT / 'studies/martin_luk/notes/PLAN_IE24_CN.md'
+PREREG = ROOT / 'studies/martin_luk/notes/PREREG_IE24_CN.md'
+HALVES, TOPS, SENTINEL = prior.HALVES, prior.ie9.TOPS, prior.SENTINEL
+LOGIT_LEVELS, BOOST_LEVELS, FORMULA_LEVELS = (1, 3, 5, 10), (20, 40, 60), (1, 3, 5)
+METHODS = ('A', 'B', 'AB')
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        while block := stream.read(1 << 20):
+            h.update(block)
+    return h.hexdigest()
+
+
+def digest(value):
+    return hashlib.sha256(json.dumps(prior.clean(value), sort_keys=True).encode()).hexdigest()
+
+
+def path(name):
+    return REPORTS / (PREFIX + name + '.json')
+
+
+def write(name, value):
+    dest = path(name)
+    temp = dest.with_suffix('.json.tmp')
+    temp.write_text(json.dumps(prior.clean(value), ensure_ascii=False, separators=(',', ':'), allow_nan=False) + '\n')
+    temp.replace(dest)
+
+
+def read(name):
+    return json.loads(path(name).read_text())
+
+
+def signature():
+    return {str(p.relative_to(ROOT)): sha(p) for p in (PLAN, PREREG, Path(__file__), Path(gp.__file__), Path(models.__file__))}
+
+
+def capacity(stage):
+    free = shutil.disk_usage(WORK).free
+    used = sum(p.stat().st_size for p in WORK.rglob('*') if p.is_file())
+    peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024
+    if free < 1_000_000_000 or used > 800_000_000 or peak > 1_500_000_000:
+        raise RuntimeError(f'{stage}: capacity exceeded: free={free}, work={used}, peak={peak}')
+    print(stage, 'free_MB', free // 1_000_000, 'work_MB', used // 1_000_000,
+          'peak_MB', peak // 1_000_000, flush=True)
+    return dict(stage=stage, free_bytes=free, work_bytes=used, peak_rss_bytes=peak,
+                utc=datetime.now(timezone.utc).isoformat())
+
+
+def guard():
+    def allowed(value):
+        p = Path(os.fsdecode(value)).resolve()
+        return p.is_relative_to(WORK.resolve()) or (p.parent == REPORTS.resolve() and p.name.startswith(PREFIX))
+    def audit(event, args):
+        if event == 'open':
+            value, _, flags = args
+            if isinstance(value, int):
+                return
+            p = Path(os.fsdecode(value))
+            if flags & (os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC | os.O_APPEND):
+                if not allowed(p):
+                    raise PermissionError('IE24 write boundary: ' + str(p))
+            elif p.name.startswith('RULES') or p.suffix in ('.srt', '.vtt') or p.name in ('trades.csv', 'INTERVIEWS_CORE_CN.md'):
+                raise PermissionError('IE24 excludes human rules and ledger remarks')
+        if event in ('socket.connect', 'socket.bind', 'os.system', 'subprocess.Popen'):
+            raise PermissionError('IE24 offline single process')
+        if event in ('os.remove', 'os.rename', 'os.rmdir', 'os.mkdir'):
+            values = args[:2] if event == 'os.rename' else args[:1]
+            if any(not allowed(p) for p in values):
+                raise PermissionError('IE24 mutation boundary')
+    sys.addaudithook(audit)
+
+
+def half_mask(halves):
+    return sum(1 << HALVES.index(h) for h in halves)
+
+
+class Data(prior.Data):
+    def __init__(self):
+        super().__init__(matrix=False)
+        copied = WORK / 'ie23_prepared.json'
+        self.prepared = json.loads((copied if copied.exists() else prior.WORK / 'prepared.json').read_text())
+        copied = WORK / 'ie23_ranks.npy'
+        self.matrix_path = copied if copied.exists() else prior.WORK / 'ranks.npy'
+        self.x = np.load(self.matrix_path, mmap_mode='r')
+        if self.x.shape != (len(self.specs), self.n) or self.specs != self.prepared['specs']:
+            raise ValueError('IE23 feature layout differs')
+        self.group = np.empty(self.n, np.int32)
+        for k, sl in enumerate(self.slices.values()):
+            self.group[sl] = k
+        self._engine = None
+        self.current_label, self.current_query = 'real', self.query
+
+    def set_label(self, label, seed=None):
+        self.current_label = label
+        self.current_query = self.query if seed is None else self.shuffled(seed)
+
+    def rows_for(self, halves):
+        allowed = np.isin(self.row_half, halves)
+        days = self.base.meta['days']
+        for excluded in (h for h in HALVES if h not in halves):
+            first = next((i for i, day in enumerate(days) if prior.ie7.half(day) == excluded), None)
+            if first is not None:
+                embargo = set(days[max(0, first - 4):first])
+                for day in embargo:
+                    sl = self.slices.get(day)
+                    if sl is not None:
+                        allowed[sl] = False
+        return np.flatnonzero(allowed)
+
+    def labels(self, halves, row_halves=None):
+        """Only these entry indices are allowed to index the current label array."""
+        allowed = np.zeros(self.n, bool)
+        allowed[self.rows_for(halves if row_halves is None else row_halves)] = True
+        result = {}
+        for h in halves:
+            records = []
+            for i in np.flatnonzero(self.primary & (self.entry_half == h)):
+                q = self.current_query[i]
+                q = q[q >= 0]
+                records.append(q[allowed[q]])
+            result[h] = records
+        return result
+
+    def groups(self, targets):
+        positives = defaultdict(lambda: defaultdict(float))
+        active = [v for v in targets.values() if any(len(q) for q in v)]
+        for records in active:
+            eligible = [q for q in records if len(q)]
+            for qs in eligible:
+                weight = 1 / (len(active) * len(eligible) * len(qs))
+                for q in qs:
+                    positives[int(self.group[q])][int(q)] += weight
+        slices = list(self.slices.values())
+        return [(slices[k], dict(p)) for k, p in sorted(positives.items())]
+
+    def columns(self, indices):
+        result = np.nan_to_num(np.asarray(self.x[indices], np.float32), nan=.5).T.copy()
+        self.release_pages()
+        return result - .5
+
+    def release_pages(self):
+        if hasattr(getattr(self.x, '_mmap', None), 'madvise'):
+            self.x._mmap.madvise(mmap.MADV_DONTNEED)
+
+    def engine(self):
+        if self._engine is not None:
+            return self._engine
+        capacity('formula:load_cached_prices')
+        stocks = sorted(set(self.codes))
+        days = self.base.meta['days']
+        fields = {k: np.full((len(stocks), len(days)), np.nan, np.float32) for k in gp.FIELDS}
+        for i, code in enumerate(stocks):
+            with np.load(prior.ie9.old.WORK / 'stocks' / (code + '.npz')) as z:
+                for k in gp.FIELDS:
+                    if k == 'qqq':
+                        continue
+                    key = k if k in ('o', 'h', 'l', 'c', 'v', 't') else 'extra_' + k
+                    if key in z:
+                        fields[k][i] = z[key]
+        fields['qqq'][:] = np.load(prior.ie9.old.WORK / 'qqq.npy')
+        si, ti = {c: i for i, c in enumerate(stocks)}, {d: i for i, d in enumerate(days)}
+        self._engine = gp.Engine(fields, np.array([si[c] for c in self.codes]),
+                                 np.array([ti[d] for d in self.days]), self.group)
+        return self._engine
+
+
+def summarize_best(d, best, halves):
+    included = np.isin(d.entry_half, halves)
+    best = np.asarray(best)
+    def summary(mask):
+        return dict(n=int(mask.sum()), hits={str(k): int(((best <= k) & mask).sum()) for k in TOPS})
+    return dict(primary=summary(included & d.primary), all_entries=summary(included),
+                halfyear={h: summary(included & d.primary & (d.entry_half == h)) for h in halves},
+                best=best.tolist())
+
+
+def coverage(d, score, halves, permitted=None):
+    ranks = d.rank(score)
+    best = np.full(len(d.entries), SENTINEL, np.int32)
+    row_allowed = np.ones(d.n, bool) if permitted is None else np.isin(d.row_half, permitted)
+    for i in np.flatnonzero(np.isin(d.entry_half, halves)):
+        q = d.current_query[i]
+        q = q[q >= 0]
+        q = q[row_allowed[q]]
+        if len(q):
+            best[i] = ranks[q].min()
+    return summarize_best(d, best, halves)
+
+
+def screening(d, groups):
+    g, h, _ = models.gradient(np.zeros(d.n), groups)
+    rows = np.concatenate([np.arange(sl.start, sl.stop) for sl, p in groups])
+    linear, split = np.zeros(len(d.specs)), np.zeros(len(d.specs))
+    tg, th = g[rows].sum(), h[rows].sum()
+    for start in range(0, len(d.specs), 64):
+        block = np.nan_to_num(np.asarray(d.x[start:start + 64, rows]), nan=.5) - .5
+        linear[start:start + len(block)] = abs(block @ g[rows])
+        gains = []
+        for threshold in (-.25, 0., .25):
+            left = block <= threshold
+            lg, lh = left @ g[rows], left @ h[rows]
+            gains.append(lg ** 2 / (lh + .01) + (tg - lg) ** 2 / (th - lh + .01) - tg ** 2 / (th + .01))
+        split[start:start + len(block)] = np.max(gains, axis=0)
+        d.release_pages()
+    indices = np.arange(len(d.specs))
+    first = np.lexsort((indices, -linear))[:64]
+    second = np.lexsort((indices, -split))[:64]
+    return list(dict.fromkeys([int(j) for j in np.r_[first, second]]))
+
+
+def logit_refit(x, groups, initial=None):
+    w = np.zeros(x.shape[1]) if initial is None else np.asarray(initial, float).copy()
+    penalty = .01
+    if not len(w):
+        return w
+    for step in range(50):
+        scores = x @ w
+        g, _, loss = models.gradient(scores, groups)
+        gradient = x.T @ g + penalty * w
+        hessian = np.eye(len(w)) * penalty
+        for sl, positive in groups:
+            z = scores[sl]
+            p = np.exp(z - z.max()); p /= p.sum()
+            v = x[sl]
+            mean = p @ v
+            hessian += sum(positive.values()) * ((v.T * p) @ v - np.outer(mean, mean))
+        delta = np.linalg.solve(hessian, gradient)
+        before = loss + penalty * (w @ w) / 2
+        rate = 1.
+        for attempt in range(20):
+            trial = w - rate * delta
+            after = models.gradient(x @ trial, groups)[2] + penalty * (trial @ trial) / 2
+            if after <= before + 1e-12:
+                w = trial
+                break
+            rate /= 2
+        if np.max(abs(rate * delta)) < 1e-7:
+            break
+    return w
+
+
+def fit_a(d, halves, fixed=None):
+    targets = d.labels(halves)
+    groups = d.groups(targets)
+    if fixed is not None:
+        features = fixed['features']
+        x = d.columns(features)
+        if fixed['family'] == 'logit':
+            w = logit_refit(x, groups)
+            return dict(family='logit', level=len(features), features=features, weights=w.tolist())
+        return boost_path(d, x, features, groups, (fixed['level'],))[-1]
+    features = screening(d, groups)
+    x = d.columns(features)
+    chosen, w, output = [], np.array([]), []
+    for step in range(max(LOGIT_LEVELS)):
+        score = x[:, chosen] @ w if chosen else np.zeros(d.n)
+        g = models.gradient(score, groups)[0]
+        importance = abs(x.T @ g)
+        importance[chosen] = -np.inf
+        j = int(np.argmax(importance))
+        chosen.append(j)
+        w = logit_refit(x[:, chosen], groups, np.r_[w, 0.])
+        if step + 1 in LOGIT_LEVELS:
+            output.append(dict(family='logit', level=step + 1,
+                               features=[features[k] for k in chosen], weights=w.tolist()))
+            print('A logit', list(halves), step + 1, flush=True)
+    output.extend(boost_path(d, x, features, groups, BOOST_LEVELS))
+    return dict(training_halves=list(halves), screening=features, candidates=output)
+
+
+def boost_path(d, x, features, groups, levels):
+    bins = np.searchsorted(np.array([-.25, 0., .25]), x, side='right').astype(np.uint8)
+    rows = np.concatenate([np.arange(sl.start, sl.stop) for sl, p in groups])
+    score, trees, result = np.zeros(d.n), [], []
+    for step in range(max(levels)):
+        g, h, _ = models.gradient(score, groups)
+        tree = models.tree_fit(bins, rows, g, h)
+        score += .1 * models.tree_predict(tree, bins)
+        trees.append(tree)
+        if step + 1 in levels:
+            used = set()
+            def visit(node):
+                if 'feature' in node:
+                    used.add(node['feature']); visit(node['left']); visit(node['right'])
+            for item in trees:
+                visit(item)
+            order = sorted(used)
+            lookup = {j: k for k, j in enumerate(order)}
+            def compact(node):
+                if 'value' in node:
+                    return node.copy()
+                return dict(feature=lookup[node['feature']], threshold=node['threshold'],
+                            left=compact(node['left']), right=compact(node['right']))
+            result.append(dict(family='boost', level=step + 1, features=[features[k] for k in order],
+                               trees=[compact(t) for t in trees], learning_rate=.1, depth=2))
+            print('A boost', step + 1, 'features', len(order), flush=True)
+    return result
+
+
+def predict_a(d, model):
+    x = d.columns(model['features'])
+    if model['family'] == 'logit':
+        return x @ np.asarray(model['weights'])
+    bins = np.searchsorted(np.array([-.25, 0., .25]), x, side='right').astype(np.uint8)
+    return sum((.1 * models.tree_predict(t, bins) for t in model['trees']), np.zeros(d.n))
+
+
+def predict_b(d, formulas):
+    return sum((d.engine().column(gp.freeze(t)) for t in formulas), np.zeros(d.n)) / max(len(formulas), 1)
+
+
+def predict(d, model):
+    a, b = model.get('a'), model.get('b')
+    scores = []
+    if a is not None:
+        scores.append(np.nan_to_num(gp.percentile(predict_a(d, a), d.group), nan=.5))
+    if b:
+        scores.append(np.nan_to_num(gp.percentile(predict_b(d, b), d.group), nan=.5))
+    return sum(scores, np.zeros(d.n)) / max(len(scores), 1)
+
+
+def cached_fit(d, halves, searcher):
+    name = 'fit_' + d.current_label + '_' + str(half_mask(halves)) + '_' + searcher.lower()
+    if path(name).exists():
+        result = read(name)
+        if result['signature'] != signature():
+            raise ValueError('saved fit source differs: ' + name)
+        return result
+    before = capacity(name + ':start')
+    started = time.monotonic()
+    if searcher == 'A':
+        result = fit_a(d, halves)
+    else:
+        ckname = name + '_checkpoint'
+        checkpoint = read(ckname) if path(ckname).exists() else None
+        if checkpoint is not None and checkpoint['signature'] != signature():
+            raise ValueError('formula checkpoint source differs')
+        def save(value):
+            write(ckname, dict(value, signature=signature()))
+        def progress(row):
+            print(name, 'generation', row['generation'], 'fitness', round(row['best'], 6),
+                  'population', row['population'], row['formula'], flush=True)
+        result = gp.evolve(d.engine(), d.labels(halves), d.rows_for(halves),
+                           2026112400 + half_mask(halves), checkpoint, save, progress)
+        result['training_halves'] = list(halves)
+    result.update(signature=signature(), before=before, after=capacity(name + ':done'),
+                  elapsed_seconds=time.monotonic() - started)
+    write(name, result)
+    return result
+
+
+def complexity(model):
+    a, b = model.get('a'), model.get('b', [])
+    return (len(a['features']) if a else 0) + sum(gp.size(gp.freeze(t)) for t in b)
+
+
+def choose_rows(rows):
+    def key(row):
+        rates = row['rates']
+        model = row['model']
+        a = model.get('a')
+        return (min(rates), float(np.mean(rates)), -complexity(model),
+                -(a['level'] if a and a['family'] == 'boost' else 0),
+                int(not a or a['family'] == 'logit'), -row['order'])
+    return max(rows, key=key)
+
+
+def pipeline(d, halves):
+    """All inner label reads remain inside halves; no outer query is accepted."""
+    name = 'pipeline_' + d.current_label + '_' + str(half_mask(halves))
+    if path(name).exists():
+        value = read(name)
+        if value['signature'] != signature():
+            raise ValueError('saved pipeline source differs')
+        return value
+    inner_a, inner_b = [], []
+    for held in halves:
+        train = [h for h in halves if h != held]
+        afit = cached_fit(d, train, 'A')
+        bfit = cached_fit(d, train, 'B')
+        for k, a in enumerate(afit['candidates']):
+            c = coverage(d, predict_a(d, a), [held], permitted=halves)
+            inner_a.append(dict(held=held, key=[a['family'], a['level']],
+                                coverage=c['primary'], order=k, features=a['features']))
+        for k, level in enumerate(FORMULA_LEVELS):
+            if len(bfit['formulas']) < level:
+                continue
+            c = coverage(d, predict_b(d, bfit['formulas'][:level]), [held], permitted=halves)
+            inner_b.append(dict(held=held, key=level, coverage=c['primary'], order=k))
+    afit, bfit = cached_fit(d, halves, 'A'), cached_fit(d, halves, 'B')
+    candidates = []
+    for k, a in enumerate(afit['candidates']):
+        records = [v for v in inner_a if v['key'] == [a['family'], a['level']]]
+        rates = [v['coverage']['hits']['5'] / v['coverage']['n'] for v in records]
+        candidates.append(dict(model=dict(a=a), rates=rates, order=k))
+    selected_a = choose_rows(candidates)
+    bchoices = []
+    for k, level in enumerate(FORMULA_LEVELS):
+        records = [v for v in inner_b if v['key'] == level]
+        if len(records) != len(halves):
+            continue
+        rates = [v['coverage']['hits']['5'] / v['coverage']['n'] for v in records]
+        bchoices.append(dict(model=dict(b=bfit['formulas'][:level]), rates=rates, order=k, level=level))
+    selected_b = choose_rows(bchoices)
+    a, b = selected_a['model']['a'], selected_b['model']['b']
+    value = dict(training_halves=list(halves), inner_a=inner_a, inner_b=inner_b,
+                 a_choices=candidates, b_choices=bchoices,
+                 models=dict(A=dict(a=a), B=dict(b=b), AB=dict(a=a, b=b)),
+                 selected_a=selected_a, selected_b=selected_b, signature=signature())
+    write(name, value)
+    return value
+
+
+def leave_out(d):
+    records = []
+    best = {k: np.full(len(d.entries), SENTINEL, np.int32) for k in METHODS}
+    for held in HALVES:
+        name = d.current_label + '_' + held
+        if path(name).exists():
+            row = read(name)
+            if row['signature'] != signature():
+                raise ValueError('saved outer source differs')
+        else:
+            capacity(name + ':start')
+            fit = pipeline(d, [h for h in HALVES if h != held])
+            frozen = digest(fit['models'])
+            write(name + '_frozen', dict(models=fit['models'], frozen_sha256=frozen, signature=signature()))
+            # Outer target labels are first read only after every model is fixed.
+            scores = {k: predict(d, m) for k, m in fit['models'].items()}
+            c = {k: coverage(d, score, [held]) for k, score in scores.items()}
+            row = dict(held_out=held, models=fit['models'], frozen_sha256=frozen,
+                       coverage=c, signature=signature(), runtime=capacity(name + ':done'))
+            write(name, row)
+        for k, model in row['models'].items():
+            dest = REPORTS / (PREFIX + name + '_' + k + '_ranks.npy')
+            if not dest.exists():
+                # Recover prediction files without reading held labels a second time.
+                np.save(dest, d.rank(predict(d, model)))
+        records.append(row)
+        for method in METHODS:
+            mask = d.entry_half == held
+            best[method][mask] = np.asarray(row['coverage'][method]['best'])[mask]
+        print('OUTER', d.current_label, held,
+              {k: row['coverage'][k]['primary'] for k in METHODS}, flush=True)
+    value = dict(records=records, methods={k: summarize_best(d, v, HALVES) for k, v in best.items()},
+                 signature=signature())
+    write(d.current_label, value)
+    return value
+
+
+def initialize(d):
+    if path('inputs').exists():
+        old = read('inputs')
+        if old['signature'] != signature():
+            raise ValueError('IE24 registration or search source changed')
+        if sha(d.matrix_path) != old['matrix_sha256']:
+            raise ValueError('IE23 input changed')
+        return
+    capacity('inputs')
+    matrix_hash = sha(d.matrix_path)
+    if matrix_hash != d.prepared['matrix_sha256']:
+        raise ValueError('matrix digest differs from IE23')
+    inventory = []
+    for p in sorted(REPORTS.glob(prior.PREFIX + '*')):
+        if not p.is_file():
+            continue
+        if p.suffix == '.json':
+            value = json.loads(p.read_text())
+            keys = list(value)
+        elif p.suffix == '.npy':
+            value = np.load(p, mmap_mode='r')
+            keys = [str(value.shape), str(value.dtype)]
+        else:
+            value = p.read_text()
+            keys = ['lines=' + str(len(value.splitlines()))]
+        inventory.append(dict(file=p.name, bytes=p.stat().st_size, sha256=sha(p), keys=keys))
+    value = dict(matrix_sha256=matrix_hash, shape=d.x.shape, signature=signature(),
+                 ie23_inventory=inventory, baseline=d.prepared['baseline'],
+                 ie23=prior.read('loo'), input_sha256=d.prepared['input_sha256'],
+                 dataset_digest=d.prepared['dataset_digest'], runtime=capacity('inputs:done'))
+    write('inputs', value)
+
+
+def run_nested(d):
+    d.set_label('real')
+    leave_out(d)
+    for seed in range(2026112401, 2026112406):
+        d.set_label('shuffle_' + str(seed), seed)
+        leave_out(d)
+
+
+def run_random(d):
+    d.set_label('real')
+    actual = read('real')
+    trials = []
+    for seed in range(2026112430, 2026112460):
+        c = coverage(d, np.random.default_rng(seed).random(d.n), HALVES)
+        trials.append(dict(seed=seed, coverage=c))
+    def place(value, values):
+        return dict(actual=value, rank=1 + sum(v > value for v in values), ties=sum(v == value for v in values),
+                    mean=float(np.mean(values)), minimum=min(values), maximum=max(values), n=len(values))
+    positions = {}
+    for method in METHODS:
+        a = actual['methods'][method]
+        positions[method] = {h: place(a['halfyear'][h]['hits']['5'],
+                                     [t['coverage']['halfyear'][h]['hits']['5'] for t in trials]) for h in HALVES}
+        positions[method]['combined'] = place(a['primary']['hits']['5'],
+                                              [t['coverage']['primary']['hits']['5'] for t in trials])
+    write('random', dict(trials=trials, placement=positions, signature=signature()))
+
+
+def refit_fixed(d, model, halves):
+    result = {}
+    if model.get('a') is not None:
+        result['a'] = fit_a(d, halves, model['a'])
+    if model.get('b'):
+        result['b'] = model['b']
+    return result
+
+
+def diagnostic_loo(d, model):
+    best = np.full(len(d.entries), SENTINEL, np.int32)
+    for held in HALVES:
+        refit = refit_fixed(d, model, [h for h in HALVES if h != held])
+        c = coverage(d, predict(d, refit), [held])
+        mask = d.entry_half == held
+        best[mask] = np.asarray(c['best'])[mask]
+    return summarize_best(d, best, HALVES)
+
+
+def deletions(model):
+    a = model.get('a')
+    if a is not None:
+        for j in a['features']:
+            trial = json.loads(json.dumps(prior.clean(model)))
+            trial['a']['features'].remove(j)
+            if not trial['a']['features']:
+                trial.pop('a')
+            yield dict(kind='a', feature=j), trial
+    for i, tree in enumerate(model.get('b', [])):
+        trial = json.loads(json.dumps(prior.clean(model)))
+        del trial['b'][i]
+        yield dict(kind='b', formula=tree), trial
+
+
+def ablate(d, model, name):
+    if path('ablation_' + name).exists():
+        return read('ablation_' + name)
+    current, history = model, []
+    before = diagnostic_loo(d, current)
+    initial = before
+    while True:
+        removed = False
+        for item, trial in deletions(current):
+            capacity('ablation:' + name)
+            after = diagnostic_loo(d, trial)
+            accept = after['primary']['hits']['5'] >= before['primary']['hits']['5']
+            history.append(dict(item=item, before=before, after=after, accepted=accept))
+            write('ablation_' + name + '_progress', dict(history=history, current=current))
+            if accept:
+                current, before, removed = trial, after, True
+                break
+        if not removed:
+            break
+    final = refit_fixed(d, current, HALVES)
+    value = dict(initial_model=model, model=final, before=initial, after=before, history=history,
+                 coverage=coverage(d, predict(d, final), HALVES), selection_biased_diagnostic=True,
+                 signature=signature())
+    write('ablation_' + name, value)
+    return value
+
+
+def run_final(d):
+    d.set_label('real')
+    full = pipeline(d, list(HALVES))
+    results = {k: ablate(d, full['models'][k], k) for k in METHODS}
+    write('final', dict(methods=results, signature=signature()))
+
+
+def run_accounts(d):
+    d.set_label('real')
+    results = {}
+    for method in METHODS:
+        final = read('final')['methods'][method]['model']
+        scores = predict(d, final)
+        full_ranks = d.rank(scores)
+        stitched = np.full(d.n, SENTINEL, np.int32)
+        real = read('real')
+        for row in real['records']:
+            ranks = np.load(REPORTS / (PREFIX + 'real_' + row['held_out'] + '_' + method + '_ranks.npy'))
+            mask = d.row_half == row['held_out']
+            stitched[mask] = ranks[mask]
+        early = stitched == SENTINEL
+        first = np.load(REPORTS / (PREFIX + 'real_' + HALVES[0] + '_' + method + '_ranks.npy'))
+        stitched[early] = first[early]
+        for label, ranks in (('final', full_ranks), ('loo', stitched)):
+            name = 'accounts_' + method + '_' + label
+            if path(name).exists():
+                results[method + '_' + label] = read(name)
+                continue
+            capacity(name + ':start')
+            selected = {}
+            for day, sl in d.slices.items():
+                rows = np.arange(sl.start, sl.stop)
+                order = rows[np.argsort(ranks[rows], kind='stable')][:5]
+                selected[day] = [d.codes[q] for q in order]
+            accounts = d.base.accounts(selected)
+            eligible, failures = prior.ie7.eligible(accounts)
+            result = dict(accounts=accounts, eligible=eligible, failures=failures,
+                          selected_sha256=digest(selected), runtime=capacity(name + ':done'))
+            write(name, result)
+            results[method + '_' + label] = result
+            print('ACCOUNTS', method, label, eligible, flush=True)
+    write('accounts', dict(results=results, baseline=prior.ie9.read('final')['accounts'], signature=signature()))
+
+
+def main(stage):
+    WORK.mkdir(exist_ok=True)
+    guard()
+    d = Data()
+    initialize(d)
+    if stage == 'nested':
+        run_nested(d)
+    elif stage == 'random':
+        run_random(d)
+    elif stage == 'final':
+        run_final(d)
+    elif stage == 'accounts':
+        run_accounts(d)
+    capacity(stage + ':complete')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('stage', choices=('nested', 'random', 'final', 'accounts'))
+    main(parser.parse_args().stage)

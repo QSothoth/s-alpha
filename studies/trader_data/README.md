@@ -10,6 +10,7 @@
 | `providers.py` | `Provider` 抽象：交易日历、全名单快照（含交易所昨收价）、历史重读；`OpenDProvider`（美股、港股）、`SinaProvider`（A 股）。新数据源加一个子类 |
 | `hourly.py` | 小时线：`HourlyDataset`（冻结 Release `trader-hourly-v1`）、`LiveHourly`（订阅接口只追加，核对重叠）、逐根前复权的面板与 `daily()` 重建日 K、`fetch`（`request_history_kline`，扣历史额度，先问用户）；入口 `TD.load_hourly`，规范见 TRADER_PROTOCOL 第 6 节 |
 | `panel.py` | 唯一的面板构建：按复权因子前复权、修正开收盘落在高低之外的坏 K 线；按数据集摘要缓存在 `data/trader-data/cache/` |
+| `supplemental.py` | 只读既有 QQQ 基准收盘和每日股票期权统计，供 IE47 使用；frozen 只读底座，live 额外读取已存期权增量；缺日期保留缺失，不补旧值、不发请求，返回各输入文件 SHA256 |
 
 ```bash
 PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"

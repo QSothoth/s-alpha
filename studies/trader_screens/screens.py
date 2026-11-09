@@ -89,6 +89,26 @@ class Feat:
             setattr(self, k[0] if k in ('open', 'high', 'low', 'close') else k, p[k].astype(float))
         self.v, self.raw = self.volume, self.raw_close
 
+    listing = False                  # new listings measured since their first bar (panels.arrays, TRADER_LISTING=1):
+                                     # a name that starts inside the panel has no 52-week or 6-12 month measure for
+                                     # its first year.  Names at the panel's first row stay NaN (data warm-up)
+
+    @property
+    def age(self):
+        """(bars since each name's first bar, days x codes; whether that first bar is inside the panel; its close)."""
+        def f():
+            first = self.has.argmax(0)
+            return (np.arange(len(self.c))[:, None] - first, self.has.any(0) & (first > 0),
+                    self.c[first, np.arange(self.c.shape[1])])
+        return self.get('age', f)
+
+    def _since_listing(self, x, src, n, f):
+        """x, with the since-listing extreme where a new listing is younger than the n-day window."""
+        if not self.listing or n < 126:
+            return x
+        age, new, _ = self.age
+        return np.where(new & (age >= 0) & (age + 1 < n), f.accumulate(src, axis=0), x)
+
     def get(self, key, fn):
         if key not in self._c:
             with np.errstate(invalid='ignore', divide='ignore'):
@@ -102,10 +122,10 @@ class Feat:
         return self.get(('ema', n), lambda: ema(self.c, n))
 
     def hi(self, n):
-        return self.get(('hi', n), lambda: rolling(self.h, n, 'max'))
+        return self.get(('hi', n), lambda: self._since_listing(rolling(self.h, n, 'max'), self.h, n, np.fmax))
 
     def lo(self, n):
-        return self.get(('lo', n), lambda: rolling(self.l, n, 'min'))
+        return self.get(('lo', n), lambda: self._since_listing(rolling(self.l, n, 'min'), self.l, n, np.fmin))
 
     def range(self, n, end_lag=0):
         """High-low range in percent of the n days ending end_lag days before today."""
@@ -113,7 +133,13 @@ class Feat:
                         if end_lag else (self.hi(n) / self.lo(n) - 1) * 100)
 
     def ret(self, n):
-        return self.get(('ret', n), lambda: self.c / lag(self.c, n) - 1)
+        def f():
+            r = self.c / lag(self.c, n) - 1
+            if self.listing and n >= 63:                       # 20 bars at least, as the 20-day turnover needs
+                age, new, c0 = self.age
+                r = np.where(new & (age >= 20) & (age < n), self.c / c0 - 1, r)
+            return r
+        return self.get(('ret', n), f)
 
     def vol(self, n):
         return self.get(('vol', n), lambda: rolling(self.v, n, 'mean'))
@@ -286,10 +312,12 @@ class ChristianFlanders(Screen):
     book_note = ('每笔风险 0.25%（CF2：计划 0.25% 的例子）；收盘跌破 10 日线离场（CF1）；初始止损档案没给，用突破当日低点：'
                  '研究者取值；每天最多 2 笔、同时 8 只、单只 ≤ 30%、总仓位 100%：研究者取值')
 
-    def run(self, F):
+    def run(self, F, adr_min=3, above50=True):
         adr = F.adr
         with np.errstate(invalid='ignore'):
-            pool = F.liquid(20e6) & (adr >= 3) & (F.c > F.sma(50))           # researcher
+            pool = F.liquid(20e6) & (adr >= adr_min)                         # researcher
+            if above50:
+                pool = pool & (F.c > F.sma(50))                              # researcher
             prior = lag(F.hi(242), 10)                         # the 52-week high as of 10 days ago
             based = F.hi(10) <= prior                          # no new high for 10 days: researcher's "base"
             watch = pool & (F.c >= .85 * F.hi(252))            # researcher
@@ -319,11 +347,11 @@ class OliverKell(Screen):
     book_note = ('止损日低（OK1–3）；收盘跌破 20 EMA 离场（OK1–3：10/20 EMA 依价格行为，取 20：研究者取值）；'
                  '指数在 20 EMA 下方时风险减半（OK1–3“更谨慎”，减半：研究者取值）；每笔 0.5%、每天 2 笔、同时 8 只：研究者取值')
 
-    def run(self, F):
+    def run(self, F, adr_min=3):
         adr = F.adr
         e10, e20 = F.ema(10), F.ema(20)
         with np.errstate(invalid='ignore'):
-            pool = F.liquid(20e6) & (adr >= 3)                                     # researcher
+            pool = F.liquid(20e6) & (adr >= adr_min)                               # researcher
             top = np.fmax(e10, e20)
             pop = (pool & (lag(F.c) <= lag(top)) & (F.c > top)                     # OK4 reclaims the 10/20 EMA
                    & (F.range(10, 1) <= 2.5 * lag(adr)))                           # OK4 after contraction; researcher

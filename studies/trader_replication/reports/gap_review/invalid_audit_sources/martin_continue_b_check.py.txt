@@ -1,0 +1,77 @@
+"""Audit continuation B with pinned data, full/cut decisions and generic placebo."""
+from __future__ import annotations
+
+import dataclasses
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+import numpy as np
+
+from . import gate, panels, systems
+from .martin_continue_a import required_fields
+from .martin_continue_b import support_book
+from .martin_strong import Data
+from .martin_strong_scan import HOLD, active, hold_sim, merge, name_score, nl_rules, pool_book2, pool_book3
+
+ROOT = Path(__file__).resolve().parents[2]
+OUT = ROOT / 'data' / 'martin-continue-b-audit'
+
+
+def digest(value):
+    return hashlib.sha256(json.dumps(value, ensure_ascii=False, separators=(',', ':'), default=str).encode()).hexdigest()
+
+
+def main(cut=None):
+    wrapper, _ = systems.get('martin_luk').load()
+    base = getattr(wrapper, 'base', wrapper)
+    if cut:
+        arrays = base.arrays
+        base.arrays = lambda market: arrays(market, upto=cut)
+    D = Data()
+    F = required_fields(D)
+    M = active(D, F)
+    score = name_score(D, F, M, HOLD['H3'])
+    H = hold_sim(score, 12, 36)
+    d1 = pool_book3(D, F, H, score, 8.0, False, .03)
+    broad = pool_book2(D, F, H, score, True, 8.0, None, False)
+    limits, _ = support_book(D, broad, d1)
+    entries = merge(d1, limits)
+    pending = [[] for _ in D.days]
+    for d in range(1, len(D.days) - 1):
+        accepted = {e[1] for e in d1[d]}
+        eligible = sorted((e for e in broad[d] if e[1] not in accepted and np.isfinite(D.l[d, e[1]])
+                           and D.l[d, e[1]] > 0), key=lambda e: e[0])
+        if eligible:
+            e = eligible[0]
+            pending[d + 1] = [int(e[1]), float(D.l[d, e[1]])]
+    del F, M, score, H, broad, d1, limits
+    rules = dataclasses.replace(nl_rules(D, 6, trail='e9'), intraday_kinds=tuple(nl_rules(D, 6, trail='e9').intraday_kinds) + ('lim',))
+    ema = D.base.ema_inputs(D.A, D.pool, rules)
+    cuts = (cut,) if cut else gate.CUTS
+    snapshots = {}
+    for day in cuts:
+        k = int(np.searchsorted(D.A['days'], day, side='right'))
+        snaps = {'entries': digest([gate._norm(x) for x in entries[:k]]), 'pending': digest(pending[:k]),
+                 'pool': hashlib.sha256(np.ascontiguousarray(D.pool[:k]).tobytes()).hexdigest(),
+                 'rules': digest(gate._norm(dataclasses.asdict(rules)))}
+        for name, val in ema.items():
+            snaps['ema:' + name] = hashlib.sha256(np.ascontiguousarray(val[:k]).tobytes()).hexdigest()
+        snapshots[day] = snaps
+    out = dict(data_digest=D.A['digest'], source_hash=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+               cutoff=cut, snapshots=snapshots)
+    if not cut:
+        st, trades = D.base.run(D.A, entries, panels.WINDOW, D.pool, rules, placebo=100, audit=True)
+        out['fills'] = gate.check_fills(D.A, trades)
+        out['win'] = gate.check_win(trades)
+        out['generic_placebo'] = st.get('placebo')
+        out['placebo_warning'] = 'Random intraday entries fill at the random stock open; not the same resting-limit process.'
+    OUT.mkdir(parents=True, exist_ok=True)
+    path = OUT / (f'{cut}.json' if cut else 'full.json')
+    path.write_text(json.dumps(out, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    print(json.dumps(out, ensure_ascii=False, indent=2), flush=True)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1] if len(sys.argv) > 1 else None)

@@ -106,6 +106,18 @@ class SecretGuardTests(unittest.TestCase):
         self.git('add', '.')
         self.assert_blocked(self.guard('staged'), secret)
 
+    def test_data_file_digest_exception_keeps_key_detection(self):
+        digest = '01a23b45c67d89ef' * 4
+        pins = ''.join('"data/us/US.%s.csv": "%s",\n' % (s, digest) for s in ('KEY', 'KEYS', 'XRAY'))
+        self.file('pins.json', '{\n' + pins + '"end": 0}\n')
+        self.git('add', '.')
+        clean = self.guard('staged')
+        self.assertEqual(clean.returncode, 0, clean.stderr)
+        secret = ''.join(('Ab3Cd4Ef5Gh6Ij7Kl8M', 'n9Op0Qr1St2Uv6Wx5Yz4'))
+        self.file('settings.py', 'api_key = ' + repr(secret) + '\n')
+        self.git('add', '.')
+        self.assert_blocked(self.guard('staged'), secret)
+
     def test_merge_only_secret_is_scanned(self):
         base = self.baseline()
         self.git('checkout', '-qb', 'right')

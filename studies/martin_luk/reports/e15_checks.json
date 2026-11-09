@@ -1,0 +1,314 @@
+{
+ "train_before_memory": {
+  "MemTotal_kib": 4022024,
+  "MemAvailable_kib": 2116328,
+  "SwapTotal_kib": 2359288,
+  "SwapFree_kib": 735796,
+  "peak_rss_mib": 43.61328125
+ },
+ "pre_measurement_correction": {
+  "reason": "Inherited E14 SK policy cap was 30%; task requires K2 probe shares, whose original cap is 25%. Correct entry cap only; no new threshold.",
+  "stopped_during": "initial indicator construction",
+  "account_results_before_correction": 0
+ },
+ "secret_hooks": {
+  "existing_hooks_verified": true,
+  "hooks_path": "/opt/opend-us-options/.githooks",
+  "overwritten": false
+ },
+ "k2_bitwise": {
+  "ok": true,
+  "references": {
+   "e10": {
+    "ok": true,
+    "diff": [],
+    "reference_sha256": "4917ef60df5f397d90683a3a409f8c6746af6752561c8de376b41b0e5b2c8d8b",
+    "trades_sha256": "eb3c591428d559bb89aab9527f6bfa66b25b9c746525260e26287ababdcd7ad0",
+    "raw_trades": 914
+   },
+   "e11": {
+    "ok": true,
+    "diff": [],
+    "reference_sha256": "701c5dfc1a7f31d6afc740fb75aaf851bbd1a8b1f81718b9975648d3f5fbfe04",
+    "trades_sha256": "eb3c591428d559bb89aab9527f6bfa66b25b9c746525260e26287ababdcd7ad0",
+    "raw_trades": 914
+   }
+  }
+ },
+ "k2_e13_e14_bitwise": {
+  "ok": true,
+  "references": {
+   "e13": {
+    "ok": true,
+    "trades": 914
+   },
+   "e14": {
+    "ok": true,
+    "trades": 914
+   }
+  }
+ },
+ "real_truncation": {
+  "C062": {
+   "ok": true,
+   "events_full": 1732,
+   "events_cut": 1732,
+   "first_difference": null,
+   "cut": "2025-06-30",
+   "spec": {
+    "S": "W",
+    "T": "T0",
+    "C": "CF",
+    "A": "A0",
+    "H": "H21",
+    "Z": "Z2",
+    "M": "W"
+   },
+   "books_bitwise": true,
+   "n_nights_different": 0,
+   "picks_different": []
+  },
+  "C000": {
+   "ok": true,
+   "events_full": 1850,
+   "events_cut": 1850,
+   "first_difference": null,
+   "cut": "2025-06-30",
+   "spec": {
+    "S": "W",
+    "T": "W",
+    "C": "W",
+    "A": "AE",
+    "H": "H21A",
+    "Z": "W",
+    "M": "W"
+   },
+   "books_bitwise": true,
+   "n_nights_different": 0,
+   "picks_different": []
+  },
+  "C127": {
+   "ok": true,
+   "events_full": 1800,
+   "events_cut": 1800,
+   "first_difference": null,
+   "cut": "2025-06-30",
+   "spec": {
+    "S": "SK",
+    "T": "T0",
+    "C": "CF",
+    "A": "A0",
+    "H": "H21",
+    "Z": "Z2",
+    "M": "MD"
+   },
+   "books_bitwise": true,
+   "n_nights_different": 0,
+   "picks_different": []
+  }
+ },
+ "gate_lookahead": {
+  "C062": {
+   "ok": true,
+   "cuts": [
+    {
+     "cut": "2024-09-30",
+     "ok": true,
+     "diff": []
+    },
+    {
+     "cut": "2025-09-30",
+     "ok": true,
+     "diff": []
+    }
+   ]
+  },
+  "C000": {
+   "ok": true,
+   "cuts": [
+    {
+     "cut": "2024-09-30",
+     "ok": true,
+     "diff": []
+    },
+    {
+     "cut": "2025-09-30",
+     "ok": true,
+     "diff": []
+    }
+   ]
+  },
+  "C127": {
+   "ok": true,
+   "cuts": [
+    {
+     "cut": "2024-09-30",
+     "ok": true,
+     "diff": []
+    },
+    {
+     "cut": "2025-09-30",
+     "ok": true,
+     "diff": []
+    }
+   ]
+  }
+ },
+ "audit_resources": {
+  "memory": {
+   "MemTotal_kib": 4022024,
+   "MemAvailable_kib": 1524312,
+   "SwapTotal_kib": 2359288,
+   "SwapFree_kib": 703360,
+   "peak_rss_mib": 689.08203125
+  },
+  "address_space_limit": 1900000000
+ },
+ "corporate_action_basis": {
+  "cut": "2025-06-30",
+  "raw_rows_cut_before_adjustment": true,
+  "future_action_codes": 1805,
+  "earlier_price_codes_changed": 1755,
+  "max_relative_scale_error": 1.1697940716093314e-07,
+  "invariant_prices": false,
+  "limitation": "shared upto loader adjusts full history before slicing; raw-asof price basis can differ"
+ },
+ "train_resources": {
+  "memory": {
+   "MemTotal_kib": 4022024,
+   "MemAvailable_kib": 1530880,
+   "SwapTotal_kib": 2359288,
+   "SwapFree_kib": 703360,
+   "peak_rss_mib": 689.08203125
+  },
+  "address_space_limit": 1900000000,
+  "inputs_built_once": true,
+  "configurations": 128
+ },
+ "validation_policy": {
+  "selected": "C062",
+  "measured": true,
+  "candidates": 1
+ },
+ "validation_k2_reference": {
+  "ok": true,
+  "actual": -0.10092294608839003,
+  "reference": -0.10092294608839003
+ },
+ "validation_resources": {
+  "memory": {
+   "MemTotal_kib": 4022024,
+   "MemAvailable_kib": 1846548,
+   "SwapTotal_kib": 2359288,
+   "SwapFree_kib": 700608,
+   "peak_rss_mib": 365.5390625
+  },
+  "address_space_limit": 1900000000
+ },
+ "tests": {
+  "custody": {
+   "ok": true,
+   "returncode": 0,
+   "log": "studies/martin_luk/reports/e15_work/test_custody.log",
+   "summary": [
+    ".............................................................................................................................................................................................................................................",
+    "----------------------------------------------------------------------",
+    "Ran 237 tests in 53.562s",
+    "",
+    "OK"
+   ],
+   "cumulative_peak_child_rss_mib": 66.47265625
+  },
+  "trader_replication": {
+   "ok": true,
+   "returncode": 0,
+   "log": "studies/martin_luk/reports/e15_work/test_trader_replication.log",
+   "summary": [
+    "............x......PATH FINAL true empty 1 {'hits': {'5': 1}, 'n': 1} True",
+    "..............................................................................................................................................................................................................................................................................................................",
+    "----------------------------------------------------------------------",
+    "Ran 1032 tests in 104.587s",
+    "",
+    "OK (expected failures=1)"
+   ],
+   "cumulative_peak_child_rss_mib": 123.12890625
+  },
+  "martin_luk": {
+   "ok": true,
+   "returncode": 0,
+   "log": "studies/martin_luk/reports/e15_work/test_martin_luk.log",
+   "summary": [
+    "  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]",
+    "....................",
+    "----------------------------------------------------------------------",
+    "Ran 166 tests in 4.290s",
+    "",
+    "OK"
+   ],
+   "cumulative_peak_child_rss_mib": 123.12890625
+  }
+ },
+ "provenance": {
+  "ok": true
+ },
+ "protected_sources": {
+  "ok": true,
+  "files": {
+   "studies/trader_replication/system.py": true,
+   "studies/trader_replication/systems.py": true,
+   "studies/trader_screens/screens.py": true,
+   "studies/trader_screens/board.py": true,
+   "studies/trader_screens/scan.py": true,
+   "studies/martin_luk/ie47_e1.py": true,
+   "studies/martin_luk/e14_research.py": true,
+   "studies/martin_luk/e13_research.py": true,
+   "studies/martin_luk/reports/e14_selected.json": true,
+   "studies/martin_luk/notes/PLAN_E15_CN.md": true
+  }
+ },
+ "complete_artifacts": {
+  "ok": true,
+  "csv_rows": 128,
+  "adds": 61626,
+  "max_budget_excess_u": 4.085620730620576e-14,
+  "no_2026_if_ineligible": true
+ },
+ "saved_value_checks": {
+  "ok": true,
+  "checks": {
+   "k2_2026_raw": {
+    "ok": true,
+    "trades": 360,
+    "reference_trades": 360
+   },
+   "k2_full_raw": {
+    "ok": true,
+    "trades": 1274,
+    "reference_trades": 1274
+   },
+   "K2_full_training_prefix": {
+    "ok": true,
+    "sessions": 502
+   },
+   "C062_full_training_prefix": {
+    "ok": true,
+    "sessions": 502
+   }
+  }
+ },
+ "final_delivery": {
+  "ok": true,
+  "configurations": 128,
+  "eligible": 21,
+  "chosen": "C062",
+  "csv_rows": 128,
+  "complete_test_suites": 3,
+  "tests_run": 1435,
+  "expected_failures": 1,
+  "report_sha256": "44072fe24253acdee005720b6ba6c029213f5a680f7cc7094b5397339bf1dea5",
+  "report_links_exist": true,
+  "profit_cashflows_reconcile": true,
+  "code_provenance_unchanged": true,
+  "protected_sources_unchanged": true
+ }
+}

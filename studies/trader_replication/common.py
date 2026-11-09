@@ -45,7 +45,7 @@ round      notes/common_rounds/<name>.json: each candidate on every registered s
            (2024-01-02 -> 2025-12-31, US), against the registered system; the acceptance rule of the
            pre-registration (notes/COMMON_PREREG_<name>.md); reports/common_<name>.json
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.trader_replication.common funnel [system ...]
     $PY -m studies.trader_replication.common round C1 [system ...]
     $PY -m studies.trader_replication.common validate V1      # once: the validation segment (2026)
@@ -62,7 +62,7 @@ from pathlib import Path
 
 import numpy as np
 
-from . import systems as SY, system as Y, study as ST
+from . import ledger as L, systems as SY, system as Y, study as ST
 
 OUT = Path(__file__).resolve().parent / 'reports'
 DIAG = ('2023-02-01', '2025-12-31')      # his 2023 trades count (Qullamaggie, Marios); 2026 is the validation segment
@@ -70,7 +70,7 @@ SELECT = ('2024-01-02', '2025-12-31')
 VALIDATE = ('2026-01-02', '2026-10-16')
 lag = ST.lag
 
-STAGES = ('not_listed', 'pool', 'setup', 'entry_stop', 'market', 'daily_cap', 'held', 'max_open', 'room', 'traded')
+STAGES = ('untestable', 'not_listed', 'pool', 'setup', 'entry_stop', 'market', 'daily_cap', 'held', 'max_open', 'room', 'traded')
 STAGE_CN = {'not_listed': '不在面板', 'pool': '股票池门槛', 'setup': '形态定义', 'entry_stop': '入场与止损',
             'market': '市况', 'daily_cap': '名额与排序（每天）', 'held': '名额与排序（已持有）',
             'max_open': '名额与排序（持仓上限）', 'room': '仓位（总敞口 / 单只）', 'traded': '买到'}
@@ -348,20 +348,20 @@ def his_entry(st, A, d, j, cfg):
     return st.his_entry(A, d, j, cfg)
 
 
-def funnel_one(system):
+def funnel_one(system, period=DIAG):
     st, cfg = system.load()
     A = st.arrays('us')
     trace = {}
     entries, rules, mask, pool = st.build(A, cfg, trace)
     px, ema = st.px(A), st.ema_inputs(A, pool, rules)
-    curve, dates, tr = Y.simulate(px, ema, rules, entries, *DIAG, audit=True)
+    curve, dates, tr = Y.simulate(px, ema, rules, entries, *period, audit=True)
     codes = [str(c) for c in A['codes']]
     di = {str(d): i for i, d in enumerate(A['days'])}
     ours = {(t['code'], t['entry']): t for t in tr if t['side'] > 0}
     sets = {k: [{e[1] for e in lst} for lst in trace[k]] for k in ('raw', 'filtered', 'capped')}
     fl = floors(system.id, st, A, cfg)
     located = [x for x in st.located(A, st.trades(), dated=False)
-               if x[0].dated and DIAG[0] <= x[0].entry_date <= DIAG[1]]
+               if x[0].dated and period[0] <= x[0].entry_date <= period[1]]
     # layer two: his ticker on his day, our execution, every trade alone
     mine = [[] for _ in range(len(A['days']))]
     for t, j, a, b in located:
@@ -372,7 +372,7 @@ def funnel_one(system):
                 mine[d].append(e)
     alone = replace(rules, max_open=0, max_new_long=0, max_gross=1e9, max_position=1e9, feedback=0,
                     risk_scale='', margin_rate=0.0, max_open_by_kind={}, month_loss_cap=0.0)
-    _, _, tr2 = Y.simulate(px, ema, alone, mine, *DIAG, audit=False)
+    _, _, tr2 = Y.simulate(px, ema, alone, mine, *period, audit=False)
     lay2 = {(t['code'], t['entry']): t for t in tr2}
     # engine state per day: open longs (all sides count for max_open) and new longs opened
     n = len(A['days'])
@@ -387,7 +387,14 @@ def funnel_one(system):
     max_new = rules.max_new_long or cfg.get('max_new', 0)
     rows = []
     known = set(codes)
-    for t in [t for t in st.trades() if t.side == 'long' and t.dated and DIAG[0] <= t.entry_date <= DIAG[1]]:
+    first_signal = str(A['days'][mask.any(1).argmax()])    # before it the system's own measures are still warming up
+    for t in [t for t in st.trades() if t.side == 'long' and t.dated and period[0] <= t.entry_date <= period[1]
+              and L.market(t.ticker) == A['market']]:
+        if t.entry_date < first_signal:
+            rows.append(dict(id=t.id, ticker=t.ticker, date=t.entry_date, setup=t.setup, ep=is_ep(t),
+                             outcome=t.outcome, his_r=t.r_multiple, stage='untestable', detail='warm-up',
+                             l2_r=None, l2_ret=None, our_r=None, our_ret=None))
+            continue
         hit = [x for x in located if x[0].id == t.id]
         if not hit:
             rows.append(dict(id=t.id, ticker=t.ticker, date=t.entry_date, setup=t.setup, ep=is_ep(t),
@@ -441,7 +448,7 @@ def funnel_one(system):
                          gap=float(A['open'][d, j] / A['close'][d - 1, j] - 1),
                          rvol=float(A['turnover'][d, j] / A['to20'][d - 1, j]),
                          stop_width=float((c - l) / c) if c > 0 else None))
-    out = dict(id=system.id, version=system.version, period=DIAG, rows=rows,
+    out = dict(id=system.id, version=system.version, period=period, first_signal=first_signal, rows=rows,
                by_stage={s: dict(n=sum(r['stage'] == s for r in rows),
                                  l2_r=float(sum(r.get('l2_r') or 0 for r in rows if r['stage'] == s)))
                          for s in STAGES})

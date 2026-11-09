@@ -1,0 +1,197 @@
+完整141笔，单次成交最多覆盖一笔；45笔空头仍保留。当前阶段按本段细分归因，原stage保留旧引擎粗分类。
+
+| ID | 股票 | 方向 | 半年 | 精度／窗口 | 分组 | 权重来源／值 | 信号 | 买到 | 买入→卖出 | 赚到 | 洗出 | 当前阶段 | 卖出理由 | 右删失 | 失误单 | 卖出核对 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| I01 | US.SMCI | 1 | 2024H1 | chart／250–256 | big | price_proxy／106.90 | True | True | 2024-01-09→2024-01-17 | -1.1% | True | 买到被洗出 | gap_stop | False | True | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": false} |
+| I02 | US.COIN | 1 | 2024H1 | chart／272–278 | big | price_proxy／44.08 | True | True | 2024-02-09→2024-02-09 | -2.3% | True | 买到被洗出 | stop_day0 | False | True | {"stated_dates": [], "expected": ["ema9"], "date_ok": null, "reason_ok": false, "reproduction_target": false} |
+| I03 | US.GME | 1 | 2024H1 | exact／339–343 | big | price_proxy／35.28 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["stop", "partial"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I04 | US.AMC | 1 | 2024H1 | exact／339–343 | loss | published_r／0.00 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I05 | US.AMC | 1 | 2024H1 | exact／339–343 | big | published_r／54.00 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["ema9", "partial"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I06 | US.SOFI | 1 | 2024H2 | chart／460–466 | big | price_proxy／20.43 | False | False | None→None | — | False | 买点 | None | False | False | {"stated_dates": [], "expected": ["stop", "ema9", "partial"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I07 | US.COIN | 1 | 2024H2 | exact／462–466 | big | price_proxy／12.51 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["ema9", "partial"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I08 | US.LMND | 1 | 2024H2 | chart／470–476 | big | price_proxy／11.39 | True | False | None→None | — | False | 市况 | None | False | False | {"stated_dates": [], "expected": ["climax", "partial"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I09 | US.SOUN | 1 | 2024H2 | chart／471–478 | big | price_proxy／64.47 | True | True | 2024-11-22→2024-11-27 | -2.5% | True | 买到被洗出 | stop | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I10 | US.QUBT | 1 | 2024H2 | chart／489–493 | loss | published_r／0.00 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I11 | US.QUBT | 1 | 2024H2 | chart／489–493 | big | price_proxy／48.35 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["climax"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I12 | US.SMTC | 1 | 2024H1 | exact／356–360 | loss | price_proxy／0.00 | False | False | None→None | — | False | 领涨状态 | None | False | True | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": false} |
+| I13 | US.CLSK | 1 | 2024H1 | window／353–375 | loss | price_proxy／0.00 | True | True | 2024-06-18→2024-06-18 | -40.4% | True | 买到被洗出 | stop_day0 | False | True | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": true, "reproduction_target": false} |
+| I14 | US.RDDT | -1 | 2025H1 | window／532–563 | big | price_proxy／11.67 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I15 | US.CAVA | -1 | 2025H1 | window／532–563 | other | price_proxy／4.17 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I16 | US.SMCI | -1 | 2025H1 | window／539–567 | big | price_proxy／10.39 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I17 | US.UPST | 1 | 2025H1 | window／581–647 | loss | published_r／0.00 | True | True | 2025-06-24→2025-06-25 | -4.8% | True | 买到被洗出 | stop | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": true, "reproduction_target": true} |
+| I18 | US.QS | 1 | 2025H2 | window／500–753 | loss | published_r／0.00 | True | True | 2025-09-26→2025-09-26 | -2.7% | False | 卖早卖晚 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I19 | US.CRCL | 1 | 2025H2 | window／622–731 | loss | published_r／0.00 | True | True | 2025-09-23→2025-09-23 | -16.3% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I20 | US.RKLB | -1 | 2025H2 | window／500–753 | loss | published_r／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I21 | US.SOFI | 1 | 2025H2 | window／728–746 | loss | published_r／0.00 | True | True | 2025-11-26→2025-12-05 | -46.8% | True | 买到被洗出 | gap_stop | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I22 | US.OKLO | 1 | 2025H2 | window／728–746 | loss | published_r／0.00 | True | True | 2025-12-08→2025-12-08 | -20.6% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I23 | US.OPEN | 1 | 2025H2 | window／728–746 | loss | published_r／0.00 | True | True | 2025-12-10→2025-12-10 | -23.6% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I24 | US.NVDA | -1 | 2025H2 | window／728–746 | loss | published_r／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I25 | US.QBTS | -1 | 2025H2 | exact／740–744 | loss | published_r／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": ["2026-01-07"], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I26 | US.CSIQ | 1 | 2025H2 | chart／726–731 | loss | published_r／0.00 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": ["2025-12-01", "2025-12-02"], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I27 | US.BBAI | 1 | 2025H1 | chart／521–525 | big | price_proxy／37.00 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["ema9", "partial"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I28 | US.TQQQ | 1 | 2025H1 | exact／564–568 | big | published_r／13.00 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I29 | US.HOOD | 1 | 2025H1 | chart／583–590 | big | price_proxy／42.31 | True | True | 2025-05-07→2025-06-09 | 42.6% | False | 卖早卖晚 | climax | False | False | {"stated_dates": [], "expected": ["climax"], "date_ok": null, "reason_ok": true, "reproduction_target": true} |
+| I30 | US.OKLO | 1 | 2025H1 | chart／580–586 | big | price_proxy／65.65 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I31 | US.FUTU | 1 | 2025H2 | chart／625–640 | big | price_proxy／20.77 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I32 | US.SMR | 1 | 2025H2 | window／500–753 | big | price_proxy／24.55 | True | True | 2025-07-14→2025-07-14 | -6.3% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I33 | US.PL | 1 | 2025H2 | exact／669–673 | big | price_proxy／32.05 | True | False | None→None | — | False | 触发 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I34 | US.IONQ | 1 | 2025H2 | chart／665–677 | big | published_r／25.00 | True | True | 2025-09-11→2025-09-11 | -3.1% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I35 | US.RGTI | 1 | 2025H2 | chart／665–677 | big | price_proxy／84.14 | True | True | 2025-09-11→2025-09-11 | -1.2% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I36 | US.RGTI | 1 | 2025H2 | exact／687–691 | big | price_proxy／21.42 | True | True | 2025-10-02→2025-10-06 | 36.2% | False | 卖早卖晚 | climax | False | False | {"stated_dates": ["2025-10-02"], "expected": [], "date_ok": true, "reason_ok": null, "reproduction_target": true} |
+| I37 | US.QBTS | 1 | 2025H2 | chart／665–677 | big | price_proxy／67.73 | True | True | 2025-09-11→2025-10-01 | 27.4% | False | 卖早卖晚 | ema9 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I38 | US.TSLA | 1 | 2025H2 | chart／669–676 | big | price_proxy／12.10 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I39 | US.AMPX | 1 | 2025H2 | exact／672–676 | big | price_proxy／32.31 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I40 | US.ACHR | 1 | 2025H2 | window／686–692 | big | price_proxy／29.08 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["partial"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I41 | US.AMD | 1 | 2025H2 | exact／686–690 | big | published_r／42.00 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": ["2025-10-10"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I42 | US.ASTS | 1 | 2025H2 | exact／686–690 | big | published_r／50.00 | True | True | 2025-10-01→2025-10-01 | -3.8% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": ["2025-10-10"], "expected": [], "date_ok": false, "reason_ok": null, "reproduction_target": true} |
+| I43 | US.TEM | 1 | 2025H2 | window／500–753 | big | price_proxy／20.13 | True | True | 2025-06-27→2025-06-27 | -5.1% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I44 | US.GDX | -1 | 2025H2 | window／697–704 | big | published_r／36.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": ["2025-10-28"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I45 | US.SNDK | -1 | 2025H2 | window／709–731 | other | price_proxy／9.33 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| I46 | US.UUUU | -1 | 2025H2 | window／696–753 | big | published_r／6.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| O01 | US.RCAT | 1 | 2025H2 | exact／688–692 | other | price_proxy／9.85 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": ["2025-10-09"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S01 | US.RIVN | 1 | 2025H2 | exact／725–729 | big | price_proxy／15.27 | True | True | 2025-11-25→2025-12-12 | 18.6% | False | 卖早卖晚 | ema9 | False | False | {"stated_dates": ["2025-12-11"], "expected": ["stop"], "date_ok": true, "reason_ok": false, "reproduction_target": true} |
+| S02 | US.TSLA | 1 | 2025H2 | exact／728–732 | other | price_proxy／10.65 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": ["2025-12-12"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S03 | US.LMND | 1 | 2025H2 | exact／728–732 | big | price_proxy／10.91 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S04 | US.ONDS | 1 | 2025H2 | exact／728–732 | loss | published_r／0.00 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S05 | US.PL | -1 | 2025H2 | exact／736–740 | other | price_proxy／4.69 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S06 | US.SNDK | -1 | 2025H2 | exact／738–742 | other | price_proxy／0.39 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S07 | US.QBTS | 1 | 2026H1 | exact／750–754 | other | price_proxy／4.77 | True | False | None→None | — | False | 市况 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S08 | US.AEVA | 1 | 2026H1 | exact／752–756 | loss | published_r／0.00 | True | False | None→None | — | False | 触发 | None | False | False | {"stated_dates": ["2026-01-07"], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S09 | US.AEVA | 1 | 2026H1 | exact／752–756 | loss | published_r／0.00 | True | False | None→None | — | False | 触发 | None | False | False | {"stated_dates": ["2026-01-07"], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S10 | US.HUT | 1 | 2026H1 | exact／751–755 | loss | price_proxy／0.00 | True | False | None→None | — | False | 市况 | None | False | False | {"stated_dates": ["2026-01-15"], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S11 | US.RKLB | 1 | 2026H1 | chart／751–756 | other | price_proxy／5.25 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S12 | US.GLXY | 1 | 2026H1 | exact／757–761 | other | price_proxy／9.83 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["partial"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S13 | US.ASTS | 1 | 2026H1 | exact／758–762 | big | price_proxy／12.14 | True | True | 2026-01-15→2026-01-15 | -8.5% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": ["2026-01-16"], "expected": ["partial"], "date_ok": true, "reason_ok": false, "reproduction_target": true} |
+| S14 | US.SERV | 1 | 2026H1 | exact／760–764 | loss | price_proxy／0.00 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": ["2026-01-20"], "expected": ["ema9"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S15 | US.RR | 1 | 2026H1 | exact／766–770 | other | price_proxy／0.54 | True | False | None→None | — | False | 触发 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S16 | US.GLD | -1 | 2026H1 | exact／768–772 | other | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S17 | US.SLV | -1 | 2026H1 | exact／768–772 | other | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S18 | US.OKLO | -1 | 2026H1 | chart／768–773 | big | price_proxy／14.54 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": ["2026-02-04"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S19 | US.PLTR | 1 | 2026H1 | exact／771–775 | loss | price_proxy／0.00 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S20 | US.TSLA | -1 | 2026H1 | chart／770–775 | other | price_proxy／6.69 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S21 | US.NVDA | -1 | 2026H1 | exact／771–775 | other | price_proxy／2.97 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S22 | US.SLV | -1 | 2026H1 | exact／772–776 | other | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S23 | US.SNDK | -1 | 2026H1 | exact／773–777 | other | published_r／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S24 | US.SNDK | -1 | 2026H1 | exact／776–780 | other | price_proxy／1.52 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S25 | US.GLD | -1 | 2026H1 | exact／776–780 | loss | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S26 | US.SMR | -1 | 2026H1 | exact／778–782 | big | price_proxy／12.25 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S27 | US.AMD | -1 | 2026H1 | exact／788–792 | loss | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": ["2026-03-02"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S28 | US.NVDA | -1 | 2026H1 | exact／789–793 | loss | published_r／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S29 | US.STX | -1 | 2026H1 | exact／789–793 | other | price_proxy／3.30 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S30 | US.GLD | -1 | 2026H1 | exact／791–795 | other | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": ["2026-03-06"], "expected": ["ema9"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S31 | US.SLV | -1 | 2026H1 | exact／791–795 | other | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": ["2026-03-09"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S32 | US.AVGO | -1 | 2026H1 | chart／791–796 | other | price_proxy／2.83 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S33 | US.NVDA | -1 | 2026H1 | exact／792–796 | other | price_proxy／3.47 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S34 | US.DELL | 1 | 2026H1 | exact／795–799 | big | price_proxy／75.83 | True | True | 2026-03-11→2026-03-19 | -1.4% | True | 买到被洗出 | gap_stop | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| S35 | US.MRVL | 1 | 2026H1 | exact／810–814 | big | price_proxy／77.74 | True | True | 2026-04-01→2026-05-08 | 32.4% | False | 卖早卖晚 | ema9 | False | False | {"stated_dates": [], "expected": ["ema9"], "date_ok": null, "reason_ok": true, "reproduction_target": true} |
+| V01 | US.GLXY | 1 | 2026H1 | exact／816–820 | big | price_proxy／54.37 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V02 | US.ARM | 1 | 2026H1 | exact／818–822 | big | price_proxy／62.43 | True | True | 2026-04-10→2026-04-10 | -1.5% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V03 | US.COIN | 1 | 2026H1 | exact／821–825 | other | price_proxy／3.76 | False | False | None→None | — | False | 买点 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V04 | US.NET | 1 | 2026H1 | exact／823–827 | big | price_proxy／14.03 | True | False | None→None | — | False | 没仓位 | None | False | False | {"stated_dates": [], "expected": ["ema9"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V05 | US.MSTR | 1 | 2026H1 | exact／831–835 | other | price_proxy／6.36 | True | True | 2026-05-01→2026-05-14 | 14.5% | False | 卖早卖晚 | ema9 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V06 | US.MRVL | 1 | 2026H1 | chart／831–836 | big | price_proxy／33.25 | True | False | None→None | — | False | 没仓位 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V07 | US.NBIS | 1 | 2026H1 | exact／832–836 | big | price_proxy／31.37 | True | True | 2026-05-04→2026-05-21 | 40.7% | False | 卖早卖晚 | ema9 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V08 | US.IONQ | 1 | 2026H1 | exact／832–836 | big | price_proxy／19.81 | True | True | 2026-05-01→2026-05-01 | -5.2% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": ["ema9"], "date_ok": null, "reason_ok": false, "reproduction_target": true} |
+| V09 | US.QBTS | 1 | 2026H1 | exact／832–836 | big | price_proxy／17.99 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V10 | US.ARM | 1 | 2026H1 | exact／843–847 | loss | price_proxy／0.00 | True | True | 2026-05-19→2026-05-19 | -2.8% | True | 买到被洗出 | stop_day0 | False | True | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": false} |
+| V11 | US.IONQ | 1 | 2026H1 | exact／845–849 | big | price_proxy／13.46 | True | True | 2026-05-21→2026-06-05 | 35.0% | False | 卖早卖晚 | ema9 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V12 | US.QBTS | 1 | 2026H1 | exact／846–850 | other | price_proxy／7.52 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V13 | US.AMD | 1 | 2026H1 | exact／812–816 | big | price_proxy／56.28 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V14 | US.QQQ | -1 | 2026H1 | exact／858–862 | other | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V15 | US.INTC | 1 | 2026H1 | exact／860–864 | loss | published_r／0.00 | True | True | 2026-06-12→2026-06-12 | -14.3% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": true, "reproduction_target": true} |
+| V16 | US.INTC | 1 | 2026H1 | exact／860–864 | other | price_proxy／7.24 | False | False | None→None | — | False | 买点 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V17 | US.ENPH | 1 | 2026H1 | exact／861–865 | other | price_proxy／1.24 | False | False | None→None | — | False | 领涨状态 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V18 | US.CRWD | 1 | 2026H1 | exact／865–869 | big | price_proxy／14.17 | True | True | 2026-06-22→2026-06-22 | -6.3% | True | 买到被洗出 | stop_day0 | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V19 | US.GLW | 1 | 2026H1 | exact／865–869 | big | price_proxy／13.14 | True | True | 2026-06-22→2026-06-23 | -10.4% | True | 买到被洗出 | gap_stop | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V20 | US.TEL | 1 | 2026H1 | exact／866–870 | other | price_proxy／1.46 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V21 | US.ENPH | 1 | 2026H1 | exact／868–872 | other | price_proxy／4.38 | False | False | None→None | — | False | 领涨状态 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V22 | US.NET | 1 | 2026H1 | exact／870–874 | big | price_proxy／16.84 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V23 | US.QBTS | 1 | 2026H1 | exact／872–876 | other | price_proxy／1.03 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V24 | US.SKHY | -1 | 2026H2 | exact／882–886 | other | price_proxy／9.76 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": ["2026-07-10"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V25 | US.NET | 1 | 2026H2 | chart／886–891 | big | price_proxy／12.00 | True | False | None→None | — | False | 触发 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V26 | US.BMNR | 1 | 2026H2 | exact／887–891 | loss | published_r／0.00 | True | True | 2026-07-22→2026-07-23 | -4.9% | True | 买到被洗出 | stop | False | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": true, "reproduction_target": true} |
+| V27 | US.BMNR | 1 | 2026H2 | exact／887–891 | big | price_proxy／20.89 | True | False | None→None | — | False | 没仓位 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V28 | US.SKHY | -1 | 2026H2 | exact／887–891 | other | price_proxy／8.16 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V29 | US.NET | 1 | 2026H2 | exact／892–896 | big | price_proxy／12.32 | True | True | 2026-07-31→2026-07-31 | -7.5% | True | 买到被洗出 | stop_day0 | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V30 | US.PANW | 1 | 2026H2 | chart／892–897 | big | price_proxy／12.54 | True | True | 2026-08-03→2026-08-19 | 38.7% | False | 卖早卖晚 | ema9 | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V31 | US.FTNT | 1 | 2026H2 | exact／893–897 | loss | published_r／0.00 | False | False | None→None | — | False | 股票池 | None | True | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V32 | US.FTNT | 1 | 2026H2 | exact／894–898 | other | price_proxy／7.24 | False | False | None→None | — | False | 股票池 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V33 | US.BMNR | 1 | 2026H2 | exact／893–897 | big | price_proxy／19.87 | True | False | None→None | — | False | 触发 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V34 | US.CRCL | 1 | 2026H2 | chart／900–905 | big | price_proxy／15.05 | True | True | 2026-08-11→2026-09-10 | 79.7% | False | 对上 | ema9 | True | False | {"stated_dates": ["2026-08-21"], "expected": ["partial"], "date_ok": true, "reason_ok": true, "reproduction_target": true} |
+| V35 | US.AAOI | 1 | 2026H2 | exact／901–905 | other | price_proxy／6.62 | True | False | None→None | — | False | 被别的信号抢先 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V36 | US.TSLA | -1 | 2026H2 | exact／913–917 | loss | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V37 | US.SNDK | -1 | 2026H2 | exact／914–918 | other | price_proxy／4.69 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V38 | US.SKHY | -1 | 2026H2 | exact／914–918 | other | price_proxy／5.14 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V39 | US.MU | -1 | 2026H2 | exact／916–920 | other | price_proxy／2.69 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V40 | US.NVDA | -1 | 2026H2 | exact／917–921 | loss | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V41 | US.IONQ | -1 | 2026H2 | chart／921–926 | other | price_proxy／7.09 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V42 | US.ARM | -1 | 2026H2 | exact／926–930 | loss | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V43 | US.MSTR | 1 | 2026H2 | exact／927–931 | loss | published_r／0.00 | True | True | 2026-09-18→2026-10-01 | 32.0% | False | 卖早卖晚 | ema9 | True | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": false, "reproduction_target": true} |
+| V44 | US.MSTR | 1 | 2026H2 | exact／927–931 | other | price_proxy／9.81 | True | False | None→None | — | False | 没仓位 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V45 | US.BMNR | 1 | 2026H2 | exact／927–931 | other | price_proxy／6.93 | True | False | None→None | — | False | 市况 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V46 | US.PLTR | 1 | 2026H2 | exact／927–931 | loss | published_r／0.00 | False | False | None→None | — | False | 股票池 | None | True | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V47 | US.PLTR | 1 | 2026H2 | exact／928–932 | other | price_proxy／6.62 | False | False | None→None | — | False | 股票池 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V48 | US.TSLA | 1 | 2026H2 | exact／927–931 | loss | published_r／0.00 | False | False | None→None | — | False | 股票池 | None | True | False | {"stated_dates": [], "expected": ["stop"], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V49 | US.TSLA | 1 | 2026H2 | exact／928–932 | other | price_proxy／2.22 | False | False | None→None | — | False | 股票池 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V50 | US.CRWD | 1 | 2026H2 | chart／927–932 | other | price_proxy／6.92 | True | True | 2026-09-22→2026-09-28 | -15.0% | True | 买到被洗出 | gap_stop | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V51 | US.QBTS | -1 | 2026H2 | exact／938–942 | other | price_proxy／9.34 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": ["2026-10-06"], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V52 | US.QBTS | -1 | 2026H2 | exact／940–944 | other | price_proxy／9.37 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V53 | US.SNDK | -1 | 2026H2 | exact／941–945 | other | price_proxy／8.20 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V54 | US.AAOI | -1 | 2026H2 | exact／943–947 | big | price_proxy／10.40 | False | False | None→None | — | False | 未开空头 | None | True | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| V55 | US.USO | 1 | 2026H2 | exact／945–949 | other | price_proxy／0.00 | False | False | None→None | — | False | 股票池 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| J01 | US.IONQ | 1 | 2025H1 | exact／586–590 | big | price_proxy／17.90 | True | False | None→None | — | False | 被别的信号抢先 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| J02 | US.SLV | -1 | 2026H1 | exact／768–772 | other | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| J03 | US.GLD | -1 | 2026H1 | exact／768–772 | other | price_proxy／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+| J04 | US.SLV | -1 | 2026H1 | exact／765–769 | other | published_r／0.00 | False | False | None→None | — | False | 未开空头 | None | False | False | {"stated_dates": [], "expected": [], "date_ok": null, "reason_ok": null, "reproduction_target": true} |
+
+
+**原来被同日信号抢先的26笔**
+
+| ID | 股票 | 救回 | 现在买入 | 最终状态 |
+| --- | --- | --- | --- | --- |
+| I04 | US.AMC | False | None | 被别的信号抢先 |
+| I05 | US.AMC | False | None | 被别的信号抢先 |
+| I11 | US.QUBT | False | None | 被别的信号抢先 |
+| I22 | US.OKLO | True | 2025-12-08 | 已买到 |
+| I23 | US.OPEN | True | 2025-12-10 | 已买到 |
+| I26 | US.CSIQ | False | None | 被别的信号抢先 |
+| I27 | US.BBAI | False | None | 被别的信号抢先 |
+| I30 | US.OKLO | False | None | 被别的信号抢先 |
+| I39 | US.AMPX | False | None | 被别的信号抢先 |
+| I40 | US.ACHR | False | None | 被别的信号抢先 |
+| I42 | US.ASTS | True | 2025-10-01 | 已买到 |
+| O01 | US.RCAT | False | None | 被别的信号抢先 |
+| S03 | US.LMND | False | None | 被别的信号抢先 |
+| S04 | US.ONDS | False | None | 被别的信号抢先 |
+| S12 | US.GLXY | False | None | 被别的信号抢先 |
+| V01 | US.GLXY | False | None | 被别的信号抢先 |
+| V02 | US.ARM | True | 2026-04-10 | 已买到 |
+| V09 | US.QBTS | False | None | 被别的信号抢先 |
+| V12 | US.QBTS | False | None | 被别的信号抢先 |
+| V22 | US.NET | False | None | 被别的信号抢先 |
+| V23 | US.QBTS | False | None | 被别的信号抢先 |
+| V26 | US.BMNR | True | 2026-07-22 | 已买到 |
+| V27 | US.BMNR | False | None | 没仓位 |
+| V29 | US.NET | True | 2026-07-31 | 已买到 |
+| V35 | US.AAOI | False | None | 被别的信号抢先 |
+| J01 | US.IONQ | False | None | 被别的信号抢先 |
+
+
+**相对IE16新增、丢失和换日的逐笔变化**
+
+| ID | 股票 | 变化 | IE16买入 | IE17买入 | 原赚到 | 现赚到 | ③贡献百分点 | 实际动作 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| I03 | US.GME | 丢失 | 2024-05-14 | None | -2.7% | — | +0.11 |  |
+| I07 | US.COIN | 丢失 | 2024-11-07 | None | -8.3% | — | +0.12 |  |
+| I10 | US.QUBT | 丢失 | 2024-12-18 | None | -2.1% | — | +0.00 |  |
+| I17 | US.UPST | 换日 | 2025-05-28 | 2025-06-24 | -5.3% | -4.8% | +0.00 | 加仓0→1；退出stop_day0→stop |
+| I18 | US.QS | 换日 | 2025-08-08 | 2025-09-26 | -2.7% | -2.7% | +0.00 | 加仓0→0；退出stop_day0→stop_day0 |
+| I19 | US.CRCL | 换日 | 2025-09-15 | 2025-09-23 | -16.3% | -16.3% | +0.00 | 加仓0→0；退出stop_day0→stop_day0 |
+| I22 | US.OKLO | 新增 | None | 2025-12-08 | — | -20.6% | -0.00 |  |
+| I23 | US.OPEN | 新增 | None | 2025-12-10 | — | -23.6% | -0.00 |  |
+| I37 | US.QBTS | 换日 | 2025-09-03 | 2025-09-11 | -1.5% | 27.4% | +2.10 | 加仓0→1；退出stop_day0→ema9 |
+| I42 | US.ASTS | 新增 | None | 2025-10-01 | — | -3.8% | -0.20 |  |
+| S11 | US.RKLB | 丢失 | 2026-01-06 | None | -19.7% | — | +0.12 |  |
+| V02 | US.ARM | 新增 | None | 2026-04-10 | — | -1.5% | -0.10 |  |
+| V26 | US.BMNR | 新增 | None | 2026-07-22 | — | -4.9% | -0.00 |  |
+| V29 | US.NET | 新增 | None | 2026-07-31 | — | -7.5% | -0.10 |  |

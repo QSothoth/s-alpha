@@ -3,7 +3,7 @@ his parabolic short), with his own numbers: EPs gapping >= 5% out of a range of 
 wider than 1 ADR, 0.3% risk, 25% per name, no margin, at most 15 names, 3 a day, a quarter sold at 3R (his 2.5-3
 ADR) with the stop then at cost, the rest out on a close below the 10-day line.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.marios_stamatoudis.replicate round R1
 
 Rounds choose on the selection segment only (2024-01-02 -> 2025-12-31, PREREG_R0); `validate` runs the carried

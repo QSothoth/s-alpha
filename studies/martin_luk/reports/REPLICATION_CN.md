@@ -1,5 +1,7 @@
 # 用他的真实交易逐环节逼近（R19–R74）
 
+> **事后更正（2026-11-01）**：本报告中的 Z1 “第一次反抽 50 日线”是原意图标签。实际公式允许此前已触线后再次触线，旧账户结果不能作为对严格首次反抽的完整检验；原数值不改。审计与定义见 [STRONG 续研 DN](../notes/PREREG_STRONG.md)。
+
 2026-10-17。方法见 [skills/trader-replication](../../../skills/trader-replication/SKILL.md)；台账 [trades.csv](../notes/trades.csv)，原话 [RULES_CN](../notes/RULES_CN.md)，各轮预登记 `notes/PREREG_R19～R74.md`（R42 起候选在 `notes/rounds/R*.json`），机器结果 `r19_*.json`～`r41_*.json`、`r42.json`～`r74.json`，逐轮记录 [ROUNDS_CN](../notes/ROUNDS_CN.md)。
 
 第一阶段（R19–R28）逐环节按“像不像”和“有没有超额”选，组合后 2024 年亏损；第二阶段（R29–R74）直接逼近他的收益。**最终结论在文末“最终结论：逼近到什么程度、还差在哪”**；中间的“结论”一节是第一阶段的，已被第二阶段取代。

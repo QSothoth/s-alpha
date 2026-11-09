@@ -8,7 +8,7 @@
 Both are then held with the same daily rule (out at the stop, else at the close 10 sessions later) so only the
 entry differs.  Reported per trade and on average (R multiples and returns).
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.christian_flanders.checks.ep_minutes
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.christian_flanders.checks.ep_minutes
 """
 from __future__ import annotations
 

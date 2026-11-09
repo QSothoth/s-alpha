@@ -1,7 +1,7 @@
 """Christian Flanders through skills/trader-replication: his stages as masks on the research daily panels, the
 configuration a round JSON changes, and the generic loop of studies.trader_replication.study.
 
-    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/futu-opend/venv/bin/python"
+    PY="nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/opend-us-options/.venv/bin/python"
     $PY -m studies.christian_flanders.replicate round R1
     $PY -m studies.christian_flanders.replicate diagnose r1.json
     $PY -m studies.christian_flanders.replicate three r1.json
@@ -42,6 +42,7 @@ DRAFT = dict(
 )
 
 EP = dict(gap=.10, rvol=0.0, near=None, far_low=None)   # gap >= 10% (his "ideally 10% or more"); the rest optional
+BRKV = dict(rvol=2.0, up_adr=1.0, listing=False)   # "obvious to an 8-year-old": a wide-range up day on huge volume
 PP = dict(gain=1.0, flag=10, depth=.25)     # up 100% within 40 days, then a flag of at most 25% (Minervini's power play)
 
 
@@ -111,6 +112,13 @@ class Flanders(study.Study):
                 return lag(F.c >= 2 * F.lo(252))
         raise ValueError(s)
 
+    def kind_strength(self, A, cfg, kind, ok):
+        """ok and, for a kind named in cfg['strength_by_kind'] ({kind: [strength, ...]}), every one of its own
+        strength rules too (as of t-1, like strength_ok): a narrower 'what is strong' for that setup only."""
+        for s in cfg.get('strength_by_kind', {}).get(kind, ()):
+            ok = ok & self.strength_ok(A, dict(cfg, strength=s))
+        return ok
+
     def rs(self, A):
         F = A['F']
         return F.rank('rs', .4 * F.ret(63) + .2 * F.ret(126) + .2 * F.ret(189) + .2 * F.ret(252))
@@ -121,7 +129,9 @@ class Flanders(study.Study):
         out = {}
         names = cfg.get('setups', ['hi52'])
         if 'hi52' in names:
-            st = [x for x in S.ChristianFlanders().run(F)['setups'] if x.kind == 'triggered'][0]
+            sc = cfg.get('screen', {})                          # F3: the board's researcher floors, by name
+            st = [x for x in S.ChristianFlanders().run(F, sc.get('adr', 3), sc.get('above50', True))['setups']
+                  if x.kind == 'triggered'][0]
             out['hi52'] = (st.mask, st.price, F.l)
         pool = lag(self.pool(A, cfg))                         # known before the day's trades
         if 'ep' in names:
@@ -141,6 +151,17 @@ class Flanders(study.Study):
                 prior = lag(F.hi(252))
                 m = pool & (F.h > prior)
                 out['brk52'] = (m, np.fmax(F.o, prior), F.l)
+            if 'brkv' in names:                                     # his breakout: a close over the prior 52-week
+                o = dict(BRKV, **cfg.get('brkv', {}))               # high (listing: the high since listing for a
+                prior = lag(self.high52(F) if o['listing'] else F.hi(252))   # name listed under a year, his
+                base = pool                                         # "all-time high") on an up day of at least
+                if o['listing']:                                    # up_adr ADRs and rvol x the 20-day turnover;
+                    base = lag(F.liquid(cfg.get('pool', {}).get('turnover', 20e6))       # no base required.  A
+                               & (F.adr >= cfg.get('pool', {}).get('adr', 3.0))          # new listing has no
+                               & ~(F.c <= F.sma(50)))                                    # 50-day yet: not a fail
+                m = (base & (F.c > prior) & (F.c / lag(F.c) - 1 >= o['up_adr'] * lag(F.adr) / 100)
+                     & (F.turnover >= o['rvol'] * lag(F.to20)))
+                out['brkv'] = (m, np.fmax(F.o, prior), F.l)
             if 'pp' in names:                                       # power play / high tight flag
                 o = dict(PP, **cfg.get('pp', {}))
                 flag_hi = lag(F.hi(o['flag']))
@@ -150,7 +171,9 @@ class Flanders(study.Study):
                 out['pp'] = (m, np.fmax(F.o, flag_hi), F.l)
             if 'pb' in names:                                       # pullback into the 10 / 20 EMA, then its high
                 e10, e20 = F.ema(10), F.ema(20)
-                ready = (F.l <= e10 * 1.01) & (F.c >= e20) & (e10 > e20) & (F.c > F.sma(50))
+                ready = (F.l <= e10 * 1.01) & (F.c >= e20) & (e10 > e20)
+                if not cfg.get('no50'):
+                    ready &= F.c > F.sma(50)
                 up = cfg.get('pb', {}).get('up')
                 if up is not None:                                  # only names up (1 + up)x from the 52-week low
                     ready &= F.c >= (1 + up) * self.low52(F)
@@ -175,7 +198,9 @@ class Flanders(study.Study):
         with np.errstate(invalid='ignore'):
             for k in kinds:
                 if k == 'hi52':
-                    out[k] = lag(F.liquid(20e6) & (F.adr >= 3) & (F.c > F.sma(50)))
+                    sc = cfg.get('screen', {})
+                    m = F.liquid(20e6) & (F.adr >= sc.get('adr', 3))
+                    out[k] = lag(m & (F.c > F.sma(50)) if sc.get('above50', True) else m)
                 elif k == 'ep':
                     out[k] = lag(self.ep_pool(A, cfg))
                 else:
@@ -193,6 +218,14 @@ class Flanders(study.Study):
             low = np.fmin.accumulate(np.where(np.isnan(F.l), np.inf, F.l), axis=0)
             return np.where(np.isfinite(F.lo(252)), F.lo(252), low)
         return F.get('low52_or_listing', f)
+
+    @staticmethod
+    def high52(F):
+        """The 52-week high; a name listed less than a year: its highest so far (his all-time high)."""
+        def f():
+            high = np.fmax.accumulate(np.where(np.isnan(F.h), -np.inf, F.h), axis=0)
+            return np.where(np.isfinite(F.hi(252)), F.hi(252), np.where(np.isfinite(high), high, np.nan))
+        return F.get('high52_or_listing', f)
 
     def ep_pool(self, A, cfg):
         """Names an EP can come from: the pool's turnover and price floors only (an EP may gap from below its
@@ -277,7 +310,8 @@ class Flanders(study.Study):
     def build(self, A, cfg, trace=None):
         pool = self.pool(A, cfg)
         ok = self.strength_ok(A, cfg)
-        masks = {k: (m & ok, lv, st) for k, (m, lv, st) in self.setups(A, cfg).items()}   # each carries its pool
+        masks = {k: (m & self.kind_strength(A, cfg, k, ok), lv, st)
+                 for k, (m, lv, st) in self.setups(A, cfg).items()}                   # each carries its pool
         mask = np.zeros(pool.shape, bool)
         for m, _, _ in masks.values():
             mask |= m

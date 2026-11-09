@@ -1,0 +1,134 @@
+"""GD: diagnostic forced trades from publicly documented Martin entries."""
+from collections import Counter, defaultdict
+from dataclasses import asdict, replace
+import gc
+import json
+from pathlib import Path
+
+import numpy as np
+from studies import trader_data
+from studies.trader_replication import ledger, panels, system
+from studies.trader_replication import martin_continue_du as du
+from studies.trader_replication import martin_continue_fc as fc
+from studies.trader_replication.martin_continue_dq import sha
+from studies.trader_replication.martin_strong_scan import nl_rules
+
+LEDGER = Path(__file__).resolve().parents[1] / 'martin_luk/notes/trades.csv'
+
+
+def order_state(opening, low, stop):
+    if not np.isfinite(stop) or stop <= 0:
+        return 'signal_low_missing'
+    if not np.isfinite(opening) or opening <= 0:
+        return 'opening_missing'
+    if np.float32(opening) == np.float32(stop):
+        return 'opening_precision_unknown'
+    if opening < stop:
+        return 'open_below_stop'
+    if not np.isfinite(low) or low <= 0:
+        return 'low_missing'
+    if np.float32(low) == np.float32(stop):
+        return 'stop_precision_unknown'
+    return 'day0_stop' if low < stop else 'fillable'
+
+
+def summarize(rows):
+    closed = [r['model'] for r in rows if r['status'] == 'closed']
+    positive = sum(t['r'] > 0 for t in closed)
+    return {'rows': len(rows), 'status': dict(Counter(r['status'] for r in rows)),
+            'closed_win': positive, 'closed_loss_or_flat': len(closed) - positive,
+            'closed_ge5r': sum(t['r'] >= 5 for t in closed), 'closed_ge10r': sum(t['r'] >= 10 for t in closed),
+            'median_r': float(np.median([t['r'] for t in closed])) if closed else None,
+            'median_sessions': float(np.median([t['days'] for t in closed])) if closed else None,
+            'closed_exit_reasons': dict(Counter(t['why'] for t in closed))}
+
+
+def main():
+    reference = du.REPORTS / 'strong_continue_fc.json'
+    fc_ref = json.loads(reference.read_text())
+    ds = trader_data.dataset('us', mode='frozen', version='trader-data-v1')
+    if ds.digest() != fc_ref['dataset_digest']:
+        raise ValueError('dataset differs')
+    d = du.make_data(ds)
+    rules = replace(nl_rules(d, 6), gross_cost=True, trail_next_open=True)
+    rules = replace(rules, intraday_kinds=tuple(sorted(set(rules.intraday_kinds) | {'n1'})))
+    del d.fp, d.fwd, d.raw
+    for key in ('pr21', 'pr63', 'pr126', 'rank_pool', 'stack', 'tight'):
+        d.A.pop(key, None)
+    d.rk = d.rk.astype(np.int32)
+    gc.collect()
+    px, ema = d.base.px(d.A), d.base.ema_inputs(d.A, d.pool, rules)
+    codes = {str(code): i for i, code in enumerate(d.A['codes'])}
+    source = [t for t in ledger.load(LEDGER) if t.side == 'long']
+    duplicates = Counter((t.ticker, t.entry_date) for t in source if t.dated and t.entry_date)
+    rows = []
+    for trade in source:
+        item = {'ledger': asdict(trade), 'repeated_stock_date': bool(trade.entry_date and duplicates[(trade.ticker, trade.entry_date)] > 1),
+                'status': None, 'model': None}
+        if ledger.market(trade.ticker) != 'us':
+            item['status'] = 'non_us'
+        elif not trade.dated:
+            item['status'] = 'undated_window'
+        elif not panels.WINDOW[0] <= trade.entry_date <= panels.WINDOW[1]:
+            item['status'] = 'outside_window'
+        elif 'US.' + trade.ticker not in codes:
+            item['status'] = 'code_absent'
+        elif trade.entry_date not in d.di:
+            item['status'] = 'signal_day_missing'
+        else:
+            signal = d.di[trade.entry_date]
+            j = codes['US.' + trade.ticker]
+            if signal + 1 >= len(d.days) or d.days[signal + 1] > panels.WINDOW[1]:
+                item['status'] = 'no_next_session'
+            else:
+                entry = signal + 1
+                opening, low, stop = (float(d.A[k][i, j]) for k, i in (('open', entry), ('low', entry), ('low', signal)))
+                state = order_state(opening, low, stop)
+                item['order_state'] = state
+                if state not in ('day0_stop', 'fillable'):
+                    item['status'] = state
+                else:
+                    book = [[] for _ in d.days]
+                    book[entry] = [((1.,), j, 1, opening, stop, 'n1', stop if state == 'day0_stop' else None)]
+                    _, _, trades = system.simulate(px, ema, rules, book, d.days[entry], panels.WINDOW[1], audit=True)
+                    if len(trades) != 1:
+                        item['status'] = 'sim_no_single_trade'
+                        item['model_count'] = len(trades)
+                    else:
+                        model = trades[0]
+                        if model['entry'] != d.days[entry] or model['fill'] != opening or model['stop'] != stop:
+                            raise AssertionError('entry differs')
+                        if state == 'day0_stop' and model['why'] != 'stop_day0':
+                            raise AssertionError('same-day stop differs')
+                        fc.signal_audit(d, trades)
+                        item['status'] = 'end_unclosed' if model['why'] == 'end' else 'closed'
+                        item['model'] = model
+        rows.append(item)
+    by_group = defaultdict(list)
+    for row in rows:
+        t = row['ledger']
+        year = t['entry_date'][:4] if t['entry_date'] else 'undated'
+        by_group[(year, t['precision'])].append(row)
+    unique = {}
+    for row in rows:
+        t = row['ledger']
+        if t['entry_date'] and t['precision'] in ('exact', 'chart'):
+            key = t['ticker'], t['entry_date']
+            if key in unique:
+                prior = unique[key]
+                if prior['status'] != row['status'] or prior['model'] != row['model']:
+                    raise AssertionError('same stock / signal date differs')
+            else:
+                unique[key] = row
+    result = {'dataset_digest': ds.digest(), 'fc_sha256': sha(reference), 'system_sha256': sha(Path(system.__file__)),
+              'ledger_sha256': sha(LEDGER), 'script_sha256': sha(Path(__file__)),
+              'all': summarize(rows), 'dated_unique': summarize(list(unique.values())),
+              'groups': {year + ':' + precision: summarize(group) for (year, precision), group in sorted(by_group.items())},
+              'disclosed_r': [r for r in rows if r['ledger']['r_multiple'] is not None], 'rows': rows}
+    target = du.REPORTS / 'strong_continue_gd.json'
+    target.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':'), allow_nan=False) + '\n')
+    print('wrote', target, 'ledger rows', len(rows), flush=True)
+
+
+if __name__ == '__main__':
+    main()

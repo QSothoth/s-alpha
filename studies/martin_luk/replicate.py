@@ -1,7 +1,7 @@
 """Martin Luk as the first case of skills/trader-replication: stage masks on the point-in-time US daily panel,
 scored against his public trades (notes/trades.csv) and against random entry on the same stocks.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.replicate r19
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.replicate r19
 """
 from __future__ import annotations
 
@@ -836,6 +836,7 @@ def r26():
 
 
 def short_signals(A, pool):
+    """Z1 allows repeated retests after a recent close above EMA50; it is not a first-retest state machine."""
     c, h, l = A['close'], A['high'], A['low']
     e9p, e21p, e50p = prev(A['e9']), prev(A['e21']), prev(A['e50'])
     wk_down = prev(weekly_ema(c, A['days'], 9) < weekly_ema(c, A['days'], 21))
@@ -958,9 +959,9 @@ def pool_for(A, name=None):
     return prev(m)
 
 
-def system_signals(A, cfg=None):
+def system_signals(A, cfg=None, pool=None):
     cfg = cfg or {}
-    pool = pool_for(A, cfg.get('pool'))
+    pool = pool_for(A, cfg.get('pool')) if pool is None else pool
     k = pool & strength_lists(A, pool)[cfg.get('strength') or strength_choice()]
     w = k & watch_lists(A)[cfg.get('watch') or watch_choice()]
     fams = setup_families(A, w)
@@ -1314,10 +1315,10 @@ def market_ok(A, pool, w, spec):
     return out
 
 
-def build_system(A, cfg, trace=None):
+def system_nominations(A, cfg, trace=None, pool=None):
     """Entries, rules, signal mask and placebo pool for a configuration, in any market; `trace` (a dict) gets
     the entries after the stop rule ('raw'), the market filter ('filtered') and the daily cap ('capped')."""
-    pool, w, sig = system_signals(A, cfg)
+    pool, w, sig = system_signals(A, cfg, pool)
     ep = ep_signal(A, pool, **cfg.get('ep_opts', {}))
     if cfg['signals'] == 'NONE':
         mask = np.zeros_like(w)
@@ -1358,10 +1359,10 @@ def build_system(A, cfg, trace=None):
                    for d, lst in enumerate(entries)]
     if trace is not None:
         trace['filtered'] = entries
-    if cfg.get('max_new'):
-        entries = [sorted(lst, key=lambda e: e[0])[:cfg['max_new']] for lst in entries]
-    if trace is not None:
-        trace['capped'] = entries
+    return entries, mask, pool
+
+
+def system_legacy_shorts(A, cfg, entries, pool):
     if cfg.get('shorts') and A['market'] == 'us':
         z = short_masks(A, pool)[cfg['shorts']]
         se = entries_short_capped(A, z, cfg.get('short_size', 1.0))
@@ -1374,15 +1375,25 @@ def build_system(A, cfg, trace=None):
                        for a, b in zip(entries, se)]
         else:
             entries = [a + b for a, b in zip(entries, se)]
+    return entries
+
+
+def system_rules(cfg, market):
     rules = replace(RULES, **EXITS[cfg['exits']], max_gross=cfg['gross'], risk=cfg['risk'],
                     feedback=10 if cfg.get('risk_high') else 0, risk_low=cfg['risk'],
                     risk_high=cfg.get('risk_high', 0.0), short_trims=(3,),
                     short_max_days=cfg.get('short_days', 3),
                     max_position=cfg.get('max_position', .30),
-                    buy_cost=COSTS[A['market']][0], sell_cost=COSTS[A['market']][1])
+                    buy_cost=COSTS[market][0], sell_cost=COSTS[market][1])
     if cfg.get('rule_opts'):
         rules = replace(rules, **{k: tuple(v) if isinstance(v, list) else v for k, v in cfg['rule_opts'].items()})
-    return entries, rules, mask, pool
+    return rules
+
+
+def build_system(A, cfg, trace=None):
+    """Historical entry point, composed by Martin's explicit Study facade."""
+    from studies.trader_replication.martin import Martin
+    return Martin().build(A, cfg, trace)
 
 
 def carry_round(cfgs, file, tag, ref):
@@ -1612,7 +1623,8 @@ def short_masks(A, pool):
 
 def short_setups(A, sc):
     """The short side for studies.trader_replication.shorts (S rounds on the common data): his day-t short triggers
-    named in sc['setups'] (Z1 first rally back to the 50 EMA after the first break, weekly down; Z2 rally into the
+    named in sc['setups'] (Z1 a recent break below EMA50 and a retest, weekly down; repeated retests are allowed;
+    Z2 rally into the
     declining 9 < 21 < 50 EMAs, rejected under the 9; Z6 a former leader rejected at the falling 9 EMA within 5 days
     of its first close below the 21; Z8 a former leader opening up into the 21 and closing under the 9), each on the
     long system's pool as of t-1 (or sc['pool'], a POOLS key), and that pool for the placebo."""

@@ -1,7 +1,7 @@
 """R2: replicate Martin Luk's long book on local 5-minute bars (notes/PREREG_R2.md).
 
-    /opt/futu-opend/venv/bin/python -m studies.martin_luk.intraday select
-    /opt/futu-opend/venv/bin/python -m studies.martin_luk.intraday validate I?
+    /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.intraday select
+    /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.intraday validate I?
 
 Bars are dense arrays (stock, day, 78 five-minute slots 09:35..16:00); daily OHLC is aggregated from them.
 Signals use only the previous day's close and today's bars up to the decision bar.

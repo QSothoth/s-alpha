@@ -1,6 +1,6 @@
 """How the replicated edge scales: universe size, and per-trade equity growth projected to his trade count.
 
-    nice -n 19 /opt/futu-opend/venv/bin/python -m studies.martin_luk.scale
+    nice -n 19 /opt/opend-us-options/.venv/bin/python -m studies.martin_luk.scale
 """
 from __future__ import annotations
 

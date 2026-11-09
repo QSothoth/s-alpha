@@ -1,0 +1,1096 @@
+{
+ "preregistered_sha256": "b7c2ad50c74dfd3e55f6e304b336fa21b0790abc9a6dc72c21d0471cce0c35ba",
+ "profile_sha256": "aef5f0a685c12e5fc12ce0708676f331bf14995a5a056f90a489375017524d1a",
+ "source_sha256": {
+  "studies/martin_luk/notes/PREREG_E1_CN.md": "b7c2ad50c74dfd3e55f6e304b336fa21b0790abc9a6dc72c21d0471cce0c35ba",
+  "studies/martin_luk/reports/ie47_profile.json": "aef5f0a685c12e5fc12ce0708676f331bf14995a5a056f90a489375017524d1a",
+  "studies/martin_luk/ie47_e1.py": "9c695fcc957ee788bd8b1ec79181ac7e01be30fcb8e22d355a6644484de5e543",
+  "studies/trader_replication/system.py": "f45c09e704c276a4efc55b9acd4354db490112b9e60fd5928addf224ac32f180",
+  "studies/martin_luk/e1_research.py": "cc76c6f7e51e1741fb923f381a319a1ad7e18bca01f694c695609d44ff612cd9",
+  "studies/trader_replication/standard_indicators.py": "c1c529c36b01b53ea1f6503a37894f9edcced57cbc96c5eef58261187e7539f8",
+  "studies/trader_data/supplemental.py": "b00ea09f4c60c92d3269e325323e92c16271c4e2229b1c4a5ee1ee742a8c5227"
+ },
+ "selection_span": [
+  "2024-01-02",
+  "2025-12-31"
+ ],
+ "validation_span": [
+  "2026-01-02",
+  "2026-10-16"
+ ],
+ "draws": 100,
+ "seed": 1,
+ "candidates": {
+  "E1": {
+   "config": {
+    "candidate": "E1",
+    "profile_sha256": "aef5f0a685c12e5fc12ce0708676f331bf14995a5a056f90a489375017524d1a",
+    "frozen_inputs_sha256": "af3d1f08fd0e64d57f3447c14af9700da1b9071f21d2ef4234fe01576330ff4b"
+   },
+   "total": -0.33961498737335205,
+   "cagr": -0.1877060653467455,
+   "maxdd": 0.5474650316935123,
+   "by_year": {
+    "2024": 0.22602462768554688,
+    "2025": -0.46136072823161534
+   },
+   "trades": 983,
+   "open_at_end": 1,
+   "per_year": 492.511316872428,
+   "win": 0.1688708036622584,
+   "avg_win": 0.13329701588346402,
+   "avg_loss": -0.02780397460130199,
+   "payoff": 4.794171257702921,
+   "days_win": 11.234939759036145,
+   "days_loss": 0.7074663402692778,
+   "median_days_win": 9.0,
+   "pnl_top10": 0.9396906859913293,
+   "stop_width": 0.029999999999999957,
+   "entry_weight": 0.1922283205704135,
+   "open_mean": 4.886454183266932,
+   "candidates_day": 2.0,
+   "mean_days": 2.4852492370295014,
+   "annual": {
+    "2024": {
+     "n": 507,
+     "wins": 91,
+     "losses": 416,
+     "win": 0.1794871794871795,
+     "avg_win": 0.13633519411087036,
+     "avg_loss": -0.02542159201095932,
+     "exp_r": 0.12651393019126558,
+     "opened": 507,
+     "mean_days": 2.7159763313609466,
+     "days_win": 11.626373626373626,
+     "days_loss": 0.7668269230769231,
+     "maxdd": 0.42867010695965313,
+     "ret": 0.22602462768554688,
+     "gap": 0.21586738931990668,
+     "gap_parts": {
+      "per_year": 0.18113882454490524,
+      "avg_win": 0.09551877807971637,
+      "avg_loss": 0.16559848957870166,
+      "win": 0.42121346507630353
+     }
+    },
+    "2025": {
+     "n": 476,
+     "wins": 75,
+     "losses": 401,
+     "win": 0.15756302521008403,
+     "avg_win": 0.12961070239543915,
+     "avg_loss": -0.03027547337114811,
+     "exp_r": -0.20951519906520844,
+     "opened": 477,
+     "mean_days": 2.2394957983193278,
+     "days_win": 10.76,
+     "days_loss": 0.6458852867830424,
+     "maxdd": 0.49821728817843813,
+     "ret": -0.46136072823161534,
+     "gap": 0.38532724460846485,
+     "gap_parts": {
+      "per_year": 0.6804620210326296,
+      "avg_win": 0.08422452965783007,
+      "avg_loss": 0.3658154873044167,
+      "win": 0.4108069404389829
+     }
+    }
+   },
+   "behaviour_gap": 0.3005973169641858,
+   "year_gap": 2.0640204031206846,
+   "placebo": {
+    "real": -0.33961498737335205,
+    "median": 0.30023443698883057,
+    "p90": 0.775401246547699,
+    "rank": 0.05
+   },
+   "drop2": -0.5371764898300171,
+   "gate": {
+    "ok": true,
+    "data": {
+     "ok": true,
+     "why": [],
+     "span": [
+      "2024-01-02",
+      "2025-12-31"
+     ]
+    },
+    "lookahead": {
+     "ok": true,
+     "cuts": [
+      {
+       "cut": "2024-09-30",
+       "ok": true,
+       "diff": []
+      },
+      {
+       "cut": "2025-09-30",
+       "ok": true,
+       "diff": []
+      }
+     ]
+    },
+    "fills": {
+     "ok": true,
+     "executions": 2275,
+     "bad": [],
+     "n_bad": 0
+    },
+    "win_rate": {
+     "ok": true,
+     "status": "checked",
+     "win": 0.1688708036622584,
+     "trades": 983,
+     "max_win": 0.35,
+     "note": ""
+    }
+   },
+   "judgements": {
+    "2024": [
+     [
+      "gate",
+      true,
+      "win 0.169 over 983 closed"
+     ],
+     [
+      "count",
+      true,
+      "507 a year vs his 423: off 20%"
+     ],
+     [
+      "behaviour",
+      true,
+      "3 published measures within"
+     ],
+     [
+      "years",
+      false,
+      "log gap over 0.3: {'2024': 1.14}"
+     ],
+     [
+      "placebo",
+      false,
+      "-0.33961498737335205 vs median 0.30023443698883057"
+     ],
+     [
+      "validate",
+      false,
+      "None vs median None"
+     ],
+     [
+      "not two",
+      false,
+      "without the best two -0.5371764898300171 vs median 0.30023443698883057"
+     ]
+    ],
+    "2025": [
+     [
+      "gate",
+      true,
+      "win 0.169 over 983 closed"
+     ],
+     [
+      "count",
+      false,
+      "476 a year vs his 940: off 49%"
+     ],
+     [
+      "behaviour",
+      false,
+      "outside +-30%: {'avg_loss': 0.44}"
+     ],
+     [
+      "years",
+      false,
+      "log gap over 0.3: {'2025': 2.99}"
+     ],
+     [
+      "placebo",
+      false,
+      "-0.33961498737335205 vs median 0.30023443698883057"
+     ],
+     [
+      "validate",
+      false,
+      "None vs median None"
+     ],
+     [
+      "not two",
+      false,
+      "without the best two -0.5371764898300171 vs median 0.30023443698883057"
+     ]
+    ]
+   },
+   "success": [
+    [
+     "gate",
+     true,
+     {
+      "2024": "win 0.169 over 983 closed",
+      "2025": "win 0.169 over 983 closed"
+     }
+    ],
+    [
+     "count",
+     false,
+     {
+      "2024": "507 a year vs his 423: off 20%",
+      "2025": "476 a year vs his 940: off 49%"
+     }
+    ],
+    [
+     "behaviour",
+     false,
+     {
+      "2024": "3 published measures within",
+      "2025": "outside +-30%: {'avg_loss': 0.44}"
+     }
+    ],
+    [
+     "years",
+     false,
+     {
+      "2024": "log gap over 0.3: {'2024': 1.14}",
+      "2025": "log gap over 0.3: {'2025': 2.99}"
+     }
+    ],
+    [
+     "placebo",
+     false,
+     {
+      "2024": "-0.33961498737335205 vs median 0.30023443698883057",
+      "2025": "-0.33961498737335205 vs median 0.30023443698883057"
+     }
+    ],
+    [
+     "validate",
+     false,
+     {
+      "2024": "None vs median None",
+      "2025": "None vs median None"
+     }
+    ],
+    [
+     "not two",
+     false,
+     {
+      "2024": "without the best two -0.5371764898300171 vs median 0.30023443698883057",
+      "2025": "without the best two -0.5371764898300171 vs median 0.30023443698883057"
+     }
+    ]
+   ],
+   "selection_passes": 1,
+   "2026": "未测"
+  },
+  "E2": {
+   "config": {
+    "candidate": "E2",
+    "profile_sha256": "aef5f0a685c12e5fc12ce0708676f331bf14995a5a056f90a489375017524d1a",
+    "frozen_inputs_sha256": "af3d1f08fd0e64d57f3447c14af9700da1b9071f21d2ef4234fe01576330ff4b"
+   },
+   "total": -0.05433988571166992,
+   "cagr": -0.027605324711985624,
+   "maxdd": 0.4191571175912514,
+   "by_year": {
+    "2024": 0.3416421413421631,
+    "2025": -0.29514727873536917
+   },
+   "trades": 813,
+   "open_at_end": 1,
+   "per_year": 407.33641975308643,
+   "win": 0.16728167281672818,
+   "avg_win": 0.14711816609644088,
+   "avg_loss": -0.02768397221108185,
+   "payoff": 5.314200035121756,
+   "days_win": 11.536764705882353,
+   "days_loss": 0.7592319054652881,
+   "median_days_win": 10.0,
+   "pnl_top10": 0.9445489469412044,
+   "stop_width": 0.029999999999999964,
+   "entry_weight": 0.19271924617207298,
+   "open_mean": 4.169322709163347,
+   "candidates_day": 2.0,
+   "mean_days": 2.5621156211562117,
+   "annual": {
+    "2024": {
+     "n": 440,
+     "wins": 79,
+     "losses": 361,
+     "win": 0.17954545454545454,
+     "avg_win": 0.14444729685783386,
+     "avg_loss": -0.02513867505753773,
+     "exp_r": 0.1854142727799035,
+     "opened": 440,
+     "mean_days": 2.765909090909091,
+     "days_win": 11.632911392405063,
+     "days_loss": 0.8254847645429363,
+     "maxdd": 0.35898669114499526,
+     "ret": 0.3416421413421631,
+     "gap": 0.1686827070543269,
+     "gap_parts": {
+      "per_year": 0.03940254786602883,
+      "avg_win": 0.03772058070051446,
+      "avg_loss": 0.17678988245301455,
+      "win": 0.4208178171977497
+     }
+    },
+    "2025": {
+     "n": 373,
+     "wins": 57,
+     "losses": 316,
+     "win": 0.15281501340482573,
+     "avg_win": 0.15081991255283356,
+     "avg_loss": -0.030591735616326332,
+     "exp_r": -0.13350044190883636,
+     "opened": 374,
+     "mean_days": 2.32171581769437,
+     "days_win": 11.403508771929825,
+     "days_loss": 0.6835443037974683,
+     "maxdd": 0.4129441361031898,
+     "ret": -0.29514727873536917,
+     "gap": 0.4537150218713719,
+     "gap_parts": {
+      "per_year": 0.924301455620234,
+      "avg_win": 0.06732660258469114,
+      "avg_loss": 0.37620745685947626,
+      "win": 0.4470245724210862
+     }
+    }
+   },
+   "behaviour_gap": 0.3111988644628494,
+   "year_gap": 1.884490303185715,
+   "placebo": {
+    "real": -0.05433988571166992,
+    "median": 0.25921422243118286,
+    "p90": 0.8354369044303896,
+    "rank": 0.24
+   },
+   "drop2": -0.33724379539489746,
+   "gate": {
+    "ok": true,
+    "data": {
+     "ok": true,
+     "why": [],
+     "span": [
+      "2024-01-02",
+      "2025-12-31"
+     ]
+    },
+    "lookahead": {
+     "ok": true,
+     "cuts": [
+      {
+       "cut": "2024-09-30",
+       "ok": true,
+       "diff": []
+      },
+      {
+       "cut": "2025-09-30",
+       "ok": true,
+       "diff": []
+      }
+     ]
+    },
+    "fills": {
+     "ok": true,
+     "executions": 1892,
+     "bad": [],
+     "n_bad": 0
+    },
+    "win_rate": {
+     "ok": true,
+     "status": "checked",
+     "win": 0.16728167281672818,
+     "trades": 813,
+     "max_win": 0.35,
+     "note": ""
+    }
+   },
+   "judgements": {
+    "2024": [
+     [
+      "gate",
+      true,
+      "win 0.167 over 813 closed"
+     ],
+     [
+      "count",
+      true,
+      "440 a year vs his 423: off 4%"
+     ],
+     [
+      "behaviour",
+      true,
+      "3 published measures within"
+     ],
+     [
+      "years",
+      false,
+      "log gap over 0.3: {'2024': 1.05}"
+     ],
+     [
+      "placebo",
+      false,
+      "-0.05433988571166992 vs median 0.25921422243118286"
+     ],
+     [
+      "validate",
+      false,
+      "None vs median None"
+     ],
+     [
+      "not two",
+      false,
+      "without the best two -0.33724379539489746 vs median 0.25921422243118286"
+     ]
+    ],
+    "2025": [
+     [
+      "gate",
+      true,
+      "win 0.167 over 813 closed"
+     ],
+     [
+      "count",
+      false,
+      "373 a year vs his 940: off 60%"
+     ],
+     [
+      "behaviour",
+      false,
+      "outside +-30%: {'win': 0.31, 'avg_loss': 0.46}"
+     ],
+     [
+      "years",
+      false,
+      "log gap over 0.3: {'2025': 2.72}"
+     ],
+     [
+      "placebo",
+      false,
+      "-0.05433988571166992 vs median 0.25921422243118286"
+     ],
+     [
+      "validate",
+      false,
+      "None vs median None"
+     ],
+     [
+      "not two",
+      false,
+      "without the best two -0.33724379539489746 vs median 0.25921422243118286"
+     ]
+    ]
+   },
+   "success": [
+    [
+     "gate",
+     true,
+     {
+      "2024": "win 0.167 over 813 closed",
+      "2025": "win 0.167 over 813 closed"
+     }
+    ],
+    [
+     "count",
+     false,
+     {
+      "2024": "440 a year vs his 423: off 4%",
+      "2025": "373 a year vs his 940: off 60%"
+     }
+    ],
+    [
+     "behaviour",
+     false,
+     {
+      "2024": "3 published measures within",
+      "2025": "outside +-30%: {'win': 0.31, 'avg_loss': 0.46}"
+     }
+    ],
+    [
+     "years",
+     false,
+     {
+      "2024": "log gap over 0.3: {'2024': 1.05}",
+      "2025": "log gap over 0.3: {'2025': 2.72}"
+     }
+    ],
+    [
+     "placebo",
+     false,
+     {
+      "2024": "-0.05433988571166992 vs median 0.25921422243118286",
+      "2025": "-0.05433988571166992 vs median 0.25921422243118286"
+     }
+    ],
+    [
+     "validate",
+     false,
+     {
+      "2024": "None vs median None",
+      "2025": "None vs median None"
+     }
+    ],
+    [
+     "not two",
+     false,
+     {
+      "2024": "without the best two -0.33724379539489746 vs median 0.25921422243118286",
+      "2025": "without the best two -0.33724379539489746 vs median 0.25921422243118286"
+     }
+    ]
+   ],
+   "selection_passes": 1,
+   "2026": "未测"
+  },
+  "E3": {
+   "config": {
+    "candidate": "E3",
+    "profile_sha256": "aef5f0a685c12e5fc12ce0708676f331bf14995a5a056f90a489375017524d1a",
+    "frozen_inputs_sha256": "af3d1f08fd0e64d57f3447c14af9700da1b9071f21d2ef4234fe01576330ff4b"
+   },
+   "total": -0.2785724997520447,
+   "cagr": -0.15091639657771505,
+   "maxdd": 0.5385744974896378,
+   "by_year": {
+    "2024": 0.24314165115356445,
+    "2025": -0.41967393693348476
+   },
+   "trades": 929,
+   "open_at_end": 1,
+   "per_year": 465.45576131687244,
+   "win": 0.16361679224973089,
+   "avg_win": 0.13936813765605238,
+   "avg_loss": -0.027580643537305157,
+   "payoff": 5.053114060502075,
+   "days_win": 12.0,
+   "days_loss": 0.7271557271557272,
+   "median_days_win": 10.0,
+   "pnl_top10": 0.9411779645865215,
+   "stop_width": 0.029999999999999954,
+   "entry_weight": 0.19257422147514583,
+   "open_mean": 4.778884462151394,
+   "candidates_day": 2.0,
+   "mean_days": 2.571582346609257,
+   "annual": {
+    "2024": {
+     "n": 481,
+     "wins": 85,
+     "losses": 396,
+     "win": 0.17671517671517672,
+     "avg_win": 0.13912621140480042,
+     "avg_loss": -0.025239028990858583,
+     "exp_r": 0.1290659754662783,
+     "opened": 481,
+     "mean_days": 2.765072765072765,
+     "days_win": 12.070588235294117,
+     "days_loss": 0.7676767676767676,
+     "maxdd": 0.39370272367994585,
+     "ret": 0.24314165115356445,
+     "gap": 0.20417633753866765,
+     "gap_parts": {
+      "per_year": 0.1284950910594832,
+      "avg_win": 0.07525377722632287,
+      "avg_loss": 0.1728058157728102,
+      "win": 0.44015066609605435
+     }
+    },
+    "2025": {
+     "n": 448,
+     "wins": 67,
+     "losses": 381,
+     "win": 0.14955357142857142,
+     "avg_win": 0.1396750658750534,
+     "avg_loss": -0.03001444786787033,
+     "exp_r": -0.19311432540416718,
+     "opened": 449,
+     "mean_days": 2.3638392857142856,
+     "days_win": 11.91044776119403,
+     "days_loss": 0.6850393700787402,
+     "maxdd": 0.48374331274996596,
+     "ret": -0.41967393693348476,
+     "gap": 0.3950311430650269,
+     "gap_parts": {
+      "per_year": 0.7410866428490643,
+      "avg_win": 0.009441123402113616,
+      "avg_loss": 0.3571564236044705,
+      "win": 0.4724403824044592
+     }
+    }
+   },
+   "behaviour_gap": 0.2996037403018473,
+   "year_gap": 2.0198159676171885,
+   "placebo": {
+    "real": -0.2785724997520447,
+    "median": 0.0949661135673523,
+    "p90": 0.8025236010551454,
+    "rank": 0.11
+   },
+   "drop2": -0.4853508472442627,
+   "gate": {
+    "ok": true,
+    "data": {
+     "ok": true,
+     "why": [],
+     "span": [
+      "2024-01-02",
+      "2025-12-31"
+     ]
+    },
+    "lookahead": {
+     "ok": true,
+     "cuts": [
+      {
+       "cut": "2024-09-30",
+       "ok": true,
+       "diff": []
+      },
+      {
+       "cut": "2025-09-30",
+       "ok": true,
+       "diff": []
+      }
+     ]
+    },
+    "fills": {
+     "ok": true,
+     "executions": 2157,
+     "bad": [],
+     "n_bad": 0
+    },
+    "win_rate": {
+     "ok": true,
+     "status": "checked",
+     "win": 0.16361679224973089,
+     "trades": 929,
+     "max_win": 0.35,
+     "note": ""
+    }
+   },
+   "judgements": {
+    "2024": [
+     [
+      "gate",
+      true,
+      "win 0.164 over 929 closed"
+     ],
+     [
+      "count",
+      true,
+      "481 a year vs his 423: off 14%"
+     ],
+     [
+      "behaviour",
+      true,
+      "3 published measures within"
+     ],
+     [
+      "years",
+      false,
+      "log gap over 0.3: {'2024': 1.13}"
+     ],
+     [
+      "placebo",
+      false,
+      "-0.2785724997520447 vs median 0.0949661135673523"
+     ],
+     [
+      "validate",
+      false,
+      "None vs median None"
+     ],
+     [
+      "not two",
+      false,
+      "without the best two -0.4853508472442627 vs median 0.0949661135673523"
+     ]
+    ],
+    "2025": [
+     [
+      "gate",
+      true,
+      "win 0.164 over 929 closed"
+     ],
+     [
+      "count",
+      false,
+      "448 a year vs his 940: off 52%"
+     ],
+     [
+      "behaviour",
+      false,
+      "outside +-30%: {'win': 0.32, 'avg_loss': 0.43}"
+     ],
+     [
+      "years",
+      false,
+      "log gap over 0.3: {'2025': 2.91}"
+     ],
+     [
+      "placebo",
+      false,
+      "-0.2785724997520447 vs median 0.0949661135673523"
+     ],
+     [
+      "validate",
+      false,
+      "None vs median None"
+     ],
+     [
+      "not two",
+      false,
+      "without the best two -0.4853508472442627 vs median 0.0949661135673523"
+     ]
+    ]
+   },
+   "success": [
+    [
+     "gate",
+     true,
+     {
+      "2024": "win 0.164 over 929 closed",
+      "2025": "win 0.164 over 929 closed"
+     }
+    ],
+    [
+     "count",
+     false,
+     {
+      "2024": "481 a year vs his 423: off 14%",
+      "2025": "448 a year vs his 940: off 52%"
+     }
+    ],
+    [
+     "behaviour",
+     false,
+     {
+      "2024": "3 published measures within",
+      "2025": "outside +-30%: {'win': 0.32, 'avg_loss': 0.43}"
+     }
+    ],
+    [
+     "years",
+     false,
+     {
+      "2024": "log gap over 0.3: {'2024': 1.13}",
+      "2025": "log gap over 0.3: {'2025': 2.91}"
+     }
+    ],
+    [
+     "placebo",
+     false,
+     {
+      "2024": "-0.2785724997520447 vs median 0.0949661135673523",
+      "2025": "-0.2785724997520447 vs median 0.0949661135673523"
+     }
+    ],
+    [
+     "validate",
+     false,
+     {
+      "2024": "None vs median None",
+      "2025": "None vs median None"
+     }
+    ],
+    [
+     "not two",
+     false,
+     {
+      "2024": "without the best two -0.4853508472442627 vs median 0.0949661135673523",
+      "2025": "without the best two -0.4853508472442627 vs median 0.0949661135673523"
+     }
+    ]
+   ],
+   "selection_passes": 1,
+   "2026": "未测"
+  },
+  "E4": {
+   "config": {
+    "candidate": "E4",
+    "profile_sha256": "aef5f0a685c12e5fc12ce0708676f331bf14995a5a056f90a489375017524d1a",
+    "frozen_inputs_sha256": "af3d1f08fd0e64d57f3447c14af9700da1b9071f21d2ef4234fe01576330ff4b"
+   },
+   "total": -0.11474955081939697,
+   "cagr": -0.05924048571982199,
+   "maxdd": 0.41450173906578713,
+   "by_year": {
+    "2024": 0.3244720697402954,
+    "2025": -0.33162014556170716
+   },
+   "trades": 983,
+   "open_at_end": 1,
+   "per_year": 492.511316872428,
+   "win": 0.1688708036622584,
+   "avg_win": 0.13329701604528832,
+   "avg_loss": -0.027803977405493455,
+   "payoff": 4.794170780003287,
+   "days_win": 11.234939759036145,
+   "days_loss": 0.7074663402692778,
+   "median_days_win": 9.0,
+   "pnl_top10": 0.9459279666409873,
+   "stop_width": 0.029999999999999957,
+   "entry_weight": 0.12603941357427614,
+   "open_mean": 4.886454183266932,
+   "candidates_day": 2.0,
+   "mean_days": 2.4852492370295014,
+   "annual": {
+    "2024": {
+     "n": 507,
+     "wins": 91,
+     "losses": 416,
+     "win": 0.1794871794871795,
+     "avg_win": 0.13633519411087036,
+     "avg_loss": -0.02542159207952123,
+     "exp_r": 0.1265139305940121,
+     "opened": 507,
+     "mean_days": 2.7159763313609466,
+     "days_win": 11.626373626373626,
+     "days_loss": 0.7668269230769231,
+     "maxdd": 0.26864428434323717,
+     "ret": 0.3244720697402954,
+     "gap": 0.2158673886456579,
+     "gap_parts": {
+      "per_year": 0.18113882454490524,
+      "avg_win": 0.09551877807971637,
+      "avg_loss": 0.16559848688170656,
+      "win": 0.42121346507630353
+     }
+    },
+    "2025": {
+     "n": 476,
+     "wins": 75,
+     "losses": 401,
+     "win": 0.15756302521008403,
+     "avg_win": 0.12961068749427795,
+     "avg_loss": -0.030275478959083557,
+     "exp_r": -0.20951531827449799,
+     "opened": 477,
+     "mean_days": 2.2394957983193278,
+     "days_win": 10.76,
+     "days_loss": 0.6458852867830424,
+     "maxdd": 0.3611344974097336,
+     "ret": -0.33162014556170716,
+     "gap": 0.385327319493041,
+     "gap_parts": {
+      "per_year": 0.6804620210326296,
+      "avg_win": 0.08422464462643817,
+      "avg_loss": 0.3658156718741132,
+      "win": 0.4108069404389829
+     }
+    }
+   },
+   "behaviour_gap": 0.30059735406934945,
+   "year_gap": 1.9174966126226494,
+   "placebo": {
+    "real": -0.11474955081939697,
+    "median": 0.23828983306884766,
+    "p90": 0.7556771993637088,
+    "rank": 0.16
+   },
+   "drop2": -0.24445444345474243,
+   "gate": {
+    "ok": true,
+    "data": {
+     "ok": true,
+     "why": [],
+     "span": [
+      "2024-01-02",
+      "2025-12-31"
+     ]
+    },
+    "lookahead": {
+     "ok": true,
+     "cuts": [
+      {
+       "cut": "2024-09-30",
+       "ok": true,
+       "diff": []
+      },
+      {
+       "cut": "2025-09-30",
+       "ok": true,
+       "diff": []
+      }
+     ]
+    },
+    "fills": {
+     "ok": true,
+     "executions": 2275,
+     "bad": [],
+     "n_bad": 0
+    },
+    "win_rate": {
+     "ok": true,
+     "status": "checked",
+     "win": 0.1688708036622584,
+     "trades": 983,
+     "max_win": 0.35,
+     "note": ""
+    }
+   },
+   "judgements": {
+    "2024": [
+     [
+      "gate",
+      true,
+      "win 0.169 over 983 closed"
+     ],
+     [
+      "count",
+      true,
+      "507 a year vs his 423: off 20%"
+     ],
+     [
+      "behaviour",
+      true,
+      "3 published measures within"
+     ],
+     [
+      "years",
+      false,
+      "log gap over 0.3: {'2024': 1.06}"
+     ],
+     [
+      "placebo",
+      false,
+      "-0.11474955081939697 vs median 0.23828983306884766"
+     ],
+     [
+      "validate",
+      false,
+      "None vs median None"
+     ],
+     [
+      "not two",
+      false,
+      "without the best two -0.24445444345474243 vs median 0.23828983306884766"
+     ]
+    ],
+    "2025": [
+     [
+      "gate",
+      true,
+      "win 0.169 over 983 closed"
+     ],
+     [
+      "count",
+      false,
+      "476 a year vs his 940: off 49%"
+     ],
+     [
+      "behaviour",
+      false,
+      "outside +-30%: {'avg_loss': 0.44}"
+     ],
+     [
+      "years",
+      false,
+      "log gap over 0.3: {'2025': 2.77}"
+     ],
+     [
+      "placebo",
+      false,
+      "-0.11474955081939697 vs median 0.23828983306884766"
+     ],
+     [
+      "validate",
+      false,
+      "None vs median None"
+     ],
+     [
+      "not two",
+      false,
+      "without the best two -0.24445444345474243 vs median 0.23828983306884766"
+     ]
+    ]
+   },
+   "success": [
+    [
+     "gate",
+     true,
+     {
+      "2024": "win 0.169 over 983 closed",
+      "2025": "win 0.169 over 983 closed"
+     }
+    ],
+    [
+     "count",
+     false,
+     {
+      "2024": "507 a year vs his 423: off 20%",
+      "2025": "476 a year vs his 940: off 49%"
+     }
+    ],
+    [
+     "behaviour",
+     false,
+     {
+      "2024": "3 published measures within",
+      "2025": "outside +-30%: {'avg_loss': 0.44}"
+     }
+    ],
+    [
+     "years",
+     false,
+     {
+      "2024": "log gap over 0.3: {'2024': 1.06}",
+      "2025": "log gap over 0.3: {'2025': 2.77}"
+     }
+    ],
+    [
+     "placebo",
+     false,
+     {
+      "2024": "-0.11474955081939697 vs median 0.23828983306884766",
+      "2025": "-0.11474955081939697 vs median 0.23828983306884766"
+     }
+    ],
+    [
+     "validate",
+     false,
+     {
+      "2024": "None vs median None",
+      "2025": "None vs median None"
+     }
+    ],
+    [
+     "not two",
+     false,
+     {
+      "2024": "without the best two -0.24445444345474243 vs median 0.23828983306884766",
+      "2025": "without the best two -0.24445444345474243 vs median 0.23828983306884766"
+     }
+    ]
+   ],
+   "selection_passes": 1,
+   "2026": "未测"
+  }
+ },
+ "chosen": "E3",
+ "selection_keys": {
+  "E1": [
+   1,
+   -0.3005973169641858,
+   -2.0640204031206846,
+   0
+  ],
+  "E2": [
+   1,
+   -0.3111988644628494,
+   -1.884490303185715,
+   -1
+  ],
+  "E3": [
+   1,
+   -0.2996037403018473,
+   -2.0198159676171885,
+   -2
+  ],
+  "E4": [
+   1,
+   -0.30059735406934945,
+   -1.9174966126226494,
+   -3
+  ]
+ }
+}

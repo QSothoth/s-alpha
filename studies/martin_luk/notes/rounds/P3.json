@@ -1,0 +1,18 @@
+{
+ "layer": "signal",
+ "sections_changed": ["signal", "trade"],
+ "paired": true,
+ "mechanism": "Own market breadth and matured nomination feedback determine tier budgets and the same fixed long/short risk policy; selection uses only early signal coverage.",
+ "upper_bound": 0.9791666666666666,
+ "selection_layer": "signal",
+ "selection_metric": "S_K3_early_coverage_min_2024_2025",
+ "base": {"signal": {"candidate": "IE9"}, "trade": {"regime_policy": "master"}},
+ "base_change": {"trade": {"regime_policy": "P3_fixed_A_B"}},
+ "candidates": {
+  "C1_TIER": {"signal": {"candidate": "C1_TIER"}},
+  "C2_NEAR21": {"signal": {"candidate": "C2_NEAR21"}},
+  "C3_UPGRADE": {"signal": {"candidate": "C3_UPGRADE"}},
+  "C4_STATE": {"signal": {"candidate": "C4_STATE"}},
+  "C5_COMBO": {"signal": {"candidate": "C5_COMBO"}}
+ }
+}

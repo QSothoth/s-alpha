@@ -1,0 +1,252 @@
+== 06:08 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success mark_minervini
+SUCCESS mark_minervini gate pass win 0.129 over 294 closed
+SUCCESS mark_minervini count FAIL no sourced trade count of his
+SUCCESS mark_minervini behaviour pass 0 published measures within
+SUCCESS mark_minervini years pass 0 of his years within
+SUCCESS mark_minervini placebo pass 1.5661124050050068 vs median 0.162061682874317
+SUCCESS mark_minervini validate pass 0.030202457615895684 vs median -0.047545219421157636
+SUCCESS mark_minervini not two pass without the best two 0.3782043182510151 vs median 0.162061682874317
+== 06:11 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success martin_luk
+/opt/lowbuy-dip-scout/.venv/lib/python3.12/site-packages/numpy/lib/_nanfunctions_impl.py:1593: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a,
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/martin_luk/replicate.py:810: RuntimeWarning: Mean of empty slice
+  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/martin_luk/replicate.py:1164: RuntimeWarning: Mean of empty slice
+  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+SUCCESS martin_luk gate pass win 0.208 over 886 closed
+SUCCESS martin_luk count FAIL 320 a year vs his 681.5: off 53%
+SUCCESS martin_luk behaviour FAIL outside +-30%: {'avg_win': 0.51}
+SUCCESS martin_luk years FAIL log gap over 0.3: {'2025': 1.14}
+SUCCESS martin_luk placebo pass 33.175603995300335 vs median -0.49443120862308987
+SUCCESS martin_luk validate pass 1.2237085242303216 vs median -0.32867116142627006
+SUCCESS martin_luk not two pass without the best two 32.69049304340603 vs median -0.49443120862308987
+== 06:14 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success marios_stamatoudis
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+SUCCESS marios_stamatoudis gate pass win 0.326 over 1511 closed
+SUCCESS marios_stamatoudis count pass 546 a year vs his 500: off 9%
+SUCCESS marios_stamatoudis behaviour pass 1 published measures within
+SUCCESS marios_stamatoudis years pass 0 of his years within
+SUCCESS marios_stamatoudis placebo pass 4.621285501978999 vs median 0.1550689353475172
+SUCCESS marios_stamatoudis validate pass 0.00013598399956382679 vs median -0.0558710174058748
+SUCCESS marios_stamatoudis not two pass without the best two 1.2318786106743222 vs median 0.1550689353475172
+== 06:17 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success evan_medeiros
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/evan_medeiros/replicate.py:143: RuntimeWarning: Mean of empty slice
+  return np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))
+SUCCESS evan_medeiros gate FAIL win 0.659 over 957 closed
+SUCCESS evan_medeiros count pass 345 a year vs his 328: off 5%
+SUCCESS evan_medeiros behaviour pass 4 published measures within
+SUCCESS evan_medeiros years pass 1 of his years within
+SUCCESS evan_medeiros placebo pass 0.45729299789019806 vs median -0.05664606201047967
+SUCCESS evan_medeiros validate pass 0.15530322268361596 vs median -0.0007727126137997975
+SUCCESS evan_medeiros not two pass without the best two 0.4071170223272844 vs median -0.05664606201047967
+== 06:19 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success alfredo_holguin
+SUCCESS alfredo_holguin gate FAIL win 0.917 over 1454 closed; not passed or unchecked: data, lookahead, fills
+SUCCESS alfredo_holguin count FAIL 522 a year vs his 993.3958733205375: off 47%
+SUCCESS alfredo_holguin behaviour pass 1 published measures within
+SUCCESS alfredo_holguin years pass 1 of his years within
+SUCCESS alfredo_holguin placebo pass 1.7518672618004802 vs median -0.07049436242790802
+SUCCESS alfredo_holguin validate pass 0.5784341346858304 vs median -0.06203722999544775
+SUCCESS alfredo_holguin not two FAIL without the best two None vs median -0.07049436242790802
+== 07:17 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success dan_zanger
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/christian_flanders/replicate.py:291: RuntimeWarning: divide by zero encountered in divide
+  return -(A['F'].turnover / lag(A['F'].to20))
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/christian_flanders/replicate.py:291: RuntimeWarning: invalid value encountered in divide
+  return -(A['F'].turnover / lag(A['F'].to20))
+SUCCESS dan_zanger gate pass win 0.272 over 169 closed
+SUCCESS dan_zanger count FAIL 61 a year vs his (104.0, inf): off 42%
+SUCCESS dan_zanger behaviour pass 4 published measures within
+SUCCESS dan_zanger years pass 0 of his years within
+SUCCESS dan_zanger placebo pass 0.5301510391263644 vs median -0.04046465754776918
+SUCCESS dan_zanger validate FAIL -0.22792001931866523 vs median -0.030626200758875788
+SUCCESS dan_zanger not two pass without the best two 0.014395038623224554 vs median -0.04046465754776918
+== 07:18 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel mark_minervini
+FUNNEL mark_minervini {'untestable': 1, 'not_listed': 4, 'pool': 1, 'setup': 19, 'entry_stop': 1, 'room': 2}
+== 07:19 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel christian_flanders
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+FUNNEL christian_flanders {'not_listed': 1, 'pool': 7, 'setup': 21, 'entry_stop': 2, 'daily_cap': 7, 'max_open': 7, 'room': 2, 'traded': 8}
+== 07:19 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel clement_ang
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+FUNNEL clement_ang {'not_listed': 4, 'pool': 2, 'setup': 7, 'market': 1, 'held': 1, 'room': 3, 'traded': 7}
+== 07:19 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel qullamaggie
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/qullamaggie/replicate.py:104: RuntimeWarning: Mean of empty slice
+  mean = np.nan_to_num(np.nanmean(r, axis=1))
+FUNNEL qullamaggie {'not_listed': 2, 'pool': 4, 'setup': 8, 'market': 10, 'room': 1, 'traded': 5}
+== 07:20 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel oliver_kell
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+FUNNEL oliver_kell {'untestable': 5, 'pool': 13, 'setup': 10, 'market': 1, 'held': 2, 'traded': 5}
+== 07:20 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel marios_stamatoudis
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+FUNNEL marios_stamatoudis {'pool': 2, 'setup': 3, 'entry_stop': 2, 'daily_cap': 1, 'max_open': 1, 'room': 3, 'traded': 6}
+== 07:20 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel martin_luk
+/opt/lowbuy-dip-scout/.venv/lib/python3.12/site-packages/numpy/lib/_nanfunctions_impl.py:1593: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a,
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/martin_luk/replicate.py:810: RuntimeWarning: Mean of empty slice
+  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/martin_luk/replicate.py:1164: RuntimeWarning: Mean of empty slice
+  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+FUNNEL martin_luk {'not_listed': 3, 'pool': 19, 'setup': 10, 'market': 14, 'daily_cap': 28, 'held': 6, 'traded': 5}
+== 07:20 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success mark_minervini
+SUCCESS mark_minervini gate pass win 0.127 over 299 closed
+SUCCESS mark_minervini count FAIL no sourced trade count of his
+SUCCESS mark_minervini behaviour pass 0 published measures within
+SUCCESS mark_minervini years pass 0 of his years within
+SUCCESS mark_minervini placebo pass 1.5377243734050898 vs median 0.28687513795067654
+SUCCESS mark_minervini validate FAIL -0.051726325901267356 vs median -0.02656486129355634
+SUCCESS mark_minervini not two FAIL without the best two 0.2277371586512298 vs median 0.28687513795067654
+== 07:23 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success christian_flanders
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+SUCCESS christian_flanders gate pass win 0.311 over 1077 closed
+SUCCESS christian_flanders count pass 390 a year vs his 444.5: off 12%
+SUCCESS christian_flanders behaviour FAIL outside +-30%: {'days_win': 0.32}
+SUCCESS christian_flanders years FAIL log gap over 0.3: {'2024': 1.64}
+SUCCESS christian_flanders placebo pass 1.3982229120966951 vs median 0.030198006171804792
+SUCCESS christian_flanders validate FAIL -0.13004417944178726 vs median -0.046774499289052585
+SUCCESS christian_flanders not two pass without the best two 0.6564832817088637 vs median 0.030198006171804792
+== 07:26 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success clement_ang
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+SUCCESS clement_ang gate pass win 0.278 over 1411 closed
+SUCCESS clement_ang count FAIL 508 a year vs his 1047.0: off 51%
+SUCCESS clement_ang behaviour FAIL outside +-30%: {'avg_win': 1.69, 'avg_loss': 0.7, 'days_win': 5.27, 'days_loss': 2.26}
+SUCCESS clement_ang years FAIL log gap over 0.3: {'2024': 0.37}
+SUCCESS clement_ang placebo pass 5.090939723067408 vs median -0.09793724821941646
+SUCCESS clement_ang validate pass 1.0973013209847875 vs median -0.09098904707792604
+SUCCESS clement_ang not two pass without the best two 3.5792591319232008 vs median -0.09793724821941646
+== 07:36 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success qullamaggie
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/qullamaggie/replicate.py:104: RuntimeWarning: Mean of empty slice
+  mean = np.nan_to_num(np.nanmean(r, axis=1))
+SUCCESS qullamaggie gate pass win 0.329 over 617 closed
+SUCCESS qullamaggie count FAIL no sourced trade count of his
+SUCCESS qullamaggie behaviour FAIL outside +-30%: {'win': 0.32}
+SUCCESS qullamaggie years pass 0 of his years within
+SUCCESS qullamaggie placebo pass 0.3886895110881745 vs median -0.04080653850961036
+SUCCESS qullamaggie validate FAIL -0.050770904560704544 vs median -0.011805945506749294
+SUCCESS qullamaggie not two pass without the best two 0.3047851092671383 vs median -0.04080653850961036
+== 07:38 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success oliver_kell
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+SUCCESS oliver_kell gate pass win 0.209 over 895 closed
+SUCCESS oliver_kell count FAIL no sourced trade count of his
+SUCCESS oliver_kell behaviour pass 0 published measures within
+SUCCESS oliver_kell years pass 0 of his years within
+SUCCESS oliver_kell placebo pass 1.5321984084340587 vs median 0.11910100952956493
+SUCCESS oliver_kell validate pass 0.3527712577312998 vs median -0.03052676579791852
+SUCCESS oliver_kell not two pass without the best two 1.320049400334713 vs median 0.11910100952956493
+== 07:43 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success marios_stamatoudis
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+SUCCESS marios_stamatoudis gate pass win 0.322 over 1508 closed
+SUCCESS marios_stamatoudis count pass 545 a year vs his 500: off 9%
+SUCCESS marios_stamatoudis behaviour pass 1 published measures within
+SUCCESS marios_stamatoudis years pass 0 of his years within
+SUCCESS marios_stamatoudis placebo pass 4.285611737324693 vs median 0.17275333278508354
+SUCCESS marios_stamatoudis validate pass -0.012702708519262806 vs median -0.03742525699301652
+SUCCESS marios_stamatoudis not two pass without the best two 1.1318803384816865 vs median 0.17275333278508354
+== 07:46 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success dan_zanger
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/christian_flanders/replicate.py:291: RuntimeWarning: divide by zero encountered in divide
+  return -(A['F'].turnover / lag(A['F'].to20))
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/christian_flanders/replicate.py:291: RuntimeWarning: invalid value encountered in divide
+  return -(A['F'].turnover / lag(A['F'].to20))
+SUCCESS dan_zanger gate pass win 0.27 over 178 closed
+SUCCESS dan_zanger count FAIL 64 a year vs his (104.0, inf): off 38%
+SUCCESS dan_zanger behaviour pass 4 published measures within
+SUCCESS dan_zanger years pass 0 of his years within
+SUCCESS dan_zanger placebo pass 0.3900706072439566 vs median -0.07686928004666482
+SUCCESS dan_zanger validate FAIL -0.248491334327699 vs median -0.02559311900027894
+SUCCESS dan_zanger not two FAIL without the best two -0.07995841969149908 vs median -0.07686928004666482
+== 07:48 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review success martin_luk
+/opt/lowbuy-dip-scout/.venv/lib/python3.12/site-packages/numpy/lib/_nanfunctions_impl.py:1593: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a,
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/martin_luk/replicate.py:810: RuntimeWarning: Mean of empty slice
+  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/martin_luk/replicate.py:1164: RuntimeWarning: Mean of empty slice
+  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+SUCCESS martin_luk gate pass win 0.208 over 886 closed
+SUCCESS martin_luk count FAIL 320 a year vs his 681.5: off 53%
+SUCCESS martin_luk behaviour FAIL outside +-30%: {'avg_win': 0.51}
+SUCCESS martin_luk years FAIL log gap over 0.3: {'2025': 1.14}
+SUCCESS martin_luk placebo pass 33.175603995300335 vs median -0.49443120862308987
+SUCCESS martin_luk validate pass 1.2237085242303216 vs median -0.32867116142627006
+SUCCESS martin_luk not two pass without the best two 32.69049304340603 vs median -0.49443120862308987
+== 07:50 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel mark_minervini
+FUNNEL mark_minervini {'untestable': 1, 'not_listed': 4, 'pool': 1, 'setup': 19, 'entry_stop': 1, 'room': 2}
+== 07:51 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel christian_flanders
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+FUNNEL christian_flanders {'not_listed': 1, 'pool': 7, 'setup': 18, 'entry_stop': 5, 'daily_cap': 6, 'max_open': 7, 'room': 2, 'traded': 9}
+== 07:51 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel clement_ang
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+FUNNEL clement_ang {'not_listed': 4, 'pool': 2, 'setup': 7, 'market': 1, 'held': 1, 'room': 3, 'traded': 7}
+== 07:51 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel qullamaggie
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/qullamaggie/replicate.py:104: RuntimeWarning: Mean of empty slice
+  mean = np.nan_to_num(np.nanmean(r, axis=1))
+FUNNEL qullamaggie {'not_listed': 2, 'pool': 4, 'setup': 8, 'market': 10, 'room': 1, 'traded': 5}
+== 07:51 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel oliver_kell
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+FUNNEL oliver_kell {'untestable': 5, 'pool': 11, 'setup': 11, 'market': 1, 'held': 2, 'max_open': 1, 'traded': 5}
+== 07:52 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel marios_stamatoudis
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+FUNNEL marios_stamatoudis {'pool': 2, 'setup': 3, 'entry_stop': 2, 'daily_cap': 1, 'max_open': 1, 'room': 3, 'traded': 6}
+== 07:52 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review funnel martin_luk
+/opt/lowbuy-dip-scout/.venv/lib/python3.12/site-packages/numpy/lib/_nanfunctions_impl.py:1593: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a,
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/martin_luk/replicate.py:810: RuntimeWarning: Mean of empty slice
+  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/martin_luk/replicate.py:1164: RuntimeWarning: Mean of empty slice
+  idx = np.cumprod(1 + np.nan_to_num(np.nanmean(r, axis=1)))[:, None]
+FUNNEL martin_luk {'not_listed': 3, 'pool': 19, 'setup': 10, 'market': 14, 'daily_cap': 28, 'held': 6, 'traded': 5}
+== DONE 07:52
+== 07:53 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review round christian_flanders F3
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+F3 REG total +1.435 years {'2024': 0.105, '2025': 1.354, '2026': -0.064} placebo -0.055 win 0.313 per_year 369 bought {'sel': [8, 54], 'y2026': [0, 0]} width 7.0 year_gap 0.8512857697602704
+F3 F3A total +1.571 years {'2024': 0.166, '2025': 1.354, '2026': -0.064} placebo +0.014 win 0.314 per_year 368 bought {'sel': [8, 54], 'y2026': [0, 0]} width 7.0 year_gap 0.8241395273156555
+F3 F3B total +1.367 years {'2024': 0.183, '2025': 1.247, '2026': -0.11} placebo -0.021 win 0.312 per_year 374 bought {'sel': [8, 54], 'y2026': [0, 0]} width 15.0 year_gap 0.8401906214221135
+F3 F3C total +1.325 years {'2024': 0.163, '2025': 1.247, '2026': -0.11} placebo -0.042 win 0.311 per_year 374 bought {'sel': [8, 54], 'y2026': [0, 0]} width 15.0 year_gap 0.8489833348802865
+F3 chosen REG fails {'F3A': ['bought'], 'F3B': ['bought'], 'F3C': ['bought']}
+== 07:56 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review round christian_flanders F3L
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+F3L REG total +1.398 years {'2024': 0.031, '2025': 1.519, '2026': -0.077} placebo +0.038 win 0.311 per_year 370 bought {'sel': [9, 54], 'y2026': [0, 0]} width 7.0 year_gap 0.8517365365397006
+F3L F3A total +1.517 years {'2024': 0.083, '2025': 1.519, '2026': -0.077} placebo -0.014 win 0.312 per_year 368 bought {'sel': [9, 54], 'y2026': [0, 0]} width 7.0 year_gap 0.8274855835303296
+F3L F3B total +1.493 years {'2024': 0.179, '2025': 1.379, '2026': -0.111} placebo -0.031 win 0.310 per_year 376 bought {'sel': [9, 54], 'y2026': [0, 0]} width 15.0 year_gap 0.8132808777861724
+F3L F3C total +1.508 years {'2024': 0.186, '2025': 1.379, '2026': -0.111} placebo -0.018 win 0.310 per_year 374 bought {'sel': [9, 54], 'y2026': [0, 0]} width 15.0 year_gap 0.8102377906345214
+F3L chosen REG fails {'F3A': ['bought'], 'F3B': ['bought'], 'F3C': ['bought']}
+== 08:00 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review round oliver_kell F3
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+F3 REG total +1.224 years {'2024': 0.132, '2025': 0.37, '2026': 0.434} placebo +0.107 win 0.206 per_year 330 bought {'sel': [5, 30], 'y2026': [0, 1]} width 21.0 year_gap None
+F3 F3A total +1.334 years {'2024': 0.376, '2025': 0.217, '2026': 0.393} placebo +0.095 win 0.205 per_year 314 bought {'sel': [3, 30], 'y2026': [0, 1]} width 27.0 year_gap None
+F3 F3B total +1.097 years {'2024': 0.132, '2025': 0.344, '2026': 0.378} placebo +0.102 win 0.202 per_year 332 bought {'sel': [5, 30], 'y2026': [0, 1]} width 21.0 year_gap None
+F3 F3C total +1.226 years {'2024': 0.37, '2025': 0.213, '2026': 0.339} placebo +0.112 win 0.202 per_year 316 bought {'sel': [3, 30], 'y2026': [0, 1]} width 28.0 year_gap None
+F3 chosen REG fails {'F3A': ['bought'], 'F3B': ['bought'], 'F3C': ['bought']}
+== 08:07 env TRADER_LISTING=1 systemd-run --scope -q -p CPUQuota=40% taskset -c 0 ionice -c3 nice -n 19 env OPENBLAS_NUM_THREADS=1 PYTHONUTF8=1 /opt/lowbuy-dip-scout/.venv/bin/python -m studies.trader_replication.review round oliver_kell F3L
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+F3L REG total +1.532 years {'2024': 0.292, '2025': 0.281, '2026': 0.53} placebo +0.137 win 0.209 per_year 324 bought {'sel': [5, 30], 'y2026': [0, 1]} width 21.0 year_gap None
+== rerun 08:10 kell F3L
+/opt/opend-us-options/.claude/worktrees/gap-review/studies/trader_replication/shorts.py:78: RuntimeWarning: Mean of empty slice
+  mean = np.nanmean(r, axis=1)
+F3L REG total +1.532 years {'2024': 0.292, '2025': 0.281, '2026': 0.53} placebo +0.137 win 0.209 per_year 324 bought {'sel': [5, 30], 'y2026': [0, 1]} width 21.0 year_gap None
+F3L F3A total +1.690 years {'2024': 0.53, '2025': 0.152, '2026': 0.526} placebo +0.092 win 0.209 per_year 314 bought {'sel': [4, 30], 'y2026': [0, 1]} width 28.0 year_gap None
+F3L F3B total +1.367 years {'2024': 0.292, '2025': 0.251, '2026': 0.465} placebo +0.102 win 0.204 per_year 326 bought {'sel': [5, 30], 'y2026': [0, 1]} width 22.0 year_gap None
+F3L F3C total +1.558 years {'2024': 0.524, '2025': 0.149, '2026': 0.462} placebo +0.047 win 0.205 per_year 316 bought {'sel': [4, 30], 'y2026': [0, 1]} width 28.0 year_gap None
+F3L chosen REG fails {'F3A': ['bought'], 'F3B': ['bought'], 'F3C': ['bought']}
+rc=0

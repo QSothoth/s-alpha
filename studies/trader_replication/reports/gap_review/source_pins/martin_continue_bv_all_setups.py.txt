@@ -1,0 +1,108 @@
+"""BV: replay fixed Martin accounts on either existing frozen universe."""
+from collections import Counter
+import gc
+import hashlib
+import json
+import os
+from pathlib import Path
+
+import numpy as np
+
+from . import panels, system, ticket_t4, watchlist
+from .martin_continue_a import required_fields
+from .martin_continue_bq import _ROLL_MEAN, activity_ranks, chunked_roll_mean
+from .martin_continue_bt import fidelity
+from .martin_strong import Data
+from .martin_strong_scan import HOLD, active, f1_rules, hold_sim, longs, name_score, nl_rules, pool_book2, u1_entries
+from . import compare
+
+
+def extra_names(trades, reference):
+    out = {}
+    for year in ('2024', '2025', '2026'):
+        rows = [t for t in trades if t['entry'].startswith(year) and t['code'] not in reference]
+        closed = [t for t in rows if t['why'] != 'end']
+        opened = [t for t in rows if t['why'] == 'end']
+        out[year] = {'entries': len(rows), 'closed': len(closed), 'open_at_end': len(opened),
+                     'closed_pnl': float(sum(t['pnl'] for t in closed)),
+                     'open_mark_pnl': float(sum(t['pnl'] for t in opened)),
+                     'kinds': dict(Counter(t['kind'] for t in rows))}
+    return out
+
+
+def main():
+    tag = os.environ.get('TRADER_DATA_TAG')
+    if os.environ.get('TRADER_DATA_MODE') != 'frozen' or tag not in ('trader-data-v1', 'trader-data-v2'):
+        raise ValueError('explicit frozen mode and an existing v1 or v2 tag are required')
+    root = Path(__file__).resolve().parents[2]
+    reference = {r['code'] for r in json.loads((root / 'data/trader-data-v1/us/universe.json').read_text())['stocks']}
+    pins = json.loads((root / 'studies/trader_replication/DATA_PIN.json').read_text())
+    old = ticket_t4.ranks
+    try:
+        ticket_t4.ranks = activity_ranks
+        D = Data()
+    finally:
+        ticket_t4.ranks = old
+    if D.A['digest'] != pins[tag]['us']:
+        raise ValueError('loaded dataset does not match the registered tag digest')
+    print('panel', tag, D.c.shape, D.days[0], D.days[-1], flush=True)
+    del D.fp, D.fwd, D.raw
+    for key in ('pr21', 'pr63', 'pr126', 'rank_pool', 'stack', 'tight'):
+        D.A.pop(key, None)
+    D.rk = D.rk.astype(np.int32)
+    gc.collect()
+    try:
+        watchlist.roll_mean = chunked_roll_mean
+        fields = required_fields(D)
+    finally:
+        watchlist.roll_mean = _ROLL_MEAN
+    mask = active(D, fields)
+    score = name_score(D, fields, mask, HOLD['H3'])
+    holding = hold_sim(score, 12, 36)
+    u1 = u1_entries(D, fields, holding, score)
+    raw = pool_book2(D, fields, holding, score, True, 8.0, None, False)
+    sat = [[((2.0,) + (e[0] if isinstance(e[0], tuple) else (e[0],)),) + tuple(e[1:6])
+            for e in row] for row in raw]
+    reg6 = longs(D.reg)
+    del fields, mask, score, holding, raw
+    gc.collect()
+    px = D.base.px(D.A)
+    cases = {'R74': (D.reg, D.rules), 'U1': (u1, f1_rules(D, 6, (1, 3))),
+             'REG6': (reg6, nl_rules(D, 6)), 'SAT6': (sat, nl_rules(D, 6))}
+    results = {}
+    start = int(np.searchsorted(D.A['days'], panels.WINDOW[0]))
+    end = int(np.searchsorted(D.A['days'], panels.WINDOW[1], side='right'))
+    for name, (book, rules) in cases.items():
+        print('account', name, flush=True)
+        em = D.base.ema_inputs(D.A, D.pool, rules)
+        track = {}
+        curve, dates, trades = system.simulate(px, em, rules, book, *panels.WINDOW, audit=True, track=track)
+        metrics = compare.metrics(curve, dates, trades, book, start, end)
+        metrics['entries_by_year'] = {y: sum(t['entry'].startswith(y) for t in trades)
+                                      for y in ('2024', '2025', '2026')}
+        metrics['max_close_positions'] = max(track['open'])
+        results[name] = {'metrics': metrics, 'fidelity': fidelity(D, trades),
+                         'v2_only': extra_names(trades, reference)}
+    if tag == 'trader-data-v1':
+        previous = {'R74': json.loads((root / 'studies/trader_replication/reports/gap_review/strong_s7.json').read_text())['REG']['by_year'],
+                    'U1': json.loads((root / 'studies/trader_replication/reports/gap_review/strong_continue_bt.json').read_text())['results']['U1']['metrics']['by_year'],
+                    'REG6': json.loads((root / 'studies/trader_replication/reports/gap_review/strong_s59.json').read_text())['REG6']['by_year'],
+                    'SAT6': json.loads((root / 'studies/trader_replication/reports/gap_review/strong_s59.json').read_text())['SAT6']['by_year']}
+        for name, years in previous.items():
+            for year, value in years.items():
+                if abs(results[name]['metrics']['by_year'][year] - value) > 1e-10:
+                    raise AssertionError(f'{name} {year} does not reproduce its prior baseline')
+    paths = ('studies/trader_replication/martin_continue_bv.py', 'studies/trader_replication/martin_continue_a.py',
+             'studies/trader_replication/martin_continue_bq.py', 'studies/trader_replication/martin_continue_bt.py',
+             'studies/trader_replication/martin_strong.py', 'studies/trader_replication/martin_strong_scan.py',
+             'studies/trader_replication/system.py')
+    out = {'tag': tag, 'dataset_digest': D.A['digest'], 'shape': list(D.c.shape),
+           'window': list(panels.WINDOW), 'results': results,
+           'code_sha256': {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in paths}}
+    target = root / f'studies/trader_replication/reports/gap_review/strong_continue_bv_{tag}.json'
+    target.write_text(json.dumps(out, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
+    print(json.dumps(out, ensure_ascii=False, indent=2, allow_nan=False), flush=True)
+
+
+if __name__ == '__main__':
+    main()

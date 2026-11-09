@@ -138,6 +138,29 @@ class TiersAndGross(unittest.TestCase):
         self.assertEqual(tr_['margin'], 0)
         self.assertLessEqual(max(tr_['gross']), 1.0 + 1e-12)
 
+    def test_gross_cost_limits_each_order_in_a_batch(self):
+        for side in (1, -1):
+            entries = empty()
+            entries[0] = [(k, k, side, 10.0, 10.0 - .5 * side, 'brk') for k in range(4)]
+            for gross_limit in (1.0, 2.0):
+                for intraday in ((), ('brk',)):
+                    with self.subTest(side=side, gross_limit=gross_limit, intraday=intraday):
+                        _, trades, track = run(entries, buy_cost=.001, sell_cost=.002, max_gross=gross_limit,
+                                               max_position=gross_limit / 4, risk=1.0,
+                                               gross_cost=True, intraday_kinds=intraday)
+                        self.assertEqual(len(trades), 4)
+                        self.assertLessEqual(max(track['gross']), gross_limit + 1e-12)
+
+    def test_gross_cost_limits_a_leveraged_add(self):
+        close = np.full((len(DATES), N), 10.0)
+        close[1:, 0] = 16.0
+        entries = empty()
+        entries[0] = [(0, 0, 1, 10.0, 5.0, 'brk')]
+        _, trades, track = run(entries, px(close=close), buy_cost=.001, max_gross=2.0,
+                               max_position=2.0, risk=.5, gross_cost=True, add_r=1.0, add_frac=1.0)
+        self.assertTrue(any(e['action'] == 'add' for e in trades[0]['executions']))
+        self.assertLessEqual(max(track['gross']), 2.0 + 1e-12)
+
     def test_a_rising_short_is_covered_at_the_close_back_to_the_gross_limit(self):
         c = np.full((len(DATES), N), 10.0)
         c[2:, 1] = 12.0                                        # the short rises 20% on day 2
