@@ -1,0 +1,123 @@
+{
+ "status": "stopped_rule_drift",
+ "detected_at": "2026-11-09T06:22:28.885480+00:00",
+ "files": {
+  ".claude/workflows/trader-replication-loop.js": {
+   "expected": "bc34e4b77daa0e93d29139f9be77ecf0abfa5105a84ebbcf4c9a5e02d9f9e8e3",
+   "observed": "b08778ecc86558537145aca227dc09b1be26d307db7958cb6034e17812c13ecd",
+   "modified_utc": "2026-11-09T05:57:17.478772+00:00"
+  },
+  "skills/trader-replication/references/WORKFLOW_CN.md": {
+   "expected": "aa9c7985b580967c903fbaaa078d3e163e622b6808ec66d8bb4f3e8b428da1b9",
+   "observed": "41bb3c7536a4083cd5634d1131e831e9bfaf7c353b8da0b5adc5ddde0e9ee185",
+   "modified_utc": "2026-11-09T05:57:17.478772+00:00"
+  }
+ },
+ "rule": "WORKFLOW_CN 第一节：变了就立刻停下，报告规则漂移。",
+ "observed_change": "新增每类轮次计算范围/时限、冻结缓存和STATUS局部更新要求；本次执行未修改这两个文件。",
+ "action": "stopped WF00 verification scope; no further calculations or rebasing",
+ "requires_user": "确认以当前新版规则继续，或恢复经批准的原规则。",
+ "resolutions": [
+  {
+   "status": "resolved",
+   "date": "2026-11-09",
+   "reason": "用户要求 11-09 的流程变更，见 WF-010a；RESUME_CN.md 授权以当前版本继续",
+   "old": {
+    ".claude/workflows/trader-replication-loop.js": {
+     "expected": "bc34e4b77daa0e93d29139f9be77ecf0abfa5105a84ebbcf4c9a5e02d9f9e8e3",
+     "observed_when_stopped": "b08778ecc86558537145aca227dc09b1be26d307db7958cb6034e17812c13ecd"
+    },
+    "skills/trader-replication/references/WORKFLOW_CN.md": {
+     "expected": "aa9c7985b580967c903fbaaa078d3e163e622b6808ec66d8bb4f3e8b428da1b9",
+     "observed_when_stopped": "41bb3c7536a4083cd5634d1131e831e9bfaf7c353b8da0b5adc5ddde0e9ee185"
+    }
+   },
+   "new": {
+    ".claude/workflows/trader-replication-loop.js": "b08778ecc86558537145aca227dc09b1be26d307db7958cb6034e17812c13ecd",
+    "skills/trader-replication/references/WORKFLOW_CN.md": "9f72bff455195c165fad63ad8500cb7bfed19a6d12f51f89b0b95c08ff84746c",
+    "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+    "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+    "studies/trader_replication/funnel.py": "e3d6eac8f326284420881309632d5c5263722ecfdad29d0f86ac42d5b6fbd9bb",
+    "studies/martin_luk/workflow/config.json": "a9ec95fcaa0bfc1cde61e0367796fe1f7d9e210f2989af6be82a6fb39815e1ca"
+   },
+   "recorded_at": "2026-11-09T06:28:45.900512+00:00",
+   "authorized_funnel_followup": "任务书第1节要求增加缓存读取入口，最终指纹另记"
+  },
+  {
+   "status": "resolved",
+   "kind": "final_cache_entry",
+   "date": "2026-11-09",
+   "reason": "RESUME_CN.md 第0、1节授权新版规则及缓存读取入口；旧漂移记录保留",
+   "old_fingerprints": {
+    ".claude/workflows/trader-replication-loop.js": "b08778ecc86558537145aca227dc09b1be26d307db7958cb6034e17812c13ecd",
+    "skills/trader-replication/references/WORKFLOW_CN.md": "9f72bff455195c165fad63ad8500cb7bfed19a6d12f51f89b0b95c08ff84746c",
+    "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+    "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+    "studies/trader_replication/funnel.py": "e3d6eac8f326284420881309632d5c5263722ecfdad29d0f86ac42d5b6fbd9bb",
+    "studies/martin_luk/workflow/config.json": "a9ec95fcaa0bfc1cde61e0367796fe1f7d9e210f2989af6be82a6fb39815e1ca"
+   },
+   "new_fingerprints": {
+    ".claude/workflows/trader-replication-loop.js": "b08778ecc86558537145aca227dc09b1be26d307db7958cb6034e17812c13ecd",
+    "skills/trader-replication/references/WORKFLOW_CN.md": "9f72bff455195c165fad63ad8500cb7bfed19a6d12f51f89b0b95c08ff84746c",
+    "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+    "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+    "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+    "studies/martin_luk/workflow/config.json": "a9ec95fcaa0bfc1cde61e0367796fe1f7d9e210f2989af6be82a6fb39815e1ca"
+   },
+   "recorded_at": "2026-11-09T06:56:25.768050+00:00"
+  },
+  {
+   "status": "resolved",
+   "kind": "WF00f_current_rules_baseline",
+   "date": "2026-11-09",
+   "reason": "VERSIONS_TASK_CN.md 指定读取当前 WORKFLOW、base 与 capital；本轮未修改规则文件。",
+   "old_fingerprints": {
+    ".claude/workflows/trader-replication-loop.js": "2ae34440cbcae5115ea901c5585ffa254e2633634b5a5da5e8696488aa0d2d44",
+    "skills/trader-replication/references/WORKFLOW_CN.md": "5116a99e8da1da2a92c825f9bc8119dcd30ef9dcf0d71a138b951918ad18f1fe",
+    "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+    "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+    "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+    "studies/martin_luk/workflow/config.json": "4c79b629d11c0de19ebc8fbe9141f5e0185c39832f42bcda4dcac318a415ec21"
+   },
+   "new_fingerprints": {
+    ".claude/workflows/trader-replication-loop.js": "1b160bf1b0d01abf82f800a57de3498207d4e7305afac8775441ffb1dd1f6ce2",
+    "skills/trader-replication/references/WORKFLOW_CN.md": "46694f4ee640bc783d39dc9ddb4de9398323bfddef44f4c4dd5aab8109825d16",
+    "studies/martin_luk/workflow/config.json": "b3869467c296521f914ff3f9eda9d4326266b87306507d1d654298a7669b451f",
+    "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+    "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+    "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e"
+   },
+   "changed": {
+    ".claude/workflows/trader-replication-loop.js": {
+     "previous": "2ae34440cbcae5115ea901c5585ffa254e2633634b5a5da5e8696488aa0d2d44",
+     "current": "1b160bf1b0d01abf82f800a57de3498207d4e7305afac8775441ffb1dd1f6ce2"
+    },
+    "skills/trader-replication/references/WORKFLOW_CN.md": {
+     "previous": "5116a99e8da1da2a92c825f9bc8119dcd30ef9dcf0d71a138b951918ad18f1fe",
+     "current": "46694f4ee640bc783d39dc9ddb4de9398323bfddef44f4c4dd5aab8109825d16"
+    },
+    "studies/martin_luk/workflow/config.json": {
+     "previous": "4c79b629d11c0de19ebc8fbe9141f5e0185c39832f42bcda4dcac318a415ec21",
+     "current": "b3869467c296521f914ff3f9eda9d4326266b87306507d1d654298a7669b451f"
+    }
+   },
+   "recorded_at": "2026-11-09T09:16:36.499196+00:00"
+  },
+  {
+   "status": "resolved",
+   "date": "2026-11-09",
+   "reason": "WF00g 任务书指定读取用户当前版 WORKFLOW 与 capital；两文件在本任务开始前已更新，本轮未修改。",
+   "files": {
+    "skills/trader-replication/references/WORKFLOW_CN.md": {
+     "previous": "46694f4ee640bc783d39dc9ddb4de9398323bfddef44f4c4dd5aab8109825d16",
+     "current": "017590e946c54336d736abd06e42abe1c44a61430c2416c05442071deec161e0"
+    },
+    "studies/martin_luk/workflow/config.json": {
+     "previous": "b3869467c296521f914ff3f9eda9d4326266b87306507d1d654298a7669b451f",
+     "current": "326e1c50ae10e15f463d3bc2ec23a96b8ce136485ef7208903aaed5fc721dd49"
+    }
+   },
+   "recorded_at": "2026-11-09T09:59:10.000773+00:00"
+  }
+ ]
+}

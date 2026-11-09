@@ -268,11 +268,14 @@ def g6(*, code_sha, data_sha, freeze, data_last, registered, forward_start, mark
                   code_sha=code_sha, data_sha=data_sha, freeze=freeze, approved=approved)
 
 
-def allowed_actions(results):
+def allowed_actions(results, *, legacy=False):
     for key, allowed in ALLOWED.items():
+        if not legacy and key in ('G2', 'G3'):
+            continue
         row = results.get(key)
         if not row or (row['status'] != 'pass' and not (key == 'G2' and row['numbers'].get('permitted'))):
-            return dict(gate=key, allowed=list(allowed),
+            return dict(gate=key, allowed=list(allowed) if legacy or key in ('G0', 'G1', 'G6') else
+                        list(dict.fromkeys(['universe', 'signal', 'allocate', 'trade', 'switch', *allowed])),
                         paired_downstream=['allocate', 'trade'] if key == 'G3' else [],
                         reason=row['reason'] if row else 'no evidence')
     return dict(gate=None, allowed=[], reason='pipeline complete')
@@ -313,7 +316,7 @@ def validate_round(spec, base, *, legacy=False, gates=None):
     if spec.get('paired') is True and not spec.get('mechanism', '').strip():
         raise ValueError('paired round requires mechanism')
     if gates is not None:
-        allowed = allowed_actions(gates)
+        allowed = allowed_actions(gates, legacy=legacy)
         if not changed.issubset(allowed['allowed']):
             paired = (spec.get('paired') is True and layer in allowed['allowed']
                 and spec.get('selection_layer') == layer and bool(spec.get('selection_metric', '').strip())
@@ -322,3 +325,110 @@ def validate_round(spec, base, *, legacy=False, gates=None):
                 raise ValueError('upstream gate blocks changes; paired work must select on the upstream metric: '+str(allowed))
     return dict(legacy=False, layer=layer, sections_changed=sorted(changed),
                 selection_layer=spec.get('selection_layer', layer), selection_metric=spec.get('selection_metric'))
+
+
+def accept(line, candidate, compare, cfg):
+    """Judge frozen selection-year metrics; holdout values cannot select a version.
+
+    Inputs use annual[year] and, for pooled behaviour, selection.behaviour_within.
+    Missing facts branch instead of silently passing a guardrail.
+    """
+    rules, years, checks = cfg['accept'][line], list(map(str, cfg['selection_years'])), []
+
+    def check(name, ok, **numbers):
+        checks.append(dict(rule=name, ok=bool(ok), **numbers))
+
+    def values(record, key):
+        return [record.get('annual', {}).get(y, {}).get(key) for y in years]
+
+    def finite(vs):
+        return all(v is not None and np.isfinite(v) for v in vs)
+
+    primary = 'covered' if line == 'selection' else 'peak_held'
+    a, b = values(candidate, primary), values(compare, primary)
+    valid = finite(a+b)
+    delta = sum(a)-sum(b) if valid else None
+    check('selection_year_gain', valid and delta >= rules['min_extra_legs'],
+          years=years, candidate=a, compare=b, delta=delta, threshold=rules['min_extra_legs'])
+    if line in ('selection', 'merge'):
+        check('no_year_decrease', valid and all(x >= y for x, y in zip(a, b)), candidate=a, compare=b)
+    if line == 'selection':
+        width = values(candidate, 'unlimited_mean_new_names')
+        check('nomination_width', finite(width) and all(x <= rules['max_unlimited_mean_new_names'] for x in width),
+              candidate=width, threshold=rules['max_unlimited_mean_new_names'])
+        names, ref = values(candidate, 'unique_names'), values(compare, 'unique_names')
+        check('unique_names', finite(names+ref) and all(x <= y*(1+rules['max_unique_growth'])
+              for x, y in zip(names, ref)), candidate=names, compare=ref, growth=rules['max_unique_growth'])
+    if line == 'trading':
+        avg, ref = candidate.get('selection', {}).get('his_mean_r'), compare.get('selection', {}).get('his_mean_r')
+        check('his_average_r', finite([avg, ref]) and avg >= ref, candidate=avg, compare=ref)
+        control, ref = (record.get('selection', {}).get('control_pnl') for record in (candidate, compare))
+        check('control_pnl', finite([control, ref]) and control >= ref, candidate=control, compare=ref)
+    if line in ('trading', 'merge'):
+        a, b = (record.get('selection', {}).get('behaviour_within') for record in (candidate, compare))
+        check('behaviour_items', finite([a, b]) and a >= b, candidate=a, compare=b,
+              tolerance=cfg['hard_lines']['behaviour_tolerance'])
+    if line in ('conversion', 'merge'):
+        annual = values(candidate, 'return')
+        check('annual_return_floor', finite(annual) and all(x >= cfg['hard_lines']['annual_return_min'] for x in annual),
+              candidate=annual, threshold=cfg['hard_lines']['annual_return_min'])
+    if line == 'merge':
+        a, b = (record.get('selection', {}).get('peak_weight_median') for record in (candidate, compare))
+        check('peak_position_weight', finite([a, b]) and a >= b, candidate=a, compare=b)
+        check('selection_base', candidate.get('uses_bar_turnover_selection') is False,
+              uses_bar_turnover_selection=candidate.get('uses_bar_turnover_selection'))
+    return dict(status='accepted' if all(r['ok'] for r in checks) else 'branch', line=line,
+                checks=checks, selection_years=years, holdout_used_for_selection=False)
+
+
+def checkpoint(history, latest, cfg):
+    """Return every reached stopping rule, with the supplied evidence."""
+    rules, reasons = cfg['checkpoint'], []
+    run_limit = latest.get('run_round_limit', rules['default_rounds'])
+    cell = latest.get('cell')
+    streak = 0
+    rounds = list(history)
+    if any(k in latest for k in ('progress', 'status', 'id')) and (not rounds or latest != rounds[-1]):
+        rounds.append(latest)
+    count = latest.get('rounds_in_run', len(rounds))
+    if count >= run_limit:
+        reasons.append(dict(rule='run_round_limit', value=count, limit=run_limit))
+    for row in reversed(rounds):
+        if row.get('cell') != cell or row.get('progress') is not False:
+            break
+        streak += 1
+    if streak >= rules['no_progress_rounds']:
+        reasons.append(dict(rule='same_cell_no_progress', value=streak, limit=rules['no_progress_rounds']))
+    if latest.get('review_failures', 0) >= rules['review_failures']:
+        reasons.append(dict(rule='review_failures', value=latest['review_failures'], limit=rules['review_failures']))
+    for field in ('rule_drift', 'fixed_card_failed', 'success'):
+        if latest.get(field) is True:
+            reasons.append(dict(rule=field, value=True))
+    holdout = latest.get('holdout_return')
+    if holdout is not None and holdout < cfg['hard_lines']['annual_return_min']:
+        reasons.append(dict(rule='holdout_loss', value=holdout, threshold=cfg['hard_lines']['annual_return_min']))
+    last = latest if 'status' in latest else history[-1] if history else {}
+    return dict(stop=bool(reasons), reasons=reasons,
+                pending_merge=last.get('status') == 'accepted' and last.get('line') != 'merge')
+
+
+def freeze_switch(stability, split, cfg):
+    """Freeze only after stability and every predeclared reference/year agree.
+
+    split[account][year] contains up/weak compounded daily account returns.
+    Public-ledger state descriptions remain reported evidence, not a p-value gate.
+    """
+    rules, checks = cfg['accept']['regime'], []
+    value = stability.get('minimum')
+    checks.append(dict(rule='stability', ok=value is not None and np.isfinite(value)
+        and value >= rules['min_agreement'], value=value, threshold=rules['min_agreement']))
+    checks.append(dict(rule='causal', ok=stability.get('lookahead_ok') is True))
+    for account in cfg['reference_accounts']:
+        for year in map(str, cfg['selection_years']):
+            row = split.get(account, {}).get(year, {})
+            up, weak = row.get('up'), row.get('weak')
+            ok = up is not None and weak is not None and np.isfinite(up) and np.isfinite(weak) and up > weak
+            checks.append(dict(rule='reference_state_return', account=account, year=year,
+                               ok=bool(ok), up=up, weak=weak))
+    return dict(status='frozen' if all(r['ok'] for r in checks) else 'candidate', checks=checks,
+                holdout_used_for_selection=False)

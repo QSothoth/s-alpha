@@ -167,6 +167,8 @@ class Rules:
     entry_group_risk: bool = False  # px['entry_groups'][day]: column -> group; at most 3 new longs share one risk
     equity_state_days: int = 0      # opt-in absolute risk: above prior equity mean -> risk_high, drawdown -> risk_low
     equity_state_drawdown: float = .10
+    maintenance: float | None = None  # close equity / gross threshold; None preserves legacy behavior
+    deleverage: str = 'weakest_first'
 
 
 @dataclass
@@ -263,6 +265,12 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     daily_close = px.get('daily_close')
     mark = px.get('mark')
     d0, d1 = int(np.searchsorted(dates, start)), int(np.searchsorted(dates, end, side='right'))
+    if rules.deleverage not in ('weakest_first', 'pro_rata', 'largest_first'):
+        raise ValueError('invalid deleverage method')
+    if rules.maintenance is not None and not (np.isfinite(rules.maintenance) and 0 < rules.maintenance <= 1):
+        raise ValueError('invalid maintenance threshold')
+    if rules.maintenance is not None and rules.maintenance * rules.max_gross > 1:
+        raise ValueError('maintenance threshold is below the initial limit')
     trail = ema.get(rules.trail) if rules.trail else None
     sig_exit = ema[rules.exit_signal] if rules.exit_signal else None
     sig_exit_s = ema[rules.short_exit_signal] if rules.short_exit_signal else None
@@ -308,6 +316,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
     peak = 1.0
     braked = False
     cash, pos, trades, curve = 1.0, {}, [], []
+    margin_pending = None
     month_trades = []
     sold_today = set()
     new_all, year_new, year_ = 0, 0, ''
@@ -430,7 +439,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
         x = o[d, j]
         if rules.proof_stop:
             x = float(x)
-        return x if np.isfinite(x) else last(j, d - 1)
+        return x if np.isfinite(x) and (rules.maintenance is None or x > 0) else last(j, d - 1)
 
     def gross_open(d):
         return sum(q.size * at_open(q.j, d) for q in pos.values())
@@ -523,6 +532,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             sold_today.add(q.j)
         if audit:
             q.executions.append(dict(time=str(dates[d]), action=why, price=float(price), shares=float(size)))
+            if why == 'margin_call':
+                q.executions[-1]['why'] = why
         if q.size <= 1e-12 * q.size0:
             pos.pop(q.j, None)
             if daily_tolerance is not None and q.side > 0 and why != 'end':
@@ -565,9 +576,60 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 if why == 'end':
                     trades[-1]['state'] = q.state
 
+    def execute_margin_call(d):
+        nonlocal margin_pending
+        opening_value = lambda: sum(q.side * q.size * at_open(q.j, d) for q in pos.values())
+        excess = gross_open(d) - rules.max_gross * (cash + opening_value())
+        if excess <= 1e-12 or not pos:
+            margin_pending = None
+            return
+        available = [q for q in pos.values() if np.isfinite(o[d, q.j]) and o[d, q.j] > 0]
+        if rules.deleverage == 'pro_rata' and len(available) != len(pos):
+            return
+
+        def sell(q, size):
+            price = float(o[d, q.j])
+            size = min(q.size, size)
+            cost = rules.sell_cost if q.side > 0 else rules.buy_cost
+            entry_cost = rules.buy_cost if q.side > 0 else rules.sell_cost
+            basis = q.avg or q.fill
+            pnl = (size * (price * (1 - cost) - basis * (1 + entry_cost)) if q.side > 0 else
+                   size * (basis * (1 - entry_cost) - price * (1 + cost)))
+            margin_pending['sales'].append(dict(day=str(dates[d]), code=str(px['codes'][q.j]),
+                side=q.side, shares=float(size), price=price, value=float(size * price), pnl=float(pnl),
+                why='margin_call'))
+            close_part(q, size, price, d, 'margin_call')
+
+        if rules.deleverage == 'pro_rata' and available:
+            total = gross_open(d)
+            fee = sum(q.size * float(o[d, q.j]) * (rules.sell_cost if q.side > 0 else rules.buy_cost)
+                      for q in available)
+            denominator = total - rules.max_gross * fee
+            fraction = min(1., excess / denominator) if denominator > 0 else 1.
+            for q in available:
+                sell(q, q.size * fraction)
+        else:
+            if rules.deleverage == 'largest_first':
+                key = lambda q: (-q.size * float(o[d, q.j]), str(px['codes'][q.j]))
+            else:
+                key = lambda q: (q.side * (float(o[d, q.j]) - (q.avg or q.fill)) /
+                                 (q.risk_unit or abs(q.fill-q.stop0)),
+                                 str(px['codes'][q.j]))
+            for q in sorted(available, key=key):
+                excess = gross_open(d) - rules.max_gross * (cash + opening_value())
+                if excess <= 1e-12:
+                    break
+                cost = rules.sell_cost if q.side > 0 else rules.buy_cost
+                denominator = 1 - rules.max_gross * cost
+                sell(q, q.size if denominator <= 0 else excess / denominator / float(o[d, q.j]))
+        if not pos or gross_open(d) - rules.max_gross * (cash + opening_value()) <= 1e-12:
+            margin_pending = None
+
     def open_pos(j, side, fill, stop, kind, d, equity, size_risk=None, max_pos=None, mult=None, add_mult=None,
                  early=False, fixed=None, priority=()):
         nonlocal cash, new_risk
+        if margin_pending is not None:
+            return
         if j in pos or not np.isfinite(fill) or fill <= 0:
             return
         if rules.no_rebuy_day and j in sold_today:
@@ -721,6 +783,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
 
     def add_pos(q, price, d, frac=None, signal=False, early=False, fixed_shares=None, stop_price=None):
         nonlocal cash
+        if margin_pending is not None:
+            return
         if rules.proof_stop:
             price = float(price)
         eq = cash + (sum(p.side * p.size * at_open(p.j, d) for p in pos.values()) if early else value(d))
@@ -949,6 +1013,9 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                 if fixed is None:
                     continue
                 rec = preplanned['entry_trace'][(kind, j)]
+                if margin_pending is not None:
+                    rec['execution'] = 'margin_call_pending'
+                    continue
                 if not np.isfinite(fill) or fill <= 0:
                     rec['execution'] = 'missing_open'
                     continue
@@ -1152,6 +1219,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                         fee = rules.borrow_rate / 252 * q.size * last(q.j, d - 1)
                         cash -= fee
                         q.cash -= fee
+            if margin_pending is not None:
+                execute_margin_call(d)
         if preopen:
             from .preopen import plan
             if d > d0 and session[d] == session[d - 1]:
@@ -1218,6 +1287,8 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     fixed = preplanned['adds'].get(q.j)
                     if fixed is None:
                         status = 'preopen_not_submitted'
+                    elif margin_pending is not None:
+                        status = 'margin_call_pending'
                     elif not np.isfinite(opening) or opening <= 0:
                         status = 'missing_open'
                     elif np.float32(opening) == np.float32(fixed['limit']):
@@ -1447,7 +1518,7 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
             if j not in pos:
                 raise AssertionError('gap position vanished before the close')
             close_part(pos[j], pos[j].size, price, d, 'gap_moc')
-        if rules.gross_close and (daily_close is None or daily_close[d]):
+        if rules.gross_close and rules.maintenance is None and (daily_close is None or daily_close[d]):
             for side_ in (-1, 1):
                 for q in sorted([q for q in pos.values() if q.side == side_ and np.isfinite(c[d, q.j])],
                                 key=lambda q: -q.size * c[d, q.j]):
@@ -1459,6 +1530,11 @@ def simulate(px, ema, rules, entries, start, end, placebo=None, pool=None, audit
                     x = excess / (1 - rules.max_gross * cost) * (1 + 1e-9)    # value to take off at this close
                     close_part(q, min(q.size, x / c[d, q.j]), c[d, q.j], d, 'gross')
         curve.append(cash + value(d))
+        if (rules.maintenance is not None and margin_pending is None and pos and
+                (daily_close is None or daily_close[d]) and gross(d) * rules.maintenance > curve[-1]):
+            margin_pending = dict(signal_day=str(dates[d]), sales=[])
+            if track is not None:
+                track.setdefault('margin_calls', []).append(margin_pending)
         if track is not None:
             if daily_tolerance is not None:
                 track.setdefault('tolerance_holdings', []).append(dict(day=str(dates[d]),

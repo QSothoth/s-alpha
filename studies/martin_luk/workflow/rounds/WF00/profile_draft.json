@@ -1,0 +1,2023 @@
+{
+  "status": "草稿，未经用户确认",
+  "created": "2026-11-09",
+  "scope": "仅使用本人台账、SOURCES，另以既有B4日历按入场窗口归类；不读取分位计算行情。",
+  "date_note": "数值的date为本次读取/统计日期；SOURCES所记检索日为2026-10-16（另有10-17资料），台账原始事件日期见逐笔记录，未把统计日冒充原话发表日。",
+  "merge_note": "这是带元数据的补充草稿，不能整体覆盖现有 behaviour_card；2025赢家/输家分组天数不是原有数值days字段，合并前须先解决现有funnel只接受数值的格式问题。",
+  "method": "逐条台账记一笔；有入场日按该年，无入场日但窗口在同一年则归该年。精确日期按当日状态；其余仅在日期窗口内所有日历交易日状态相同时归类。不可定态的逐笔列出。",
+  "limitations": [
+    "台账是公开复盘样本，不是完整交易，不能当作总体概率或频率。",
+    "2026为多次查看过的历史留出*，不用于选择。",
+    "样本少于10的分组和类别均标证据弱；其余也因选择性披露保守标证据弱。",
+    "有明示均值但无统计样本量时 sample_n 为 null，不把台账笔数冒充原文样本量。"
+  ],
+  "calendar": {
+    "path": "studies/martin_luk/workflow/rounds/WF00/regime.json",
+    "version": "B4_PCT2",
+    "use": "仅分组，不用于执行",
+    "source": "studies/martin_luk/workflow/rounds/WF00/regime.json",
+    "date": "2026-11-09"
+  },
+  "year_labels": {
+    "2024": "选择年",
+    "2025": "选择年",
+    "2026": "留出*"
+  },
+  "behaviour_card": {
+    "by_state": {
+      "2024": {
+        "up": {
+          "side": {
+            "value": {
+              "long": {
+                "count": 7,
+                "fraction": 1.0,
+                "sample_n": 7,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 7,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "setup": {
+            "value": {
+              "breakout": {
+                "count": 5,
+                "fraction": 0.7142857142857143,
+                "sample_n": 7,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "ep": {
+                "count": 2,
+                "fraction": 0.2857142857142857,
+                "sample_n": 7,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 7,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [
+            "I06",
+            "I07",
+            "I08",
+            "I09",
+            "I10",
+            "I11",
+            "I12"
+          ],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        },
+        "weak": {
+          "side": {
+            "value": {
+              "long": {
+                "count": 5,
+                "fraction": 1.0,
+                "sample_n": 5,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 5,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "setup": {
+            "value": {
+              "breakout": {
+                "count": 1,
+                "fraction": 0.2,
+                "sample_n": 5,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "ep": {
+                "count": 3,
+                "fraction": 0.6,
+                "sample_n": 5,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "pullback": {
+                "count": 1,
+                "fraction": 0.2,
+                "sample_n": 5,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 5,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [
+            "I01",
+            "I02",
+            "I03",
+            "I04",
+            "I05"
+          ],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        },
+        "pullback": {
+          "side": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "setup": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        }
+      },
+      "2025": {
+        "up": {
+          "side": {
+            "value": {
+              "long": {
+                "count": 7,
+                "fraction": 0.7777777777777778,
+                "sample_n": 9,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short": {
+                "count": 2,
+                "fraction": 0.2222222222222222,
+                "sample_n": 9,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 9,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "setup": {
+            "value": {
+              "breakout": {
+                "count": 4,
+                "fraction": 0.4444444444444444,
+                "sample_n": 9,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "ep": {
+                "count": 1,
+                "fraction": 0.1111111111111111,
+                "sample_n": 9,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "parabolic_short": {
+                "count": 1,
+                "fraction": 0.1111111111111111,
+                "sample_n": 9,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "pullback": {
+                "count": 2,
+                "fraction": 0.2222222222222222,
+                "sample_n": 9,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short_pullback": {
+                "count": 1,
+                "fraction": 0.1111111111111111,
+                "sample_n": 9,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 9,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [
+            "I25",
+            "I31",
+            "I36",
+            "I40",
+            "I41",
+            "I42",
+            "I44",
+            "O01",
+            "J01"
+          ],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        },
+        "weak": {
+          "side": {
+            "value": {
+              "long": {
+                "count": 14,
+                "fraction": 0.7368421052631579,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short": {
+                "count": 5,
+                "fraction": 0.2631578947368421,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 19,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "setup": {
+            "value": {
+              "breakout": {
+                "count": 4,
+                "fraction": 0.21052631578947367,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "ep": {
+                "count": 2,
+                "fraction": 0.10526315789473684,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "parabolic_long": {
+                "count": 1,
+                "fraction": 0.05263157894736842,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "pullback": {
+                "count": 7,
+                "fraction": 0.3684210526315789,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short_breakdown": {
+                "count": 1,
+                "fraction": 0.05263157894736842,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short_ep": {
+                "count": 1,
+                "fraction": 0.05263157894736842,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short_pullback": {
+                "count": 3,
+                "fraction": 0.15789473684210525,
+                "sample_n": 19,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 19,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [
+            "I14",
+            "I15",
+            "I16",
+            "I26",
+            "I27",
+            "I28",
+            "I30",
+            "I33",
+            "I34",
+            "I35",
+            "I37",
+            "I38",
+            "I39",
+            "S01",
+            "S02",
+            "S03",
+            "S04",
+            "S05",
+            "S06"
+          ],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        },
+        "pullback": {
+          "side": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "setup": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        }
+      },
+      "2026": {
+        "up": {
+          "side": {
+            "value": {
+              "long": {
+                "count": 27,
+                "fraction": 0.5869565217391305,
+                "sample_n": 46,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short": {
+                "count": 19,
+                "fraction": 0.41304347826086957,
+                "sample_n": 46,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 46,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "setup": {
+            "value": {
+              "breakout": {
+                "count": 12,
+                "fraction": 0.2608695652173913,
+                "sample_n": 46,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "ep": {
+                "count": 5,
+                "fraction": 0.10869565217391304,
+                "sample_n": 46,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "parabolic_short": {
+                "count": 5,
+                "fraction": 0.10869565217391304,
+                "sample_n": 46,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "pullback": {
+                "count": 10,
+                "fraction": 0.21739130434782608,
+                "sample_n": 46,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short_pullback": {
+                "count": 14,
+                "fraction": 0.30434782608695654,
+                "sample_n": 46,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 46,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [
+            "S07",
+            "S08",
+            "S09",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S18",
+            "S19",
+            "S20",
+            "S21",
+            "S22",
+            "S23",
+            "S24",
+            "S25",
+            "V04",
+            "V05",
+            "V06",
+            "V07",
+            "V08",
+            "V09",
+            "V10",
+            "V11",
+            "V12",
+            "V14",
+            "V15",
+            "V16",
+            "V17",
+            "V18",
+            "V19",
+            "V20",
+            "V21",
+            "V22",
+            "V36",
+            "V37",
+            "V38",
+            "V39",
+            "V40",
+            "V41",
+            "J02",
+            "J03",
+            "J04"
+          ],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        },
+        "weak": {
+          "side": {
+            "value": {
+              "long": {
+                "count": 26,
+                "fraction": 0.6341463414634146,
+                "sample_n": 41,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short": {
+                "count": 15,
+                "fraction": 0.36585365853658536,
+                "sample_n": 41,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 41,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "setup": {
+            "value": {
+              "breakout": {
+                "count": 6,
+                "fraction": 0.14634146341463414,
+                "sample_n": 41,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "ep": {
+                "count": 2,
+                "fraction": 0.04878048780487805,
+                "sample_n": 41,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "pullback": {
+                "count": 18,
+                "fraction": 0.43902439024390244,
+                "sample_n": 41,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              },
+              "short_pullback": {
+                "count": 15,
+                "fraction": 0.36585365853658536,
+                "sample_n": 41,
+                "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+                "evidence_strength": "证据弱",
+                "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+              }
+            },
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 41,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [
+            "S26",
+            "S27",
+            "S28",
+            "S29",
+            "S30",
+            "S31",
+            "S32",
+            "S33",
+            "S34",
+            "S35",
+            "V01",
+            "V02",
+            "V03",
+            "V13",
+            "V23",
+            "V24",
+            "V25",
+            "V26",
+            "V27",
+            "V28",
+            "V29",
+            "V30",
+            "V31",
+            "V32",
+            "V33",
+            "V34",
+            "V35",
+            "V42",
+            "V43",
+            "V44",
+            "V45",
+            "V46",
+            "V47",
+            "V48",
+            "V49",
+            "V50",
+            "V51",
+            "V52",
+            "V53",
+            "V54",
+            "V55"
+          ],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        },
+        "pullback": {
+          "side": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "setup": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "turnover_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "adr_percentile": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "days": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "没有按此分组可核实的完整进出场和持有时长。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "ids": [],
+          "win": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "payoff": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "n": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          },
+          "return": {
+            "value": null,
+            "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+            "date": "2026-11-09",
+            "sample_n": 0,
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本不是完整交易或完整账户记录，不能推算该状态总体值。",
+            "draft": true,
+            "status": "证据弱，按原话"
+          }
+        }
+      }
+    },
+    "2024": {
+      "side": {
+        "value": {
+          "long": {
+            "count": 13,
+            "fraction": 1.0,
+            "sample_n": 13,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          }
+        },
+        "source": "studies/martin_luk/notes/trades.csv",
+        "date": "2026-11-09",
+        "sample_n": 13,
+        "evidence_strength": "证据弱",
+        "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+        "draft": true
+      },
+      "setup": {
+        "value": {
+          "breakout": {
+            "count": 7,
+            "fraction": 0.5384615384615384,
+            "sample_n": 13,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "ep": {
+            "count": 5,
+            "fraction": 0.38461538461538464,
+            "sample_n": 13,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "pullback": {
+            "count": 1,
+            "fraction": 0.07692307692307693,
+            "sample_n": 13,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          }
+        },
+        "source": "studies/martin_luk/notes/trades.csv",
+        "date": "2026-11-09",
+        "sample_n": 13,
+        "evidence_strength": "证据弱",
+        "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+        "draft": true
+      },
+      "turnover_percentile": {
+        "value": null,
+        "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "adr_percentile": {
+        "value": null,
+        "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "days": {
+        "value": 5,
+        "source": "studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": null,
+        "evidence_strength": "证据弱",
+        "reason": "来源称2024年平均5天，未说明用于该平均数的样本量；不是从公开台账推算。",
+        "draft": true
+      },
+      "ids": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I05",
+        "I06",
+        "I07",
+        "I08",
+        "I09",
+        "I10",
+        "I11",
+        "I12",
+        "I13"
+      ]
+    },
+    "2025": {
+      "side": {
+        "value": {
+          "long": {
+            "count": 30,
+            "fraction": 0.7317073170731707,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "short": {
+            "count": 11,
+            "fraction": 0.2682926829268293,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          }
+        },
+        "source": "studies/martin_luk/notes/trades.csv",
+        "date": "2026-11-09",
+        "sample_n": 41,
+        "evidence_strength": "证据弱",
+        "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+        "draft": true
+      },
+      "setup": {
+        "value": {
+          "breakout": {
+            "count": 12,
+            "fraction": 0.2926829268292683,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "ep": {
+            "count": 3,
+            "fraction": 0.07317073170731707,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "parabolic_long": {
+            "count": 1,
+            "fraction": 0.024390243902439025,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "parabolic_short": {
+            "count": 1,
+            "fraction": 0.024390243902439025,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "pullback": {
+            "count": 14,
+            "fraction": 0.34146341463414637,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "short_breakdown": {
+            "count": 1,
+            "fraction": 0.024390243902439025,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "short_ep": {
+            "count": 1,
+            "fraction": 0.024390243902439025,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "short_pullback": {
+            "count": 8,
+            "fraction": 0.1951219512195122,
+            "sample_n": 41,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          }
+        },
+        "source": "studies/martin_luk/notes/trades.csv",
+        "date": "2026-11-09",
+        "sample_n": 41,
+        "evidence_strength": "证据弱",
+        "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+        "draft": true
+      },
+      "turnover_percentile": {
+        "value": null,
+        "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "adr_percentile": {
+        "value": null,
+        "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "days": {
+        "value": {
+          "winner_days_about": 3,
+          "loser_days_about": 1
+        },
+        "source": "studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": null,
+        "evidence_strength": "证据弱",
+        "reason": "来源分别称赢家约3天、输家约1天，未给样本量；不是整体平均。",
+        "draft": true
+      },
+      "ids": [
+        "I14",
+        "I15",
+        "I16",
+        "I17",
+        "I18",
+        "I19",
+        "I20",
+        "I21",
+        "I22",
+        "I23",
+        "I24",
+        "I25",
+        "I26",
+        "I27",
+        "I28",
+        "I29",
+        "I30",
+        "I31",
+        "I32",
+        "I33",
+        "I34",
+        "I35",
+        "I36",
+        "I37",
+        "I38",
+        "I39",
+        "I40",
+        "I41",
+        "I42",
+        "I43",
+        "I44",
+        "I45",
+        "I46",
+        "O01",
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "J01"
+      ]
+    },
+    "2026": {
+      "side": {
+        "value": {
+          "long": {
+            "count": 53,
+            "fraction": 0.6091954022988506,
+            "sample_n": 87,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "short": {
+            "count": 34,
+            "fraction": 0.39080459770114945,
+            "sample_n": 87,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          }
+        },
+        "source": "studies/martin_luk/notes/trades.csv",
+        "date": "2026-11-09",
+        "sample_n": 87,
+        "evidence_strength": "证据弱",
+        "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+        "draft": true
+      },
+      "setup": {
+        "value": {
+          "breakout": {
+            "count": 18,
+            "fraction": 0.20689655172413793,
+            "sample_n": 87,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "ep": {
+            "count": 7,
+            "fraction": 0.08045977011494253,
+            "sample_n": 87,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "parabolic_short": {
+            "count": 5,
+            "fraction": 0.05747126436781609,
+            "sample_n": 87,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "pullback": {
+            "count": 28,
+            "fraction": 0.3218390804597701,
+            "sample_n": 87,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          },
+          "short_pullback": {
+            "count": 29,
+            "fraction": 0.3333333333333333,
+            "sample_n": 87,
+            "source": "studies/martin_luk/notes/trades.csv",
+            "evidence_strength": "证据弱",
+            "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+          }
+        },
+        "source": "studies/martin_luk/notes/trades.csv",
+        "date": "2026-11-09",
+        "sample_n": 87,
+        "evidence_strength": "证据弱",
+        "reason": "公开复盘样本非完整交易，不能视为总体比例；0笔时未观测。",
+        "draft": true
+      },
+      "turnover_percentile": {
+        "value": null,
+        "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "adr_percentile": {
+        "value": null,
+        "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有逐笔成交额或 ADR 截面分位；SOURCES 有绝对条件，不能换算成分位。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "days": {
+        "value": null,
+        "source": "studies/martin_luk/notes/trades.csv；studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "没有按此分组可核实的完整进出场和持有时长。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "ids": [
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14",
+        "S15",
+        "S16",
+        "S17",
+        "S18",
+        "S19",
+        "S20",
+        "S21",
+        "S22",
+        "S23",
+        "S24",
+        "S25",
+        "S26",
+        "S27",
+        "S28",
+        "S29",
+        "S30",
+        "S31",
+        "S32",
+        "S33",
+        "S34",
+        "S35",
+        "V01",
+        "V02",
+        "V03",
+        "V04",
+        "V05",
+        "V06",
+        "V07",
+        "V08",
+        "V09",
+        "V10",
+        "V11",
+        "V12",
+        "V13",
+        "V14",
+        "V15",
+        "V16",
+        "V17",
+        "V18",
+        "V19",
+        "V20",
+        "V21",
+        "V22",
+        "V23",
+        "V24",
+        "V25",
+        "V26",
+        "V27",
+        "V28",
+        "V29",
+        "V30",
+        "V31",
+        "V32",
+        "V33",
+        "V34",
+        "V35",
+        "V36",
+        "V37",
+        "V38",
+        "V39",
+        "V40",
+        "V41",
+        "V42",
+        "V43",
+        "V44",
+        "V45",
+        "V46",
+        "V47",
+        "V48",
+        "V49",
+        "V50",
+        "V51",
+        "V52",
+        "V53",
+        "V54",
+        "V55",
+        "J02",
+        "J03",
+        "J04"
+      ],
+      "return": {
+        "value": 8.686,
+        "source": "studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": null,
+        "evidence_strength": "证据弱",
+        "reason": "本人收益截至7月，不是全年；来源未提供交易笔数。",
+        "draft": true
+      },
+      "win": {
+        "value": null,
+        "source": "studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有2026年完整交易的此项统计。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "payoff": {
+        "value": null,
+        "source": "studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有2026年完整交易的此项统计。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      },
+      "n": {
+        "value": null,
+        "source": "studies/martin_luk/notes/SOURCES.md",
+        "date": "2026-11-09",
+        "sample_n": 0,
+        "evidence_strength": "证据弱",
+        "reason": "限定来源没有2026年完整交易的此项统计。",
+        "draft": true,
+        "status": "证据弱，按原话"
+      }
+    }
+  },
+  "unassigned_state": [
+    {
+      "id": "I13",
+      "year": "2024",
+      "entry_date": "2024-06-20",
+      "window": [
+        "2024-06-01",
+        "2024-06-28"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I17",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-05-01",
+        "2025-07-31"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I18",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-01-01",
+        "2025-12-31"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I19",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-07-01",
+        "2025-11-30"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I20",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-01-01",
+        "2025-12-31"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I21",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-12-01",
+        "2025-12-19"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I22",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-12-01",
+        "2025-12-19"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I23",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-12-01",
+        "2025-12-19"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I24",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-12-01",
+        "2025-12-19"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I29",
+      "year": "2025",
+      "entry_date": "2025-05-07",
+      "window": [
+        "2025-05-05",
+        "2025-05-08"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I32",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-01-01",
+        "2025-12-31"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I43",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-01-01",
+        "2025-12-31"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I45",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-11-01",
+        "2025-11-30"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    },
+    {
+      "id": "I46",
+      "year": "2025",
+      "entry_date": null,
+      "window": [
+        "2025-10-15",
+        "2025-12-31"
+      ],
+      "possible_states": [
+        "up",
+        "weak"
+      ],
+      "reason": "日期窗口跨状态或没有日历记录"
+    }
+  ],
+  "public_facts": {
+    "turnover": {
+      "value": "2025年10月回顾：观察名单的日均成交额大于1亿美元",
+      "source": "studies/martin_luk/notes/SOURCES.md",
+      "date": "2026-11-09",
+      "sample_n": null,
+      "evidence_strength": "证据弱",
+      "reason": "这是绝对门槛而非逐笔横截面分位。",
+      "draft": true
+    },
+    "adr": {
+      "value": "ADR大于5%",
+      "source": "studies/martin_luk/notes/SOURCES.md",
+      "date": "2026-11-09",
+      "sample_n": null,
+      "evidence_strength": "证据弱",
+      "reason": "这是绝对门槛而非逐笔横截面分位。",
+      "draft": true
+    }
+  }
+}

@@ -104,6 +104,10 @@
 - 每行字段：`id`、`date`、`line`（regime / selection / trading / conversion / merge / metric / infra）、`scope`、`sections_changed`、`mechanism`、`his_words`、`main_result`、`returns`、`verdict`、`report`、`lesson`（包括任务书写错的地方）。
 - 数字只抄报告原文，没有的写 null。
 
+### 流程问题账起头
+
+按 WORKFLOW_CN 第八节的字段，从回填总账的 `lesson` 里挑出属于流程本身的（例如尺子换过、底座回到参照系统、选股和交易混评、任务书写错），追加进 `skills/trader-replication/references/workflow_issues.jsonl`，`status` 写 open，`general` 照实判断。已经被 WORKFLOW_CN 吸收的写 applied，并注明对应条款。本轮做工具时遇到的流程问题同样追加。
+
 ## 4. 基线（放 `rounds/WF00/`，写 `REPORT_CN.md`，白话，先结论）
 
 1. **他的台账分状态画像**：按年、按月、按 B4_PCT2 状态，列他做多/做空、票档（成交额分位、ADR 分位）、形态。不比笔数密度。再对照 master、M3B 的月度盈亏。

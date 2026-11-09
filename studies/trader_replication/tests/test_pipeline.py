@@ -83,11 +83,11 @@ class PipelineTests(unittest.TestCase):
     def test_upstream_failure_blocks_paired_downstream_too(self):
         gates = {k: P.result('pass', 'test') for k in ('G0', 'G1', 'G2')}
         gates['G3'] = P.result('fail', 'coverage 65%')
-        self.assertEqual(P.allowed_actions(gates)['allowed'], ['universe', 'signal'])
+        self.assertEqual(P.allowed_actions(gates, legacy=True)['allowed'], ['universe', 'signal'])
         spec = dict(layer='trade', sections_changed=['trade'], upper_bound=1.,
                     candidates=dict(A=dict(trade=dict(risk=.01))))
         with self.assertRaises(ValueError):
-            P.validate_round(spec, {}, gates=gates)
+            P.validate_round(spec, {}, gates=gates, legacy=True)
 
     def test_signal_round_can_pair_trade_but_must_select_on_signal(self):
         gates = {k: P.result('pass', 'test') for k in ('G0', 'G1', 'G2')}
@@ -96,16 +96,16 @@ class PipelineTests(unittest.TestCase):
             paired=True, mechanism='state changes signal tiers and entry risk together',
             candidates=dict(A=dict(signal=dict(rank='tier'), trade=dict(risk=.008))))
         with self.assertRaises(ValueError):
-            P.validate_round(spec, {}, gates=gates)
+            P.validate_round(spec, {}, gates=gates, legacy=True)
         spec.update(selection_layer='signal', selection_metric='S_K3_early_coverage')
-        self.assertEqual(P.validate_round(spec, {}, gates=gates)['selection_layer'], 'signal')
+        self.assertEqual(P.validate_round(spec, {}, gates=gates, legacy=True)['selection_layer'], 'signal')
         spec['selection_layer'] = 'trade'
         with self.assertRaises(ValueError):
-            P.validate_round(spec, {}, gates=gates)
+            P.validate_round(spec, {}, gates=gates, legacy=True)
         spec['selection_layer'] = 'signal'
         gates['G1'] = P.result('fail', 'bad fills')
         with self.assertRaises(ValueError):
-            P.validate_round(spec, {}, gates=gates)
+            P.validate_round(spec, {}, gates=gates, legacy=True)
 
     def test_unobserved_weak_state_retains_quoted_rules(self):
         labels = dict(episodes=R.episodes([0]*10+[1]*10+[2]*10, list(map(str, range(30)))), spec_sha='frozen')

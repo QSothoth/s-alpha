@@ -154,7 +154,7 @@ class FacadeTests(unittest.TestCase):
             st.rounds.mkdir(parents=True)
             st.reports.mkdir()
             gates = {k: pipeline.result('pass', 'test') for k in ('G0', 'G1', 'G2')}
-            gates['G3'] = pipeline.result('fail', 'coverage below 80%')
+            gates['G1'] = pipeline.result('fail', 'bad fills')
             (st.reports/'pipeline.json').write_text(json.dumps(gates))
             spec = dict(base=['', 'base'], ref='BASE', layer='trade', sections_changed=['trade'],
                         upper_bound=1., pipeline='reports/pipeline.json', candidates=dict(A=dict(trade=dict(risk=.01))))

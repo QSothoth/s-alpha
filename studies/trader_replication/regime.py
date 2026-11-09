@@ -16,13 +16,18 @@ UP, PULLBACK, WEAK = range(3)
 DEFAULTS = dict(version=1, frozen='2026-11-08', producer='idx_ema', source='equal_weight',
                 fast=21, slow=50, band=.01, fractal=10, breadth_ratio=1.5,
                 price=5., turnover=20e6, lag=1)
+B4_DEFAULTS = dict(e9=9, e21=21, e50=50, width_fast=10, width_slow=30,
+                   turnover=100e6, fraction=.30, feedback=.5)
 
 
 def spec(options=None):
     out = dict(DEFAULTS, **(options or {}))
-    if set(out)-set(DEFAULTS):
+    b4 = out['producer'] == 'B4_PCT2'
+    if b4:
+        out = {**DEFAULTS, **B4_DEFAULTS, **(options or {})}
+    if set(out)-(set(DEFAULTS) | (set(B4_DEFAULTS) if b4 else set())):
         raise ValueError('unknown regime specification field')
-    if out['producer'] not in ('idx_ema', 'breadth', 'smc') or out['lag'] != 1:
+    if out['producer'] not in ('idx_ema', 'breadth', 'smc', 'B4_PCT2') or out['lag'] != 1:
         raise ValueError('one known producer and lag=1 required')
     for k in ('fast', 'slow', 'fractal'):
         if not isinstance(out[k], int) or isinstance(out[k], bool) or out[k] < 1:
@@ -33,6 +38,10 @@ def spec(options=None):
         raise ValueError('invalid regime thresholds')
     if out['producer'] == 'breadth' and out['source'] != 'equal_weight':
         raise ValueError('breadth uses the market basket, not an index price')
+    if b4 and (not 0 < out['fraction'] <= 1 or not 0 <= out['feedback'] <= 1
+               or any(not isinstance(out[k], int) or out[k] < 1
+                      for k in ('e9', 'e21', 'e50', 'width_fast', 'width_slow'))):
+        raise ValueError('invalid B4_PCT2 definition')
     return out
 
 
@@ -136,10 +145,74 @@ def episodes(label, days):
     return out
 
 
+class _Confirm:
+    def __init__(self, initial=0):
+        self.current, self.pending, self.count = initial, None, 0
+
+    def update(self, value):
+        if value is None:
+            self.pending, self.count = None, 0
+        else:
+            self.count = self.count+1 if self.pending == value else 1
+            self.pending = value
+            if self.count >= 3:
+                self.current = value
+        return self.current
+
+
+def b4_pct2(A, s):
+    """P5's frozen two-state definition, using only bars and own nominations.
+
+    Width and two completed closes of nomination feedback are known at t-1.
+    The three confirmations and warmup match the historical P5 definition.
+    """
+    n, m = A['close'].shape
+    means = [np.full(m, np.nan) for _ in range(3)]
+    net = np.zeros(n)
+    for t in range(n):
+        c = np.asarray(A['close'][t], float)
+        valid = np.isfinite(c) & (c > 0)
+        for values, length in zip(means, (s['e9'], s['e21'], s['e50'])):
+            fresh = valid & ~np.isfinite(values)
+            values[fresh] = c[fresh]
+            update = valid & ~fresh
+            alpha = 2/(length+1)
+            values[update] = alpha*c[update]+(1-alpha)*values[update]
+        adr = np.asarray(A['adr'][t], float)
+        liquid = valid & (A['to20'][t] >= s['turnover']) & np.isfinite(adr) & (adr > 0)
+        eligible = liquid & (adr >= np.quantile(adr[liquid], 1-s['fraction'])) if liquid.any() else liquid
+        a, b, c = means
+        net[t] = np.sum(eligible & (a > b) & (b > c))-np.sum(eligible & (a < b) & (b < c))
+    fast, slow = ema(net, s['width_fast']), ema(net, s['width_slow'])
+    width, feedback, final = _Confirm(), _Confirm(), _Confirm(WEAK)
+    columns = {str(c): j for j, c in enumerate(A['codes'])}
+    picks = A['nominations']
+    labels = np.full(n, WEAK, np.int8)
+    for t in range(n):
+        delta = fast[t-1]-slow[t-1] if t else 0.
+        w = width.update(1 if delta > 0 else -1 if delta < 0 else None) if t else 0
+        outcomes = []
+        for night in range(max(0, t-10), t-2):
+            for code in picks.get(night, ()):
+                j = columns[code]
+                opening, low = A['open'][night+1, j], A['low'][night+1, j]
+                closes = A['close'][night+1:night+3, j]
+                if np.isfinite(opening) and opening > 0 and np.isfinite(low) and low > 0 \
+                        and np.all(np.isfinite(closes) & (closes > 0)):
+                    outcomes.append(bool(np.all(closes >= low)))
+        rate = np.mean(outcomes) if outcomes else None
+        f = feedback.update((1 if rate >= s['feedback'] else -1) if len(outcomes) >= 5 else None)
+        labels[t] = final.update(UP if w == 1 and f == 1 else WEAK)
+    return labels
+
+
 def states(A, options=None):
     s = spec(options)
-    raw = {'idx_ema': idx_ema, 'breadth': breadth, 'smc': smc}[s['producer']](A, s)
-    label = np.r_[np.int8(PULLBACK), raw[:-1]] if len(raw) else raw
+    if s['producer'] == 'B4_PCT2':
+        label = b4_pct2(A, s)
+    else:
+        raw = {'idx_ema': idx_ema, 'breadth': breadth, 'smc': smc}[s['producer']](A, s)
+        label = np.r_[np.int8(PULLBACK), raw[:-1]] if len(raw) else raw
     parts = episodes(label, A['days'])
     return dict(label=label, episodes=parts, counts={name: dict(days=int(np.sum(label == k)),
         episodes=sum(p['state'] == name for p in parts)) for k, name in enumerate(NAMES)},
@@ -148,6 +221,17 @@ def states(A, options=None):
 
 def perturbations(options):
     s = spec(options)
+    if s['producer'] == 'B4_PCT2':
+        for key in ('e9', 'e21', 'e50', 'width_fast', 'width_slow'):
+            for step in (-2, 2):
+                yield f'{key}={s[key]+step}', dict(s, **{key: s[key]+step})
+        for value in (.75, 1.25):
+            yield f'turnover={s["turnover"]*value:g}', dict(s, turnover=s['turnover']*value)
+        for value in (.4, .6):
+            yield f'feedback={value}', dict(s, feedback=value)
+        for value in (.25, .35):
+            yield f'fraction={value}', dict(s, fraction=value)
+        return
     keys = {'idx_ema': ('fast', 'slow', 'band'), 'breadth': ('fast', 'slow', 'breadth_ratio'),
             'smc': ('fractal',)}[s['producer']]
     for key in keys:

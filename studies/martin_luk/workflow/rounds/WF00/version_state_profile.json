@@ -1,0 +1,1205 @@
+{
+  "date": "2026-11-09",
+  "label": "本人画像草稿；B4 只作共同拆账，仍待用户重判",
+  "definition": {
+    "state_return": "当年该状态各日实际权益日收益相乘；其他状态日跳过。",
+    "state_drawdown": "将该状态日收益依时间顺序相乘的合成序列从1起算最大回撤；并非连续行情段或真实账户全年回撤。",
+    "trades": "按首次入场日和当日B4归类；选择年平仓统计截止2025-12-31；样本台账非总体。",
+    "peak": "按冻结段首锚点日期和B4归类，峰前一日仍持仓；包括晚买。",
+    "gap": "系统多头占比减本人公开样本多头占比，单位百分点；本人样本有选择性，仅作草稿差距。",
+    "setup": "系统kind是引擎触发类型，不与本人台账setup假定等价。"
+  },
+  "switches": {
+    "v0": "无执行开关；B4仅分状态拆账。",
+    "v1": "C062的e8_scale执行开关：前日QQQ不高于21 EMA时风险乘0.5；前夜筛选池低于20夜均值时再乘0.5；两者均触发乘0.25。其自身判定，不使用B4日历。"
+  },
+  "replay_sources": {
+    "v0": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/master_L2.8_weakest_first.json",
+    "v1": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/C062_L2.8_weakest_first.json",
+    "v1_off": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/C062_L2.8_weakest_first_risk_scale_off.json"
+  },
+  "replay_sha256": {
+    "v0": "96a4d85519d6d43ff849f865cbf8596ac863d05e22910799fe7be781ac77925c",
+    "v1": "202abf33493ea975360f0a3a7e5eeb01f7a0955dd80efe7bcedfc5020639ac08",
+    "v1_off": "c240c941e412e7e897d88b654bdb29722167124931ea07cfbd1a93c57bd88423"
+  },
+  "switch_off_rules_difference": {
+    "risk_scale": [
+      "e8_scale",
+      ""
+    ]
+  },
+  "by_state": {
+    "v0": {
+      "2024": {
+        "up": {
+          "entries": 171,
+          "closed": 171,
+          "win": 0.15204678362573099,
+          "payoff": 4.71938151800182,
+          "days": 4.216374269005848,
+          "side": {
+            "long": 161,
+            "short": 10
+          },
+          "kind": {
+            "n1": 161,
+            "s_Z15": 10
+          },
+          "calendar_days": 135,
+          "return": 1.2932157551917673,
+          "max_drawdown": -0.46333444428730464,
+          "segments": 5,
+          "peak_held": 1,
+          "peak_unknown": 0,
+          "trader_sample_n": 7,
+          "trader_side": {
+            "long": {
+              "count": 7,
+              "fraction": 1.0,
+              "sample_n": 7,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": -5.847953216374268
+        },
+        "weak": {
+          "entries": 179,
+          "closed": 179,
+          "win": 0.2122905027932961,
+          "payoff": 15.866645770607686,
+          "days": 6.039106145251397,
+          "side": {
+            "long": 147,
+            "short": 32
+          },
+          "kind": {
+            "n1": 147,
+            "s_Z15": 32
+          },
+          "calendar_days": 117,
+          "return": 0.7324559255435554,
+          "max_drawdown": -0.40445033801028774,
+          "segments": 4,
+          "peak_held": 2,
+          "peak_unknown": 0,
+          "trader_sample_n": 5,
+          "trader_side": {
+            "long": {
+              "count": 5,
+              "fraction": 1.0,
+              "sample_n": 5,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": -17.87709497206704
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      },
+      "2025": {
+        "up": {
+          "entries": 102,
+          "closed": 95,
+          "win": 0.3157894736842105,
+          "payoff": 7.044719492813977,
+          "days": 8.842105263157896,
+          "side": {
+            "long": 101,
+            "short": 1
+          },
+          "kind": {
+            "n1": 101,
+            "s_Z15": 1
+          },
+          "calendar_days": 109,
+          "return": 1.9878066726023644,
+          "max_drawdown": -0.1915502696382012,
+          "segments": 7,
+          "peak_held": 3,
+          "peak_unknown": 0,
+          "trader_sample_n": 9,
+          "trader_side": {
+            "long": {
+              "count": 7,
+              "fraction": 0.7777777777777778,
+              "sample_n": 9,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 2,
+              "fraction": 0.2222222222222222,
+              "sample_n": 9,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 21.24183006535948
+        },
+        "weak": {
+          "entries": 178,
+          "closed": 178,
+          "win": 0.24157303370786518,
+          "payoff": 4.459550495750498,
+          "days": 4.421348314606742,
+          "side": {
+            "long": 119,
+            "short": 59
+          },
+          "kind": {
+            "n1": 119,
+            "s_Z15": 59
+          },
+          "calendar_days": 141,
+          "return": 0.1500544641344448,
+          "max_drawdown": -0.4764893029259534,
+          "segments": 15,
+          "peak_held": 1,
+          "peak_unknown": 0,
+          "trader_sample_n": 19,
+          "trader_side": {
+            "long": {
+              "count": 14,
+              "fraction": 0.7368421052631579,
+              "sample_n": 19,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 5,
+              "fraction": 0.2631578947368421,
+              "sample_n": 19,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": -6.830277942046125
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      },
+      "2026": {
+        "up": {
+          "entries": 119,
+          "closed": 116,
+          "win": 0.16379310344827586,
+          "payoff": 6.268074773625852,
+          "days": 5.413793103448276,
+          "side": {
+            "long": 115,
+            "short": 4
+          },
+          "kind": {
+            "n1": 115,
+            "s_Z15": 4
+          },
+          "calendar_days": 94,
+          "return": 3.483366231662444,
+          "max_drawdown": -0.3647521703459876,
+          "segments": 8,
+          "peak_held": 1,
+          "peak_unknown": 0,
+          "trader_sample_n": 46,
+          "trader_side": {
+            "long": {
+              "count": 27,
+              "fraction": 0.5869565217391305,
+              "sample_n": 46,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 19,
+              "fraction": 0.41304347826086957,
+              "sample_n": 46,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 37.943003288271825
+        },
+        "weak": {
+          "entries": 141,
+          "closed": 140,
+          "win": 0.17142857142857143,
+          "payoff": 8.042046396940641,
+          "days": 4.121428571428571,
+          "side": {
+            "long": 103,
+            "short": 38
+          },
+          "kind": {
+            "n1": 103,
+            "s_Z15": 38
+          },
+          "calendar_days": 105,
+          "return": -0.44161470881033515,
+          "max_drawdown": -0.6186011765589396,
+          "segments": 9,
+          "peak_held": 3,
+          "peak_unknown": 0,
+          "trader_sample_n": 41,
+          "trader_side": {
+            "long": {
+              "count": 26,
+              "fraction": 0.6341463414634146,
+              "sample_n": 41,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 15,
+              "fraction": 0.36585365853658536,
+              "sample_n": 41,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 9.635011243729464
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      }
+    },
+    "v1": {
+      "2024": {
+        "up": {
+          "entries": 203,
+          "closed": 203,
+          "win": 0.11822660098522167,
+          "payoff": 5.869314633835408,
+          "days": 4.669950738916256,
+          "side": {
+            "long": 203,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 203
+          },
+          "calendar_days": 135,
+          "return": 0.7920722089656917,
+          "max_drawdown": -0.16165896025253013,
+          "segments": 5,
+          "peak_held": 3,
+          "peak_unknown": 0,
+          "trader_sample_n": 7,
+          "trader_side": {
+            "long": {
+              "count": 7,
+              "fraction": 1.0,
+              "sample_n": 7,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 0.0
+        },
+        "weak": {
+          "entries": 179,
+          "closed": 179,
+          "win": 0.12290502793296089,
+          "payoff": 11.561337679258372,
+          "days": 6.033519553072626,
+          "side": {
+            "long": 179,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 179
+          },
+          "calendar_days": 117,
+          "return": -0.0998715126650882,
+          "max_drawdown": -0.21791085936804933,
+          "segments": 4,
+          "peak_held": 1,
+          "peak_unknown": 0,
+          "trader_sample_n": 5,
+          "trader_side": {
+            "long": {
+              "count": 5,
+              "fraction": 1.0,
+              "sample_n": 5,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 0.0
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      },
+      "2025": {
+        "up": {
+          "entries": 137,
+          "closed": 135,
+          "win": 0.17777777777777778,
+          "payoff": 16.52081373807491,
+          "days": 6.451851851851852,
+          "side": {
+            "long": 137,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 137
+          },
+          "calendar_days": 109,
+          "return": 0.6046070729475306,
+          "max_drawdown": -0.19462561806019518,
+          "segments": 7,
+          "peak_held": 3,
+          "peak_unknown": 0,
+          "trader_sample_n": 9,
+          "trader_side": {
+            "long": {
+              "count": 7,
+              "fraction": 0.7777777777777778,
+              "sample_n": 9,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 2,
+              "fraction": 0.2222222222222222,
+              "sample_n": 9,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 22.22222222222222
+        },
+        "weak": {
+          "entries": 236,
+          "closed": 235,
+          "win": 0.11914893617021277,
+          "payoff": 10.3384978052143,
+          "days": 4.182978723404255,
+          "side": {
+            "long": 236,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 236
+          },
+          "calendar_days": 141,
+          "return": -0.01928091763445372,
+          "max_drawdown": -0.2905400012917586,
+          "segments": 15,
+          "peak_held": 6,
+          "peak_unknown": 0,
+          "trader_sample_n": 19,
+          "trader_side": {
+            "long": {
+              "count": 14,
+              "fraction": 0.7368421052631579,
+              "sample_n": 19,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 5,
+              "fraction": 0.2631578947368421,
+              "sample_n": 19,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 26.315789473684216
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      },
+      "2026": {
+        "up": {
+          "entries": 145,
+          "closed": 145,
+          "win": 0.09655172413793103,
+          "payoff": 3.1558816654976765,
+          "days": 3.4413793103448276,
+          "side": {
+            "long": 145,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 145
+          },
+          "calendar_days": 94,
+          "return": 0.003981947756310333,
+          "max_drawdown": -0.20802707091369865,
+          "segments": 8,
+          "peak_held": 1,
+          "peak_unknown": 0,
+          "trader_sample_n": 46,
+          "trader_side": {
+            "long": {
+              "count": 27,
+              "fraction": 0.5869565217391305,
+              "sample_n": 46,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 19,
+              "fraction": 0.41304347826086957,
+              "sample_n": 46,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 41.30434782608695
+        },
+        "weak": {
+          "entries": 188,
+          "closed": 188,
+          "win": 0.09042553191489362,
+          "payoff": 13.191253853635898,
+          "days": 4.026595744680851,
+          "side": {
+            "long": 188,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 188
+          },
+          "calendar_days": 105,
+          "return": -0.14649794624218826,
+          "max_drawdown": -0.16773112341865948,
+          "segments": 9,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 41,
+          "trader_side": {
+            "long": {
+              "count": 26,
+              "fraction": 0.6341463414634146,
+              "sample_n": 41,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 15,
+              "fraction": 0.36585365853658536,
+              "sample_n": 41,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 36.58536585365854
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      }
+    },
+    "v1_off": {
+      "2024": {
+        "up": {
+          "entries": 203,
+          "closed": 203,
+          "win": 0.11822660098522167,
+          "payoff": 5.8939038369300265,
+          "days": 4.669950738916256,
+          "side": {
+            "long": 203,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 203
+          },
+          "calendar_days": 135,
+          "return": 0.5084066470120308,
+          "max_drawdown": -0.27024729223703625,
+          "segments": 5,
+          "peak_held": 3,
+          "peak_unknown": 0,
+          "trader_sample_n": 7,
+          "trader_side": {
+            "long": {
+              "count": 7,
+              "fraction": 1.0,
+              "sample_n": 7,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 0.0
+        },
+        "weak": {
+          "entries": 179,
+          "closed": 179,
+          "win": 0.12290502793296089,
+          "payoff": 11.575800481147201,
+          "days": 6.033519553072626,
+          "side": {
+            "long": 179,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 179
+          },
+          "calendar_days": 117,
+          "return": -0.12196964751870765,
+          "max_drawdown": -0.26520540976257123,
+          "segments": 4,
+          "peak_held": 1,
+          "peak_unknown": 0,
+          "trader_sample_n": 5,
+          "trader_side": {
+            "long": {
+              "count": 5,
+              "fraction": 1.0,
+              "sample_n": 5,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 0.0
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      },
+      "2025": {
+        "up": {
+          "entries": 137,
+          "closed": 135,
+          "win": 0.17777777777777778,
+          "payoff": 16.53916613968037,
+          "days": 6.451851851851852,
+          "side": {
+            "long": 137,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 137
+          },
+          "calendar_days": 109,
+          "return": 1.159115723965864,
+          "max_drawdown": -0.2606254753823666,
+          "segments": 7,
+          "peak_held": 3,
+          "peak_unknown": 0,
+          "trader_sample_n": 9,
+          "trader_side": {
+            "long": {
+              "count": 7,
+              "fraction": 0.7777777777777778,
+              "sample_n": 9,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 2,
+              "fraction": 0.2222222222222222,
+              "sample_n": 9,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 22.22222222222222
+        },
+        "weak": {
+          "entries": 236,
+          "closed": 235,
+          "win": 0.11914893617021277,
+          "payoff": 10.345142312529644,
+          "days": 4.182978723404255,
+          "side": {
+            "long": 236,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 236
+          },
+          "calendar_days": 141,
+          "return": -0.01787150275596161,
+          "max_drawdown": -0.4490014196344716,
+          "segments": 15,
+          "peak_held": 6,
+          "peak_unknown": 0,
+          "trader_sample_n": 19,
+          "trader_side": {
+            "long": {
+              "count": 14,
+              "fraction": 0.7368421052631579,
+              "sample_n": 19,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 5,
+              "fraction": 0.2631578947368421,
+              "sample_n": 19,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 26.315789473684216
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      },
+      "2026": {
+        "up": {
+          "entries": 145,
+          "closed": 145,
+          "win": 0.09655172413793103,
+          "payoff": 3.158752483814536,
+          "days": 3.4413793103448276,
+          "side": {
+            "long": 145,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 145
+          },
+          "calendar_days": 94,
+          "return": 0.03828182639630384,
+          "max_drawdown": -0.3245295088747857,
+          "segments": 8,
+          "peak_held": 1,
+          "peak_unknown": 0,
+          "trader_sample_n": 46,
+          "trader_side": {
+            "long": {
+              "count": 27,
+              "fraction": 0.5869565217391305,
+              "sample_n": 46,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 19,
+              "fraction": 0.41304347826086957,
+              "sample_n": 46,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 41.30434782608695
+        },
+        "weak": {
+          "entries": 188,
+          "closed": 188,
+          "win": 0.09042553191489362,
+          "payoff": 13.205187916814085,
+          "days": 4.026595744680851,
+          "side": {
+            "long": 188,
+            "short": 0
+          },
+          "kind": {
+            "ie47_close_pdh": 188
+          },
+          "calendar_days": 105,
+          "return": -0.30427789644685777,
+          "max_drawdown": -0.30492572667609474,
+          "segments": 9,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 41,
+          "trader_side": {
+            "long": {
+              "count": 26,
+              "fraction": 0.6341463414634146,
+              "sample_n": 41,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            },
+            "short": {
+              "count": 15,
+              "fraction": 0.36585365853658536,
+              "sample_n": 41,
+              "source": "studies/martin_luk/notes/trades.csv；状态日期匹配 studies/martin_luk/workflow/rounds/WF00/regime.json",
+              "evidence_strength": "证据弱",
+              "reason": "公开复盘样本非完整交易；少于10笔的类别尤其不稳定"
+            }
+          },
+          "long_share_gap_pp": 36.58536585365854
+        },
+        "pullback": {
+          "entries": 0,
+          "closed": 0,
+          "win": null,
+          "payoff": null,
+          "days": null,
+          "side": {
+            "long": 0,
+            "short": 0
+          },
+          "kind": {},
+          "calendar_days": 0,
+          "return": null,
+          "max_drawdown": null,
+          "segments": 0,
+          "peak_held": 0,
+          "peak_unknown": 0,
+          "trader_sample_n": 0,
+          "trader_side": {},
+          "long_share_gap_pp": null
+        }
+      }
+    }
+  },
+  "holding_2025_by_outcome": {
+    "v0": {
+      "win": {
+        "n": 73,
+        "days": 16.863013698630137
+      },
+      "loss": {
+        "n": 200,
+        "days": 1.98
+      }
+    },
+    "v1": {
+      "win": {
+        "n": 52,
+        "days": 20.076923076923077
+      },
+      "loss": {
+        "n": 318,
+        "days": 2.547169811320755
+      }
+    }
+  },
+  "switch_comparison": {
+    "v0": "不适用：无执行开关",
+    "v1": {
+      "2024": {
+        "annual_on": {
+          "peak_held": 4,
+          "early_buy": 3,
+          "segments": 9,
+          "return": 0.6130952466512225,
+          "win": 0.12041884816753927,
+          "payoff": 8.55099077225736,
+          "trades": 382,
+          "closed": 382,
+          "days": 5.30890052356021,
+          "max_gross": 2.26417304261066,
+          "mean_gross": 1.0494440586569231,
+          "behaviour_within": 1,
+          "behaviour_sourced": 3,
+          "margin_calls": 0,
+          "margin_sales": 0,
+          "margin_sold_value": 0,
+          "margin_sold_pnl": 0
+        },
+        "annual_off": {
+          "peak_held": 4,
+          "early_buy": 3,
+          "segments": 9,
+          "return": 0.32442681996109846,
+          "win": 0.12041884816753927,
+          "payoff": 8.580872914617066,
+          "trades": 382,
+          "closed": 382,
+          "days": 5.30890052356021,
+          "max_gross": 2.800028334533127,
+          "mean_gross": 1.4486383981280386,
+          "behaviour_within": 1,
+          "behaviour_sourced": 3,
+          "margin_calls": 0,
+          "margin_sales": 0,
+          "margin_sold_value": 0,
+          "margin_sold_pnl": 0
+        },
+        "annual_max_drawdown_on": -0.21905317848965866,
+        "annual_max_drawdown_off": -0.38019790819377364,
+        "annual_max_drawdown_delta": -0.16114472970411498,
+        "annual_delta_off_minus_on": {
+          "return": -0.28866842669012405,
+          "win": 0.0,
+          "payoff": 0.0298821423597051,
+          "trades": 0,
+          "days": 0.0,
+          "peak_held": 0,
+          "max_gross": 0.5358552919224673
+        },
+        "by_state": {
+          "up": {
+            "return": -0.283665561953661,
+            "max_drawdown": -0.10858833198450613,
+            "peak_held": 0,
+            "entries": 0,
+            "win": 0.0,
+            "payoff": 0.024589203094618206,
+            "days": 0.0,
+            "long_share_gap_pp": 0.0
+          },
+          "weak": {
+            "return": -0.022098134853619444,
+            "max_drawdown": -0.047294550394521906,
+            "peak_held": 0,
+            "entries": 0,
+            "win": 0.0,
+            "payoff": 0.014462801888829091,
+            "days": 0.0,
+            "long_share_gap_pp": 0.0
+          },
+          "pullback": {
+            "return": null,
+            "max_drawdown": null,
+            "peak_held": 0,
+            "entries": 0,
+            "win": null,
+            "payoff": null,
+            "days": null,
+            "long_share_gap_pp": null
+          }
+        }
+      },
+      "2025": {
+        "annual_on": {
+          "peak_held": 9,
+          "early_buy": 6,
+          "segments": 22,
+          "return": 0.5736687761383674,
+          "win": 0.14054054054054055,
+          "payoff": 12.579346628728032,
+          "trades": 373,
+          "closed": 370,
+          "days": 5.010810810810811,
+          "max_gross": 1.99616579907018,
+          "mean_gross": 0.8186110251621825,
+          "behaviour_within": 0,
+          "behaviour_sourced": 3,
+          "margin_calls": 0,
+          "margin_sales": 0,
+          "margin_sold_value": 0,
+          "margin_sold_pnl": 0
+        },
+        "annual_off": {
+          "peak_held": 9,
+          "early_buy": 6,
+          "segments": 22,
+          "return": 1.12052908135457,
+          "win": 0.14054054054054055,
+          "payoff": 12.589215046118456,
+          "trades": 373,
+          "closed": 370,
+          "days": 5.010810810810811,
+          "max_gross": 2.653310224413632,
+          "mean_gross": 1.2013573709391507,
+          "behaviour_within": 0,
+          "behaviour_sourced": 3,
+          "margin_calls": 0,
+          "margin_sales": 0,
+          "margin_sold_value": 0,
+          "margin_sold_pnl": 0
+        },
+        "annual_max_drawdown_on": -0.2768184403747631,
+        "annual_max_drawdown_off": -0.4294983704655645,
+        "annual_max_drawdown_delta": -0.15267993009080139,
+        "annual_delta_off_minus_on": {
+          "return": 0.5468603052162027,
+          "win": 0.0,
+          "payoff": 0.009868417390423545,
+          "trades": 0,
+          "days": 0.0,
+          "peak_held": 0,
+          "max_gross": 0.657144425343452
+        },
+        "by_state": {
+          "up": {
+            "return": 0.5545086510183335,
+            "max_drawdown": -0.0659998573221714,
+            "peak_held": 0,
+            "entries": 0,
+            "win": 0.0,
+            "payoff": 0.01835240160545837,
+            "days": 0.0,
+            "long_share_gap_pp": 0.0
+          },
+          "weak": {
+            "return": 0.0014094148784921101,
+            "max_drawdown": -0.158461418342713,
+            "peak_held": 0,
+            "entries": 0,
+            "win": 0.0,
+            "payoff": 0.006644507315343162,
+            "days": 0.0,
+            "long_share_gap_pp": 0.0
+          },
+          "pullback": {
+            "return": null,
+            "max_drawdown": null,
+            "peak_held": 0,
+            "entries": 0,
+            "win": null,
+            "payoff": null,
+            "days": null,
+            "long_share_gap_pp": null
+          }
+        }
+      },
+      "2026": {
+        "annual_on": {
+          "peak_held": 1,
+          "early_buy": 4,
+          "segments": 17,
+          "return": -0.14309934565422233,
+          "win": 0.09309309309309309,
+          "payoff": 8.694273762454804,
+          "trades": 333,
+          "closed": 333,
+          "days": 3.7717717717717716,
+          "max_gross": 2.010516542617792,
+          "mean_gross": 0.5456833543350162,
+          "behaviour_within": null,
+          "behaviour_sourced": null,
+          "margin_calls": 0,
+          "margin_sales": 0,
+          "margin_sold_value": 0,
+          "margin_sold_pnl": 0
+        },
+        "annual_off": {
+          "peak_held": 1,
+          "early_buy": 4,
+          "segments": 17,
+          "return": -0.27764438365856525,
+          "win": 0.09309309309309309,
+          "payoff": 8.702909264316961,
+          "trades": 333,
+          "closed": 333,
+          "days": 3.7717717717717716,
+          "max_gross": 2.1467989711508615,
+          "mean_gross": 0.8889946963557507,
+          "behaviour_within": null,
+          "behaviour_sourced": null,
+          "margin_calls": 0,
+          "margin_sales": 0,
+          "margin_sold_value": 0,
+          "margin_sold_pnl": 0
+        },
+        "annual_max_drawdown_on": -0.3395408758973607,
+        "annual_max_drawdown_off": -0.5194474376237674,
+        "annual_max_drawdown_delta": -0.17990656172640673,
+        "annual_delta_off_minus_on": {
+          "return": -0.13454503800434292,
+          "win": 0.0,
+          "payoff": 0.008635501862157113,
+          "trades": 0,
+          "days": 0.0,
+          "peak_held": 0,
+          "max_gross": 0.1362824285330695
+        },
+        "by_state": {
+          "up": {
+            "return": 0.03429987863999351,
+            "max_drawdown": -0.11650243796108706,
+            "peak_held": 0,
+            "entries": 0,
+            "win": 0.0,
+            "payoff": 0.002870818316859758,
+            "days": 0.0,
+            "long_share_gap_pp": 0.0
+          },
+          "weak": {
+            "return": -0.1577799502046695,
+            "max_drawdown": -0.13719460325743527,
+            "peak_held": 0,
+            "entries": 0,
+            "win": 0.0,
+            "payoff": 0.013934063178187017,
+            "days": 0.0,
+            "long_share_gap_pp": 0.0
+          },
+          "pullback": {
+            "return": null,
+            "max_drawdown": null,
+            "peak_held": 0,
+            "entries": 0,
+            "win": null,
+            "payoff": null,
+            "days": null,
+            "long_share_gap_pp": null
+          }
+        }
+      }
+    }
+  },
+  "holdout": "2026 留出*已反复查看，不是独立样本外，仅报告。"
+}

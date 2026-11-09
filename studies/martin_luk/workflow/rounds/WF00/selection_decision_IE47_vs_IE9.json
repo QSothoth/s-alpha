@@ -1,0 +1,63 @@
+{
+ "status": "accepted",
+ "line": "selection",
+ "checks": [
+  {
+   "rule": "selection_year_gain",
+   "ok": true,
+   "years": [
+    "2024",
+    "2025"
+   ],
+   "candidate": [
+    8,
+    14
+   ],
+   "compare": [
+    3,
+    14
+   ],
+   "delta": 5,
+   "threshold": 3
+  },
+  {
+   "rule": "no_year_decrease",
+   "ok": true,
+   "candidate": [
+    8,
+    14
+   ],
+   "compare": [
+    3,
+    14
+   ]
+  },
+  {
+   "rule": "nomination_width",
+   "ok": true,
+   "candidate": [
+    2.988095238095238,
+    3.0
+   ],
+   "threshold": 5.0
+  },
+  {
+   "rule": "unique_names",
+   "ok": true,
+   "candidate": [
+    219,
+    216
+   ],
+   "compare": [
+    196,
+    194
+   ],
+   "growth": 0.2
+  }
+ ],
+ "selection_years": [
+  "2024",
+  "2025"
+ ],
+ "holdout_used_for_selection": false
+}

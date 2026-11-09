@@ -1,0 +1,161 @@
+{
+ "status": "pass",
+ "reason": "reference and engineering checks passed",
+ "numbers": {
+  "checks": {
+   "data": {
+    "ok": true,
+    "why": [],
+    "span": [
+     "2024-01-02",
+     "2025-12-31"
+    ]
+   },
+   "fills": {
+    "ok": true,
+    "executions": 1448,
+    "bad": [],
+    "n_bad": 0
+   },
+   "win_rate": {
+    "ok": true,
+    "status": "checked",
+    "win": 0.21990369181380418,
+    "trades": 623,
+    "max_win": 0.35,
+    "note": ""
+   },
+   "lookahead": {
+    "ok": true,
+    "cuts": [
+     {
+      "cut": "2024-09-30",
+      "ok": true,
+      "diff": []
+     },
+     {
+      "cut": "2025-09-30",
+      "ok": true,
+      "diff": []
+     }
+    ]
+   }
+  },
+  "code_sha": "503d3177a96e5061080f7304ed467b638236a90aec2370d0040951fa1cac7b7a",
+  "data_sha": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158",
+  "is_reference": true
+ },
+ "run": {
+  "system": "registered martin_luk R74 + S7 master",
+  "market": "us",
+  "mode": "frozen",
+  "selection_span": [
+   "2024-01-02",
+   "2025-12-31"
+  ],
+  "full_panel_cut": "2025-12-31",
+  "cutoff_dates": [
+   "2024-09-30",
+   "2025-09-30"
+  ],
+  "approach": "native full and each truncated panel rebuilt separately; gate.check_lookahead compares their persisted native decisions",
+  "adjustment_limit": "upto is sliced after forward adjustment; later corporate actions are not independently replayed",
+  "source_sha256": {
+   "studies/martin_luk/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "studies/martin_luk/fetch_r8.py": "b2ad8ae99b729fbb39208f76cd64433f63896aa7ed1bab50d203692ca9342a31",
+   "studies/martin_luk/intraday.py": "e44474ad2973d914604c2515588cc5741905dec8586dedc36c2620d14b47dcad",
+   "studies/martin_luk/luk.py": "79de2e6bd821b59c9f399bcd4c3ad8962267033c52492452c13c65f3e734090b",
+   "studies/martin_luk/replicate.py": "9a911c38e96352becf60413cca6bd0d283e14e8b20aea11a3ecf96bcf9b0b866",
+   "studies/martin_luk/reports/final_system_r74.json": "d0b9ee825aaf51930449e32bfb141aedfe0674d1930574f679407f1a63d1b278",
+   "studies/martin_luk/reports/s7.json": "20c8e6fc1456c8e2e376691eb9375750ac342e4d7f8be672a14edcab8719d842",
+   "studies/martin_luk/selection.py": "da8f71dec97d3258edca0f7c892c77e61503715ad4f9f00c604a5096f55b34e6",
+   "studies/martin_luk/workflow/config.json": "7f29c942fdf0584ef3c67c9c2873c9bcbc64ff807533085a8473950ac63a9afb",
+   "studies/martin_luk/workflow/rounds/WF00/work/g1_master.py": "eb4ed148a958fd1ec02f0015569c7cd16bcee7029bedd534d9fa9a882196d4a3",
+   "studies/trader_data/__init__.py": "2a835dc4b7517d2b565ed606d294e7d08ab0feea46ace27d70fa08a72f5336fe",
+   "studies/trader_data/dataset.py": "776accc81f441b277e43f551be15841213a2cfa7be80444b32c929b264207db2",
+   "studies/trader_data/live.py": "06dd171d5d8cda7276f05c9b64352fbfe1fb6290e207c42d1968add227c2c0a7",
+   "studies/trader_data/panel.py": "5bc893f388ce0e177db7572b5a7e9bc6ab3771ed6fac894052aff24f97ebbc03",
+   "studies/trader_data/providers.py": "85b669817ccac616731885625c264c5edcd451ac2e4dfe83d4eb6b99fc78ce37",
+   "studies/trader_replication/DATA_PIN.json": "9ca3d4597a49f8937d13e52088a21d266e1054fbae08058ad84f904775f3adb8",
+   "studies/trader_replication/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "studies/trader_replication/allocation.py": "d55adb0ca3872c1c7854fca8f8f502712f6d7c4bf5d05624ef8a60302d08f60e",
+   "studies/trader_replication/compare.py": "0f337a0f348a63339541317131e9e1914d44ed8d184d1dd969285e672b1986ce",
+   "studies/trader_replication/config.py": "0cd8a369989f3571d338cc4dd4563eb2311e1df4f9d2e2a98ed96f397f85d713",
+   "studies/trader_replication/edge.py": "7d251887650a6275ba10fada49fc06ca4e5e39d9aa3c5aeaf2fa7fe6df3d23b8",
+   "studies/trader_replication/fidelity.py": "c5749c7ca34cb0a42023e2b22a266cb19d4cbe73f88c4db6eae41c975e4b5dd9",
+   "studies/trader_replication/gate.py": "10e7241c37ee64758c31634d46970536e91223ab21f70ca89114bb763d15e8e2",
+   "studies/trader_replication/human.py": "0f4b160e422677f835cb726bb1d043279ec1501e7ba7cffc24ef0d44e78496ae",
+   "studies/trader_replication/ledger.py": "94e086eebd4e623b242a8b6a693f61e16839d25d895f189ddf193970fc59ad2f",
+   "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+   "studies/trader_replication/martin.py": "5f70d72852a705451613534db2e1cd15ab1c22e9580408c8a5026cfc0fd049de",
+   "studies/trader_replication/negations.py": "ee59b97756219196cfbd8277b960931eedef262d699b8311e5fc14493766671e",
+   "studies/trader_replication/panels.py": "f3413a71bf9ddbf9e0de490a99f68f287bd32ef1075de697a20ea9ed9d351306",
+   "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+   "studies/trader_replication/regime.py": "eb26f7bcc95f29260eed2ec83ede53258db426b8cf29b6336f2369e4d6547609",
+   "studies/trader_replication/shorts.py": "5089cd3044d6084dbc381663d8fb302235bf372d13c72efd1389e60112c50635",
+   "studies/trader_replication/study.py": "976e188a2c56a5981b5f73ce42b13f36ced631f2aa9bf335eb4d69cfa4bf3d61",
+   "studies/trader_replication/success.py": "44ba379ddd7f2b6031aedd6b81bb51a7a88dd24d5bbd80ae9e69699d355b4613",
+   "studies/trader_replication/system.py": "17e1156c9547ff4f2e9feba11ead9fdf4a9a0c85942278ad20715fea5ed9e974",
+   "studies/trader_replication/systems.py": "43eb1da6ff9519aa115253b3655b34818c0d631f653ae991f9999c6a27b38ddf"
+  },
+  "pinned_market_digest": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158",
+  "datasets_checksums": {
+   "trader-data-v1": "812054a6f67600b4df2dde3d093c1a8062ae9632d1c9f34e7f8189aaf301d9ca",
+   "trader-options-v1": "ad35e5da3be288c72230201fddae8722cb4dd7a99e25b5f8bde4b723d345f69b",
+   "martin-luk-benchmarks-v1": "c75ecd0b127efccbc0b66fc8576891ddc115dd3ced6f2ea4ce9f8c782a2b0c35"
+  },
+  "trade_count": 630,
+  "closed_by_entry_year": {
+   "2024": {
+    "closed": 350,
+    "wins": 64
+   },
+   "2025": {
+    "closed": 273,
+    "wins": 73
+   }
+  },
+  "fills_bad_trades": [],
+  "winning_trades": [],
+  "lookahead_differences": {},
+  "processes": [
+   {
+    "cut": "2025-12-31",
+    "elapsed_seconds": 11.806651651160792,
+    "resources": {
+     "peak_rss_bytes": 563404800,
+     "cgroup_peak_bytes": 596926464,
+     "memory_max_bytes": 943718400,
+     "cpu_max": "60000 100000"
+    }
+   },
+   {
+    "cut": "2024-09-30",
+    "elapsed_seconds": 6.619872345821932,
+    "resources": {
+     "peak_rss_bytes": 341716992,
+     "cgroup_peak_bytes": 392110080,
+     "memory_max_bytes": 943718400,
+     "cpu_max": "60000 100000"
+    }
+   },
+   {
+    "cut": "2025-09-30",
+    "elapsed_seconds": 8.863005111925304,
+    "resources": {
+     "peak_rss_bytes": 518201344,
+     "cgroup_peak_bytes": 556335104,
+     "memory_max_bytes": 943718400,
+     "cpu_max": "60000 100000"
+    }
+   }
+  ],
+  "comparison_elapsed_seconds": 0.5025146359112114,
+  "comparison_resources": {
+   "peak_rss_bytes": 177844224,
+   "cgroup_peak_bytes": 90624000,
+   "memory_max_bytes": 943718400,
+   "cpu_max": "60000 100000"
+  }
+ }
+}

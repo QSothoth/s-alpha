@@ -1,0 +1,99 @@
+{
+ "systems": {
+  "master": {
+   "trades": 890,
+   "rules_sha256": "228ea2a1e4a4c1f99033720c45477ce066ea110a122bcc9752772ce18e71006f",
+   "account_source": "studies/martin_luk/reports/p4_work/a1/master",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  },
+  "M3B": {
+   "trades": 790,
+   "rules_sha256": "cb8deb3b7c096c9c4eef0a9dc619f069f4436cbd22953abfb733baba0873a8ed",
+   "account_source": "studies/martin_luk/reports/m3_work/validation/continuous",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  },
+  "X1_OPEN": {
+   "trades": 1126,
+   "rules_sha256": "d17f60c5d49f93f3c1ee1d430499d68af51595e0b219ee97ce51c6c5826a9034",
+   "account_source": "studies/martin_luk/reports/p4_work/accounts/X1_OPEN",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  },
+  "S1_NOBLOCK": {
+   "trades": 1111,
+   "rules_sha256": "33fb6a34681d042c0dad63e11696811481a0d7782585606b3691c741ba2cec74",
+   "account_source": "studies/martin_luk/reports/p5_work/accounts/S1_NOBLOCK",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  },
+  "S2_CLOSESTOP": {
+   "trades": 1010,
+   "rules_sha256": "7d7d9bc82732891a59406e414f4b88655ea91fe7d0b773203ea00597e265011f",
+   "account_source": "studies/martin_luk/reports/p5_work/accounts/S2_CLOSESTOP",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  },
+  "S3_BOTH": {
+   "trades": 968,
+   "rules_sha256": "8bebe5bfd4cdecd5dae1c659dac6ceaa0a0a1c447aecd99f75f25618081014fd",
+   "account_source": "studies/martin_luk/reports/p5_work/accounts/S3_BOTH",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  },
+  "IE9_master": {
+   "trades": 722,
+   "rules_sha256": "228ea2a1e4a4c1f99033720c45477ce066ea110a122bcc9752772ce18e71006f",
+   "account_source": "studies/martin_luk/reports/p4_work/a1/IE9_master",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  },
+  "C062": {
+   "trades": 1088,
+   "rules_sha256": "7d0e448a9b38526fc94f13ada9c10580676e6bc928dab3f65e37f36b4eb4ebb3",
+   "account_source": "studies/martin_luk/reports/e21_work/BASE_full/C062_2024",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  },
+  "K2": {
+   "trades": 1274,
+   "rules_sha256": "6cfa5f03ff88a1477973052d1a3c014eb136dd672238e969b29a68c6b5517ce9",
+   "account_source": "studies/martin_luk/reports/e15_work/full/K2_2024",
+   "data_files": [],
+   "mode": "saved_account_replay",
+   "note": "现成台账不重新打开上游原始行情；上游实际打开记录另列native audit"
+  }
+ },
+ "expected_datasets": [
+  "trader-data-v1",
+  "trader-options-v1",
+  "trader-hourly-v1",
+  "martin-luk-benchmarks-v1"
+ ],
+ "unexpected": [],
+ "no_data_writes": true,
+ "no_new_datasets": true,
+ "native_audits": [
+  "native_master_audit.json",
+  "native_ie47_audit.json"
+ ],
+ "native_dataset_counts": {
+  "trader-options-v1": 3433,
+  "trader-data-v1": 3,
+  "trader-data": 1,
+  "martin-luk-benchmarks-v1": 1
+ },
+ "unused_expected": [
+  "trader-hourly-v1"
+ ],
+ "derived_cache_note": "trader-data/cache由studies.trader_data.panel构建；WF00只读，原生重放未写缓存。已有P3/U1映射只用于复算既有工件，并核对原生master/IE47输入。"
+}

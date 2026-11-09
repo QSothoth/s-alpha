@@ -1,0 +1,312 @@
+{
+  "version": "B4_PCT2",
+  "date": "2026-11-09",
+  "decision": "证据弱（按原话可用）",
+  "effect": "仅供用户决定；不改config、state或冻结状态；不构成接受任何执行开关。",
+  "checks": [
+    {
+      "rule": "只用当日之前的数据",
+      "result": "通过",
+      "evidence": "regime.py b4_pct2：宽度取t-1；点名反馈只用night≤t-3的两次已完成收盘；三日确认逐日推进；regime.json前缀一致。"
+    },
+    {
+      "rule": "扰动日重合率≥配置门槛",
+      "result": "通过",
+      "minimum": 0.9482071713147411,
+      "threshold": 0.9,
+      "variants": [
+        {
+          "variant": "e9=7",
+          "agreement": 0.9760956175298805,
+          "by_state": {
+            "up": 0.952191235059761,
+            "pullback": null,
+            "weak": 0.9543726235741445
+          }
+        },
+        {
+          "variant": "e9=11",
+          "agreement": 0.9721115537848606,
+          "by_state": {
+            "up": 0.9442231075697212,
+            "pullback": null,
+            "weak": 0.9471698113207547
+          }
+        },
+        {
+          "variant": "e21=19",
+          "agreement": 0.9840637450199203,
+          "by_state": {
+            "up": 0.9678714859437751,
+            "pullback": null,
+            "weak": 0.9693486590038314
+          }
+        },
+        {
+          "variant": "e21=23",
+          "agreement": 0.9760956175298805,
+          "by_state": {
+            "up": 0.9523809523809523,
+            "pullback": null,
+            "weak": 0.9541984732824428
+          }
+        },
+        {
+          "variant": "e50=48",
+          "agreement": 0.9920318725099602,
+          "by_state": {
+            "up": 0.9838709677419355,
+            "pullback": null,
+            "weak": 0.9844961240310077
+          }
+        },
+        {
+          "variant": "e50=52",
+          "agreement": 0.9940239043824701,
+          "by_state": {
+            "up": 0.9878542510121457,
+            "pullback": null,
+            "weak": 0.9883720930232558
+          }
+        },
+        {
+          "variant": "width_fast=8",
+          "agreement": 0.9760956175298805,
+          "by_state": {
+            "up": 0.952191235059761,
+            "pullback": null,
+            "weak": 0.9543726235741445
+          }
+        },
+        {
+          "variant": "width_fast=12",
+          "agreement": 0.9681274900398407,
+          "by_state": {
+            "up": 0.9367588932806324,
+            "pullback": null,
+            "weak": 0.939622641509434
+          }
+        },
+        {
+          "variant": "width_slow=28",
+          "agreement": 0.9940239043824701,
+          "by_state": {
+            "up": 0.9877551020408163,
+            "pullback": null,
+            "weak": 0.9884615384615385
+          }
+        },
+        {
+          "variant": "width_slow=32",
+          "agreement": 0.9800796812749004,
+          "by_state": {
+            "up": 0.9603174603174603,
+            "pullback": null,
+            "weak": 0.9615384615384616
+          }
+        },
+        {
+          "variant": "turnover=7.5e+07",
+          "agreement": 0.9601593625498008,
+          "by_state": {
+            "up": 0.9224806201550387,
+            "pullback": null,
+            "weak": 0.9242424242424242
+          }
+        },
+        {
+          "variant": "turnover=1.25e+08",
+          "agreement": 0.9701195219123506,
+          "by_state": {
+            "up": 0.9409448818897638,
+            "pullback": null,
+            "weak": 0.9429657794676806
+          }
+        },
+        {
+          "variant": "feedback=0.4",
+          "agreement": 0.9940239043824701,
+          "by_state": {
+            "up": 0.9878542510121457,
+            "pullback": null,
+            "weak": 0.9883720930232558
+          }
+        },
+        {
+          "variant": "feedback=0.6",
+          "agreement": 0.9721115537848606,
+          "by_state": {
+            "up": 0.9426229508196722,
+            "pullback": null,
+            "weak": 0.9485294117647058
+          }
+        },
+        {
+          "variant": "fraction=0.25",
+          "agreement": 0.9482071713147411,
+          "by_state": {
+            "up": 0.8968253968253969,
+            "pullback": null,
+            "weak": 0.9057971014492754
+          }
+        },
+        {
+          "variant": "fraction=0.35",
+          "agreement": 0.9701195219123506,
+          "by_state": {
+            "up": 0.9409448818897638,
+            "pullback": null,
+            "weak": 0.9429657794676806
+          }
+        }
+      ],
+      "source": "studies/martin_luk/workflow/rounds/WF00/regime.json#stability（选择年，沿用既有结果）"
+    },
+    {
+      "rule": "每个实际状态对应原话",
+      "result": "通过（只对应近似条件）",
+      "states": {
+        "up": {
+          "words_index": [
+            0,
+            1
+          ],
+          "mapping": "高ADR票中的领涨减落后宽度改善且既有点名反馈改善，近似原话名单宽度和新仓反馈。"
+        },
+        "weak": {
+          "words_index": [
+            0,
+            1
+          ],
+          "mapping": "宽度或反馈未同时改善，近似市况变差及新仓反馈变弱。默认和暖机也落入weak，不等于真实下跌。"
+        }
+      },
+      "note": "二态定义不产生pullback；不使用QQQ/IWM比较、指数回踩或50EMA空头形态，不能宣称复刻这些原话。"
+    },
+    {
+      "rule": "选择年本人分状态做法差异与原话方向",
+      "result": "证据弱",
+      "selection_year_states": {
+        "up": {
+          "n": 16,
+          "sides": {
+            "long": 14,
+            "short": 2
+          },
+          "setups": {
+            "breakout": 9,
+            "ep": 3,
+            "short_pullback": 1,
+            "pullback": 2,
+            "parabolic_short": 1
+          },
+          "ids": [
+            "I06",
+            "I07",
+            "I08",
+            "I09",
+            "I10",
+            "I11",
+            "I12",
+            "I25",
+            "I31",
+            "I36",
+            "I40",
+            "I41",
+            "I42",
+            "I44",
+            "O01",
+            "J01"
+          ]
+        },
+        "weak": {
+          "n": 24,
+          "sides": {
+            "long": 19,
+            "short": 5
+          },
+          "setups": {
+            "breakout": 5,
+            "pullback": 8,
+            "ep": 5,
+            "short_pullback": 3,
+            "short_breakdown": 1,
+            "parabolic_long": 1,
+            "short_ep": 1
+          },
+          "ids": [
+            "I01",
+            "I02",
+            "I03",
+            "I04",
+            "I05",
+            "I14",
+            "I15",
+            "I16",
+            "I26",
+            "I27",
+            "I28",
+            "I30",
+            "I33",
+            "I34",
+            "I35",
+            "I37",
+            "I38",
+            "I39",
+            "S01",
+            "S02",
+            "S03",
+            "S04",
+            "S05",
+            "S06"
+          ]
+        }
+      },
+      "reason": "按同一口径，weak的空头占比略高，但样本少、日期窗口不可定态且台账是选择性复盘；原话具体强调IWM相对QQQ和个股50EMA，B4没有这些指标。形态差异仅描述，原话没有明确绑定二态。",
+      "frequency": "不比较逐年或跨状态的笔数密度：公开台账披露不完整，不能识别真实频率。",
+      "ticket_class": "限定来源无成交额/ADR分位，无法对照。",
+      "holding": "无按状态可靠的持有分布，无法对照。",
+      "year_state_source": "profile_draft.json#behaviour_card.by_state"
+    }
+  ],
+  "reference_returns_report_only": {
+    "master": {
+      "2024": {
+        "up": 1.2932157551917673,
+        "pullback": null,
+        "weak": 0.7324559255435554
+      },
+      "2025": {
+        "up": 1.9878066726023644,
+        "pullback": null,
+        "weak": 0.1500544641344448
+      },
+      "2026": {
+        "up": 3.483366231662444,
+        "pullback": null,
+        "weak": -0.44161470881033515
+      }
+    },
+    "M3B": {
+      "2024": {
+        "up": 1.9483801793774917,
+        "pullback": null,
+        "weak": 0.9712398669357905
+      },
+      "2025": {
+        "up": 1.2859826988016558,
+        "pullback": null,
+        "weak": 0.04642831778323697
+      },
+      "2026": {
+        "up": 3.9029418941907412,
+        "pullback": null,
+        "weak": -0.620063555059244
+      }
+    }
+  },
+  "warnings": [
+    "2024、2025各状态及空头样本少；留出*数据未用于此结论。",
+    "2025除可定态28笔外仍有13笔窗口跨态，不能假装确定状态。"
+  ]
+}

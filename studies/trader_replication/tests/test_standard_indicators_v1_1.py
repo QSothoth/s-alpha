@@ -1,7 +1,10 @@
 """v1.1 inclusion, exact earlier values and per-indicator causal clocks."""
 import json
+import hashlib
 from pathlib import Path
+import tempfile
 import unittest
+from unittest.mock import patch
 import warnings
 
 import numpy as np
@@ -300,12 +303,15 @@ class V11IndicatorsTest(unittest.TestCase):
 
     def test_44_legacy_columns_match_old_cache_and_price_is_checked_against_raw(self):
         path = dedup.GAP/'ie39_work/pool_legacy.npz'
-        self.assertTrue(path.exists(), 'run --version v1.1 --verify-legacy before this integration check')
+        old_path = dedup.GAP/'ie29_work/indicators_h4nan_v2.npz'
+        if not path.exists() or not old_path.exists():
+            self._check_preserved_legacy_snapshot()
+            return
         provenance = json.loads((path.parent/'legacy_consistency.json').read_text())
         self.assertEqual(provenance['library_sha256'], dedup.library_hash())
         with np.load(path) as z:
             names, actual = list(z['names']), z['x']
-        with np.load(dedup.GAP/'ie29_work/indicators_h4nan_v2.npz') as z:
+        with np.load(old_path) as z:
             old_names, expected = list(z['names']), z['x']
         self.assertEqual(set(names), set(lib.LEGACY_NAMES))
         self.assertEqual(len(names), 45)
@@ -317,6 +323,42 @@ class V11IndicatorsTest(unittest.TestCase):
             earlier = expected[old_names.index(name)]
             np.testing.assert_array_equal(np.isnan(row), np.isnan(earlier), err_msg=name)
             np.testing.assert_allclose(row, earlier, rtol=0, atol=1e-6, equal_nan=True, err_msg=name)
+
+    def _check_preserved_legacy_snapshot(self):
+        root = dedup.ROOT/'studies/martin_luk/reports/e1_work/legacy_cache_before'
+        hashes = json.loads((root/'sha256.json').read_text())
+        for name, digest in hashes.items():
+            with (root/name).open('rb') as stream:
+                self.assertEqual(hashlib.file_digest(stream, 'sha256').hexdigest(), digest, name)
+        provenance = json.loads((root/'legacy_consistency.json').read_text())
+        self.assertTrue(provenance['passed'])
+        self.assertEqual(provenance['compared_indicators'], 44)
+        current_library = dedup.library_hash()
+        with np.load(root/'pool_legacy.npz') as z:
+            names, expected = list(z['names']), z['x']
+        with np.load(root/'legacy_rows.npz') as z:
+            codes, row_day = list(map(str, z['codes'])), z['day']
+        metadata = json.loads((dedup.SOURCE/'prepared.json').read_text())
+        # Regenerate into a temporary test directory; never restore a deleted data cache.
+        with tempfile.TemporaryDirectory() as directory, patch.object(dedup, 'WORK', Path(directory)), \
+                patch.object(dedup, 'VERSION', 'v1.1'):
+            actual_names, actual = dedup.legacy_pool_matrix(codes, row_day, metadata['days'], metadata['scope'])
+        self.assertEqual(current_library, dedup.library_hash())
+        self.assertEqual(set(actual_names), set(lib.LEGACY_NAMES))
+        self.assertEqual(len(actual_names), 45)
+        for name, row in zip(actual_names, actual):
+            frozen = expected[names.index(name)]
+            np.testing.assert_array_equal(np.isnan(row), np.isnan(frozen), err_msg=name)
+            np.testing.assert_allclose(row, frozen, rtol=0, atol=1e-6, equal_nan=True, err_msg=name)
+        code_array = np.asarray(codes)
+        price = actual[actual_names.index('price')]
+        for code in dict.fromkeys(codes):
+            rows = np.flatnonzero(code_array == code)
+            with np.load(dedup.SOURCE/'stocks'/(code+'.npz')) as z:
+                raw = z['raw_c'][row_day[rows]] if 'raw_c' in z.files else np.full(len(rows), np.nan)
+            np.testing.assert_allclose(price[rows], raw, rtol=0, atol=1e-9, equal_nan=True, err_msg=code)
+        self.assertEqual(provenance['exempt_indicators'], ['price'])
+        self.assertTrue(provenance['price_matches_raw_c'])
 
 
 if __name__ == '__main__':

@@ -299,38 +299,29 @@ G2 逐状态检验，统计单位是 episode。调用者在预登记里固定一
 
 效果归因还须报告关掉 Switch 且匹配平均敞口的对照；`pipeline.exposure_scale` 给出同平均敞口的全局倍数，不自动运行新账户。本轮 P1 只描述三种标签，不选择 Switch、不测候选收益。
 
-## 13. 七道卡子的工件与允许动作
+## 13. 固定卡、行情层、三条线与合并验收
 
-`pipeline.g0` 到 `g6` 返回 `status / reason / numbers`，具体通过线见 SKILL 的七行表。G0 的 manifest 包含 `files`，按 trades、legs、split 各给相对 study 根的路径与 SHA；split JSON 分别给 `select`、`validate` 的起止日。`claims` 按已使用的节列原话、出处和 timestamp，未启用的 switch 可不填，视频来源也可直接含时间戳；`public` 逐项给 value 与 source，未公开的 value 为 null。参照 G1 用 `is_reference=True` 先查自身，再给其他系统作参照。G1 消费既有四个 `gate.check_*` 的完整结果、参照 G1 结果及源码和数据指纹，不把“未检查”当过关。
+规则以 [WORKFLOW_CN](WORKFLOW_CN.md) 为准，编排入口为 `.claude/workflows/trader-replication-loop.js`。新流程不再依次等 G2、G3 通过才做下游；G0 资料和 G1 数据、引擎仍是起点固定卡，G4/G5 是合并终点的行为、账户标准，G6 冻结仍需用户同意。原 g0–g6 函数与第12节的历史 G2 检验保留，旧轮次的判定不回改。
 
-G3 的 `folds[年份]` 每折给已冻结的 `picks`、`trained_years`、`model_sha`、样本属性，可选 ranks。三年逐折使用 S0 原函数 K=3、10日冷却，覆盖按首锚点年；计算全日历后再读留出年，跨年冷却及跨年合格夜都保留。另用相同点名计算不限K的新名均数≤5，避免宽名单经 K=3 截断后把宽度门槛变成恒真。主留出覆盖≥80%；其他两折也全报并报告均值，缺模型记未观测，不能新增拟合来填格子。`upper_bound` 是开轮前池与合格窗口的可达上限，不足80%就回上游。
+行情只有一份市场状态供三条线共用，最多三态、两个有本人原话的开关。`regime.states` 提供原三种 producer 及 WF00 接入的 B4_PCT2；后者复用 P5 百分位宽度、已成熟点名反馈和三日确认，状态 t 只用 t−1 以前信息。B4 的自身点名必须显式提供，不从台账构造。`freeze_switch(stability, split, cfg)` 检查定义扰动重合与固定参照账户每个选择年进攻日收益大于防守日；台账画像只报告，无样本标未观测。市场级未冻结不开题材级。
 
-G4、G5 按 episode 留一，读同一冻结策略的事实，不重新拟合。G4 按首次开仓所属 episode 分交易，报留出段与其余段的已平仓笔数、胜率、盈亏比和持有。G5 按实际日历段分账户回报，报该段与剔除该段的复合收益；这只是整段剔除描述，不假装删除交易后重配资金。完整年度硬线仍在全账上查，不能把一个短 episode 当作完整年比较52笔。
-
-| 最早未通过卡子 | `allowed_actions` 允许 | 禁止 |
+| 线 | 输入与主尺 | 接受与护栏 |
 |---|---|---|
-| G0 | sources | 进入收益逼近 |
-| G1 | data、engine | 改策略解释坏数据 |
-| G2 | switch | 调个股排序、止损或账户 |
-| G3 | 主改universe、signal；可paired改allocate、trade，选择仍看覆盖 | 用下游收益代替上游覆盖 |
-| G4 | allocate、trade | 放宽覆盖或改段表 |
-| G5 | diagnose | 无新机制就继续开轮；先定位并重开对应 G3/G4 证据 |
-| G6 | freeze | 未经用户同意登记新冻结版 |
+| 选股 | 冻结点名；mainleg 的 S 早期合格夜、K=3、10晚冷却 | 选择年总覆盖增加且每年不降；同冷却不限K宽度及每年不同票数不扩张过多 |
+| 交易 | 测试台每天喂他的段的票，同晚自身点名的其他票作对照；同账户同执行 | 峰前持有增加、他的段平均R不降；对照盈亏和行为贴合项数不退 |
+| 衔接 | 选股与交易的冻结版；点到→早买→峰前持有 | 峰前持有增加、选择年每年不亏 |
+| 合并 | 冻结段表上的全账户逐段漏斗 | 峰前持有逐年不降，仓位占比及行为项数不退，并查成功标准 |
 
-新 round 示例：
+数值阈值只从交易员 `workflow/config.json` 读取；`pipeline.accept(line, candidate, compare, cfg)` 返回 accepted 或 branch，以及每条条件的数字和原因。指标输入是 `annual[year]` 与 pooled `selection`，只消费 `selection_years`，不让留出年参与选择。`checkpoint` 检查运行轮数、同格无进步、审查失败、留出亏损、固定卡失败、规则漂移与成功标准。运行预算由调用参数传入，不写死在判定代码。
 
-```json
-{
-  "layer": "signal",
-  "sections_changed": ["signal"],
-  "upper_bound": 0.9,
-  "pipeline": "reports/pipeline.json",
-  "base": ["", "base"],
-  "ref": "BASE",
-  "candidates": {"A": {"signal": {"rank": "adr"}}}
-}
-```
+`funnel.measure` 将每段按首次失败阶段计入 L0–L6，复用 mainleg 的首实际lot时钟与 S0投影。早买后又买不重置首笔；峰前持有按峰前一日收盘股数，期末估值不当卖出。历史真实账户可以绕过诊断用K=3，必须显式标出。L6 是早买且峰前持有；P5 的 peak_held 还包含晚买后持有，两者同时报告，不能把这两个数混写。按年、状态列层数、仓位/权益、行为与逐夜准入原因。
 
-`validate_round` 对比实际配置差异，校验每个候选只改声明层。成对改还要 `paired: true`、`mechanism` 说明和准确的 sections_changed。G3未过时，primary layer仍须在universe/signal，另声明 `selection_layer` 与该层相同、`selection_metric` 为上游主尺，才可同时修改allocate/trade；资料、工程等更早卡子仍阻止越层。`allowed_actions` 为G3另列 `paired_downstream`。这些是声明校验，不能替代对实际选择代码的核对；P3以覆盖选择先落chosen、后揭2026和运行账户保证，未声称所有旧选择器自动按S选方案。`Study.round` 在加载行情前读卡子 JSON 并校验，拒绝新轮次把 placebo 用作否决条件。`legacy_rounds.json` 是 P1 开始时已有轮次的路径与 SHA，原文件兼容；新文件或改写的旧文件不享受豁免。
+`funnel.execution_bench` 在评测侧构造 oracle 点名，只把市场字段与普通有序名单传给执行；执行期间的 open 审计拒绝台账/段表文件。买点、止损、仓位和退出均来自现成执行。这个接口验证输入边界，不是对任意 Python 代码的安全沙箱。跨年未到峰前日的段要报未知与上下界，不得借留出结果决定选择。
 
-按年份留一的信号与按 episode 留一的交易都只是稳定性核对。已反复看过的2026只标“留出*”；唯一独立样本外是 G6 后逐日保留的 forward。G6 检查用户同意、三市场、robust报告、指纹、登记和日期一致性，不自动修改登记系统。
+配置保留 universe/signal/allocate/trade/switch 五节与旧扁平别名。每节可写 `common` 和 `by_state`；`Config(..., regime_frozen=True).for_state(state)` 显式解析冻结状态，未冻结有修正时报错，嵌套修正也按叶子参数计数、每状态最多两项。该解析器不自动改写旧系统的逐日执行；接入新策略时仍须验证使用了哪份状态配置。
+
+新 round JSON 继续校验 `layer`、实际 `sections_changed` 和 `upper_bound`，一次只改声明线的一格。旧文件按 legacy_rounds 的路径与 SHA 兼容，历史 G3 paired 规则仍保留；动态 workflow 的一次一线要求还须核对实际代码，声明校验不能代替事实核对。
+
+每轮先读 `STATUS.json` 与 append-only 总账，按漏斗丢段最多的线、可补段数定格。接受一条线后下一轮强制合并；master 只作底线比较对象，不回到其成交额排序底座。2026 只标“留出*”，不把反复使用的数据称独立样本外；G6 后的 forward 才是独立记录。
+
+数据登记、批准与逐项核对由 `datasets` 工具提供；白名单草案的 `approved_by_user` 为 null 时不得开策略轮。WF00 的缺清单数据须如实报失败，不补写原始数据集。workflow 的编排约定、已有检查函数和历史研究资格分别报告，不声称已自动保证所有旧选择器的行为。
