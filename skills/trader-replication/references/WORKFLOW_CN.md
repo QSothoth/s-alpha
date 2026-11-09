@@ -6,7 +6,13 @@
 
 迭代中最容易漂移的是：尺子被换、目标被放宽、底座悄悄回到参照系统、同一机制反复试、选股和交易混在一起评。所以以下由用户掌握，任何 agent 和 Codex 都不能改：
 
-- **本文件**、各交易员 `config.json` 的 `goal`、`hard_lines`、`accept`、`checkpoint` 四节，以及尺子和判定代码（`studies/trader_replication/pipeline.py`、`funnel.py`、`mainleg.py`）。每次运行开始时记下它们的指纹，每轮开头重新核对；变了就立刻停下，报告“规则漂移”。改这些就是改规则，须用户同意，旧轮次判定不回改。
+- **本文件**、各交易员 `config.json` 的 `goal`、`hard_lines`、`accept`、`checkpoint`、`datasets` 五节，以及尺子和判定代码（`studies/trader_replication/pipeline.py`、`funnel.py`、`mainleg.py`）。每次运行开始时记下它们的指纹，每轮开头重新核对；变了就立刻停下，报告“规则漂移”。改这些就是改规则，须用户同意，旧轮次判定不回改。
+- **数据集白名单**：`datasets` 节逐个登记可用数据集，包括名称、Release tag、本地路径、`CHECKSUMS.sha256` 的 SHA，以及 schema（文件、列名与类型、市场、日期范围、标的数）。要求如下：
+  - 流程里只能读登记过的数据集，以及经 `studies.trader_data` 由它们派生的缓存；
+  - 不新增、不修改、不替换数据集，不改 schema，也不在代码里引用未登记的数据路径；
+  - 每轮“量”都核对文件与 CHECKSUMS、schema 是否一致，不一致按固定卡失败停下；
+  - 方案需要新数据或改数据时，直接进检查点，写明需要什么数据、为什么，等用户同意后由用户改 `datasets` 节；
+  - 新登记的 `datasets` 节要用户确认后，把 `approved_by_user` 填上日期才生效，没填就不开轮。
 - **阈值只写在 config**，代码从 config 读，不写死数字；本文件只讲含义。
 - **判定由 Codex 在轮末调用 `pipeline.accept` 算出**，写进 completion.json，核对步骤重算一次，记账只照抄。
 - **留出年结果不进入下一轮设计的输入**：历史记录只带选择年，留出年只决定是否进检查点。
@@ -122,7 +128,7 @@
 | 定格 + 设计 | 见下文 | Opus |
 | 审查 | 独立挑错，最多改两次。清单见下文 | Opus |
 | 跑 | Codex 执行：预登记 → 选择 → 留出一次 → 报告 → `pipeline.accept` 判定 → 重出 `STATUS.json` | Sonnet，低推理（只负责启动和等待） |
-| 核对 | 流程：时间顺序、只用选择年、登记版、看板和判定代码未改、测试全过。数字：从 json 复算关键数，漏斗分层之和等于段数，重算判定 | Sonnet |
+| 核对 | 流程：时间顺序、只用选择年、登记版、看板和判定代码未改、测试全过；数据集核对与改动代码的路径扫描都通过。数字：从 json 复算关键数，漏斗分层之和等于段数，重算判定 | Sonnet |
 | 记账 | 照抄已核对的判定，写总账和 state | Sonnet，低推理 |
 
 **定格 + 设计**：
@@ -137,6 +143,7 @@
 **审查清单**：
 
 - 未来函数；策略侧是否读了他的台账、票名、日期、段表；
+- 是否只用 `datasets` 白名单里的数据，有没有新增或改动数据、引用未登记路径；
 - 选择和留出是否分开；参照账户和比较对象是否事先写死；可达上限是否先算；
 - 是否只改了声明的线和格子；
 - 翻译和实现上的老坑：宽止损配固定风险导致仓位太小（H1）；小试仓占满名额（H2）；加仓后止损没跟上（H2）；过滤过严导致可达上限过低（H2）；冷却挡住再买（P5）；止损只有约半个 ADR、盘中被扫（P5）；选错参照账户（P5）；
@@ -186,4 +193,8 @@ systemd-run --unit=codex-$n --collect -p CPUQuota=60% -p AllowedCPUs=0-1 -p Nice
 pid=$(systemctl show -p MainPID --value codex-$n); [ "$pid" != 0 ] && timeout 570 tail --pid=$pid -f /dev/null; systemctl is-active codex-$n
 ```
 
-磁盘剩余低于 800MB 时，只清理本轮自己的重复中间文件。
+数据和磁盘：
+
+- 只用 `datasets` 白名单（见第一节）。不新建数据集，也不另存同一份行情的面板副本，面板一律走 `studies.trader_data` 的缓存。核对命令：`.venv/bin/python -m studies.trader_replication.datasets check --config <config.json>`；扫描本轮改动代码：`... datasets scan --config <config.json> --git-diff`。
+- 本轮中间文件只放 `rounds/WFnn/work/`。轮末只保留 completion.json 里 `keep` 列出、下一轮或报告复算真正要用的文件，合计不超过 100MB，其余删掉；completion.json 记下轮前、轮后的磁盘剩余。
+- 磁盘剩余低于 800MB 时，先清本轮自己的中间文件；还不够就停下报告，不碰本轮以外的东西。
