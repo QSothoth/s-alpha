@@ -174,10 +174,10 @@
  "bar": "master",
  "metrics_round": "WF00",
  "pending_merge": false,
- "next_round": "WF03",
+ "next_round": "WF04",
  "bootstrap_done": true,
  "can_start_round": true,
- "rounds_run": 2,
+ "rounds_run": 3,
  "blocked_reasons": [],
  "rule_drift": {
   "status": "resolved",
@@ -245,7 +245,7 @@
  },
  "rule_fingerprints": {
   ".claude/workflows/trader-replication-loop.js": "b5d929c2080b965ecb2ab051b5c0db8c051f94cebe19910f47fdea29870ea4c9",
-  "skills/trader-replication/references/WORKFLOW_CN.md": "a83dcddf5effc4bec0a3a559aed4ef0287c31ff527cab2f2063de690a8faa6d1",
+  "skills/trader-replication/references/WORKFLOW_CN.md": "79e4f1f282656d5e497f0ad0057bc442dad4840d49d2da13bea5c3fe1b8460d8",
   "studies/martin_luk/workflow/config.json": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
   "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
   "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
@@ -497,6 +497,17 @@
      "new": "a83dcddf5effc4bec0a3a559aed4ef0287c31ff527cab2f2063de690a8faa6d1"
     }
    }
+  },
+  {
+   "date": "2026-11-09",
+   "approved_by": "leader per user 2026-11-09 (lead-dont-ask)",
+   "change": "检查点 WF03–WF04：max_open 交易线与衔接线共有；腾名额类方案先量占位、可达上限按当晚排队；Codex 环境由启动命令设定",
+   "files": {
+    "skills/trader-replication/references/WORKFLOW_CN.md": {
+     "old": "a83dcddf5effc4bec0a3a559aed4ef0287c31ff527cab2f2063de690a8faa6d1",
+     "new": "79e4f1f282656d5e497f0ad0057bc442dad4840d49d2da13bea5c3fe1b8460d8"
+    }
+   }
   }
  ],
  "recent_rounds": [
@@ -515,11 +526,19 @@
    "main": "W2A 峰前持有 12 vs v1 11",
    "returns": "W2A +140.0%/+50.6%",
    "date": "2026-11-09"
+  },
+  {
+   "round": "WF03",
+   "line": "trading",
+   "verdict": "branch",
+   "main": "测试台峰前持有最好 T1 16 vs C062 15（B0 16）",
+   "returns": "T2 测试台 +148.3%/+100.5%",
+   "date": "2026-11-09"
   }
  ],
  "checkpoint": {
   "date": "2026-11-09",
-  "reason": "同一格 joint×(conversion+trading common) 连续 2 轮（WF01、WF02）无进步",
+  "reason": "WF04 定格：交易线单独已到可达上限，剩余缺口是名额被赢家占满（衔接线），本次 line=trading 无法改；审查 1 否定停滞离场假设，任务书未交 Codex",
   "report": "studies/martin_luk/workflow/CHECKPOINT_CN.md"
  }
 }

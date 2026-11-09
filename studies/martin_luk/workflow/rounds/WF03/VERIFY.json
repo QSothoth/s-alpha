@@ -1,0 +1,27 @@
+{
+ "round": "WF03",
+ "ok": true,
+ "problems": [],
+ "notes": [
+  "时间顺序：mechanism_release/reachable/d0/equivalence/baseline（11:38-11:46）< PREREG_CN.md（11:47:09，sha effdeb51…，与 selection.json 记录及自身 sha256 一致）< candidates_wf03.py（11:49:13）< candidate_T1/T2/T3.json（11:49:29-33）< REPORT_CN.md（12:09:29）；codex.log 同序。abort_run1 是研究计算前因环境变量/读取顺序而中止的空跑，无结果。",
+  "只用选择年：三份候选曲线末日与最晚成交/离场均为 2025-12-31，run_wf03.END 写死 2025-12-31；completion.holdout.executed=false，未见 2026 回放。",
+  "受保护文件：state.json、attempts.jsonl、versions.json、config.json、system.py、pipeline.py、funnel.py、mainleg.py、WORKFLOW_CN.md、loop.js 的 git diff 为空，sha256 与 state.json.rule_fingerprints 全部一致；frozen/ 九个缓存 manifest sha 与 state.frozen_caches 一致、manifest 内文件校验 0 处不符、06:00 后无新文件；work/protected_check.json 132 个受保护文件无变化。已跟踪文件的改动仅 rounds/WF03 下 PLAN_CN.md、measure.json、rules_pin.txt（量步骤更新规则指纹，仍在本轮目录内）。未跟踪的新代码只有 wf03_engine.py、wf03_trading.py、tests/test_wf03_trading.py；workflow/tools/wfcheck.js 和 workflow/frozen/ 未跟踪但 mtime 早于本轮（wfcheck 09:52，frozen 03–05 点），不属本轮改动。",
+  "wf03_engine.py 与 system.py 的 diff 只有：import 改绝对路径、Rules 新增 confirmed_close_stop 字段、proof_stop 新增 'stop0' 取值及其分支、证实后收盘止损分支；默认值下路径等价。",
+  "等价性：我自己用 run_wf03.prepare/execute 重跑 C062，副本引擎与 system.simulate 在同一入场簿上 difference(copy, original)==None（含 track），compare_frozen ok（768 笔已平仓、3 笔跨年持仓、曲线逐位一致），且与 work/baseline_C062.json 的 record 逐位相同。equivalence.json 对 C062、B0 均声明 copy_matches_original=true，依据是逐位 != 比较而非容差。",
+  "数字复算（从 work/baseline_*.json、candidate_T*.json 的 attribution/coverage 重算）：峰前持有 C062 5/10、B0 6/10、T1 6/10、T2 5/9、T3 4/8；his_mean_r 22.3094/22.4694/30.8172/32.0202/28.7070；control_pnl 1.4718/3.0805/-0.2988/2.7836/4.6043；已平对照 R 之和 1193.01/1311.87/394.14/1470.95/1575.10（笔数 721/704/641/589/530）；behaviour_within 与报告第 2 节主尺表全部一致，段数 28。",
+  "放行表：从 mechanism_replays.json 逐笔重算，B0 平均 R 1.7277/99 笔≥5R，Q1 2.0190/125，Q2 3.0208/142，Q1Q2 3.2599/161，Q3 1.6073/104，Q4 1.6455/111（分母 1240），与 mechanism_release.json 完全一致；按预登记规则（两项均不低于 B0 且至少一项严格提高）放行 Q1、Q2，Q3、Q4 因平均 R 下降不放行，T4、T5 被删，判断正确。",
+  "选择规则：pipeline.accept('trading', 候选, C062, cfg) 我重算 T1、T2、T3 均为 branch，checks 与 completion.decision（原样为 T1 的 accept）及各候选 accept 逐项相同。T1：+1 段、控制 pnl 低于 C062、R 之和 394<1193，不合格；T2：-1 段、行为项 0<1、对 B0 的 pnl 护栏不过；T3：-3 段、行为项 0<1。无人合格，故无最终版、无消融、无留出，符合预登记。",
+  "第 3 节抽查：28 段 × 5 方案的“峰前持有”标记与 coverage.peak_held 逐格一致（0 处不符）；T1 COIN（2024-02-12 止损 -2.03R、02-16 止损 -2.10R、02-26 入场拿到 trail +36.5R）、T1 RGTI（09-17 入场 trail +44.7R）、T2 PL（09-08 gap_stop -3.91R）的成交台账与表中归类吻合。第 4 节相对 B0 的增减清单（T1 +COIN/TEM/RGTI −LMND/PL/QBTS，净 0）与表一致。",
+  "STATUS.json 对 WF02 的差异仅 round、copied_from、copy_note 与两项指纹（WORKFLOW_CN.md、loop.js 因用户批准的规则改动已更新为 state.rule_fingerprints 当前值）；trading 等各格未改。",
+  "检验与检查：custody 238 个测试 OK；trader_replication 1196 个 OK（expected failures=1）；martin_luk 354 个 OK；datasets check ok、can_start_round true；datasets scan --git-diff 无违规。",
+  "第 6 节：L2.8 单只上限 50%、最多 11 只、日新增 4 笔、追保次数 0，均在档案 capital 范围内；hard_lines 三项（胜率≤35%、每年≥52 笔、对数差）仅报告，T1~T3 各年胜率均 <35%，笔数均 >52；未改档案。风险超原话（Q1/Q2 按 B0 定股数放宽止损）已标注“待合并验收”，符合预登记。",
+  "实质解读提醒（不影响判定）：T1/T2/T3 的 his_mean_r 升高伴随已平本人笔数由 47 降到 34/29/31，且 T1 相对 B0 的峰前持有净增 0 段，本人段平均 R 升高不能读作执行更好；R 的分母（试单股数×止损距离）在 Q1/Q2 下与 C062 不同，已平对照 R 之和只近似与仓位无关，报告第 2 节已作此声明。",
+  "我的测试在 work/tmp 留下了 10 个临时目录：清理命令被安全检查拦截（相对路径解析不了），未执行；请由用户或下一步清理 studies/martin_luk/workflow/rounds/WF03/work/tmp 内容。除本 VERIFY.json 外我没有改动仓库文件，临时脚本放在 /root/.claude/jobs/5d384615/tmp。"
+ ],
+ "workflow_issues": [
+  "核对步骤要求“跑完删掉 work/tmp 内容”，但在工作树 cwd 不固定时 rm -rf 的相对路径会被安全检查拦截，规则没有说明用绝对路径还是由谁清理；建议 WORKFLOW_CN.md 第七节写明清理由 Codex 轮末脚本做，或核对用 find 绝对路径。",
+  "WORKFLOW_CN.md 第四节交易线“主尺”只写峰前持有与本人段平均 R，但 his_mean_r 的样本是已平本人笔，在改止损/离场的候选下笔数大幅变化（47→29~34），均值不可比；建议加一条同口径护栏（如本人已平笔数或总 R 之和）或在报告中强制并列笔数。",
+  "预登记发生在基线、放行、可达上限计算之后、候选之前，核对只能靠 mtime 与 sha 推断“候选前未见候选结果”，没有流程内的不可抵赖时间戳；对 json 文件被覆盖重写的情形无法区分，建议轮次里记录每一步 sha 链（本轮 selection.json 只记了 PREREG sha）。",
+  "completion.decision 在无人当选时被迫抄 T1 的 accept（任务书第 6 节），与“轮次 branch”语义混用；Codex 已在 workflow_issues 记录，核对确认属实。"
+ ]
+}

@@ -1,0 +1,375 @@
+{
+ "compare": {
+  "annual": {
+   "2024": {
+    "peak_held": 5,
+    "peak_unknown": 0,
+    "by_state": {
+     "up": {
+      "n": 5,
+      "peak_held": 4,
+      "peak_unknown": 0
+     },
+     "pullback": {
+      "n": 0,
+      "peak_held": 0,
+      "peak_unknown": 0
+     },
+     "weak": {
+      "n": 4,
+      "peak_held": 1,
+      "peak_unknown": 0
+     }
+    }
+   },
+   "2025": {
+    "peak_held": 10,
+    "peak_unknown": 3,
+    "by_state": {
+     "up": {
+      "n": 7,
+      "peak_held": 3,
+      "peak_unknown": 0
+     },
+     "pullback": {
+      "n": 0,
+      "peak_held": 0,
+      "peak_unknown": 0
+     },
+     "weak": {
+      "n": 15,
+      "peak_held": 7,
+      "peak_unknown": 3
+     }
+    }
+   }
+  },
+  "selection": {
+   "his_mean_r": 22.309355095246858,
+   "control_pnl": 1.4717903349179573,
+   "behaviour_within": 1
+  }
+ },
+ "compare_closed_control_r": 1193.0122065044516,
+ "b0_control_pnl": 3.080501455494121,
+ "candidates": {
+  "T1": {
+   "record": {
+    "annual": {
+     "2024": {
+      "peak_held": 6,
+      "peak_unknown": 0,
+      "by_state": {
+       "up": {
+        "n": 5,
+        "peak_held": 4,
+        "peak_unknown": 0
+       },
+       "pullback": {
+        "n": 0,
+        "peak_held": 0,
+        "peak_unknown": 0
+       },
+       "weak": {
+        "n": 4,
+        "peak_held": 2,
+        "peak_unknown": 0
+       }
+      }
+     },
+     "2025": {
+      "peak_held": 10,
+      "peak_unknown": 3,
+      "by_state": {
+       "up": {
+        "n": 7,
+        "peak_held": 3,
+        "peak_unknown": 0
+       },
+       "pullback": {
+        "n": 0,
+        "peak_held": 0,
+        "peak_unknown": 0
+       },
+       "weak": {
+        "n": 15,
+        "peak_held": 7,
+        "peak_unknown": 3
+       }
+      }
+     }
+    },
+    "selection": {
+     "his_mean_r": 30.81718039107816,
+     "control_pnl": -0.29876720016949393,
+     "behaviour_within": 3
+    }
+   },
+   "accept": {
+    "status": "branch",
+    "line": "trading",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": false,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       6,
+       10
+      ],
+      "compare": [
+       5,
+       10
+      ],
+      "delta": 1,
+      "threshold": 3
+     },
+     {
+      "rule": "his_average_r",
+      "ok": true,
+      "candidate": 30.81718039107816,
+      "compare": 22.309355095246858
+     },
+     {
+      "rule": "control_pnl",
+      "ok": false,
+      "candidate": -0.29876720016949393,
+      "compare": 1.4717903349179573
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 3,
+      "compare": 1,
+      "tolerance": 0.2
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
+   "closed_control_r": 394.14175562185926,
+   "closed_control_n": 641,
+   "control_r_guard": false,
+   "b0_control_pnl_guard": false,
+   "qualified": false
+  },
+  "T2": {
+   "record": {
+    "annual": {
+     "2024": {
+      "peak_held": 5,
+      "peak_unknown": 0,
+      "by_state": {
+       "up": {
+        "n": 5,
+        "peak_held": 3,
+        "peak_unknown": 0
+       },
+       "pullback": {
+        "n": 0,
+        "peak_held": 0,
+        "peak_unknown": 0
+       },
+       "weak": {
+        "n": 4,
+        "peak_held": 2,
+        "peak_unknown": 0
+       }
+      }
+     },
+     "2025": {
+      "peak_held": 9,
+      "peak_unknown": 3,
+      "by_state": {
+       "up": {
+        "n": 7,
+        "peak_held": 3,
+        "peak_unknown": 0
+       },
+       "pullback": {
+        "n": 0,
+        "peak_held": 0,
+        "peak_unknown": 0
+       },
+       "weak": {
+        "n": 15,
+        "peak_held": 6,
+        "peak_unknown": 3
+       }
+      }
+     }
+    },
+    "selection": {
+     "his_mean_r": 32.02018538366332,
+     "control_pnl": 2.783563833144174,
+     "behaviour_within": 0
+    }
+   },
+   "accept": {
+    "status": "branch",
+    "line": "trading",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": false,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       5,
+       9
+      ],
+      "compare": [
+       5,
+       10
+      ],
+      "delta": -1,
+      "threshold": 3
+     },
+     {
+      "rule": "his_average_r",
+      "ok": true,
+      "candidate": 32.02018538366332,
+      "compare": 22.309355095246858
+     },
+     {
+      "rule": "control_pnl",
+      "ok": true,
+      "candidate": 2.783563833144174,
+      "compare": 1.4717903349179573
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": false,
+      "candidate": 0,
+      "compare": 1,
+      "tolerance": 0.2
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
+   "closed_control_r": 1470.9460754477793,
+   "closed_control_n": 589,
+   "control_r_guard": true,
+   "b0_control_pnl_guard": false,
+   "qualified": false
+  },
+  "T3": {
+   "record": {
+    "annual": {
+     "2024": {
+      "peak_held": 4,
+      "peak_unknown": 0,
+      "by_state": {
+       "up": {
+        "n": 5,
+        "peak_held": 3,
+        "peak_unknown": 0
+       },
+       "pullback": {
+        "n": 0,
+        "peak_held": 0,
+        "peak_unknown": 0
+       },
+       "weak": {
+        "n": 4,
+        "peak_held": 1,
+        "peak_unknown": 0
+       }
+      }
+     },
+     "2025": {
+      "peak_held": 8,
+      "peak_unknown": 3,
+      "by_state": {
+       "up": {
+        "n": 7,
+        "peak_held": 2,
+        "peak_unknown": 0
+       },
+       "pullback": {
+        "n": 0,
+        "peak_held": 0,
+        "peak_unknown": 0
+       },
+       "weak": {
+        "n": 15,
+        "peak_held": 6,
+        "peak_unknown": 3
+       }
+      }
+     }
+    },
+    "selection": {
+     "his_mean_r": 28.707025715984187,
+     "control_pnl": 4.604266155211777,
+     "behaviour_within": 0
+    }
+   },
+   "accept": {
+    "status": "branch",
+    "line": "trading",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": false,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       8
+      ],
+      "compare": [
+       5,
+       10
+      ],
+      "delta": -3,
+      "threshold": 3
+     },
+     {
+      "rule": "his_average_r",
+      "ok": true,
+      "candidate": 28.707025715984187,
+      "compare": 22.309355095246858
+     },
+     {
+      "rule": "control_pnl",
+      "ok": true,
+      "candidate": 4.604266155211777,
+      "compare": 1.4717903349179573
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": false,
+      "candidate": 0,
+      "compare": 1,
+      "tolerance": 0.2
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
+   "closed_control_r": 1575.095948713012,
+   "closed_control_n": 530,
+   "control_r_guard": true,
+   "b0_control_pnl_guard": true,
+   "qualified": false
+  }
+ }
+}

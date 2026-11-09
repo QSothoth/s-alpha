@@ -1,8 +1,8 @@
 # WF03 任务书：交易线（line=trading，scope=common）——确认加仓后的止损与买点
 
-> **状态（2026-11-09）**：经三次独立审查（`work/preflight_1.json`–`preflight_3.json`）。第 3 次审查仍有 1 条致命问题（对照护栏量不出来），本次运行按规则第五节“审查两次都没过”停在检查点，**本任务书没有交给 Codex 运行**。下面已按第 3 次审查改好（第 4 节第 1 条、第 5 节 C3 去留、2.3 Q2 落地、3.2 拆批与 book 重建、报告项），但这一版**未经审查**；下次运行须重新审查后才能用。
+> **状态（2026-11-09，第二次运行）**：上一次运行经三次独立审查（`work/preflight_1.json`–`preflight_3.json`）后停在检查点，没有交给 Codex。之后规则按检查点裁定更新（WORKFLOW_CN 第四节交易线：留出只报告；起点与比较对象每笔风险不同时补已平仓对照票 R 之和护栏、只更严；轮次中不改共享引擎、用副本并先证明逐位一致）。本版已按新规则核对（第 4 节第 1 条、第 6 节第 1 条、1 节引擎副本），重新审查记录见 `work/preflight_4*.json`（第 4 次审查的 2 条致命问题已改：2.1 市场与执行路径、3.2.3 全账本核对；第 5 次审查无致命问题，7 条次要意见已并入 2.1、3.2.1、3.2.3、3.2.4、3.3、3.4、6.3）。审查已通过，交给 Codex。
 
-> 本文件就是全部要求。规则以 `skills/trader-replication/references/WORKFLOW_CN.md` 为准，先读它；本书与它冲突时以它为准，并把冲突写进 completion.json 的 `workflow_issues`。工作区 `/opt/opend-us-options/.claude/worktrees/gap-review`，不提交、不推送。交易员 martin_luk，流程目录 `studies/martin_luk/workflow`，本轮目录 `rounds/WF03`。本次运行参数 `line=trading, rounds=3`，本轮是第 1/3 轮。冻结版本仍为 v1（选股 IE47、交易 C062、衔接 C062、行情 B4_PCT2）；WF01、WF02 判 branch；`rounds/WF02/STATUS.json` 照抄 WF00。
+> 本文件就是全部要求。规则以 `skills/trader-replication/references/WORKFLOW_CN.md` 为准，先读它；本书与它冲突时以它为准，并把冲突写进 completion.json 的 `workflow_issues`。工作区 `/opt/opend-us-options/.claude/worktrees/gap-review`，不提交、不推送。交易员 martin_luk，流程目录 `studies/martin_luk/workflow`，本轮目录 `rounds/WF03`。本次运行参数 `line=trading, rounds=3`，本轮是第 1/3 轮（规则指纹 `a83dcddf5effc4be+6e2a56ea1e06ff47+81889204d1728986+af4618772ad79596`，见 `rules_pin.txt`）。冻结版本仍为 v1（选股 IE47、交易 C062、衔接 C062、行情 B4_PCT2）；WF01、WF02 判 branch；`rounds/WF02/STATUS.json` 照抄 WF00。
 
 ## 0. 定格结论
 
@@ -52,10 +52,12 @@
 
 ## 1. 硬约束（违反就停，写进 completion.json）
 
+> **执行环境说明（第一次启动因误读此节中止后补，2026-11-09）**：Codex 单元启动时已用 `systemd-run -E PYTHONUTF8=1 -E LC_ALL=C.UTF-8` 设好环境，**单元里的每条命令都已带这两个变量**，命令行里再写一遍只是冗余；漏写不算违规，不停。“违反就停”只指本节列的实质约束：读台账/段表、拉数据或用白名单外数据、改受保护文件或 `system.py`、用留出年选择、超计算上限等。先读任务书再读 WORKFLOW_CN.md 也不算违规。上一次中止的记录在 `work/abort_run1/`，它没有跑任何计算，本次从头执行即可。
+
 - 只用日 K 与冻结数据，不拉数据；只读 config `datasets` 白名单和经 `studies.trader_data` 派生的缓存；不新增、不修改数据集或 schema。
 - 策略代码不读他的台账、票名、日期、段表：新策略模块里不得出现 `legs_frozen`、`trades.csv`、`labels(`、`notes/`。段表只在测试台的输入构建（`funnel.bench_nominations` / 冻结的 `frozen/trading/C062/inputs.json`）和评测里用。
 - 受保护、不得改的文件：`WORKFLOW_CN.md`、`config.json`、`.claude/workflows/`、`pipeline.py`、`funnel.py`、`mainleg.py`、`allocation.py`、`regime.py`、`ie47_e1.py`、`e15_research.py`、`e14_research.py`、`e10_research.py`、`p3_research.py`、`p4_policy.py`、`p5_policy.py`、`replicate.py`、`trader_data/`、`workflow/*.py`、已有 `frozen/` 缓存、`state.json`、`attempts.jsonl`、`versions.json`、`VERSIONS_CN.md`、`wf01_joint.py`、`wf02_joint.py` 及其测试、登记版与看板。
-- **不改 `studies/trader_replication/system.py`**（它的 SHA 在所有冻结缓存的代码指纹里，改一个字节就让全部缓存失效、后续轮次开不了；登记版和看板也用它）。Q1、Q2 的新字段放在**引擎副本** `studies/martin_luk/wf03_engine.py` 里：把 `system.py` 的 `Rules` 与 `simulate` 复制过去，只在副本中新增可选字段，默认值保持原行为。3.1 第 1 条先证明副本在新字段全关时与 `system.simulate` 逐位一致。新版本缓存的规则与 manifest 要写明引擎模块（`studies.martin_luk.wf03_engine`）和新字段，免得 `D.load_rules` 悄悄丢掉未知字段。
+- **不改 `studies/trader_replication/system.py`**（规则第四节“改执行引擎”，WF-062/068；它的 SHA 在所有冻结缓存的代码指纹里，改一个字节就让全部缓存失效、后续轮次开不了；登记版和看板也用它）。Q1、Q2 的新字段放在**引擎副本** `studies/martin_luk/wf03_engine.py` 里：把 `system.py` 的 `Rules` 与 `simulate` 复制过去，只在副本中新增可选字段，默认值保持原行为。3.1 第 1 条先证明副本在新字段全关时与 `system.simulate` 逐位一致。新版本缓存的规则与 manifest 要写明引擎模块（`studies.martin_luk.wf03_engine`）和新字段，免得 `D.load_rules` 悄悄丢掉未知字段。
 - 2024、2025 只用于选择；2026（留出*）只对最终选中者跑一次。
 - **所有命令都加 `PYTHONUTF8=1 LC_ALL=C.UTF-8`**；测试再加 `TMPDIR=$PWD/studies/martin_luk/workflow/rounds/WF03/work/tmp`。`test_standard_indicators_v1_1` 读旧回归缓存属于既有回归测试（规则第一节），照跑。
 - 一次只跑一个重计算进程：`systemd-run --scope -p CPUQuota=60% -p MemoryMax=900M`，`OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1`。**全部计算合计不超过 15 分钟墙钟**（规则第五节交易轮上限；一次测试台约 3.5 秒，单票回放计入；轮末三套测试与 datasets/profile 检查不计入）。超了就停，写明停在哪。
@@ -68,13 +70,14 @@
 
 - 测试台输入：`frozen/trading/C062/inputs.json`、`prices.json`（按 manifest 核对 SHA），点名为 IE47（与 `frozen/selection/IE47/manifest.json` 一致）。
 - 行情状态：`frozen/regime/B4_PCT2/states.json`，只拆账。
-- **所有分支（含 C062、B0 的等价性检查）都调用 `wf03_engine.simulate`**：`run_wf03.py` 自己写 simulate 包装（照 `run_wf02.simulate` 的参数），不得 import `run_wf02.simulate`（它内部调 `system.simulate`，Q1、Q2 会悄悄失效）；`system.Rules` 先 `dataclasses.asdict` 再构造副本的 `Rules`，再交给 build。
-- 执行与测试台构建：参照 `rounds/WF02/work/trading_bench.py`（`funnel.execution_bench` + `wf01_joint.build(..., c3=True)` + `run_wf02.simulate`），以及 `frozen_cache.bench_score()` 的评分口径。可以 import，不改原文件。
+- **市场与执行路径写死为冻结缓存的建库路径**（第 4 次审查致命 1）：`frozen/trading/C062` 由 `rounds/WF00/work/base_c062_build.py` 用 `adapter.market()`（float64 价格与指标）+ `adapter.execution_inputs(A)` + `adapter.execution` 建成（该脚本当时没传 `profile`，照原样已不能重跑；冻结 account.json 的 rules 是 `maintenance=None`、没有 deleverage 字段）。本轮用 `adapter.execution(A, offered, 'C062', profile='L2.8', end=...)` 同法的路径：要求与冻结缓存的**成交和曲线逐位一致**（追保 0 次时成立，审查实测已平仓 768 笔相同），不要求 rules 字典与 account.rules 相同。本轮一切重放（等价性、D0、全账本、单票回放、候选、消融、留出）都用同一个 `A = adapter.market()`，**不得用 `run_wf01.prepare` / `run_wf02.prepared` / `trading_bench.py` 的 float32 面板**（实测会让 GME 2024-06-03 的离场翻转、73 笔 r 差超过 1e-9）。测试台点名 `offered` 读冻结 `frozen/trading/C062/inputs.json` 的 combined（与 base_c062_build 同法还原，核对 SHA）。
+- **simulate 包装**：`run_wf03.py` 照抄 `adapter.execution` 的函数体（book 构建、`P3.px(A)`、ema 键 `e9/e21/idx_pb16/e8_scale` 与 `always`、起点 `2024-01-02`、`audit=True`、`track`），只把 `system.simulate` 换成 `wf03_engine.simulate`，并允许传入已构建的 book 和 rules（rules 先过 `capital.check_rules(rules, cfg['capital'], 'L2.8')`；B0 = `capital.candidate_rules(replace(adapter.rules_for('C062'), risk=0.005), cfg['capital'], 'L2.8')`）。不得 import `run_wf02.simulate` 或 `adapter.execution` 来跑候选（它们内部调 `system.simulate`，Q1、Q2 会悄悄失效）；`system.Rules` 先 `dataclasses.asdict` 再构造副本的 `Rules`。Q4 的 book 在同一个 A 上按 `adapter.execution` 的 C062 分支同法构建，只把 `M.entry_book(..., **M.E6['E6c'])` 换成加 `pullback=True` 的调用，后续 `retry_book` 与元组后处理照抄；Q4 关闭时 book 必须与 `adapter.execution` 的 C062 book 逐项相同（单测）。
+- 可参照 `rounds/WF02/work/trading_bench.py`、`wf01_joint.build` 理解 C3 与测试台构建，但只借逻辑、不借它们的市场加载。报告里凡引用 `trading_bench.json` 的数字，只能引用整数项（峰前持有、早买），R 与 pnl 类数字一律用本轮 adapter 路径重出的值，并注明路径。
 - **评分口径写死**：候选和比较对象都用 `frozen_cache.bench_score()` 里 `training` 块的同一套计算（截至 2025-12-31；跨年未决段 `peak_unknown` 不计入峰前持有；2025-12-31 仍持有的按当天收盘计 `why='end'`，`his_mean_r` 只算已平仓）。候选只跑到 2025-12-31，在自己的记录上调用同一套计算（把这段逻辑抽成本轮 `work/` 下的函数，或直接 import 后套用；不改 `frozen_cache.py`）。
 
 ### 2.2 新代码放哪
 
-- 策略：`studies/martin_luk/wf03_trading.py`。在 `wf01_joint.build(..., c1=False, c2=False, c3=True)` 返回的 book 与 rules 上加 Q1–Q4；Q1、Q2 由引擎副本 `studies/martin_luk/wf03_engine.py` 执行。
+- 策略：`studies/martin_luk/wf03_trading.py`。在 2.1 写死的 `adapter.market()` 同一个 A 上，以 `adapter.execution` C062 分支同法构建的 book 与 2.1 的 B0 rules（与 `wf01_joint.build(..., c1=False, c2=False, c3=True)` 等价，单测核对 rules 字段相同）为起点加 Q1–Q4；Q1、Q2 由引擎副本 `studies/martin_luk/wf03_engine.py` 执行。
 - 评测：`rounds/WF03/work/run_wf03.py`。
 - 单测：`studies/martin_luk/tests/test_wf03_trading.py`。
 
@@ -90,7 +93,7 @@
   - 原话：TRANSLATION“听一半”行“以收盘价判断”；⑥ 离场“收盘第一次跌破 9 EMA 清仓”。
 - **Q3 证实要等“顺利”**：第一次证实除了收盘高于成交价，还要求当天收盘高于前一日最高价。用现有字段 `proof_confirm_signal`，信号数组只用当天及以前的完成 K 线计算（`close[d] > high[d-1]`），放进 `ema` 字典。止损语义同 C062（原价）。
   - 原话：⑦“新仓顺利才继续加”。
-- **Q4 回调收回买点**：在 IE47 的入场 book 里加入 E7 的回调收回入场（`IE.entry_book(..., **IE.E6['E6c'], pullback=True)`：9 EMA > 21 EMA，当天最低价触及 9 EMA、收盘在 9 EMA 上方且收阳，收盘买），止损规则与突破入场相同（入场日低点，收到 min(5%, ADR/2)）；之后走与 C062 相同的 `retry_book` 和元组后处理（照 `wf02_joint.build` 中 C5 分支的做法重建，不从旧 book 删改条目）。
+- **Q4 回调收回买点**：在 IE47 的入场 book 里加入 E7 的回调收回入场（`IE.entry_book(..., **IE.E6['E6c'], pullback=True)`：9 EMA > 21 EMA，当天最低价触及 9 EMA、收盘在 9 EMA 上方且收阳，收盘买），止损规则与突破入场相同（入场日低点，收到 min(5%, ADR/2)）；之后走与 C062 相同的 `retry_book` 和元组后处理（照 `wf02_joint.build` 中 C5 分支的做法重建，但在 2.1 的 A 上，不从旧 book 删改条目）。
   - 原话：④ 回调（2025 年主力）“回调至少到日线 9 EMA……21 EMA 回调胜率更高”；TRANSLATION“换成日 K 动作：收盘收回 9/21 EMA”。
 
 ### 2.4 候选（5 个）
@@ -124,15 +127,16 @@
 
 1. **等价性**（不算候选、不算留出）：
    - C062 测试台只跑到 2025-12-31，按 2.1 的评分口径得到的 `training` 块与 `frozen_cache.bench_score()['training']` 一致：整数项（峰前持有 (5,10)、`peak_unknown`、`behaviour_within`）逐位相同；`his_mean_r`、`control_pnl` 绝对差 ≤ 1e-9（跨年持仓的 `end` pnl 一律套用 `bench_score` 的 executions 重算法）。成交比对沿用 WF01 的投影法：已平仓逐笔相同，跨年持仓只比入场字段和 2025-12-31 及以前的 executions。
-   - B0 测试台跑到 2025-12-31，峰前持有、早买必须与 `rounds/WF02/work/trading_bench.json` 一致（2024 9/3/6、2025 19/9/10）。
+   - B0 测试台跑到 2025-12-31，段数/早买/峰前持有必须与 `rounds/WF02/work/trading_bench.json` 的整数项一致（2024 9/3/6、2025 19/9/10）。**段数与早买只算 `peak_eve ≤ 2025-12-31` 的段**（trading_bench 的 known 口径；按 bench_score 的 annual 全部段算，2025 年会变成 22 段、早买 12，误触发停止）；C062 同口径应为 (9/3/5, 19/9/10)。3.4 与报告里候选的早买也用这个口径。
+   - 同路径按 2.1 评分口径出 C062 与 B0 的完整 `training` 块，以及 4.1 护栏用的数：**选择年已平仓对照票 `r` 之和**（入场在 2024–2025、跑到 2025-12-31 时 `why != 'end'`、按 `frozen_cache.bench_score` 的 `leg_at` 归属判为对照）与对照 pnl。审查时的只读实测参考：C062 r 之和 1193.012（721 笔）、B0 1311.874（704 笔）、B0 对照 pnl 3.0805；本轮复现值与参考差异较大（>0.01）时停下查原因。复现值写进 PREREG 后才跑候选。
    - 任何一项不一致就停。
 2. **逐段诊断**（B0 测试台，选择年已完成且未峰前持有的段，约 12 段）：每段按最早的损失分类，并列出证据：
    - 窗口 [首锚点−3, 峰前1日] 内没有成交：逐晚写原因（没有收盘突破前高 / 观察到期 / chase / 名额 `max_open` 或 `max_new_long` 或总敞口被占 / 其他），名额被占时列出占着名额的持仓是他的票还是对照票、是否已证实；
    - 首次成交晚：首次成交之前有没有出现过 Q4 定义的回调收回日（只计数，不据此改参数）；
    - 早买后在峰前离场：每次离场的原因、离场时是否已证实、证实时止损离收盘多远（% 和 ADR 倍数）、离场当天收盘是否仍高于止损、离场后 10 个交易日内收盘是否回到离场价上方。
-3. **全账本机制统计**（只用 IE47 自己的点名 book 与行情，不读段表）：`frozen/merge/C062/account.json` 只有 curve 和 trades，没有 entry book，所以用冻结 IE47 点名按 `wf01_joint.build` 的同一路径重建（`IE.entry_book(**IE.E6['E6c'])` + `E15.P.retry_book(SPECS['C062'])` + 元组后处理），并核对重建出的 book 包含 C062 测试台的全部成交；在这本 book 的全部入场（含被挡的）上，统计证实后离场的路径：证实时止损距离分布、证实后 1–3 天内被止损的比例与 R、这些被止损的票离场后 10/20 个交易日的收盘变化。
+3. **全账本机制统计**（只用 IE47 自己的点名 book 与行情，不读段表；**只用入场在 2024-01-02 至 2025-12-31 的入场**，审查实测 1124 条，2026 年 445 条一律排除；离场后 10/20 个交易日等观察窗截到 2025-12-31，截断处如实标注，不读 2026 年 K 线）：`frozen/merge/C062/account.json` 只有 curve 和 trades，没有 entry book，所以在 2.1 的同一个 A 上用冻结 IE47 点名（`adapter.indexed(A, ROOT/cfg["systems"]["C062"]["picks"])`，与冻结 selection 缓存核对）按 `adapter.execution` C062 分支的同一路径重建（`IE.entry_book(**IE.E6['E6c'])` + `E15.P.retry_book(SPECS['C062'])` + 元组后处理），并核对重建出的 book 包含 C062 测试台的**全部对照票成交**（归类写死为“**入场前最近一次点名那一晚**（会重置观察窗的那晚）在冻结 `inputs.json` 的 control 里”，只在这条核对里用；审查实测按此口径 722 笔全部包含、喂票 49 笔中 39 笔不在 book。不要用 leg_at 归属或“观察窗内任一晚”判：COIN 2024-03-25 按 leg_at 算对照、按点名夜算喂票，QUBT 2024-12-17 反之。4.1 的 R 之和护栏仍按 leg_at 归属，两套口径分开用，不混）；测试台喂他的票产生、而 IE47 自己没点名的成交不要求包含，只报告条数（审查实测 39 笔）。这条核对之外，全账本统计不得读 inputs.json 的 his 部分或段表（第 4 次审查致命 2）；在这本 book 的全部入场（含被挡的）上，统计证实后离场的路径：证实时止损距离分布、证实后 1–3 天内被止损的比例与 R、这些被止损的票离场后 10/20 个交易日的收盘变化。
 4. **组件放行（规则第五节；放行规则现在写死，跑完不改）**。单票回放：对 3 中的全部入场逐条单独回放（无名额、无组合约束：`max_open`、`max_new_long` 设 0 即不限，`max_gross` 放大到不约束，`maintenance=None`；起始权益 1；回放到 2025-12-31，未平按 `end` 计 R；R 与 ≥5R 用引擎 trades 的 `r`）。可合并成一次模拟，但要按同票持有期不重叠拆批，并断言计划回放条数 = 实际开出条数且每条都有 `r`，不满足就逐条回放。回放代码不读段表，只作诊断，不进任何账户、判定或版本条目。
-   - 回放时 `margin_rate=0`，并断言权益始终为正；另报与股数无关的诊断（只报告、不作门槛）：每笔离场的每股收益按 w 计、离场后 10/20 个交易日收盘是否回到离场价上方、触及单只 50% 上限的比例；拆批写死为**按同票序号**：每只票的第 k 次入场放进第 k 批，每批每只票最多一笔，任何分支都不重叠；先报批数与墙钟估计（每批约 3 秒 × 分支数）。断言失败就停下报告，**不改为逐条回放**（会超时）。
+   - 单票回放是诊断，**规则不过 `capital.check_rules`**（`max_gross` 放大、`maintenance=None`、`margin_rate=0` 必然通不过），只断言权益始终为正；后备的 mechanism.py 法只借它的单列切片方法，价格与指标用 2.1 同一个 A 的切片（`A[k][d:, j:j+1]` 及 `e8_scale[d:]`、`always`），不用它的 float32 面板与 screens.ema；另报与股数无关的诊断（只报告、不作门槛）：每笔离场的每股收益按 w 计、离场后 10/20 个交易日收盘是否回到离场价上方、触及单只 50% 上限的比例；拆批写死为**按同票序号**：每只票的第 k 次入场放进第 k 批，每批每只票最多一笔，任何分支都不重叠；先报批数与墙钟估计（每批约 3 秒 × 分支数）。断言失败时改用 `rounds/WF02/work/mechanism.py` 的单列逐条回放法（WF02 实测 1124 条共 5.4 秒）作后备，两种方法只要有一种通过条数断言即可；都不通过才停下报告。
    - **Q1、Q2、Q3**：同一批入场分别在 B0 与 B0+Qi 下单票回放。T3 的组合 Q1+Q2 也单独回放报告（只作参考，放行按单个组件判）。放行条件：两年合计平均 R ≥ B0，**且** ≥5R 占比 ≥ B0，**且至少一项严格大于**（持平不放行）。分年、分状态报告，但按两年合计判。
    - **Q4**：回调收回一触发就结束该观察，会替换掉同一观察里稍后的突破入场，所以按**整本 book** 比：B0+Q4 的整本 book 与 B0 的整本 book 分别单票回放。放行条件：B0+Q4 整本平均 R ≥ B0，**且** ≥5R 占比 ≥ B0，**且至少一项严格大于**。另报回调入场笔数（每年）以及被它替换掉的突破入场的成对 R。
    - 不放行的组件，含它的候选全部删除；T5 按 2.4 的规则改组成（Q4 不放行则删 T5）。全部不放行：本轮不跑候选，decision 记 branch，原因 `no_component_released`，STATUS 照抄。
@@ -147,33 +151,39 @@
 
 ### 3.3 预登记 `rounds/WF03/PREREG_CN.md`
 
-在任何候选运行之前写好，记 SHA256，跑完不改。内容：假设、原话、组件参数、D0 摘要、放行结果与数字、U、比较对象数字、选择与回退规则、留出规则、计算上限；可预见的约束（Q1、Q2 股数照 B0、止损变宽或收盘才走 → 单笔实际亏损可能超过 `risk_budget`，Q2 的上限由灾难止损 H 与跳空决定；Q3 推迟证实 → 峰前仓位可能下降；T1 预计难过的理由）。另写死两条**只标注、不否决**的规定：峰前仓位中位低于 C062 的候选，即使通过 accept 也在报告和 completion 标注“峰前仓位下降，待合并验收”；每个候选报告他的票因 `max_open`、`max_new_long`、总敞口被挡的次数，以及挡住它的持仓是试单还是已证实、是他的票还是对照票（老坑 H2）。
+在任何候选运行之前写好，记 SHA256，跑完不改。内容：假设、原话、组件参数、D0 摘要、放行结果与数字、U、比较对象数字、选择与回退规则、留出规则、计算上限；可预见的约束（Q1、Q2 股数照 B0、止损变宽或收盘才走 → 单笔实际亏损可能超过 `risk_budget`，Q2 的上限由灾难止损 H 与跳空决定；Q3 推迟证实 → 峰前仓位可能下降；T1 预计难过的理由）。另写明现实预期：Q1、Q2 股数照 B0（约 8 倍试单股数）而 R 分母仍是试单股数×w，证实后失败的笔会从约 −2R～−4R 变成约 −8R（Q1）到 −16R（Q2 打到 H）；B0 的 his_mean_r 只比 C062 多约 0.16、对照 R 之和余量约 119R，通过与否主要看被救回的大赢家能否抵消放大的失败笔，报告逐笔列出他的段上证实后失败的 R 变化，失败不得读成“结构位止损没用”。另写死三条**只标注、不否决**的规定：（0）Q1、Q2 股数照 B0 而止损变宽或收盘才走，是**有意留下的老坑 H2“加仓后止损没跟上”**：单笔亏损占权益的中位数或最大值超过原话“每笔约 0.5%”的 4 倍（即 2%）的候选，在报告和 completion 标注“风险超原话，待合并验收”，并写进下一轮合并建议；峰前仓位中位低于 C062 的候选，即使通过 accept 也在报告和 completion 标注“峰前仓位下降，待合并验收”；每个候选报告他的票因 `max_open`、`max_new_long`、总敞口被挡的次数，以及挡住它的持仓是试单还是已证实、是他的票还是对照票（老坑 H2）。
 
 ### 3.4 跑候选（只到 2025-12-31）
 
-串行跑放行的候选。每个候选的规则先过 `capital.check_rules(policy, cfg['capital'], 'L2.8')`（同 WF02 的 evaluate），不过就不跑并报告。每个候选报告追保（margin call）次数；任一候选大于 0 时，另用 maintenance=0.3 重跑一次 C062 测试台（只报告，写明峰前持有差多少段）。每个候选另报超出 `risk_budget` 的亏损笔数与幅度（见 2.3）。每个都按 2.1 的评分口径出 accept 输入（`annual.<年>.peak_held`、`selection.his_mean_r/control_pnl/behaviour_within`），另出报告用的：早买、他的段平均 R 和盈亏比、对照票笔数与 pnl、测试台账户每年收益与最大回撤、行为记分卡（胜率、盈亏比、笔数）、他的段峰前仓位中位、证实次数与证实时股数分布，全部分状态（up、weak；pullback 写“未观测”）。他的段平均 R 被单笔主导（C062 中 SMCI 一笔 678R 占均值 22.31 的约 14.4，中位数 −2.2R），所以每个候选另报他的段 R 的中位数、去掉最大一笔后的均值、前三笔 R 的变化（只报告，不作门槛；Q4 替换入场时尤其要看）。记下墙钟与峰值内存。比较对象 record 用 3.2 第 1 条复现的 C062 `training` 块。所有 record 原样存进 `rounds/WF03/accept_inputs.json`，列入 keep。
+串行跑放行的候选。每个候选的规则先过 `capital.check_rules(policy, cfg['capital'], 'L2.8')`（同 WF02 的 evaluate），不过就不跑并报告。每个候选报告追保（margin call）次数；任一候选大于 0 时，另报该候选在 `maintenance=None`（不追保）下的峰前持有差多少段（只报告；C062 在 2.1 路径下已是 maintenance=0.3，追保 0 次）。每个候选另报超出 `risk_budget` 的亏损笔数与幅度（见 2.3）。每个都按 2.1 的评分口径出 accept 输入（`annual.<年>.peak_held`、`selection.his_mean_r/control_pnl/behaviour_within`），另出报告用的：早买、他的段平均 R 和盈亏比、对照票笔数与 pnl、测试台账户每年收益与最大回撤、行为记分卡（胜率、盈亏比、笔数）、他的段峰前仓位中位、证实次数与证实时股数分布，全部分状态（up、weak；pullback 写“未观测”）。他的段平均 R 被单笔主导（C062 中 SMCI 一笔 678R 占均值 22.31 的约 14.4，中位数 −2.2R），所以每个候选另报他的段 R 的中位数、去掉最大一笔后的均值、前三笔 R 的变化（只报告，不作门槛；Q4 替换入场时尤其要看）。B0 的 `his_mean_r` 只比 C062 多约 0.16，而 SMCI 一笔约 678R：每个候选逐笔写出 SMCI 那一段的路径（证实日、止损线、离场日与原因、R），并报告“去掉 SMCI 那一段后 accept 的 his_mean_r 一项是否同向”，便于判断通过或失败是否由单笔决定（只报告）。记下墙钟与峰值内存。比较对象 record 用 3.2 第 1 条复现的 C062 `training` 块。所有 record 原样存进 `rounds/WF03/accept_inputs.json`，列入 keep。
 
 ## 4. 选择规则（预登记，跑完不改）
 
 1. 合格要同时满足：
    - `pipeline.accept('trading', 候选, C062, cfg)['status'] == 'accepted'`，阈值只读 config，返回原样记录；
-   - **与仓位规模无关的对照护栏**（第 3 次审查：accept 的 `control_pnl` 是绝对 pnl，B0 每笔风险 0.5%、C062 是 0.25%，起点就高约一倍，候选对照 pnl 掉一半也能过）：选择年已平仓对照票 `r` 之和 ≥ C062 同口径的值，**且** 对照 pnl ≥ B0 的对照 pnl（同为 0.5% 风险）。
+   - **与仓位规模无关的对照护栏**（规则第四节“起点和比较对象每笔风险不同时”，WF-070/067；第 3 次审查：accept 的 `control_pnl` 是绝对 pnl，B0 每笔风险 0.5%、C062 是 0.25%，起点就高约一倍，候选对照 pnl 掉一半也能过）：选择年已平仓对照票 `r` 之和 ≥ C062 同口径的值，**且** 对照 pnl ≥ B0 的对照 pnl（同为 0.5% 风险）。
    只过 accept、没过这条护栏的候选不当选，completion 写明原因；它不改 accept 的判定，只是更严的选择条件。
 2. 合格者中取峰前持有合计最多的；与最多者相差不到 3 段视为并列。并列时先取组件少的，再取 `control_pnl` 高的，再按编号。
 3. 无人合格：decision 为 branch，不跑留出，STATUS 照抄。峰前持有更多但护栏没过的，记作探索分支并写明差在哪条护栏。
 
 ## 5. 消融与回退
 
-交易线单线轮规则上不强制消融，但本轮候选多为组合，**选中者含两个及以上组件时必须做**（每次约 3.5 秒）：逐个去掉一个组件各跑一次（T3 的消融就是 T1、T2；T5 的消融是去掉 Q4 的那个组合和“B0 + Q4”）。另外加跑一次“C062 + 选中的 Q 组件”（不含 C3），报告 C3 的贡献（C3 与 Q1/Q2 有交互）；C3 的去留按下面同一条规则判，但其中“对照 pnl 不降”改用对照票 `r` 之和（去掉 C3 后绝对 pnl 机械减半，不能用）。报告每个组件对峰前持有（分年、分状态）、他的段平均 R、对照 pnl、行为项、峰前仓位中位的贡献。去掉后峰前持有不少、他的段平均 R 不降、对照 pnl 不降、行为项不少的组件，不进入新版本：去掉后的组合已整体跑过就用它的 accept 结果，通过即为最终版，不通过回退到选中的整体候选。
+交易线单线轮规则上不强制消融，但本轮候选多为组合，**选中者含两个及以上组件时必须做**（每次约 1–3.5 秒）：对选中者的每个组件（含 C3），**逐个去掉一个**各跑一次（T3 的消融是 T1、T2 与“C062 + Q1 + Q2”；T5 在 Q1、Q2 都放行时有 Q1、Q2、Q4 三个组件，各去掉一个共三次，再加去掉 C3 的一次）。去掉 C3 的那支即“C062 + 选中的 Q 组件”，用来报告 C3 的贡献（C3 与 Q1/Q2 有交互）。报告每个组件对峰前持有（分年、分状态）、他的段平均 R、对照 pnl、对照票 r 之和、行为项、峰前仓位中位的贡献。
+
+去留规则（预登记，跑完不改）：去掉某组件后峰前持有不少、他的段平均 R 不降、对照票 r 之和不降（不用绝对 pnl，去掉 C3 后绝对 pnl 机械减半）、行为项不少，该组件可去。
+
+- 只有一个组件可去：去掉它的组合就是已经跑过的那支，它必须**同时满足第 4 节第 1 条全部条件**（accept 通过，且已平仓对照 r 之和 ≥ C062、对照 pnl ≥ B0；去掉 C3 时“对照 pnl ≥ B0”改为“对照 r 之和 ≥ B0 同口径”），满足即为最终版，否则回退到选中的整体候选。
+- 两个及以上组件都可去：不再加跑新组合，回退到选中的整体候选，报告里写明哪些组件单独看可去（下一轮合并时再议）。
+- 消融得出的组件集只能是选中者的子集；不得据消融结果新增组件或改参数。
 
 ## 6. 留出、判定、STATUS、缓存
 
-1. **留出一次**：只对最终版跑测试台到 2026-10-16，报告 2026 的峰前持有（2026 已完成段）、早买、他的段平均 R、对照 pnl、测试台账户 2026 收益；同时引用 C062 测试台 2026 的已有数（`base_c062_bench_score.json`，峰前持有 10/17）。`holdout_loss` = 测试台账户 2026 收益 < `hard_lines.annual_return_min`（流程要求的正式标记）。报告必须注明：测试台每晚被喂他的票，测试台收益含段表喂票偏差，这个标记检验力弱；主要看 2026 峰前持有对 C062 的 10/17、他的段平均 R、对照票 pnl。
+1. **留出一次，只报告**（规则第四节交易线“留出年”，WF-063）：只对最终版跑测试台到 2026-10-16，报告 2026 的峰前持有（2026 已完成段）、早买、他的段平均 R、对照 pnl、对照票 R 之和、测试台账户 2026 收益；同时引用 C062 测试台 2026 的已有数（`base_c062_bench_score.json`，峰前持有 10/17）。测试台每晚被喂他的票，收益含喂票偏差，判不出“每年不亏”，所以 **`holdout_loss` 一律写 `false`**，另写 `holdout_report_only: true` 和 `holdout_return`；每年亏不亏留到合并验收用完整账户判。报告主要看 2026 峰前持有对 C062 的 10/17、他的段平均 R、对照票 pnl 与 R 之和。留出结果不改判定、不进入下一轮设计。
 2. **判定**：`completion.json.decision` 原样保留 `accept('trading', 最终版, C062, cfg)` 的返回；顶层写 `line: "trading"`、`scope: "common"`、`final_components`、`candidates`、`released`、`selection_rule_trace`、`ablation`。
 3. **被接受时**：
-   - 新交易版本名 `WF03_<候选号>`。按 `rounds/WF00/work/base_c062_build.py` 与 `frozen_cache.py` 的 schema 建 `frozen/trading/WF03_<候选号>/`（`inputs.json` 与 C062 相同的测试台输入、`account.json` 为到 2026-10-16 的测试台记录与规则全量 `dataclasses.asdict(rules)`、`prices.json`、`manifest.json` 带代码与数据指纹、实际命令和脚本 SHA256，并写明 `engine: studies.martin_luk.wf03_engine` 及其 SHA256、策略模块 `wf03_trading.py` 的 SHA256——`frozen_cache.identity()` 的代码清单不含这两个文件，必须单独记）。读回自检：`frozen_cache.bench_score()` 固定读真正的 state.json，不能直接用；在 `work/` 里写一份与 `bench_score` 同算法的读回函数，直接读新缓存文件（核对 manifest 里各文件 SHA），`training` 块与本轮候选记录按 3.2 第 1 条的容差一致。不得为读回去改 `frozen_cache.py`、`adapter.py` 或 state.json。
+   - 新交易版本名 `WF03_<候选号>`。按 `rounds/WF00/work/base_c062_build.py` 与 `frozen_cache.py` 的 schema（但按 2.1 路径传 `profile='L2.8'`，account.json 写 `candidate_rules`/`check_rules` 之后的完整 rules）建 `frozen/trading/WF03_<候选号>/`（`inputs.json` 与 C062 相同的测试台输入、`account.json` 为到 2026-10-16 的测试台记录与规则全量 `dataclasses.asdict(rules)`、`prices.json`、`manifest.json` 带代码与数据指纹、实际命令和脚本 SHA256，并写明 `engine: studies.martin_luk.wf03_engine` 及其 SHA256、策略模块 `wf03_trading.py` 的 SHA256——`frozen_cache.identity()` 的代码清单不含这两个文件，必须单独记）。读回自检：`frozen_cache.bench_score()` 固定读真正的 state.json，不能直接用；在 `work/` 里写一份与 `bench_score` 同算法的读回函数，直接读新缓存文件（核对 manifest 里各文件 SHA），`training` 块与本轮候选记录按 3.2 第 1 条的容差一致。不得为读回去改 `frozen_cache.py`、`adapter.py` 或 state.json。
    - 重出 `rounds/WF03/STATUS.json`：trading 格（common、up、pullback、weak）用新版本的测试台数，`frozen_version` 写新版本；selection、conversion、merge、regime 格照抄 `rounds/WF02/STATUS.json`；`pending_merge: true`，`pending_merge_note` 写“交易线 WF03_<候选号> 待合并（本次运行 line=trading，合并推迟到下一次不带 line 的运行）”；更新指纹。
-   - 写 `rounds/WF03/state_patch.json`（记账步骤照抄用）：`components.trading` 新条目（version、status `frozen_component`、rules_source、rules_sha256、engine 模块与 SHA256、策略模块 SHA256、bench_selection IE47、accepted_on、accept 原样）、`frozen_caches.trading.<新版本>`。不改真正的 state.json、versions.json。
+   - 写 `rounds/WF03/state_patch.json`（记账步骤照抄用）：`components.trading` 新条目（version、status `frozen_component`、rules_source、rules_sha256、engine 模块与 SHA256、策略模块 SHA256、bench_selection IE47、accepted_on、accept 原样）、`frozen_caches.trading.<新版本>`（path、`manifest_sha256`、bytes，与现有条目字段相同；`frozen_cache.load` 会核对 manifest_sha256）。不改真正的 state.json、versions.json。
 4. **未被接受时**：STATUS 照抄 `rounds/WF02/STATUS.json`，`round` 改为 WF03，更新指纹；不建缓存。
 
 ## 7. 报告 `rounds/WF03/REPORT_CN.md`
@@ -209,6 +219,6 @@ python3 -m unittest discover -s custody/tests
 
 ## 9. completion.json 与收尾
 
-至少包含：`task`；`round: "WF03"`；`line: "trading"`；`scope: "common"`；`decision`（原样）；`equivalence_check`；`mechanism_release`（Q1–Q4 的回放数字、是否放行、被删候选）；`reachable_upper`；`accept_inputs`；`final_components`；`ablation`；`holdout`（`label: "留出*"`、`holdout_return`、`holdout_loss`）；`new_caches`、`state_patch`（被接受时）；`prereg_sha256`；各步墙钟与峰值内存；`code_changes_after_runs` 与重跑清单；`engine_copy_diff_summary`；`tests`；`datasets_check`；`datasets_scan`；`profile_check`；`protected_files_unchanged`；`rule_fingerprints`（轮前、轮后）；`workflow_issues`；`keep`（合计 ≤100MB）；`disk_free_before`；`disk_free_after`。
+至少包含：`task`；`round: "WF03"`；`line: "trading"`；`scope: "common"`；`decision`（原样）；`equivalence_check`；`mechanism_release`（Q1–Q4 的回放数字、是否放行、被删候选）；`reachable_upper`；`accept_inputs`；`final_components`；`ablation`；`holdout`（`label: "留出*"`、`holdout_return`、`holdout_loss: false`、`holdout_report_only: true`）；`new_caches`、`state_patch`（被接受时）；`prereg_sha256`；各步墙钟与峰值内存；`code_changes_after_runs` 与重跑清单；`engine_copy_diff_summary`；`tests`；`datasets_check`；`datasets_scan`；`profile_check`；`protected_files_unchanged`；`rule_fingerprints`（轮前、轮后）；`workflow_issues`；`keep`（合计 ≤100MB）；`disk_free_before`；`disk_free_after`。
 
 轮末删掉 `work/` 里不在 keep 中的文件（含 `work/tmp`）。磁盘剩余低于 800MB 时先清本轮中间文件，还不够就停下报告。
