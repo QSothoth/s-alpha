@@ -1,0 +1,127 @@
+{
+ "ok": true,
+ "round_decision": "branch",
+ "note": "无候选被接受；W1E 峰前持有 13 对 v1 的 11，只多 2 段(<3)。留出、选中者、缓存均无；completion.json 未改（decision=null 为 Codex 自停所致，应由记账步骤按 branch 记）。",
+ "per_candidate": {
+  "W1A": {
+   "status": "branch",
+   "peak_held": [
+    5,
+    5
+   ],
+   "returns": [
+    0.6499097051217255,
+    0.34504650791796454
+   ],
+   "failed_checks": [
+    "selection_year_gain",
+    "no_year_decrease",
+    "peak_position_weight"
+   ],
+   "recomputed_match": true
+  },
+  "W1B": {
+   "status": "branch",
+   "peak_held": [
+    5,
+    5
+   ],
+   "returns": [
+    0.7114531361270786,
+    0.30710118361840855
+   ],
+   "failed_checks": [
+    "selection_year_gain",
+    "no_year_decrease",
+    "peak_position_weight"
+   ],
+   "recomputed_match": true
+  },
+  "W1C": {
+   "status": "branch",
+   "peak_held": [
+    5,
+    5
+   ],
+   "returns": [
+    0.9905059431414815,
+    0.3977565033352455
+   ],
+   "failed_checks": [
+    "selection_year_gain",
+    "no_year_decrease"
+   ],
+   "recomputed_match": true
+  },
+  "W1D": {
+   "status": "branch",
+   "peak_held": [
+    5,
+    5
+   ],
+   "returns": [
+    1.1914772764182455,
+    0.2369281735410751
+   ],
+   "failed_checks": [
+    "selection_year_gain",
+    "no_year_decrease"
+   ],
+   "recomputed_match": true
+  },
+  "W1E": {
+   "status": "branch",
+   "peak_held": [
+    5,
+    8
+   ],
+   "returns": [
+    1.1389795845271964,
+    0.6435565142299311
+   ],
+   "failed_checks": [
+    "selection_year_gain"
+   ],
+   "recomputed_match": true
+  }
+ },
+ "process": {
+  "prereg_before_candidates": "PREREG 08:14:21、sha256 与 work/prereg.sha256 一致，早于 W1A.json 08:16:53 及之后所有候选",
+  "candidates_end": "全部候选与开关对照曲线止于 2025-12-31，无 2026",
+  "tracked_files_diff": "git diff 为空；登记版、看板、pipeline/funnel/mainleg、config、WORKFLOW_CN、workflow js 均未改，6 项规则指纹与 state.json 一致",
+  "wf01_joint": "只动 C1 观察/C2 换仓/C3 风险；不读台账/票名/日期/段表；run_wf01 读段表仅用于测量",
+  "note_boundary_fix": "wf01_joint.py(08:19:25) 与其单测晚于候选运行(08:17)，Codex 的审计显示 1977 条入场记录修正前后 SHA256 相同，候选结果有效"
+ },
+ "numbers": {
+  "layer_sums_equal_28_each_year": true,
+  "spot_checked_legs": [
+   "COIN 2024-03-22 持有",
+   "QUBT 2024-12-17 持有",
+   "SOFI 2025-01-23 持有(买晚)",
+   "SMCI 2024-03-07 未持有",
+   "QBTS 2025-10-14 持有"
+  ],
+  "ledger_match": true,
+  "accept_rerun": "用 accept_inputs.json 原样重跑 pipeline.accept(merge)：5 个均 branch，checks 与 completion.json 逐项相同"
+ },
+ "tests": {
+  "custody": "238 通过",
+  "replication_default_locale": "1196 项：2 失败 1 错误（latin-1 编码，本机 locale 非 UTF-8）",
+  "replication_utf8": "PYTHONUTF8=1 LC_ALL=C.UTF-8：1196 项全过（1 预期失败）",
+  "martin_default_locale": "334 项 3 错误（locale）",
+  "martin_utf8": "334 项全过",
+  "tmpdir": "TMPDIR 设到 work/tmp，已删除",
+  "legacy_cache_test": "按 leader 裁定不计违规"
+ },
+ "datasets_check": "默认 locale 下 trader-options-v1 schema mismatch（文件名编码）；PYTHONUTF8=1 下 ok=true",
+ "datasets_scan": "ok=true，无违规（默认与 UTF-8 各跑一次）",
+ "profile_check": "默认 locale 下 UnicodeEncodeError；UTF-8 下“档案完整”",
+ "profile_alignment": "C3 风险 0.5%：SOURCES.md 原话“每笔最多亏 0.5%”，config.capital 只管杠杆档，L2.8 档(2.8、维持 30%、weakest_first)未变，check_rules 通过；C2 换仓(rotate_below 0.02、3 天)属衔接线可优化项，max_open=11 不变；W1C/D/E 均在范围内",
+ "problems": [],
+ "workflow_issues": [
+  "本机 locale 非 UTF-8：datasets check、profile check 及约 5 个既有测试在默认环境下失败，核对与轮次命令须统一设 PYTHONUTF8=1 LC_ALL=C.UTF-8（WORKFLOW_CN 第七节命令未写）",
+  "既有 test_standard_indicators_v1_1 读白名单外旧缓存并写 /tmp，与数据白名单规则冲突；leader 已裁定，须在规则里写明测试不受白名单约束并给出 TMPDIR 约定",
+  "completion.json 保持 decision=null、task_status=stopped_hard_constraint，与本次核对的 branch 不一致，需记账步骤处理",
+  "funnel.measure 点名后只查 3 个交易日而 E6c 观察 5 个（Codex 已报告）；per_leg 的 L6 为“早买且峰前持有”，主尺 peak_held 含晚买，核对须用 coverage.peak_held"
+ ]
+}

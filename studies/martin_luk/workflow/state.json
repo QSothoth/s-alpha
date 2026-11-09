@@ -174,10 +174,10 @@
  "bar": "master",
  "metrics_round": "WF00",
  "pending_merge": false,
- "next_round": "WF01",
+ "next_round": "WF03",
  "bootstrap_done": true,
  "can_start_round": true,
- "rounds_run": 0,
+ "rounds_run": 2,
  "blocked_reasons": [],
  "rule_drift": {
   "status": "resolved",
@@ -244,8 +244,8 @@
   }
  },
  "rule_fingerprints": {
-  ".claude/workflows/trader-replication-loop.js": "9e8d31d9ee63e7863308510ab7d179839eb2b480a78f3f8615c1f5033f621fe5",
-  "skills/trader-replication/references/WORKFLOW_CN.md": "634a937243eb799d8a942734b3a5b8411988ca8673307ac6f1adee909be84e1a",
+  ".claude/workflows/trader-replication-loop.js": "b5d929c2080b965ecb2ab051b5c0db8c051f94cebe19910f47fdea29870ea4c9",
+  "skills/trader-replication/references/WORKFLOW_CN.md": "7e758f04d60478c04ae3f27bd99ea39ab7894f9ca94e2afe523ef13a1a105248",
   "studies/martin_luk/workflow/config.json": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
   "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
   "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
@@ -464,6 +464,51 @@
      "new": "634a937243eb799d8a942734b3a5b8411988ca8673307ac6f1adee909be84e1a"
     }
    }
+  },
+  {
+   "date": "2026-11-09",
+   "approved_by": "leader per user 2026-11-09 (lead-dont-ask)",
+   "change": "检查点 WF01-WF02：白名单约束范围、W1E 作交易线诊断起点、组件放行、底线项只报告、命令 UTF-8 与 TMPDIR",
+   "files": {
+    "skills/trader-replication/references/WORKFLOW_CN.md": {
+     "old": "634a937243eb799d8a942734b3a5b8411988ca8673307ac6f1adee909be84e1a",
+     "new": "7e758f04d60478c04ae3f27bd99ea39ab7894f9ca94e2afe523ef13a1a105248"
+    }
+   }
+  },
+  {
+   "date": "2026-11-09",
+   "approved_by": "leader per user 2026-11-09 (lead-dont-ask)",
+   "change": "metrics_round WF02→WF00：WF01、WF02 无新冻结版本，STATUS 照抄 WF00，指标文件仍在 WF00（WF-061）",
+   "files": {
+    ".claude/workflows/trader-replication-loop.js": {
+     "old": "9e8d31d9ee63e7863308510ab7d179839eb2b480a78f3f8615c1f5033f621fe5",
+     "new": "b5d929c2080b965ecb2ab051b5c0db8c051f94cebe19910f47fdea29870ea4c9"
+    }
+   }
   }
- ]
+ ],
+ "recent_rounds": [
+  {
+   "round": "WF01",
+   "line": "joint",
+   "verdict": "branch",
+   "main": "峰前持有最好 W1E 13 vs v1 11",
+   "returns": "W1E +113.9%/+64.4%",
+   "date": "2026-11-09"
+  },
+  {
+   "round": "WF02",
+   "line": "joint",
+   "verdict": "branch",
+   "main": "W2A 峰前持有 12 vs v1 11",
+   "returns": "W2A +140.0%/+50.6%",
+   "date": "2026-11-09"
+  }
+ ],
+ "checkpoint": {
+  "date": "2026-11-09",
+  "reason": "同一格 joint×(conversion+trading common) 连续 2 轮（WF01、WF02）无进步",
+  "report": "studies/martin_luk/workflow/CHECKPOINT_CN.md"
+ }
 }

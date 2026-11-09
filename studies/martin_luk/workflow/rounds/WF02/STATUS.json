@@ -1,0 +1,2249 @@
+{
+ "round": "WF02",
+ "selection_years": [
+  "2024",
+  "2025"
+ ],
+ "holdout": {
+  "year": "2026",
+  "label": "留出*",
+  "independent": false,
+  "note": "已反复查看，只作历史留出；WF00只回放基线，不根据它选执行"
+ },
+ "cells": [
+  {
+   "line": "selection",
+   "state": "common",
+   "target": 31,
+   "target_by_year": {
+    "2024": 9,
+    "2025": 22
+   },
+   "frozen_version": {
+    "version": "IE47",
+    "status": "frozen_component",
+    "sha256": "0a4bc805def27fc6e758fece426f184be311cca1db36ea3c771379106c090034",
+    "accepted_on": "2026-11-09",
+    "accept": {
+     "status": "accepted",
+     "line": "selection",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": true,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        8,
+        14
+       ],
+       "compare": [
+        3,
+        14
+       ],
+       "delta": 5,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        8,
+        14
+       ],
+       "compare": [
+        3,
+        14
+       ]
+      },
+      {
+       "rule": "nomination_width",
+       "ok": true,
+       "candidate": [
+        2.988095238095238,
+        3.0
+       ],
+       "threshold": 5.0
+      },
+      {
+       "rule": "unique_names",
+       "ok": true,
+       "candidate": [
+        219,
+        216
+       ],
+       "compare": [
+        196,
+        194
+       ],
+       "growth": 0.2
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    },
+    "accept_source": "rounds/WF00/selection_decision_IE47_vs_IE9.json"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 1,
+    "L1": 5,
+    "L2": 1,
+    "L3": 5,
+    "L4": 10,
+    "L5": 2,
+    "L6": 7
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 1,
+    "L1": 4,
+    "L2": 1,
+    "L3": 5,
+    "L4": 10,
+    "L5": 2,
+    "L6": 5
+   },
+   "unresolved_layers_at_selection_cutoff": 3,
+   "unresolved_at_selection_cutoff": 3,
+   "loss_in_merge": 6,
+   "loss_known_by_selection_cutoff": 5,
+   "metric": "S_K3_early",
+   "current": 20,
+   "current_by_year": {
+    "2024": 8,
+    "2025": 12
+   },
+   "retrospective_current": 22,
+   "retrospective_current_by_year": {
+    "2024": 8,
+    "2025": 14
+   },
+   "reachable_upper": 30,
+   "reachable_upper_by_year": {
+    "2024": 9,
+    "2025": 21
+   },
+   "upper_observed_in_emitted_list": 22,
+   "upper_observed_in_emitted_list_by_year": {
+    "2024": 8,
+    "2025": 14
+   },
+   "structural_upper_among_completed_legs": 27,
+   "upper_source": "rounds/WF00/work/base_c062_pool_evidence.json",
+   "note": "结构性上限取 E1 冻结合格池；名单内观测上限单列。",
+   "recoverable": 7,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "trading",
+   "state": "common",
+   "target": 31,
+   "target_by_year": {
+    "2024": 9,
+    "2025": 22
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "frozen_component",
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+    "rules_sha256": "67766eec76d1111e53e387dd5b3fc910f5083e677136547a1e26087a2f7d1143",
+    "bench_selection": "IE47"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 1,
+    "L1": 5,
+    "L2": 1,
+    "L3": 5,
+    "L4": 10,
+    "L5": 2,
+    "L6": 7
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 1,
+    "L1": 4,
+    "L2": 1,
+    "L3": 5,
+    "L4": 10,
+    "L5": 2,
+    "L6": 5
+   },
+   "unresolved_layers_at_selection_cutoff": 3,
+   "unresolved_at_selection_cutoff": 3,
+   "loss_in_merge": 12,
+   "loss_known_by_selection_cutoff": 12,
+   "metric": "his_peak_held_on_bench",
+   "current": 15,
+   "current_by_year": {
+    "2024": 5,
+    "2025": 10
+   },
+   "retrospective_current": 17,
+   "reachable_upper": 31,
+   "note": "测试台直接喂他的票；上限是样本段数。",
+   "recoverable": 13,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "conversion",
+   "state": "common",
+   "target": 31,
+   "target_by_year": {
+    "2024": 9,
+    "2025": 22
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "frozen_component",
+    "evaluation_system": "C062",
+    "options": {
+     "max_position": 0.5,
+     "max_gross": 2.8,
+     "max_open": 11,
+     "max_open_by_kind": {},
+     "max_new_long": 4,
+     "max_new_all": 0,
+     "max_new_year": 0,
+     "max_new_by_kind": {},
+     "no_rebuy_day": false,
+     "rotate_min_days": 0,
+     "rotate_below": 0.0,
+     "make_room_kind": {},
+     "make_room_confirmed": false,
+     "risk_scale": "e8_scale"
+    },
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+    "nomination": "IE47, native K=3 and 10-session cooldown",
+    "entry_observation": "E6c: 5 sessions; the engine caps successful new longs at 4 per day"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 1,
+    "L1": 5,
+    "L2": 1,
+    "L3": 5,
+    "L4": 10,
+    "L5": 2,
+    "L6": 7
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 1,
+    "L1": 4,
+    "L2": 1,
+    "L3": 5,
+    "L4": 10,
+    "L5": 2,
+    "L6": 5
+   },
+   "unresolved_layers_at_selection_cutoff": 3,
+   "unresolved_at_selection_cutoff": 3,
+   "loss_in_merge": 6,
+   "loss_known_by_selection_cutoff": 6,
+   "metric": "early_and_peak_held",
+   "current": 5,
+   "current_by_year": {
+    "2024": 2,
+    "2025": 3
+   },
+   "retrospective_current": 7,
+   "early_buy": 9,
+   "projected_early_nominations": 22,
+   "reachable_upper": 31,
+   "note": "L6 为早买且峰前持有；点名数是诊断投影。",
+   "recoverable": 23,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "merge",
+   "state": "common",
+   "target": 31,
+   "target_by_year": {
+    "2024": 9,
+    "2025": 22
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "user_selected_base",
+    "selection": "IE47",
+    "trading": "C062",
+    "conversion": "C062",
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "evaluation_system": "C062",
+    "registered_account": "studies/martin_luk/reports/e21_work/BASE_full/C062_2024",
+    "funnel": "studies/martin_luk/workflow/rounds/WF00/funnels/C062.json",
+    "funnel_sha256": "340b8b4a913987954acea929b3c5eef71ef927a19f1d0bd64cc21ff63ccc3a0a",
+    "note": "用户指定既有整套账户为起点；不是新候选的合并接受判定"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 1,
+    "L1": 5,
+    "L2": 1,
+    "L3": 5,
+    "L4": 10,
+    "L5": 2,
+    "L6": 7
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 1,
+    "L1": 4,
+    "L2": 1,
+    "L3": 5,
+    "L4": 10,
+    "L5": 2,
+    "L6": 5
+   },
+   "unresolved_layers_at_selection_cutoff": 3,
+   "unresolved_at_selection_cutoff": 3,
+   "loss_in_merge": 0,
+   "loss_known_by_selection_cutoff": 0,
+   "metric": "peak_held",
+   "current": 11,
+   "current_by_year": {
+    "2024": 4,
+    "2025": 7
+   },
+   "retrospective_current": 13,
+   "early_buy": 9,
+   "early_and_peak_held": 7,
+   "reachable_upper": 31,
+   "note": "峰前持有包括晚买；L6 只包括早买且峰前持有。",
+   "recoverable": 17,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "selection",
+   "state": "up",
+   "target": 12,
+   "target_by_year": {
+    "2024": 5,
+    "2025": 7
+   },
+   "frozen_version": {
+    "version": "IE47",
+    "status": "frozen_component",
+    "sha256": "0a4bc805def27fc6e758fece426f184be311cca1db36ea3c771379106c090034",
+    "accepted_on": "2026-11-09",
+    "accept": {
+     "status": "accepted",
+     "line": "selection",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": true,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        8,
+        14
+       ],
+       "compare": [
+        3,
+        14
+       ],
+       "delta": 5,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        8,
+        14
+       ],
+       "compare": [
+        3,
+        14
+       ]
+      },
+      {
+       "rule": "nomination_width",
+       "ok": true,
+       "candidate": [
+        2.988095238095238,
+        3.0
+       ],
+       "threshold": 5.0
+      },
+      {
+       "rule": "unique_names",
+       "ok": true,
+       "candidate": [
+        219,
+        216
+       ],
+       "compare": [
+        196,
+        194
+       ],
+       "growth": 0.2
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    },
+    "accept_source": "rounds/WF00/selection_decision_IE47_vs_IE9.json"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 1,
+    "L1": 1,
+    "L2": 1,
+    "L3": 2,
+    "L4": 4,
+    "L5": 0,
+    "L6": 3
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 1,
+    "L1": 1,
+    "L2": 1,
+    "L3": 2,
+    "L4": 4,
+    "L5": 0,
+    "L6": 3
+   },
+   "unresolved_layers_at_selection_cutoff": 0,
+   "unresolved_at_selection_cutoff": 0,
+   "loss_in_merge": 2,
+   "loss_known_by_selection_cutoff": 2,
+   "metric": "S_K3_early",
+   "current": 9,
+   "current_by_year": {
+    "2024": 5,
+    "2025": 4
+   },
+   "retrospective_current": 9,
+   "retrospective_current_by_year": {
+    "2024": 5,
+    "2025": 4
+   },
+   "reachable_upper": 11,
+   "reachable_upper_by_year": {
+    "2024": 5,
+    "2025": 6
+   },
+   "upper_observed_in_emitted_list": 9,
+   "upper_observed_in_emitted_list_by_year": {
+    "2024": 5,
+    "2025": 4
+   },
+   "structural_upper_among_completed_legs": 11,
+   "upper_source": "rounds/WF00/work/base_c062_pool_evidence.json",
+   "note": "结构性上限取 E1 冻结合格池；名单内观测上限单列。",
+   "recoverable": 2,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "trading",
+   "state": "up",
+   "target": 12,
+   "target_by_year": {
+    "2024": 5,
+    "2025": 7
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "frozen_component",
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+    "rules_sha256": "67766eec76d1111e53e387dd5b3fc910f5083e677136547a1e26087a2f7d1143",
+    "bench_selection": "IE47"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 1,
+    "L1": 1,
+    "L2": 1,
+    "L3": 2,
+    "L4": 4,
+    "L5": 0,
+    "L6": 3
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 1,
+    "L1": 1,
+    "L2": 1,
+    "L3": 2,
+    "L4": 4,
+    "L5": 0,
+    "L6": 3
+   },
+   "unresolved_layers_at_selection_cutoff": 0,
+   "unresolved_at_selection_cutoff": 0,
+   "loss_in_merge": 4,
+   "loss_known_by_selection_cutoff": 4,
+   "metric": "his_peak_held_on_bench",
+   "current": 7,
+   "current_by_year": {
+    "2024": 4,
+    "2025": 3
+   },
+   "retrospective_current": 7,
+   "reachable_upper": 12,
+   "note": "测试台直接喂他的票；上限是样本段数。",
+   "recoverable": 5,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "conversion",
+   "state": "up",
+   "target": 12,
+   "target_by_year": {
+    "2024": 5,
+    "2025": 7
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "frozen_component",
+    "evaluation_system": "C062",
+    "options": {
+     "max_position": 0.5,
+     "max_gross": 2.8,
+     "max_open": 11,
+     "max_open_by_kind": {},
+     "max_new_long": 4,
+     "max_new_all": 0,
+     "max_new_year": 0,
+     "max_new_by_kind": {},
+     "no_rebuy_day": false,
+     "rotate_min_days": 0,
+     "rotate_below": 0.0,
+     "make_room_kind": {},
+     "make_room_confirmed": false,
+     "risk_scale": "e8_scale"
+    },
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+    "nomination": "IE47, native K=3 and 10-session cooldown",
+    "entry_observation": "E6c: 5 sessions; the engine caps successful new longs at 4 per day"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 1,
+    "L1": 1,
+    "L2": 1,
+    "L3": 2,
+    "L4": 4,
+    "L5": 0,
+    "L6": 3
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 1,
+    "L1": 1,
+    "L2": 1,
+    "L3": 2,
+    "L4": 4,
+    "L5": 0,
+    "L6": 3
+   },
+   "unresolved_layers_at_selection_cutoff": 0,
+   "unresolved_at_selection_cutoff": 0,
+   "loss_in_merge": 3,
+   "loss_known_by_selection_cutoff": 3,
+   "metric": "early_and_peak_held",
+   "current": 3,
+   "current_by_year": {
+    "2024": 1,
+    "2025": 2
+   },
+   "retrospective_current": 3,
+   "early_buy": 3,
+   "projected_early_nominations": 9,
+   "reachable_upper": 12,
+   "note": "L6 为早买且峰前持有；点名数是诊断投影。",
+   "recoverable": 9,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "merge",
+   "state": "up",
+   "target": 12,
+   "target_by_year": {
+    "2024": 5,
+    "2025": 7
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "user_selected_base",
+    "selection": "IE47",
+    "trading": "C062",
+    "conversion": "C062",
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "evaluation_system": "C062",
+    "registered_account": "studies/martin_luk/reports/e21_work/BASE_full/C062_2024",
+    "funnel": "studies/martin_luk/workflow/rounds/WF00/funnels/C062.json",
+    "funnel_sha256": "340b8b4a913987954acea929b3c5eef71ef927a19f1d0bd64cc21ff63ccc3a0a",
+    "note": "用户指定既有整套账户为起点；不是新候选的合并接受判定"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 1,
+    "L1": 1,
+    "L2": 1,
+    "L3": 2,
+    "L4": 4,
+    "L5": 0,
+    "L6": 3
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 1,
+    "L1": 1,
+    "L2": 1,
+    "L3": 2,
+    "L4": 4,
+    "L5": 0,
+    "L6": 3
+   },
+   "unresolved_layers_at_selection_cutoff": 0,
+   "unresolved_at_selection_cutoff": 0,
+   "loss_in_merge": 0,
+   "loss_known_by_selection_cutoff": 0,
+   "metric": "peak_held",
+   "current": 6,
+   "current_by_year": {
+    "2024": 3,
+    "2025": 3
+   },
+   "retrospective_current": 6,
+   "early_buy": 3,
+   "early_and_peak_held": 3,
+   "reachable_upper": 12,
+   "note": "峰前持有包括晚买；L6 只包括早买且峰前持有。",
+   "recoverable": 6,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "selection",
+   "state": "pullback",
+   "target": 0,
+   "target_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "frozen_version": {
+    "version": "IE47",
+    "status": "frozen_component",
+    "sha256": "0a4bc805def27fc6e758fece426f184be311cca1db36ea3c771379106c090034",
+    "accepted_on": "2026-11-09",
+    "accept": {
+     "status": "accepted",
+     "line": "selection",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": true,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        8,
+        14
+       ],
+       "compare": [
+        3,
+        14
+       ],
+       "delta": 5,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        8,
+        14
+       ],
+       "compare": [
+        3,
+        14
+       ]
+      },
+      {
+       "rule": "nomination_width",
+       "ok": true,
+       "candidate": [
+        2.988095238095238,
+        3.0
+       ],
+       "threshold": 5.0
+      },
+      {
+       "rule": "unique_names",
+       "ok": true,
+       "candidate": [
+        219,
+        216
+       ],
+       "compare": [
+        196,
+        194
+       ],
+       "growth": 0.2
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    },
+    "accept_source": "rounds/WF00/selection_decision_IE47_vs_IE9.json"
+   },
+   "observed": false,
+   "layer_losses": {
+    "L0": 0,
+    "L1": 0,
+    "L2": 0,
+    "L3": 0,
+    "L4": 0,
+    "L5": 0,
+    "L6": 0
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 0,
+    "L1": 0,
+    "L2": 0,
+    "L3": 0,
+    "L4": 0,
+    "L5": 0,
+    "L6": 0
+   },
+   "unresolved_layers_at_selection_cutoff": 0,
+   "unresolved_at_selection_cutoff": 0,
+   "loss_in_merge": 0,
+   "loss_known_by_selection_cutoff": 0,
+   "metric": "S_K3_early",
+   "current": 0,
+   "current_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "retrospective_current": 0,
+   "retrospective_current_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "reachable_upper": 0,
+   "reachable_upper_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "upper_observed_in_emitted_list": 0,
+   "upper_observed_in_emitted_list_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "structural_upper_among_completed_legs": 0,
+   "upper_source": "rounds/WF00/work/base_c062_pool_evidence.json",
+   "note": "结构性上限取 E1 冻结合格池；名单内观测上限单列。",
+   "recoverable": 0,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "trading",
+   "state": "pullback",
+   "target": 0,
+   "target_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "frozen_component",
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+    "rules_sha256": "67766eec76d1111e53e387dd5b3fc910f5083e677136547a1e26087a2f7d1143",
+    "bench_selection": "IE47"
+   },
+   "observed": false,
+   "layer_losses": {
+    "L0": 0,
+    "L1": 0,
+    "L2": 0,
+    "L3": 0,
+    "L4": 0,
+    "L5": 0,
+    "L6": 0
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 0,
+    "L1": 0,
+    "L2": 0,
+    "L3": 0,
+    "L4": 0,
+    "L5": 0,
+    "L6": 0
+   },
+   "unresolved_layers_at_selection_cutoff": 0,
+   "unresolved_at_selection_cutoff": 0,
+   "loss_in_merge": 0,
+   "loss_known_by_selection_cutoff": 0,
+   "metric": "his_peak_held_on_bench",
+   "current": 0,
+   "current_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "retrospective_current": 0,
+   "reachable_upper": 0,
+   "note": "测试台直接喂他的票；上限是样本段数。",
+   "recoverable": 0,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "conversion",
+   "state": "pullback",
+   "target": 0,
+   "target_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "frozen_component",
+    "evaluation_system": "C062",
+    "options": {
+     "max_position": 0.5,
+     "max_gross": 2.8,
+     "max_open": 11,
+     "max_open_by_kind": {},
+     "max_new_long": 4,
+     "max_new_all": 0,
+     "max_new_year": 0,
+     "max_new_by_kind": {},
+     "no_rebuy_day": false,
+     "rotate_min_days": 0,
+     "rotate_below": 0.0,
+     "make_room_kind": {},
+     "make_room_confirmed": false,
+     "risk_scale": "e8_scale"
+    },
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+    "nomination": "IE47, native K=3 and 10-session cooldown",
+    "entry_observation": "E6c: 5 sessions; the engine caps successful new longs at 4 per day"
+   },
+   "observed": false,
+   "layer_losses": {
+    "L0": 0,
+    "L1": 0,
+    "L2": 0,
+    "L3": 0,
+    "L4": 0,
+    "L5": 0,
+    "L6": 0
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 0,
+    "L1": 0,
+    "L2": 0,
+    "L3": 0,
+    "L4": 0,
+    "L5": 0,
+    "L6": 0
+   },
+   "unresolved_layers_at_selection_cutoff": 0,
+   "unresolved_at_selection_cutoff": 0,
+   "loss_in_merge": 0,
+   "loss_known_by_selection_cutoff": 0,
+   "metric": "early_and_peak_held",
+   "current": 0,
+   "current_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "retrospective_current": 0,
+   "early_buy": 0,
+   "projected_early_nominations": 0,
+   "reachable_upper": 0,
+   "note": "L6 为早买且峰前持有；点名数是诊断投影。",
+   "recoverable": 0,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "merge",
+   "state": "pullback",
+   "target": 0,
+   "target_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "user_selected_base",
+    "selection": "IE47",
+    "trading": "C062",
+    "conversion": "C062",
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "evaluation_system": "C062",
+    "registered_account": "studies/martin_luk/reports/e21_work/BASE_full/C062_2024",
+    "funnel": "studies/martin_luk/workflow/rounds/WF00/funnels/C062.json",
+    "funnel_sha256": "340b8b4a913987954acea929b3c5eef71ef927a19f1d0bd64cc21ff63ccc3a0a",
+    "note": "用户指定既有整套账户为起点；不是新候选的合并接受判定"
+   },
+   "observed": false,
+   "layer_losses": {
+    "L0": 0,
+    "L1": 0,
+    "L2": 0,
+    "L3": 0,
+    "L4": 0,
+    "L5": 0,
+    "L6": 0
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 0,
+    "L1": 0,
+    "L2": 0,
+    "L3": 0,
+    "L4": 0,
+    "L5": 0,
+    "L6": 0
+   },
+   "unresolved_layers_at_selection_cutoff": 0,
+   "unresolved_at_selection_cutoff": 0,
+   "loss_in_merge": 0,
+   "loss_known_by_selection_cutoff": 0,
+   "metric": "peak_held",
+   "current": 0,
+   "current_by_year": {
+    "2024": 0,
+    "2025": 0
+   },
+   "retrospective_current": 0,
+   "early_buy": 0,
+   "early_and_peak_held": 0,
+   "reachable_upper": 0,
+   "note": "峰前持有包括晚买；L6 只包括早买且峰前持有。",
+   "recoverable": 0,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "selection",
+   "state": "weak",
+   "target": 19,
+   "target_by_year": {
+    "2024": 4,
+    "2025": 15
+   },
+   "frozen_version": {
+    "version": "IE47",
+    "status": "frozen_component",
+    "sha256": "0a4bc805def27fc6e758fece426f184be311cca1db36ea3c771379106c090034",
+    "accepted_on": "2026-11-09",
+    "accept": {
+     "status": "accepted",
+     "line": "selection",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": true,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        8,
+        14
+       ],
+       "compare": [
+        3,
+        14
+       ],
+       "delta": 5,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        8,
+        14
+       ],
+       "compare": [
+        3,
+        14
+       ]
+      },
+      {
+       "rule": "nomination_width",
+       "ok": true,
+       "candidate": [
+        2.988095238095238,
+        3.0
+       ],
+       "threshold": 5.0
+      },
+      {
+       "rule": "unique_names",
+       "ok": true,
+       "candidate": [
+        219,
+        216
+       ],
+       "compare": [
+        196,
+        194
+       ],
+       "growth": 0.2
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    },
+    "accept_source": "rounds/WF00/selection_decision_IE47_vs_IE9.json"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 0,
+    "L1": 4,
+    "L2": 0,
+    "L3": 3,
+    "L4": 6,
+    "L5": 2,
+    "L6": 4
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 0,
+    "L1": 3,
+    "L2": 0,
+    "L3": 3,
+    "L4": 6,
+    "L5": 2,
+    "L6": 2
+   },
+   "unresolved_layers_at_selection_cutoff": 3,
+   "unresolved_at_selection_cutoff": 3,
+   "loss_in_merge": 4,
+   "loss_known_by_selection_cutoff": 3,
+   "metric": "S_K3_early",
+   "current": 11,
+   "current_by_year": {
+    "2024": 3,
+    "2025": 8
+   },
+   "retrospective_current": 13,
+   "retrospective_current_by_year": {
+    "2024": 3,
+    "2025": 10
+   },
+   "reachable_upper": 19,
+   "reachable_upper_by_year": {
+    "2024": 4,
+    "2025": 15
+   },
+   "upper_observed_in_emitted_list": 13,
+   "upper_observed_in_emitted_list_by_year": {
+    "2024": 3,
+    "2025": 10
+   },
+   "structural_upper_among_completed_legs": 16,
+   "upper_source": "rounds/WF00/work/base_c062_pool_evidence.json",
+   "note": "结构性上限取 E1 冻结合格池；名单内观测上限单列。",
+   "recoverable": 5,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "trading",
+   "state": "weak",
+   "target": 19,
+   "target_by_year": {
+    "2024": 4,
+    "2025": 15
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "frozen_component",
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+    "rules_sha256": "67766eec76d1111e53e387dd5b3fc910f5083e677136547a1e26087a2f7d1143",
+    "bench_selection": "IE47"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 0,
+    "L1": 4,
+    "L2": 0,
+    "L3": 3,
+    "L4": 6,
+    "L5": 2,
+    "L6": 4
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 0,
+    "L1": 3,
+    "L2": 0,
+    "L3": 3,
+    "L4": 6,
+    "L5": 2,
+    "L6": 2
+   },
+   "unresolved_layers_at_selection_cutoff": 3,
+   "unresolved_at_selection_cutoff": 3,
+   "loss_in_merge": 8,
+   "loss_known_by_selection_cutoff": 8,
+   "metric": "his_peak_held_on_bench",
+   "current": 8,
+   "current_by_year": {
+    "2024": 1,
+    "2025": 7
+   },
+   "retrospective_current": 10,
+   "reachable_upper": 19,
+   "note": "测试台直接喂他的票；上限是样本段数。",
+   "recoverable": 8,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "conversion",
+   "state": "weak",
+   "target": 19,
+   "target_by_year": {
+    "2024": 4,
+    "2025": 15
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "frozen_component",
+    "evaluation_system": "C062",
+    "options": {
+     "max_position": 0.5,
+     "max_gross": 2.8,
+     "max_open": 11,
+     "max_open_by_kind": {},
+     "max_new_long": 4,
+     "max_new_all": 0,
+     "max_new_year": 0,
+     "max_new_by_kind": {},
+     "no_rebuy_day": false,
+     "rotate_min_days": 0,
+     "rotate_below": 0.0,
+     "make_room_kind": {},
+     "make_room_confirmed": false,
+     "risk_scale": "e8_scale"
+    },
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+    "nomination": "IE47, native K=3 and 10-session cooldown",
+    "entry_observation": "E6c: 5 sessions; the engine caps successful new longs at 4 per day"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 0,
+    "L1": 4,
+    "L2": 0,
+    "L3": 3,
+    "L4": 6,
+    "L5": 2,
+    "L6": 4
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 0,
+    "L1": 3,
+    "L2": 0,
+    "L3": 3,
+    "L4": 6,
+    "L5": 2,
+    "L6": 2
+   },
+   "unresolved_layers_at_selection_cutoff": 3,
+   "unresolved_at_selection_cutoff": 3,
+   "loss_in_merge": 3,
+   "loss_known_by_selection_cutoff": 3,
+   "metric": "early_and_peak_held",
+   "current": 2,
+   "current_by_year": {
+    "2024": 1,
+    "2025": 1
+   },
+   "retrospective_current": 4,
+   "early_buy": 6,
+   "projected_early_nominations": 13,
+   "reachable_upper": 19,
+   "note": "L6 为早买且峰前持有；点名数是诊断投影。",
+   "recoverable": 14,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "merge",
+   "state": "weak",
+   "target": 19,
+   "target_by_year": {
+    "2024": 4,
+    "2025": 15
+   },
+   "frozen_version": {
+    "version": "C062",
+    "status": "user_selected_base",
+    "selection": "IE47",
+    "trading": "C062",
+    "conversion": "C062",
+    "source": "config.base",
+    "source_date": "2026-11-09",
+    "evaluation_system": "C062",
+    "registered_account": "studies/martin_luk/reports/e21_work/BASE_full/C062_2024",
+    "funnel": "studies/martin_luk/workflow/rounds/WF00/funnels/C062.json",
+    "funnel_sha256": "340b8b4a913987954acea929b3c5eef71ef927a19f1d0bd64cc21ff63ccc3a0a",
+    "note": "用户指定既有整套账户为起点；不是新候选的合并接受判定"
+   },
+   "observed": true,
+   "layer_losses": {
+    "L0": 0,
+    "L1": 4,
+    "L2": 0,
+    "L3": 3,
+    "L4": 6,
+    "L5": 2,
+    "L6": 4
+   },
+   "layer_losses_known_by_selection_cutoff": {
+    "L0": 0,
+    "L1": 3,
+    "L2": 0,
+    "L3": 3,
+    "L4": 6,
+    "L5": 2,
+    "L6": 2
+   },
+   "unresolved_layers_at_selection_cutoff": 3,
+   "unresolved_at_selection_cutoff": 3,
+   "loss_in_merge": 0,
+   "loss_known_by_selection_cutoff": 0,
+   "metric": "peak_held",
+   "current": 5,
+   "current_by_year": {
+    "2024": 1,
+    "2025": 4
+   },
+   "retrospective_current": 7,
+   "early_buy": 6,
+   "early_and_peak_held": 4,
+   "reachable_upper": 19,
+   "note": "峰前持有包括晚买；L6 只包括早买且峰前持有。",
+   "recoverable": 11,
+   "recoverable_scope": "仅选择年末已完成的段；跨年未决段不参与定格"
+  },
+  {
+   "line": "regime",
+   "state": "common",
+   "current": 0.9482071713147411,
+   "target": 0.9,
+   "reachable_upper": 1.0,
+   "frozen_version": {
+    "version": "B4_PCT2",
+    "status": "frozen",
+    "spec_sha": "3afa397608b1cdadc6a7d53f4cc1304a2025098f7ea65d0b62c52980caeaf118",
+    "nominations_source": "P5 S3_BOTH frozen own nominations",
+    "nominations_sha256": "67ba85ab4d6e5585f408824f2a3587bc1962bd36d78632d5c2d337723e7d3eba",
+    "reasons": [
+     {
+      "rule": "stability",
+      "ok": true,
+      "value": 0.9482071713147411,
+      "threshold": 0.9
+     },
+     {
+      "rule": "causal",
+      "ok": true
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "master",
+      "year": "2024",
+      "ok": true,
+      "up": 1.2932157551917673,
+      "weak": 0.7324559255435554
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "master",
+      "year": "2025",
+      "ok": true,
+      "up": 1.9878066726023644,
+      "weak": 0.1500544641344448
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "M3B",
+      "year": "2024",
+      "ok": true,
+      "up": 1.9483801793774917,
+      "weak": 0.9712398669357905
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "M3B",
+      "year": "2025",
+      "ok": true,
+      "up": 1.2859826988016558,
+      "weak": 0.04642831778323697
+     }
+    ]
+   },
+   "observed": true
+  },
+  {
+   "line": "regime",
+   "state": "up",
+   "current": 0.9482071713147411,
+   "target": 0.9,
+   "reachable_upper": 1.0,
+   "frozen_version": {
+    "version": "B4_PCT2",
+    "status": "frozen",
+    "spec_sha": "3afa397608b1cdadc6a7d53f4cc1304a2025098f7ea65d0b62c52980caeaf118",
+    "nominations_source": "P5 S3_BOTH frozen own nominations",
+    "nominations_sha256": "67ba85ab4d6e5585f408824f2a3587bc1962bd36d78632d5c2d337723e7d3eba",
+    "reasons": [
+     {
+      "rule": "stability",
+      "ok": true,
+      "value": 0.9482071713147411,
+      "threshold": 0.9
+     },
+     {
+      "rule": "causal",
+      "ok": true
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "master",
+      "year": "2024",
+      "ok": true,
+      "up": 1.2932157551917673,
+      "weak": 0.7324559255435554
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "master",
+      "year": "2025",
+      "ok": true,
+      "up": 1.9878066726023644,
+      "weak": 0.1500544641344448
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "M3B",
+      "year": "2024",
+      "ok": true,
+      "up": 1.9483801793774917,
+      "weak": 0.9712398669357905
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "M3B",
+      "year": "2025",
+      "ok": true,
+      "up": 1.2859826988016558,
+      "weak": 0.04642831778323697
+     }
+    ]
+   },
+   "observed": true
+  },
+  {
+   "line": "regime",
+   "state": "pullback",
+   "current": 0.9482071713147411,
+   "target": 0.9,
+   "reachable_upper": 1.0,
+   "frozen_version": {
+    "version": "B4_PCT2",
+    "status": "frozen",
+    "spec_sha": "3afa397608b1cdadc6a7d53f4cc1304a2025098f7ea65d0b62c52980caeaf118",
+    "nominations_source": "P5 S3_BOTH frozen own nominations",
+    "nominations_sha256": "67ba85ab4d6e5585f408824f2a3587bc1962bd36d78632d5c2d337723e7d3eba",
+    "reasons": [
+     {
+      "rule": "stability",
+      "ok": true,
+      "value": 0.9482071713147411,
+      "threshold": 0.9
+     },
+     {
+      "rule": "causal",
+      "ok": true
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "master",
+      "year": "2024",
+      "ok": true,
+      "up": 1.2932157551917673,
+      "weak": 0.7324559255435554
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "master",
+      "year": "2025",
+      "ok": true,
+      "up": 1.9878066726023644,
+      "weak": 0.1500544641344448
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "M3B",
+      "year": "2024",
+      "ok": true,
+      "up": 1.9483801793774917,
+      "weak": 0.9712398669357905
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "M3B",
+      "year": "2025",
+      "ok": true,
+      "up": 1.2859826988016558,
+      "weak": 0.04642831778323697
+     }
+    ]
+   },
+   "observed": false
+  },
+  {
+   "line": "regime",
+   "state": "weak",
+   "current": 0.9482071713147411,
+   "target": 0.9,
+   "reachable_upper": 1.0,
+   "frozen_version": {
+    "version": "B4_PCT2",
+    "status": "frozen",
+    "spec_sha": "3afa397608b1cdadc6a7d53f4cc1304a2025098f7ea65d0b62c52980caeaf118",
+    "nominations_source": "P5 S3_BOTH frozen own nominations",
+    "nominations_sha256": "67ba85ab4d6e5585f408824f2a3587bc1962bd36d78632d5c2d337723e7d3eba",
+    "reasons": [
+     {
+      "rule": "stability",
+      "ok": true,
+      "value": 0.9482071713147411,
+      "threshold": 0.9
+     },
+     {
+      "rule": "causal",
+      "ok": true
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "master",
+      "year": "2024",
+      "ok": true,
+      "up": 1.2932157551917673,
+      "weak": 0.7324559255435554
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "master",
+      "year": "2025",
+      "ok": true,
+      "up": 1.9878066726023644,
+      "weak": 0.1500544641344448
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "M3B",
+      "year": "2024",
+      "ok": true,
+      "up": 1.9483801793774917,
+      "weak": 0.9712398669357905
+     },
+     {
+      "rule": "reference_state_return",
+      "account": "M3B",
+      "year": "2025",
+      "ok": true,
+      "up": 1.2859826988016558,
+      "weak": 0.04642831778323697
+     }
+    ]
+   },
+   "observed": true
+  }
+ ],
+ "components": {
+  "regime": {
+   "version": "B4_PCT2",
+   "status": "frozen",
+   "spec_sha": "3afa397608b1cdadc6a7d53f4cc1304a2025098f7ea65d0b62c52980caeaf118",
+   "nominations_source": "P5 S3_BOTH frozen own nominations",
+   "nominations_sha256": "67ba85ab4d6e5585f408824f2a3587bc1962bd36d78632d5c2d337723e7d3eba",
+   "reasons": [
+    {
+     "rule": "stability",
+     "ok": true,
+     "value": 0.9482071713147411,
+     "threshold": 0.9
+    },
+    {
+     "rule": "causal",
+     "ok": true
+    },
+    {
+     "rule": "reference_state_return",
+     "account": "master",
+     "year": "2024",
+     "ok": true,
+     "up": 1.2932157551917673,
+     "weak": 0.7324559255435554
+    },
+    {
+     "rule": "reference_state_return",
+     "account": "master",
+     "year": "2025",
+     "ok": true,
+     "up": 1.9878066726023644,
+     "weak": 0.1500544641344448
+    },
+    {
+     "rule": "reference_state_return",
+     "account": "M3B",
+     "year": "2024",
+     "ok": true,
+     "up": 1.9483801793774917,
+     "weak": 0.9712398669357905
+    },
+    {
+     "rule": "reference_state_return",
+     "account": "M3B",
+     "year": "2025",
+     "ok": true,
+     "up": 1.2859826988016558,
+     "weak": 0.04642831778323697
+    }
+   ]
+  },
+  "selection": {
+   "version": "IE47",
+   "status": "frozen_component",
+   "sha256": "0a4bc805def27fc6e758fece426f184be311cca1db36ea3c771379106c090034",
+   "accepted_on": "2026-11-09",
+   "accept": {
+    "status": "accepted",
+    "line": "selection",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       8,
+       14
+      ],
+      "compare": [
+       3,
+       14
+      ],
+      "delta": 5,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       8,
+       14
+      ],
+      "compare": [
+       3,
+       14
+      ]
+     },
+     {
+      "rule": "nomination_width",
+      "ok": true,
+      "candidate": [
+       2.988095238095238,
+       3.0
+      ],
+      "threshold": 5.0
+     },
+     {
+      "rule": "unique_names",
+      "ok": true,
+      "candidate": [
+       219,
+       216
+      ],
+      "compare": [
+       196,
+       194
+      ],
+      "growth": 0.2
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
+   "accept_source": "rounds/WF00/selection_decision_IE47_vs_IE9.json"
+  },
+  "trading": {
+   "version": "C062",
+   "status": "frozen_component",
+   "source": "config.base",
+   "source_date": "2026-11-09",
+   "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+   "rules_sha256": "67766eec76d1111e53e387dd5b3fc910f5083e677136547a1e26087a2f7d1143",
+   "bench_selection": "IE47"
+  },
+  "conversion": {
+   "version": "C062",
+   "status": "frozen_component",
+   "evaluation_system": "C062",
+   "options": {
+    "max_position": 0.5,
+    "max_gross": 2.8,
+    "max_open": 11,
+    "max_open_by_kind": {},
+    "max_new_long": 4,
+    "max_new_all": 0,
+    "max_new_year": 0,
+    "max_new_by_kind": {},
+    "no_rebuy_day": false,
+    "rotate_min_days": 0,
+    "rotate_below": 0.0,
+    "make_room_kind": {},
+    "make_room_confirmed": false,
+    "risk_scale": "e8_scale"
+   },
+   "source": "config.base",
+   "source_date": "2026-11-09",
+   "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
+   "nomination": "IE47, native K=3 and 10-session cooldown",
+   "entry_observation": "E6c: 5 sessions; the engine caps successful new longs at 4 per day"
+  },
+  "merge": {
+   "version": "C062",
+   "status": "user_selected_base",
+   "selection": "IE47",
+   "trading": "C062",
+   "conversion": "C062",
+   "source": "config.base",
+   "source_date": "2026-11-09",
+   "evaluation_system": "C062",
+   "registered_account": "studies/martin_luk/reports/e21_work/BASE_full/C062_2024",
+   "funnel": "studies/martin_luk/workflow/rounds/WF00/funnels/C062.json",
+   "funnel_sha256": "340b8b4a913987954acea929b3c5eef71ef927a19f1d0bd64cc21ff63ccc3a0a",
+   "note": "用户指定既有整套账户为起点；不是新候选的合并接受判定"
+  }
+ },
+ "pending_merge": false,
+ "bootstrap_done": true,
+ "datasets_approved": true,
+ "can_start_round": true,
+ "valid_for_next_round": true,
+ "readiness_checks": {
+  "g1": true,
+  "whitelist_approved": true,
+  "datasets": true,
+  "capital_rules": true,
+  "registered_unchanged": true,
+  "cache_consistent": true,
+  "rule_fingerprints": true
+ },
+ "blocked_reasons": [],
+ "next_cell": {
+  "line": "trading",
+  "state": "common",
+  "reason": "按选择年末已完成的段，先选主线漏斗丢段最多的线，再选可补空间最大的状态；未决段不参与定格。"
+ },
+ "selection_upper_bound": {
+  "source": "rounds/WF00/work/base_c062_pool_evidence.json",
+  "source_sha256": "95c44ae3f8fc4d46acaaa0a510db030a3ce8ee3c8b5e3077fb1b54b22af0e2b0",
+  "pool": "studies/martin_luk/reports/e1_work/selection.npz",
+  "pool_sha256": "ec3e001ab54fd9068f626a68e19737a63a61ce3fe8745f5f98a4ee184c63843b",
+  "structural": {
+   "2024": 9,
+   "2025": 21
+  },
+  "observed_in_emitted_list": {
+   "2024": 8,
+   "2025": 14
+  },
+  "completed_legs_by_year": {
+   "2024": {
+    "upper": 9,
+    "n": 9
+   },
+   "2025": {
+    "upper": 18,
+    "n": 19
+   }
+  }
+ },
+ "unresolved_segments": [
+  {
+   "key": "US.LMND:2025-12-01:2026-01-22",
+   "year": "2025",
+   "state": "weak",
+   "peak_eve": "2026-01-21"
+  },
+  {
+   "key": "US.OKLO:2025-12-01:2026-01-09",
+   "year": "2025",
+   "state": "weak",
+   "peak_eve": "2026-01-08"
+  },
+  {
+   "key": "US.ONDS:2025-12-01:2026-01-12",
+   "year": "2025",
+   "state": "weak",
+   "peak_eve": "2026-01-09"
+  }
+ ],
+ "current_merge": {
+  "system": "C062",
+  "account": {
+   "2024": {
+    "n": 382,
+    "closed": 382,
+    "win": 0.12041884816753927,
+    "payoff": 8.55099077225736,
+    "days": 5.30890052356021,
+    "return": 0.6130952466512225
+   },
+   "2025": {
+    "n": 373,
+    "closed": 370,
+    "win": 0.14054054054054055,
+    "payoff": 12.579346628728032,
+    "days": 5.010810810810811,
+    "return": 0.5736687761383674
+   }
+  },
+  "annual": {
+   "2024": {
+    "n": 9,
+    "layers": {
+     "L0": 0,
+     "L1": 1,
+     "L2": 1,
+     "L3": 2,
+     "L4": 2,
+     "L5": 1,
+     "L6": 2
+    },
+    "named": 8,
+    "early": 3,
+    "peak_held": 4,
+    "early_peak_held": 2
+   },
+   "2025": {
+    "n": 22,
+    "layers": {
+     "L0": 1,
+     "L1": 4,
+     "L2": 0,
+     "L3": 3,
+     "L4": 8,
+     "L5": 1,
+     "L6": 5
+    },
+    "named": 14,
+    "early": 6,
+    "peak_held": 9,
+    "early_peak_held": 5
+   }
+  },
+  "layers_known_by_selection_cutoff": {
+   "L0": 1,
+   "L1": 4,
+   "L2": 1,
+   "L3": 5,
+   "L4": 10,
+   "L5": 2,
+   "L6": 5
+  },
+  "unresolved_at_selection_cutoff": 3,
+  "convention": "L6=早买且峰前持有；peak_held含晚买，逐位复现P5。实际成交优先于K3诊断投影。"
+ },
+ "baseline_master": {
+  "system": "master",
+  "account": {
+   "2024": {
+    "n": 350,
+    "closed": 350,
+    "win": 0.18285714285714286,
+    "payoff": 11.027224931973409,
+    "days": 5.148571428571429,
+    "return": 2.972895223631813
+   },
+   "2025": {
+    "n": 280,
+    "closed": 273,
+    "win": 0.2673992673992674,
+    "payoff": 5.329837115508939,
+    "days": 5.95970695970696,
+    "return": 2.4361404017970276
+   }
+  },
+  "annual": {
+   "2024": {
+    "n": 9,
+    "layers": {
+     "L0": 0,
+     "L1": 4,
+     "L2": 0,
+     "L3": 0,
+     "L4": 1,
+     "L5": 1,
+     "L6": 3
+    },
+    "named": 2,
+    "early": 4,
+    "peak_held": 3,
+    "early_peak_held": 3
+   },
+   "2025": {
+    "n": 22,
+    "layers": {
+     "L0": 0,
+     "L1": 16,
+     "L2": 0,
+     "L3": 1,
+     "L4": 1,
+     "L5": 0,
+     "L6": 4
+    },
+    "named": 4,
+    "early": 4,
+    "peak_held": 4,
+    "early_peak_held": 4
+   }
+  },
+  "layers_known_by_selection_cutoff": {
+   "L0": 0,
+   "L1": 17,
+   "L2": 0,
+   "L3": 1,
+   "L4": 2,
+   "L5": 1,
+   "L6": 7
+  },
+  "unresolved_at_selection_cutoff": 3,
+  "convention": "L6=早买且峰前持有；peak_held含晚买，逐位复现P5。实际成交优先于K3诊断投影。"
+ },
+ "hard_gates": {
+  "G0": {
+   "status": "pass",
+   "reason": "sources and frozen inputs complete",
+   "numbers": {
+    "dated": 123,
+    "exact": 97,
+    "split": {
+     "select": [
+      "2024-01-02",
+      "2025-12-31"
+     ],
+     "validate": [
+      "2026-01-01",
+      "2026-10-16"
+     ]
+    },
+    "files": {
+     "trades": {
+      "path": "notes/trades.csv",
+      "sha256": "e650899b3a3b4b4d02b8f6ba70cef76e285da244d9932c3be87279b65368c764"
+     },
+     "legs": {
+      "path": "notes/legs_frozen.json",
+      "sha256": "af4618772ad79596afbae54809f8180e34f73a8e81fbfe4f48eebfe1ec32bdf2"
+     },
+     "split": {
+      "path": "workflow/rounds/WF00/split.json",
+      "sha256": "cb4c8ed4f01566095f044758e4647f37093f970778d60c90cafe44ee0769a330"
+     }
+    }
+   }
+  },
+  "G1": {
+   "status": "pass",
+   "reason": "reference and engineering checks passed",
+   "numbers": {
+    "checks": {
+     "data": {
+      "ok": true,
+      "why": [],
+      "span": [
+       "2024-01-02",
+       "2025-12-31"
+      ]
+     },
+     "fills": {
+      "ok": true,
+      "executions": 1448,
+      "bad": [],
+      "n_bad": 0
+     },
+     "win_rate": {
+      "ok": true,
+      "status": "checked",
+      "win": 0.21990369181380418,
+      "trades": 623,
+      "max_win": 0.35,
+      "note": ""
+     },
+     "lookahead": {
+      "ok": true,
+      "cuts": [
+       {
+        "cut": "2024-09-30",
+        "ok": true,
+        "diff": []
+       },
+       {
+        "cut": "2025-09-30",
+        "ok": true,
+        "diff": []
+       }
+      ]
+     }
+    },
+    "code_sha": "503d3177a96e5061080f7304ed467b638236a90aec2370d0040951fa1cac7b7a",
+    "data_sha": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158",
+    "is_reference": true
+   },
+   "run": {
+    "system": "registered martin_luk R74 + S7 master",
+    "market": "us",
+    "mode": "frozen",
+    "selection_span": [
+     "2024-01-02",
+     "2025-12-31"
+    ],
+    "full_panel_cut": "2025-12-31",
+    "cutoff_dates": [
+     "2024-09-30",
+     "2025-09-30"
+    ],
+    "approach": "native full and each truncated panel rebuilt separately; gate.check_lookahead compares their persisted native decisions",
+    "adjustment_limit": "upto is sliced after forward adjustment; later corporate actions are not independently replayed",
+    "source_sha256": {
+     "studies/martin_luk/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "studies/martin_luk/fetch_r8.py": "b2ad8ae99b729fbb39208f76cd64433f63896aa7ed1bab50d203692ca9342a31",
+     "studies/martin_luk/intraday.py": "e44474ad2973d914604c2515588cc5741905dec8586dedc36c2620d14b47dcad",
+     "studies/martin_luk/luk.py": "79de2e6bd821b59c9f399bcd4c3ad8962267033c52492452c13c65f3e734090b",
+     "studies/martin_luk/replicate.py": "9a911c38e96352becf60413cca6bd0d283e14e8b20aea11a3ecf96bcf9b0b866",
+     "studies/martin_luk/reports/final_system_r74.json": "d0b9ee825aaf51930449e32bfb141aedfe0674d1930574f679407f1a63d1b278",
+     "studies/martin_luk/reports/s7.json": "20c8e6fc1456c8e2e376691eb9375750ac342e4d7f8be672a14edcab8719d842",
+     "studies/martin_luk/selection.py": "da8f71dec97d3258edca0f7c892c77e61503715ad4f9f00c604a5096f55b34e6",
+     "studies/martin_luk/workflow/config.json": "7f29c942fdf0584ef3c67c9c2873c9bcbc64ff807533085a8473950ac63a9afb",
+     "studies/martin_luk/workflow/rounds/WF00/work/g1_master.py": "eb4ed148a958fd1ec02f0015569c7cd16bcee7029bedd534d9fa9a882196d4a3",
+     "studies/trader_data/__init__.py": "2a835dc4b7517d2b565ed606d294e7d08ab0feea46ace27d70fa08a72f5336fe",
+     "studies/trader_data/dataset.py": "776accc81f441b277e43f551be15841213a2cfa7be80444b32c929b264207db2",
+     "studies/trader_data/live.py": "06dd171d5d8cda7276f05c9b64352fbfe1fb6290e207c42d1968add227c2c0a7",
+     "studies/trader_data/panel.py": "5bc893f388ce0e177db7572b5a7e9bc6ab3771ed6fac894052aff24f97ebbc03",
+     "studies/trader_data/providers.py": "85b669817ccac616731885625c264c5edcd451ac2e4dfe83d4eb6b99fc78ce37",
+     "studies/trader_replication/DATA_PIN.json": "9ca3d4597a49f8937d13e52088a21d266e1054fbae08058ad84f904775f3adb8",
+     "studies/trader_replication/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "studies/trader_replication/allocation.py": "d55adb0ca3872c1c7854fca8f8f502712f6d7c4bf5d05624ef8a60302d08f60e",
+     "studies/trader_replication/compare.py": "0f337a0f348a63339541317131e9e1914d44ed8d184d1dd969285e672b1986ce",
+     "studies/trader_replication/config.py": "0cd8a369989f3571d338cc4dd4563eb2311e1df4f9d2e2a98ed96f397f85d713",
+     "studies/trader_replication/edge.py": "7d251887650a6275ba10fada49fc06ca4e5e39d9aa3c5aeaf2fa7fe6df3d23b8",
+     "studies/trader_replication/fidelity.py": "c5749c7ca34cb0a42023e2b22a266cb19d4cbe73f88c4db6eae41c975e4b5dd9",
+     "studies/trader_replication/gate.py": "10e7241c37ee64758c31634d46970536e91223ab21f70ca89114bb763d15e8e2",
+     "studies/trader_replication/human.py": "0f4b160e422677f835cb726bb1d043279ec1501e7ba7cffc24ef0d44e78496ae",
+     "studies/trader_replication/ledger.py": "94e086eebd4e623b242a8b6a693f61e16839d25d895f189ddf193970fc59ad2f",
+     "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+     "studies/trader_replication/martin.py": "5f70d72852a705451613534db2e1cd15ab1c22e9580408c8a5026cfc0fd049de",
+     "studies/trader_replication/negations.py": "ee59b97756219196cfbd8277b960931eedef262d699b8311e5fc14493766671e",
+     "studies/trader_replication/panels.py": "f3413a71bf9ddbf9e0de490a99f68f287bd32ef1075de697a20ea9ed9d351306",
+     "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+     "studies/trader_replication/regime.py": "eb26f7bcc95f29260eed2ec83ede53258db426b8cf29b6336f2369e4d6547609",
+     "studies/trader_replication/shorts.py": "5089cd3044d6084dbc381663d8fb302235bf372d13c72efd1389e60112c50635",
+     "studies/trader_replication/study.py": "976e188a2c56a5981b5f73ce42b13f36ced631f2aa9bf335eb4d69cfa4bf3d61",
+     "studies/trader_replication/success.py": "44ba379ddd7f2b6031aedd6b81bb51a7a88dd24d5bbd80ae9e69699d355b4613",
+     "studies/trader_replication/system.py": "17e1156c9547ff4f2e9feba11ead9fdf4a9a0c85942278ad20715fea5ed9e974",
+     "studies/trader_replication/systems.py": "43eb1da6ff9519aa115253b3655b34818c0d631f653ae991f9999c6a27b38ddf"
+    },
+    "pinned_market_digest": "920f88c4c039149473552f095c24052261d7e74d2d12e363490746d3ea745158",
+    "datasets_checksums": {
+     "trader-data-v1": "812054a6f67600b4df2dde3d093c1a8062ae9632d1c9f34e7f8189aaf301d9ca",
+     "trader-options-v1": "ad35e5da3be288c72230201fddae8722cb4dd7a99e25b5f8bde4b723d345f69b",
+     "martin-luk-benchmarks-v1": "c75ecd0b127efccbc0b66fc8576891ddc115dd3ced6f2ea4ce9f8c782a2b0c35"
+    },
+    "trade_count": 630,
+    "closed_by_entry_year": {
+     "2024": {
+      "closed": 350,
+      "wins": 64
+     },
+     "2025": {
+      "closed": 273,
+      "wins": 73
+     }
+    },
+    "fills_bad_trades": [],
+    "winning_trades": [],
+    "lookahead_differences": {},
+    "processes": [
+     {
+      "cut": "2025-12-31",
+      "elapsed_seconds": 11.806651651160792,
+      "resources": {
+       "peak_rss_bytes": 563404800,
+       "cgroup_peak_bytes": 596926464,
+       "memory_max_bytes": 943718400,
+       "cpu_max": "60000 100000"
+      }
+     },
+     {
+      "cut": "2024-09-30",
+      "elapsed_seconds": 6.619872345821932,
+      "resources": {
+       "peak_rss_bytes": 341716992,
+       "cgroup_peak_bytes": 392110080,
+       "memory_max_bytes": 943718400,
+       "cpu_max": "60000 100000"
+      }
+     },
+     {
+      "cut": "2025-09-30",
+      "elapsed_seconds": 8.863005111925304,
+      "resources": {
+       "peak_rss_bytes": 518201344,
+       "cgroup_peak_bytes": 556335104,
+       "memory_max_bytes": 943718400,
+       "cpu_max": "60000 100000"
+      }
+     }
+    ],
+    "comparison_elapsed_seconds": 0.5025146359112114,
+    "comparison_resources": {
+     "peak_rss_bytes": 177844224,
+     "cgroup_peak_bytes": 90624000,
+     "memory_max_bytes": 943718400,
+     "cpu_max": "60000 100000"
+    }
+   }
+  },
+  "success": false,
+  "datasets_approved": true
+ },
+ "fingerprints": {
+  "code": {
+   "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+   "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+   "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+   "studies/trader_replication/config.py": "0cd8a369989f3571d338cc4dd4563eb2311e1df4f9d2e2a98ed96f397f85d713",
+   "studies/trader_replication/regime.py": "eb26f7bcc95f29260eed2ec83ede53258db426b8cf29b6336f2369e4d6547609",
+   "studies/trader_replication/datasets.py": "66aea6334f3650d08e94ea59075af7fab2cac0e30d13c658d755c3bdede0ada1",
+   "studies/trader_replication/system.py": "c337adb3d9c9dfc4157c2ea564bb10164a16bab0ab900bcd5fdc29ce385b7998",
+   "studies/martin_luk/workflow/adapter.py": "23f2c3c18384b7fe3edacc782dc9e337b8d8b6ad4b8f74bc985285017c99fba1",
+   "studies/martin_luk/workflow/bootstrap.py": "eb2c502d5c990e93ecf676fa954e2f7701daa7babe71bd3060c1979ec7b75d71",
+   "studies/martin_luk/workflow/history.py": "32599750d664b34c15c6800b7050be679a82c29019873f5b4c19a16b4e868328",
+   "studies/martin_luk/workflow/verify.py": "bfa5ce925e3192fbdf542b5a6b87685839a03bbd31538a65c4fa269199a8cdd9",
+   "studies/martin_luk/workflow/frozen_cache.py": "4fcba08dc40e17fc39cd12ba62181492867b4a00d1bcbfa1a263550ed558187b",
+   "studies/martin_luk/workflow/capital.py": "1262fb8c5afe871fa787bd09a4a63fe56682f20d78bf32e2efa4b022d04adb60",
+   "studies/martin_luk/workflow/status.py": "97e7a9acf9804695e8d9fe475cf53883c2d121baa40d0c3764115cea72f9385c",
+   ".claude/workflows/trader-replication-loop.js": "9e8d31d9ee63e7863308510ab7d179839eb2b480a78f3f8615c1f5033f621fe5",
+   "skills/trader-replication/references/WORKFLOW_CN.md": "634a937243eb799d8a942734b3a5b8411988ca8673307ac6f1adee909be84e1a",
+   "studies/martin_luk/workflow/config.json": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59"
+  },
+  "data": {
+   "trader-data-v1": "812054a6f67600b4df2dde3d093c1a8062ae9632d1c9f34e7f8189aaf301d9ca",
+   "trader-options-v1": "ad35e5da3be288c72230201fddae8722cb4dd7a99e25b5f8bde4b723d345f69b",
+   "martin-luk-benchmarks-v1": "c75ecd0b127efccbc0b66fc8576891ddc115dd3ced6f2ea4ce9f8c782a2b0c35"
+  },
+  "replay_artifacts": {
+   "data/martin-luk-benchmarks-v1/US.IWM.csv": "0c0f5ebc031dbb1e0fa5c0fdd6bc68f7e39c3b80ed86702567060e451c9a11f4",
+   "data/martin-luk-benchmarks-v1/US.QQQ.csv": "cb28714aab4b77cb7509afc897aa5d23d3d6a6ad6d780829fe3e44c9e404cb30",
+   "data/martin-luk-benchmarks-v1/metadata.json": "540fbc8c2815cb781454fc3b42f3745a6bf6816f792cf7fc3bffd77c80187cfa",
+   "data/trader-data/cache/_opt_opend-us-options_data_trader-data-v1_us_eb4c87f36b_v2.npz": "66bd40d5399a8c91421ec888ed8058ef62401d33bfa69c188757e3270eb616c5",
+   "studies/martin_luk/reports/d1_work/master_book.json": "6225e661694273636ebae6c3353849b3379e4bf94cf518503149cc7fbc632b29",
+   "studies/martin_luk/reports/d1_work/master_filtered.json": "b1756533803551f6d308e837392423773fb24a48b4ed46d044ef235c6964bab6",
+   "studies/martin_luk/reports/d1_work/master_liquidity.npy": "27d28ba058c00cf3acd4eb1a33cd0a761b3a1ffeaf6db401455ed5417cdf1aca",
+   "studies/martin_luk/reports/d1_work/master_metadata.json": "5b33815993ee99be9921218ec8086e0057dea5f354b1a592f910bb63bf422b3e",
+   "studies/martin_luk/reports/d1_work/master_raw.json": "62781d43da3682c5a2bd98230ca8b4c9f900fbdb9515d02785a79796f8938366",
+   "studies/martin_luk/reports/d1_work/master_short_entries.json": "dfb67ac20b9a80e56b120217545c169e519ae12ac126023b241290cccd43b915",
+   "studies/martin_luk/reports/e15_work/full/K2_2024_curve.json": "cb1bd5ce3be150b5c1af57bf69350f74f7853df2b096cdac2b7b425d579d9e26",
+   "studies/martin_luk/reports/e15_work/full/K2_2024_trades.json": "46aa43c19b7fbe7bf2c16fcb0393b1cbe5e2c02b68ffb0b952af92222833aeb7",
+   "studies/martin_luk/reports/e1_work/selection.npz": "ec3e001ab54fd9068f626a68e19737a63a61ce3fe8745f5f98a4ee184c63843b",
+   "studies/martin_luk/reports/e21_work/BASE_full/C062_2024_curve.json": "822fb841105ff6fea8585872b5851cd460c16ae63cdf9bbc4d3b408c7438ebcd",
+   "studies/martin_luk/reports/e21_work/BASE_full/C062_2024_trades.json": "8d3290a14cba5290fea9d6eef7f649a4adb74577f37c9ec50d4ff158f02bce5b",
+   "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json": "67766eec76d1111e53e387dd5b3fc910f5083e677136547a1e26087a2f7d1143",
+   "studies/martin_luk/reports/m3_work/validation/continuous/attempts.jsonl": "6c715cb6b1dc0d62264a13292aa02df6c33a6f87956a8adda17e05cadd1ad51d",
+   "studies/martin_luk/reports/m3_work/validation/continuous/curve.json": "e4ea2962ee139292eb6086e786b0959c074fd4595963ebc805f246a1145e6107",
+   "studies/martin_luk/reports/m3_work/validation/continuous/rules.json": "540fd80a44d24934bf2aa9f408061bebe67277e49a7c71e9847ea33116a249af",
+   "studies/martin_luk/reports/m3_work/validation/continuous/trades.json": "88cb0e3cc717dd9a69f9202f3f9dcca8b516b620677d2dfd325690529a9ec661",
+   "studies/martin_luk/reports/p2a_work/market/IE9_order.json": "979872451dbd32cc1c754a6cfe426c3a42f3196ebed4fcd4b2cd6b2f343e8a6f",
+   "studies/martin_luk/reports/p3_work/market/adr.npy": "f4bb719d00da9a40c6ac340c605e9bfb501c78c28e9d1b0f398ac1e0982689ee",
+   "studies/martin_luk/reports/p3_work/market/close.npy": "4d1d35b6aa4d93c460bde1deef3242e75d05a0876d5cb53c3274b9adc1128c8f",
+   "studies/martin_luk/reports/p3_work/market/e21.npy": "17518bfb093d318bb4ab07e22dbbe563d459ddc8b276cf7c4ef70e5ec8773ce2",
+   "studies/martin_luk/reports/p3_work/market/e50.npy": "957d286ba6c0810f839771c27c13777033f23b6c89dcd3db41acd20a0221cca2",
+   "studies/martin_luk/reports/p3_work/market/e9.npy": "1f9a127639570f9018a2516c559edfd53c420e9f6eae99bfb98a57b0513f848d",
+   "studies/martin_luk/reports/p3_work/market/high.npy": "084b043eebf0724e0c2542975af99a2b77eb055865b827cf08a9b45724d2315c",
+   "studies/martin_luk/reports/p3_work/market/inside.json": "b33e3c142a65b2d6182c2044c55ef8903724c5b7626a8e7462f463ef06e3d26c",
+   "studies/martin_luk/reports/p3_work/market/low.npy": "d6fac5569d6bdf36b6ed781de898a82da03661ac2b214cebe687c5efd0666734",
+   "studies/martin_luk/reports/p3_work/market/open.npy": "e56fe3910418f0f07b0f62b846d1ec50fdc4bbac8715c1dac78cb5325d32ef38",
+   "studies/martin_luk/reports/p3_work/market/to20.npy": "0395fffe1225365b1858fd2d7831737cb50d30d66add51512ddfec6cc902b35e",
+   "studies/martin_luk/reports/p3_work/market/upgrade.npy": "360f13f2bacaebf3a0fbef4ab51221993cb9a5e0cbac23a8cb8a67abd08326e2",
+   "studies/martin_luk/reports/p3_work/market/weekly_bad.npy": "5cbaa56b6c61028e5438bb592e5b0e35e4d4bbaf1f2417269ba1fc20d92aca3e",
+   "studies/martin_luk/reports/p4_work/a1/IE9_master/attempts.json": "7c50597c3c8a2e5ba9d7ee6be96a6e64ddce82c05ade8fc0b199ab0dbca49dbd",
+   "studies/martin_luk/reports/p4_work/a1/IE9_master/curve.json": "d73914d2d94ea373007d8e0fc24b05e33ef4f2142a47f9584b14cd98b2ff5303",
+   "studies/martin_luk/reports/p4_work/a1/IE9_master/trades.json": "1cfccdb2fc2a229dc7c5c75cd38625388530c59def28256cb2674da7685d5613",
+   "studies/martin_luk/reports/p4_work/a1/master/attempts.json": "b28c346c494a2a4de7fc342ed35ed1fcdf583e47981d21bf3155ea8614e037eb",
+   "studies/martin_luk/reports/p4_work/a1/master/curve.json": "059795c2c3a51112d8c8d5985b52b8128aa37b96bca61abe7c56260ac6ecf1f3",
+   "studies/martin_luk/reports/p4_work/a1/master/trades.json": "5a3a167bdc61f0bf65ddb9fdd567ce85a24a2a265d93beba5afed74bc24dbf28",
+   "studies/martin_luk/reports/p4_work/accounts/X1_OPEN/attempts.json": "ab4c514080dea36a1147f41493f18e77f526f67f08c691052a50d81686de77b9",
+   "studies/martin_luk/reports/p4_work/accounts/X1_OPEN/curve.json": "033d57348b415817abfd77b975f8170e715914d449b2e936d6972f7c5d3c40b8",
+   "studies/martin_luk/reports/p4_work/accounts/X1_OPEN/trades.json": "abe1a1922d72d222d37ccf989aacb9d55273b2637cdff1fb34f71147d07ef5a5",
+   "studies/martin_luk/reports/p5_work/accounts/S1_NOBLOCK/attempts.json.gz": "fc40bd95034a28b5c31db13f4a9bc33a8441b4c68a2300be439dc3857fb62a2b",
+   "studies/martin_luk/reports/p5_work/accounts/S1_NOBLOCK/curve.json.gz": "2f4e8436a509e2c2a0ac695f53a25777f1af58edf3476a110f1bdcff3e5bd84c",
+   "studies/martin_luk/reports/p5_work/accounts/S1_NOBLOCK/nominations.json.gz": "ad150ca6352c50babfedcead7a0ba678de7e594df206b0e50bd4a65091d906cc",
+   "studies/martin_luk/reports/p5_work/accounts/S1_NOBLOCK/trades.json.gz": "ba9c202b1565c3fe0b40692a45802cb91bb9f8d4c013b7629402826ba20f6ac7",
+   "studies/martin_luk/reports/p5_work/accounts/S2_CLOSESTOP/attempts.json.gz": "5a844a49fe06b46b6f39769a5c84297ce68f65c229cc537be739cb94fb621b55",
+   "studies/martin_luk/reports/p5_work/accounts/S2_CLOSESTOP/curve.json.gz": "204c6e3737c3aed0fedffd9474e62de0acd3904c61fe20b30a46a4efaa924d0a",
+   "studies/martin_luk/reports/p5_work/accounts/S2_CLOSESTOP/nominations.json.gz": "ca1be38bbfe555a20e56c90f595374d83df3f06e029584e059e1298f03fed0cd",
+   "studies/martin_luk/reports/p5_work/accounts/S2_CLOSESTOP/trades.json.gz": "acc8274ee4c38fdd1389477bee15ae4d576c15777ba25d3089c854322fa40e0a",
+   "studies/martin_luk/reports/p5_work/accounts/S3_BOTH/attempts.json.gz": "9f2029b9e1b1b5553e953aa2b0c753c3d78988dda0063d69face82dcc348a346",
+   "studies/martin_luk/reports/p5_work/accounts/S3_BOTH/curve.json.gz": "679b00273cf0865fa89c4d27befdc54b511eb6e95e585202701728186a716486",
+   "studies/martin_luk/reports/p5_work/accounts/S3_BOTH/nominations.json.gz": "67ba85ab4d6e5585f408824f2a3587bc1962bd36d78632d5c2d337723e7d3eba",
+   "studies/martin_luk/reports/p5_work/accounts/S3_BOTH/trades.json.gz": "9daf5fce8b454ed590c348acb0bc4b2be944099832d19fd42160c2c79fb542b0",
+   "studies/martin_luk/reports/p5_work/regimes/B4_PCT2.json": "9feee89a8de9c00ae103b6a1dad7f3d56e2ee6cac2b88b0374f03c714d65c52f",
+   "studies/martin_luk/reports/p5_work/regimes/train/B4_PCT2.json": "cb4abf9e97a08847c89e0ecc9951fcd0f8994095021672aaf479131353fb2482",
+   "studies/martin_luk/reports/s0_work/picks/IE47.json": "0a4bc805def27fc6e758fece426f184be311cca1db36ea3c771379106c090034",
+   "studies/martin_luk/reports/s0_work/picks/IE9.json": "797dcc1f8f254fb864141421eb51b84f64b1cab8324437ebb1aaa8c5def07b77",
+   "studies/martin_luk/reports/s0_work/picks/M3B.json": "b18da300bf33b818a033add26ab01602ba21b7fee8624e4f7650f9f0e5e19bf1",
+   "studies/martin_luk/reports/s0_work/picks/master_filtered.json": "14009f4e94f598d57e83f169a37775d245517845134cf3b0cdb8b46922c9f867",
+   "studies/martin_luk/reports/u1_work/panel/close.npy": "2b939363903245ab457ac0e72ac1da9359d0ada0c6985fbd895c7ab80dca9536",
+   "studies/martin_luk/reports/u1_work/panel/codes.npy": "58bbe987038c4702ef4ff7cdf5ae687b1b15adb22653c8332f3e30ab33340ee3",
+   "studies/martin_luk/reports/u1_work/panel/days.npy": "a70e99f4a5e3a7b097dfb607e016587a73377d91f2dc27d9283a4636a13c6599",
+   "studies/martin_luk/reports/u1_work/panel/digest.npy": "46b83d53e42fb61d565678cf1a1140e9a1f08a1f585f29b116bbdc72d8ea0969",
+   "studies/martin_luk/reports/u1_work/panel/high.npy": "01193a571e13a4cd2ba2117dd71e0c523dcb4ee61b7b6d1cf4bfc34d68932d58",
+   "studies/martin_luk/reports/u1_work/panel/low.npy": "fd4b9b5fe89be629125fb16e8a72799746ccaaa54a8f512906558a46b8122bcb",
+   "studies/martin_luk/reports/u1_work/panel/open.npy": "0e3a90f3df074032be9fa6eb97c3ac41efa2b6fcdd27ed357f5e70c2cb0343f9",
+   "studies/martin_luk/reports/u1_work/panel/raw_close.npy": "d689a2a3e4757918457669800a3e41cf2f81ad608292e9b6cf20f48ef93e9fbd",
+   "studies/martin_luk/reports/u1_work/panel/turnover.npy": "e145378dbe72b54b28c98fe3a2308521faf7204a59ebcf58d01b02c90473474d",
+   "studies/martin_luk/reports/u1_work/panel/volume.npy": "c83808f59f70d687b10a5982cbc670b5b2762c400144749367acfa7441cb200e"
+  },
+  "evaluation": {
+   "studies/martin_luk/notes/trades.csv": "e650899b3a3b4b4d02b8f6ba70cef76e285da244d9932c3be87279b65368c764",
+   "studies/martin_luk/notes/legs_frozen.json": "af4618772ad79596afbae54809f8180e34f73a8e81fbfe4f48eebfe1ec32bdf2"
+  }
+ },
+ "rule_fingerprints": {
+  ".claude/workflows/trader-replication-loop.js": "b5d929c2080b965ecb2ab051b5c0db8c051f94cebe19910f47fdea29870ea4c9",
+  "skills/trader-replication/references/WORKFLOW_CN.md": "7e758f04d60478c04ae3f27bd99ea39ab7894f9ca94e2afe523ef13a1a105248",
+  "studies/martin_luk/workflow/config.json": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
+  "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+  "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+  "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e"
+ },
+ "frozen_caches": {
+  "regime": {
+   "B4_PCT2": {
+    "path": "studies/martin_luk/workflow/frozen/regime/B4_PCT2",
+    "manifest_sha256": "1281cdb9635f1db65c5ff792b98c40a8882f35f4ed5190d931e2defc365a601a",
+    "bytes": 23492
+   }
+  },
+  "selection": {
+   "IE47": {
+    "path": "studies/martin_luk/workflow/frozen/selection/IE47",
+    "manifest_sha256": "4847592c8b9c804c7d73d1015d04b00aa3a9bca5666e6db3a757ae1cfaaa1451",
+    "bytes": 219467
+   }
+  },
+  "trading": {
+   "master": {
+    "path": "studies/martin_luk/workflow/frozen/trading/master",
+    "manifest_sha256": "96d509fade64f8472ba57cd5086bcfc4788a97523af2789a97a84c21645c6344",
+    "bytes": 1340875
+   },
+   "C062": {
+    "path": "studies/martin_luk/workflow/frozen/trading/C062",
+    "manifest_sha256": "3f392a886a8002af2774ae984668fee8f3af5508bb554f45649c9f8842f65682",
+    "bytes": 2890706
+   }
+  },
+  "conversion": {
+   "master_allocate": {
+    "path": "studies/martin_luk/workflow/frozen/conversion/master_allocate",
+    "manifest_sha256": "d2ce90c83b7a79d4295c027d1bba28b0f902f5ed03ce41f6bf234c9ef12f6bd1",
+    "bytes": 5021
+   },
+   "C062": {
+    "path": "studies/martin_luk/workflow/frozen/conversion/C062",
+    "manifest_sha256": "1aa79f07cbc0cde134969b940a5b32e28e0bf8cc8138ab38026e5d90dc30b805",
+    "bytes": 5807
+   }
+  },
+  "reference": {
+   "master": {
+    "path": "studies/martin_luk/workflow/frozen/reference/master",
+    "manifest_sha256": "f44b1f319dc7b9b05a37c022040b036e4a08d7dff37cd1cf4dae24ff176c589b",
+    "bytes": 516654
+   },
+   "M3B": {
+    "path": "studies/martin_luk/workflow/frozen/reference/M3B",
+    "manifest_sha256": "d01c47e420faa88ae9f87a2bc3dac2db08f10fdb8c66d143c33fd8da5c6a8bcf",
+    "bytes": 470891
+   }
+  },
+  "merge": {
+   "C062": {
+    "path": "studies/martin_luk/workflow/frozen/merge/C062",
+    "manifest_sha256": "d20bf73fd7a993702fca0e32092c437402881e70f64c97a00b9d39c8e99656c9",
+    "bytes": 1448893
+   }
+  }
+ },
+ "frozen_cache_bytes": 7627105,
+ "rule_drift": {
+  "status": "resolved",
+  "audit": "studies/martin_luk/workflow/rounds/WF00/rule_drift.json",
+  "date": "2026-11-09"
+ },
+ "pending_merge_note": "用户指定的完整 IE47+C062 底座已包含此前的 IE47 选股；本次不声称通过候选合并接受门槛，也没有待合并的新候选。",
+ "workflow_issues_open": [
+  "WF-005",
+  "WF-006",
+  "WF-007",
+  "WF-018",
+  "WF-020",
+  "WF-021",
+  "WF-024",
+  "WF-025",
+  "WF-026",
+  "WF-027",
+  "WF-028",
+  "WF-029",
+  "WF-030"
+ ],
+ "copied_from": "WF00",
+ "copy_note": "WF01 无候选被接受，冻结版本不变，按规则第五节照抄上一轮各格；指纹已在 WF01 量步骤核对一致"
+}

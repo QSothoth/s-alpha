@@ -1,0 +1,6 @@
+{"ok": true, "round_decision": "branch", "c4_released": true, "c5_released": false,
+ "w2a": {"peak_held": [5, 7], "returns": [1.3999442647168134, 0.5063975244361472], "recomputed_match": true},
+ "tests": {"custody": "238 OK", "martin_luk": "343 OK", "trader_replication": "see logs/verify_trader_replication.log (success)"},
+ "datasets_check": "ok", "datasets_scan": "ok, violations []", "profile_check": "档案完整",
+ "problems": [],
+ "workflow_issues": [{"kind": "流程缺口", "evidence": "预登记写明不运行交易测试台，但 work/trading_bench.json 在 W2A 判定 branch 后生成（仅参考，不参与判定、未建缓存、new_caches 为空），预登记与实际有出入，应在报告写明。"}]}

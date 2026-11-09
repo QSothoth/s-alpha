@@ -180,7 +180,7 @@ for (let i = 0; i < MAX_ROUNDS && !stop; i++) {
   phase('Record')
   const rec = await agent(
     `${BASE}\n\n照抄 ${RD}/completion.json 的 decision（已核对，不重新判定）。main_metric、compare_metric、returns 只填选择年；留出年结果只决定 holdout_loss，不写进这三项。` +
-    `写一行进 ${DIR}/attempts.jsonl（含 line、scope），更新 state.json：accepted 则更新该线冻结版本，非 merge、非 joint 线被接受时 pending_merge=true，merge 或 joint 轮结束后置 false；joint 被接受时更新所有改动线的冻结版本与合并主线并记新版本号（versions.json 追加、重出 VERSIONS_CN.md）；next_round 加一。` +
+    `写一行进 ${DIR}/attempts.jsonl（含 line、scope），更新 state.json：accepted 则更新该线冻结版本，非 merge、非 joint 线被接受时 pending_merge=true，merge 或 joint 轮结束后置 false；joint 被接受时更新所有改动线的冻结版本与合并主线并记新版本号（versions.json 追加、重出 VERSIONS_CN.md）；next_round 加一；metrics_round 只在本轮重算指标并新建冻结版本时改为本轮，否则保持原值。` +
     `判定写进 ${RD}/DECISION_CN.md；有留出结果时 holdout_loss 照实填。` +
     `再按规则第八节，把这些流程问题和 ${RD}/completion.json 的 workflow_issues 追加进 ${ISSUES}（已有同类就追加引用行），issues_added 填追加行数：${JSON.stringify(flowIssues)}`,
     { label: `record:${rid}`, phase: 'Record', schema: RECORD, ...CHEAP },

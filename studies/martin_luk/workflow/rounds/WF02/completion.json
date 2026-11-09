@@ -1,0 +1,743 @@
+{
+  "task": "执行 WF02 联动轮：W1E 方向的同日准入顺序与观察期机制检查",
+  "round": "WF02",
+  "line": "joint",
+  "scope": [
+    "conversion common",
+    "trading common"
+  ],
+  "decision": {
+    "status": "branch",
+    "line": "merge",
+    "checks": [
+      {
+        "rule": "selection_year_gain",
+        "ok": false,
+        "years": [
+          "2024",
+          "2025"
+        ],
+        "candidate": [
+          5,
+          7
+        ],
+        "compare": [
+          4,
+          7
+        ],
+        "delta": 1,
+        "threshold": 3
+      },
+      {
+        "rule": "no_year_decrease",
+        "ok": true,
+        "candidate": [
+          5,
+          7
+        ],
+        "compare": [
+          4,
+          7
+        ]
+      },
+      {
+        "rule": "behaviour_items",
+        "ok": true,
+        "candidate": 1,
+        "compare": 1,
+        "tolerance": 0.2
+      },
+      {
+        "rule": "annual_return_floor",
+        "ok": true,
+        "candidate": [
+          1.3999442647168134,
+          0.5063975244361472
+        ],
+        "threshold": 0.0
+      },
+      {
+        "rule": "peak_position_weight",
+        "ok": true,
+        "candidate": 0.14332122022518035,
+        "compare": 0.10168106447651955
+      },
+      {
+        "rule": "selection_base",
+        "ok": true,
+        "uses_bar_turnover_selection": false
+      }
+    ],
+    "selection_years": [
+      "2024",
+      "2025"
+    ],
+    "holdout_used_for_selection": false
+  },
+  "equivalence_check": {
+    "v1": {
+      "ok": true,
+      "curve_exact": true,
+      "completed_trades_exact": true,
+      "cross_year_projection_exact": true,
+      "first_difference": null
+    },
+    "W1E": {
+      "ok": true,
+      "first_difference": null,
+      "curve_trades_and_attempts_exact": true
+    },
+    "STATUS_merge": {
+      "ok": true,
+      "layers": {
+        "L0": 1,
+        "L1": 4,
+        "L2": 1,
+        "L3": 5,
+        "L4": 10,
+        "L5": 2,
+        "L6": 5
+      },
+      "peak_held": {
+        "2024": 4,
+        "2025": 7
+      },
+      "record_exact": true,
+      "segments": 28
+    }
+  },
+  "mechanism_release": {
+    "C4": {
+      "released": true,
+      "contention_days": 87,
+      "incoming_single": {
+        "n": 112,
+        "mean_r": 1.982755620663448,
+        "win_rate": 0.13392857142857142,
+        "at_least_5r": 13,
+        "at_least_5r_rate": 0.11607142857142858
+      },
+      "outgoing_single": {
+        "n": 112,
+        "mean_r": 1.8461367749159385,
+        "win_rate": 0.16071428571428573,
+        "at_least_5r": 11,
+        "at_least_5r_rate": 0.09821428571428571
+      },
+      "outgoing_actual": {
+        "n": 112,
+        "mean_r": 1.864124017498226,
+        "win_rate": 0.16071428571428573,
+        "at_least_5r": 11,
+        "at_least_5r_rate": 0.09821428571428571
+      }
+    },
+    "C5": {
+      "released": false,
+      "days_1_3_single": {
+        "n": 882,
+        "mean_r": 1.5123468165911895,
+        "win_rate": 0.12244897959183673,
+        "at_least_5r": 75,
+        "at_least_5r_rate": 0.08503401360544217
+      },
+      "days_4_5_single": {
+        "n": 242,
+        "mean_r": 2.508779487276167,
+        "win_rate": 0.1652892561983471,
+        "at_least_5r": 24,
+        "at_least_5r_rate": 0.09917355371900827
+      }
+    },
+    "single_entry_planned": 1124,
+    "single_entry_opened": 1124,
+    "removed_candidates": [
+      "W2B"
+    ],
+    "reachable_upper": {
+      "c4": {
+        "total": 4,
+        "keys": [
+          "US.ASTS:2025-10-01:2025-10-16",
+          "US.FUTU:2025-07-07:2025-09-05",
+          "US.GME:2024-05-13:2024-05-14",
+          "US.SOUN:2024-11-21:2024-12-26"
+        ],
+        "by_year": {
+          "2024": 2,
+          "2025": 2
+        },
+        "by_state": {
+          "up": 3,
+          "weak": 1,
+          "pullback": 0
+        },
+        "by_year_state": {
+          "2024": {
+            "up": 1,
+            "weak": 1,
+            "pullback": 0
+          },
+          "2025": {
+            "up": 2,
+            "weak": 0,
+            "pullback": 0
+          }
+        }
+      },
+      "c5": {
+        "computed": false,
+        "reason": "not_released"
+      },
+      "union": {
+        "total": 4,
+        "keys": [
+          "US.ASTS:2025-10-01:2025-10-16",
+          "US.FUTU:2025-07-07:2025-09-05",
+          "US.GME:2024-05-13:2024-05-14",
+          "US.SOUN:2024-11-21:2024-12-26"
+        ],
+        "by_year": {
+          "2024": 2,
+          "2025": 2
+        },
+        "by_state": {
+          "up": 3,
+          "weak": 1,
+          "pullback": 0
+        },
+        "by_year_state": {
+          "2024": {
+            "up": 1,
+            "weak": 1,
+            "pullback": 0
+          },
+          "2025": {
+            "up": 2,
+            "weak": 0,
+            "pullback": 0
+          }
+        }
+      },
+      "needed": 1,
+      "proceed": true
+    },
+    "diagnostic_path": "studies/martin_luk/workflow/rounds/WF02/work/d0_diagnosis.json",
+    "path_dependence": "同日静态排序，不计后续日期持仓路径"
+  },
+  "accept_inputs": "studies/martin_luk/workflow/rounds/WF02/accept_inputs.json",
+  "candidates": {
+    "W2A": {
+      "status": "branch",
+      "line": "merge",
+      "checks": [
+        {
+          "rule": "selection_year_gain",
+          "ok": false,
+          "years": [
+            "2024",
+            "2025"
+          ],
+          "candidate": [
+            5,
+            7
+          ],
+          "compare": [
+            4,
+            7
+          ],
+          "delta": 1,
+          "threshold": 3
+        },
+        {
+          "rule": "no_year_decrease",
+          "ok": true,
+          "candidate": [
+            5,
+            7
+          ],
+          "compare": [
+            4,
+            7
+          ]
+        },
+        {
+          "rule": "behaviour_items",
+          "ok": true,
+          "candidate": 1,
+          "compare": 1,
+          "tolerance": 0.2
+        },
+        {
+          "rule": "annual_return_floor",
+          "ok": true,
+          "candidate": [
+            1.3999442647168134,
+            0.5063975244361472
+          ],
+          "threshold": 0.0
+        },
+        {
+          "rule": "peak_position_weight",
+          "ok": true,
+          "candidate": 0.14332122022518035,
+          "compare": 0.10168106447651955
+        },
+        {
+          "rule": "selection_base",
+          "ok": true,
+          "uses_bar_turnover_selection": false
+        }
+      ],
+      "selection_years": [
+        "2024",
+        "2025"
+      ],
+      "holdout_used_for_selection": false
+    },
+    "W2B": {
+      "status": "not_run",
+      "reason": "C5_not_released"
+    },
+    "W2C": {
+      "status": "not_run",
+      "reason": "ablation_only_no_selected_candidate"
+    },
+    "W2D": {
+      "status": "not_run",
+      "reason": "ablation_only_no_selected_candidate"
+    },
+    "W2E": {
+      "status": "not_run",
+      "reason": "ablation_only_no_selected_candidate"
+    }
+  },
+  "selection_rule_trace": [
+    "仅 W2A 放行参与选择；相对 v1 峰前持有增量为 1，门槛为 3，未选中。"
+  ],
+  "final_components": null,
+  "ablation": {
+    "run": false,
+    "reason": "no_accepted_candidate"
+  },
+  "holdout": {
+    "run": false,
+    "label": "留出*",
+    "reason": "no_accepted_candidate"
+  },
+  "new_caches": [],
+  "version_entry_selfcheck": {
+    "run": false,
+    "reason": "no_accepted_candidate"
+  },
+  "trading_bench": {
+    "path": "studies/martin_luk/workflow/rounds/WF02/work/trading_bench.json",
+    "scope": "C3 on frozen C062 allocation, selection years only"
+  },
+  "prereg_sha256": "d6feade1afd8b76d852823f6bc16cf5a2cca0e0608d8406951f282c6864d844c",
+  "resource_usage": {
+    "limits": "CPUQuota=60%, MemoryMax=900M; numeric libraries one thread",
+    "measured_steps": {
+      "studies/martin_luk/workflow/rounds/WF02/logs/W2A.log": [
+        {
+          "elapsed_seconds": 4.461,
+          "peak_rss_kb": 216700,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/W2A_before_calendar_fix.log": [
+        {
+          "elapsed_seconds": 4.529,
+          "peak_rss_kb": 197980,
+          "exit_status": 1
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/W2A_before_timing_recheck.log": [
+        {
+          "elapsed_seconds": 3.93,
+          "peak_rss_kb": 217496,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/datasets_check.log": [
+        {
+          "elapsed_seconds": 132.066,
+          "peak_rss_kb": 38312,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/datasets_scan.log": [
+        {
+          "elapsed_seconds": 0.182,
+          "peak_rss_kb": 28192,
+          "exit_status": 0
+        },
+        {
+          "elapsed_seconds": 0.245,
+          "peak_rss_kb": 28144,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/diagnose.log": [
+        {
+          "elapsed_seconds": 0.843,
+          "peak_rss_kb": 74320,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/equivalence.log": [
+        {
+          "elapsed_seconds": 6.77,
+          "peak_rss_kb": 222792,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/export_book.log": [
+        {
+          "elapsed_seconds": 2.752,
+          "peak_rss_kb": 163904,
+          "exit_status": 0
+        },
+        {
+          "elapsed_seconds": 3.112,
+          "peak_rss_kb": 164188,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/mechanism.log": [
+        {
+          "elapsed_seconds": 5.8,
+          "peak_rss_kb": 121324,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/preflight_datasets_check.log": [
+        {
+          "elapsed_seconds": 149.29,
+          "peak_rss_kb": 38332,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/preflight_profile_check.log": [
+        {
+          "elapsed_seconds": 0.135,
+          "peak_rss_kb": 24212,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/profile_check.log": [
+        {
+          "elapsed_seconds": 0.184,
+          "peak_rss_kb": 24344,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/report.log": [
+        {
+          "elapsed_seconds": 0.76,
+          "peak_rss_kb": 77728,
+          "exit_status": 0
+        },
+        {
+          "elapsed_seconds": 0.787,
+          "peak_rss_kb": 77920,
+          "exit_status": 0
+        },
+        {
+          "elapsed_seconds": 0.621,
+          "peak_rss_kb": 77952,
+          "exit_status": 0
+        },
+        {
+          "elapsed_seconds": 0.99,
+          "peak_rss_kb": 77728,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/test_custody.log": [
+        {
+          "elapsed_seconds": 75.646,
+          "peak_rss_kb": 64056,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/test_custody_final.log": [
+        {
+          "elapsed_seconds": 75.291,
+          "peak_rss_kb": 65764,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/test_martin_luk.log": [
+        {
+          "elapsed_seconds": 10.133,
+          "peak_rss_kb": 101352,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/test_martin_luk_final.log": [
+        {
+          "elapsed_seconds": 10.354,
+          "peak_rss_kb": 102252,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/test_martin_luk_missing_regime.log": [
+        {
+          "elapsed_seconds": 9.553,
+          "peak_rss_kb": 98992,
+          "exit_status": 1
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/test_status_repaired.log": [
+        {
+          "elapsed_seconds": 2.721,
+          "peak_rss_kb": 81800,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/test_trader_replication.log": [
+        {
+          "elapsed_seconds": 198.041,
+          "peak_rss_kb": 265592,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/timing_tests.log": [
+        {
+          "elapsed_seconds": 0.462,
+          "peak_rss_kb": 44964,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/timing_tests_final.log": [
+        {
+          "elapsed_seconds": 0.639,
+          "peak_rss_kb": 44824,
+          "exit_status": 0
+        }
+      ],
+      "studies/martin_luk/workflow/rounds/WF02/logs/trading_bench.log": [
+        {
+          "elapsed_seconds": 4.069,
+          "peak_rss_kb": 175584,
+          "exit_status": 0
+        }
+      ]
+    },
+    "measured_total_seconds": 704.366,
+    "max_peak_rss_kb": 265592,
+    "note": "包含复核与重跑；/usr/bin/time 不存在，首次未启动子进程，后改用 resource 包装器。"
+  },
+  "code_changes_after_runs": [
+    {
+      "time_utc": "2026-11-09T14:17:16Z",
+      "change": "修正 W2A 汇总跨年段索引，使用冻结完整日历。首次账户已计算但汇总报错，未生成结果文件。",
+      "preserved": [
+        "studies/martin_luk/workflow/rounds/WF02/logs/W2A_before_calendar_fix.log",
+        "studies/martin_luk/workflow/rounds/WF02/work/previous/run_wf02_before_calendar_fix.txt"
+      ],
+      "rerun": [
+        "W2A"
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T14:29:34Z",
+      "change": "补充盘中与收盘两种成交时点顺序的单测。",
+      "preserved": [
+        "studies/martin_luk/workflow/rounds/WF02/logs/W2A_before_timing_recheck.log",
+        "studies/martin_luk/workflow/rounds/WF02/work/previous/W2A_before_timing_recheck.json",
+        "studies/martin_luk/workflow/rounds/WF02/work/previous/accept_inputs_before_timing_recheck.json"
+      ],
+      "rerun": [
+        "timing_tests_final",
+        "W2A",
+        "test_martin_luk_final",
+        "test_custody_final"
+      ],
+      "rerun_equal_except_elapsed": true
+    },
+    {
+      "time_utc": "2026-11-09T14:39:42.257680+00:00",
+      "change": "新增交易测试台和报告生成代码并迭代报告；仅用于参考与呈现，不参与候选或消融计算。",
+      "rerun": [
+        "trading_bench",
+        "REPORT_CN.md",
+        "datasets_scan"
+      ]
+    }
+  ],
+  "tests": {
+    "timing": {
+      "status": "pass",
+      "count": 9,
+      "returncode": 0,
+      "log": "studies/martin_luk/workflow/rounds/WF02/logs/timing_tests_final.log"
+    },
+    "custody": {
+      "status": "pass",
+      "count": 238,
+      "returncode": 0,
+      "log": "studies/martin_luk/workflow/rounds/WF02/logs/test_custody_final.log"
+    },
+    "trader_replication": {
+      "status": "pass",
+      "count": 1196,
+      "expected_failures": 1,
+      "returncode": 0,
+      "log": "studies/martin_luk/workflow/rounds/WF02/logs/test_trader_replication.log"
+    },
+    "martin_luk": {
+      "status": "pass",
+      "count": 343,
+      "returncode": 0,
+      "log": "studies/martin_luk/workflow/rounds/WF02/logs/test_martin_luk_final.log",
+      "initial_failure": "studies/martin_luk/workflow/rounds/WF02/logs/test_martin_luk_missing_regime.log",
+      "repair_validation": "studies/martin_luk/workflow/rounds/WF02/logs/test_status_repaired.log"
+    }
+  },
+  "datasets_check": {
+    "status": "pass",
+    "returncode": 0,
+    "preflight_log": "studies/martin_luk/workflow/rounds/WF02/logs/preflight_datasets_check.log",
+    "log": "studies/martin_luk/workflow/rounds/WF02/logs/datasets_check.log"
+  },
+  "datasets_scan": {
+    "status": "pass",
+    "returncode": 0,
+    "log": "studies/martin_luk/workflow/rounds/WF02/logs/datasets_scan.log"
+  },
+  "profile_check": {
+    "status": "pass",
+    "returncode": 0,
+    "preflight_log": "studies/martin_luk/workflow/rounds/WF02/logs/preflight_profile_check.log",
+    "log": "studies/martin_luk/workflow/rounds/WF02/logs/profile_check.log"
+  },
+  "protected_files_unchanged": true,
+  "protected_file_audit": "studies/martin_luk/workflow/rounds/WF02/work/integrity.json",
+  "rule_fingerprints": {
+    "before": {
+      ".claude/workflows/trader-replication-loop.js": "9e8d31d9ee63e7863308510ab7d179839eb2b480a78f3f8615c1f5033f621fe5",
+      "skills/trader-replication/references/WORKFLOW_CN.md": "634a937243eb799d8a942734b3a5b8411988ca8673307ac6f1adee909be84e1a",
+      "studies/martin_luk/workflow/config.json": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
+      "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+      "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+      "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e"
+    },
+    "after": {
+      ".claude/workflows/trader-replication-loop.js": "9e8d31d9ee63e7863308510ab7d179839eb2b480a78f3f8615c1f5033f621fe5",
+      "skills/trader-replication/references/WORKFLOW_CN.md": "634a937243eb799d8a942734b3a5b8411988ca8673307ac6f1adee909be84e1a",
+      "studies/martin_luk/workflow/config.json": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
+      "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+      "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+      "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e"
+    }
+  },
+  "temporary_files": {
+    "test_tmpdir": "studies/martin_luk/workflow/rounds/WF02/work/tmp",
+    "removed_after_tests": true,
+    "global_tmp_zero_new": false,
+    "global_snapshot_new_count": 81,
+    "global_existing_changed_count": 26,
+    "new_under_other_claude_process_roots": 81,
+    "new_outside_those_roots": 0,
+    "limitation": "并行 Claude 进程也写共享 /tmp，无法断言全机零新增；不清理其他进程文件。",
+    "evidence": "studies/martin_luk/workflow/rounds/WF02/work/temp_audit.json"
+  },
+  "workflow_issues": [
+    {
+      "kind": "任务书老坑",
+      "evidence": "state.metrics_round=WF01 但 WF01/regime.json 缺失，首次 Martin 测试因此失败。",
+      "repair": "将 WF00/regime.json 逐字节复制为 WF01 持久引用，未修改原文件、冻结缓存或 state；重跑测试通过。",
+      "source_sha256": "ef490a0f244046432e00233496b07ed7b432151ba27f979c8972217232b2ef70",
+      "proposal": "记账时为不变行情层复制引用，或让 STATUS 读取对应冻结源。"
+    },
+    {
+      "ref": "WF-044",
+      "evidence": "QUBT 第 4 个观察日触发不在漏斗现有 3 日归因窗口，峰前持有仍按真实仓位计。"
+    },
+    {
+      "ref": "WF-045",
+      "evidence": "risk_or_gross 合并仓位过小与总敞口不足，轨迹无法逐笔拆分。"
+    },
+    {
+      "kind": "工具缺失",
+      "evidence": "共享 /tmp 有其他 Claude 进程新增文件，无法只凭全机前后快照证明零新增。",
+      "proposal": "以进程或命名空间记录测试写入，避免归责共享目录的其他任务。"
+    },
+    {
+      "kind": "工具缺失",
+      "evidence": "首次运行密钥保护安装器时，共享 git 配置的绝对 hooksPath 指向主 checkout，安装器拒绝覆盖。",
+      "resolution": "已核对现有 pre-commit/pre-push 与本 checkout 相同且固定版本扫描器可执行；本轮未提交或推送。"
+    }
+  ],
+  "keep": [
+    "studies/martin_luk/workflow/rounds/WF02/PLAN_CN.md",
+    "studies/martin_luk/workflow/rounds/WF02/PREREG_CN.md",
+    "studies/martin_luk/workflow/rounds/WF02/REPORT_CN.md",
+    "studies/martin_luk/workflow/rounds/WF02/DECISION_CN.md",
+    "studies/martin_luk/workflow/rounds/WF02/STATUS.json",
+    "studies/martin_luk/workflow/rounds/WF02/accept_inputs.json",
+    "studies/martin_luk/workflow/rounds/WF02/completion.json",
+    "studies/martin_luk/workflow/rounds/WF02/logs/W2A.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/W2A_before_calendar_fix.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/W2A_before_timing_recheck.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/datasets_check.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/datasets_scan.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/diagnose.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/equivalence.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/export_book.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/mechanism.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/preflight_datasets_check.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/preflight_profile_check.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/profile_check.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/report.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/test_custody.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/test_custody_final.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/test_martin_luk.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/test_martin_luk_final.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/test_martin_luk_missing_regime.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/test_status_repaired.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/test_trader_replication.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/timing_tests.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/timing_tests_final.log",
+    "studies/martin_luk/workflow/rounds/WF02/logs/trading_bench.log",
+    "studies/martin_luk/workflow/rounds/WF02/work/W2A.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/d0_diagnosis.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/diagnose.py",
+    "studies/martin_luk/workflow/rounds/WF02/work/equivalence.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/integrity.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/measure.py",
+    "studies/martin_luk/workflow/rounds/WF02/work/mechanism.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/mechanism.py",
+    "studies/martin_luk/workflow/rounds/WF02/work/mechanism_replays.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/preflight.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/prereg.sha256",
+    "studies/martin_luk/workflow/rounds/WF02/work/previous/W2A_before_timing_recheck.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/previous/accept_inputs_before_timing_recheck.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/previous/run_wf02_before_calendar_fix.txt",
+    "studies/martin_luk/workflow/rounds/WF02/work/report_wf02.py",
+    "studies/martin_luk/workflow/rounds/WF02/work/run_wf02.py",
+    "studies/martin_luk/workflow/rounds/WF02/work/selection.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/temp_audit.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/temp_before.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/trading_bench.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/trading_bench.py",
+    "studies/martin_luk/workflow/rounds/WF02/work/v1_funnel.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/v1_replay.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/w1e_book.json",
+    "studies/martin_luk/workflow/rounds/WF02/work/w1e_replay.json",
+    "studies/martin_luk/wf02_joint.py",
+    "studies/martin_luk/tests/test_wf02_joint.py",
+    "studies/martin_luk/workflow/rounds/WF01/regime.json"
+  ],
+  "disk_free_before": 6503686144,
+  "disk_free_after": 6469746688,
+  "keep_bytes": 16778367,
+  "checkpoint": {
+    "triggered": true,
+    "reason": "同一 joint 衔接 common + 交易 common 格连续两轮无进步"
+  },
+  "committed": false,
+  "pushed": false
+}
