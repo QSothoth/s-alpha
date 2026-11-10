@@ -1,0 +1,159 @@
+{
+ "ok": true,
+ "capital": {
+  "set_by": "user",
+  "date": "2026-11-09",
+  "definition": "杠杆 = 多空持仓总市值 ÷ 账户权益。initial：买入/加仓后不得超过；maintenance：权益 ÷ 持仓市值的最低比例，收盘低于它（杠杆超过 1/maintenance）即追保，次日开盘减仓回到 initial 以内；两者之间不开新仓也不强制卖。margin_rate：超出权益的多头市值年融资利率",
+  "profiles": {
+   "L1": {
+    "initial": 1.0,
+    "maintenance": null,
+    "margin_rate": 0.07,
+    "note": "现金账户，不借钱"
+   },
+   "L2": {
+    "initial": 2.0,
+    "maintenance": 0.25,
+    "margin_rate": 0.07,
+    "note": "美国普通融资账户：Reg T 初始 50%、FINRA 4210 维持 25%（约 4 倍）"
+   },
+   "L2.8": {
+    "initial": 2.8,
+    "maintenance": 0.3,
+    "margin_rate": 0.07,
+    "note": "他的原话：比赛中孖展曝险 280%（notes/SOURCES.md ET fairy）；维持 30% 为券商常见内部要求（约 3.3 倍）"
+   }
+  },
+  "acceptance_profile": "L2.8",
+  "deleverage_methods": [
+   "weakest_first",
+   "pro_rata",
+   "largest_first"
+  ],
+  "deleverage_default": "weakest_first",
+  "optimizable": "档位内用多少杠杆、减仓方式（只能从 deleverage_methods 三选一）、单只仓位上限、同时持仓数，属于衔接线和交易线的可优化配置，可按行情状态设；档位、验收档和追保时点由用户定"
+ },
+ "profile": "L2.8",
+ "config_sha256": "2778a59595c7aaaac8835efb03fb32249d90a58e7931fcd13c62fd023702fb3a",
+ "versions_sha256": "66ac6696905faa167e5bc6d42663e72b305b6a7128453bfd966c0ec3098736ce",
+ "cutoff": "2025-12-31",
+ "versions": {
+  "v0": {
+   "name": "master",
+   "profiles": {
+    "L1": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v0_L1.json",
+     "sha256": "ee14a99c710c5c92f5ec01a2a9d7de6173fd063f43d8eeea63d9fb765799bf0c",
+     "reference": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/master_L1_weakest_first.json",
+     "reference_sha256": "2c166dc6ce55066c8e9427f6f6ca5d86df6b437723cce5ec034e6f96db8d0f20"
+    },
+    "L2": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v0_L2.json",
+     "sha256": "b79a827a1b6ab198d698b77f026e81d9b8508bdbec123bd6cfceb3c16127512f",
+     "reference": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/master_L2_weakest_first.json",
+     "reference_sha256": "6b859853fb3e95cec15900189aea9bfb2d7602721987b2185c769fc1ffea51e1"
+    },
+    "L2.8": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v0_L2.8.json",
+     "sha256": "cc8f7f0f2037b75304a7f752dab7ee5d514c5b6d36d1f684b574eeb4404658e4",
+     "reference": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/master_L2.8_weakest_first.json",
+     "reference_sha256": "96a4d85519d6d43ff849f865cbf8596ac863d05e22910799fe7be781ac77925c"
+    }
+   }
+  },
+  "v1": {
+   "name": "上周最佳",
+   "profiles": {
+    "L1": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v1_L1.json",
+     "sha256": "34d804ee6ae746ac82a84e42d9e8489715f0c6ddabda873230d5e7f0452080b7",
+     "reference": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/C062_L1_weakest_first.json",
+     "reference_sha256": "f4bcf603e50ba99b44b4b53599e2cd4fd48e94b9a0f0314daf9367891413e60b"
+    },
+    "L2": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v1_L2.json",
+     "sha256": "89dc4baf99aa414d1a73e6caeb40a42e6b795cfb330410599d19ca2987c892ad",
+     "reference": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/C062_L2_weakest_first.json",
+     "reference_sha256": "630f225b4387be75850a0a2a020602601272763cd9dc088a10a8ede62c870d10"
+    },
+    "L2.8": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v1_L2.8.json",
+     "sha256": "6ef88b20683880d7ff541a53d56581f06a2fe2613d3e7bf4448fd755136b8720",
+     "reference": "studies/martin_luk/workflow/rounds/WF00/work/leverage_profiles/C062_L2.8_weakest_first.json",
+     "reference_sha256": "202abf33493ea975360f0a3a7e5eeb01f7a0955dd80efe7bcedfc5020639ac08"
+    }
+   }
+  },
+  "v2": {
+   "name": "WF05_J3",
+   "profiles": {
+    "L1": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v2_L1.json",
+     "sha256": "f137324c2d59cfc2becf982f16abd89d762d7521b321153630fe9ae1928aa79c",
+     "reference": "studies/martin_luk/workflow/rounds/WF05/work/holdout_L1.json",
+     "reference_sha256": "2834ec4abe13f441c55775efcaaecb5eab5a2b20765618ca960025366512e76d"
+    },
+    "L2": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v2_L2.json",
+     "sha256": "e7e58bb7c06f6770a7edd9183ca72294d615dfdfc0055a6e70f6bfba1b9cb4a1",
+     "reference": "studies/martin_luk/workflow/rounds/WF05/work/holdout_L2.json",
+     "reference_sha256": "12ab7702f9638a2fcbf81ed9b65db8f288fc592fa4f2853b5b99c539889cbeef"
+    },
+    "L2.8": {
+     "replay": "studies/martin_luk/workflow/rounds/WF05b/work/replays/v2_L2.8.json",
+     "sha256": "0be22aec4f62a08b7f4d4a1b214cb99aa07d4ea09803fb89c5999bfd2ca2b592",
+     "reference": "studies/martin_luk/workflow/rounds/WF05/work/holdout_L2.8.json",
+     "reference_sha256": "ff9f35162ffbd7af73104f4f1263e18509a289157c12302ae351402c75bf70b0"
+    }
+   }
+  }
+ },
+ "sources": {
+  "studies/martin_luk/workflow/rounds/WF00/work/leverage_replay.py": "7ddc77742369df6ca6583058875df9044d4b06300b9384db98241a04fa90409b",
+  "studies/trader_replication/system.py": "c337adb3d9c9dfc4157c2ea564bb10164a16bab0ab900bcd5fdc29ce385b7998",
+  "studies/martin_luk/workflow/adapter.py": "23f2c3c18384b7fe3edacc782dc9e337b8d8b6ad4b8f74bc985285017c99fba1",
+  "studies/martin_luk/workflow/capital.py": "1262fb8c5afe871fa787bd09a4a63fe56682f20d78bf32e2efa4b022d04adb60",
+  "studies/martin_luk/p3_research.py": "2d8581fee74e301745bcc98b0f421a61915afef464fbf5ded77a6fba5a05d760",
+  "studies/martin_luk/replicate.py": "9a911c38e96352becf60413cca6bd0d283e14e8b20aea11a3ecf96bcf9b0b866",
+  "studies/martin_luk/luk.py": "79de2e6bd821b59c9f399bcd4c3ad8962267033c52492452c13c65f3e734090b",
+  "studies/trader_replication/allocation.py": "d55adb0ca3872c1c7854fca8f8f502712f6d7c4bf5d05624ef8a60302d08f60e",
+  "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+  "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+  "studies/trader_data/supplemental.py": "b00ea09f4c60c92d3269e325323e92c16271c4e2229b1c4a5ee1ee742a8c5227",
+  "studies/martin_luk/ie47_e1.py": "c17546781e288e1837877259945f9e70f608225cc8a5acddf49436e5cbcabaed",
+  "studies/martin_luk/e15_research.py": "e6416afbb0491cdc456e5fff69d29a5ab880a36dda04cedafdea0678a52f5ed3",
+  "studies/martin_luk/e14_research.py": "52678d9acaddf20d39c984bd0acae45775ad278e3eef4b5aaf0ff1c5e386b45a",
+  "studies/trader_screens/screens.py": "85db0c2b844427f5d20abfec9ad8b09c9b7ad85179f18765c6a135d325d53446",
+  "studies/martin_luk/wf01_joint.py": "25523306810da437a1b11174163751b6f6334c209e4a17dafb40b45fada2d280",
+  "studies/martin_luk/wf02_joint.py": "475e3ebd993b2892b98d9f3841e5b6d743e9b3df416b6bedfa97c6a880c3b653",
+  "studies/martin_luk/wf05_joint.py": "68856e09a169dbe56fc0e6d7c102f222571cce02f438f5e43eda29901e1728b0",
+  "studies/martin_luk/wf05_engine.py": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+  "studies/martin_luk/workflow/rounds/WF01/work/run_wf01.py": "e5429f78499eec57a5ac42dcf5d987e1ed9d1436fc87d0c8e424c6e9ffd65e45",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replay_capital.py": "814bfb8f1fdff7768d383e0c8bb637b93fb7fad21dd34b713cf70f9d617a6e8f",
+  "studies/martin_luk/workflow/rounds/WF05b/work/build_audit.py": "46624f29a73ecfde88aed1f101f44a04514b94f40a921892612235ebc7192168"
+ },
+ "previous_audit": {
+  "path": "studies/martin_luk/workflow/rounds/WF05c/work/original_capital_audit.json",
+  "sha256": "98ef1b33c1d633be9f795ae18beba6563250932fb41a6c347571f0f9ed181702"
+ },
+ "j3_selection_record_and_track_exact": true,
+ "j3_source": "studies/martin_luk/workflow/rounds/WF05/work/J3.json",
+ "j3_source_sha256": "94dba4c349e22706be3adaf94b414ae0d101f3dfb140fdd8861a8f4df4a63225",
+ "cross_checks": [
+  {
+   "version": "v2",
+   "profile": "L2.8",
+   "reference": "studies/martin_luk/workflow/rounds/WF05/work/J3.json",
+   "reference_sha256": "94dba4c349e22706be3adaf94b414ae0d101f3dfb140fdd8861a8f4df4a63225"
+  }
+ ],
+ "holdout_policy": "2026 values copied from previously saved version records; no 2026 bars replayed",
+ "selection_scope": "all returns and trading statistics plus curves, closed trades and crossing-position projections",
+ "rebound_from": {
+  "path": "studies/martin_luk/workflow/rounds/WF05b/capital_audit.json",
+  "sha256": "f3fa5c2f2690a387235a09770c3dbf078a43edcb840a0889bae441ddb0dc6c6e",
+  "config_before_sha256": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
+  "proof": "studies/martin_luk/workflow/rounds/WF05c/work/capital_unchanged.json",
+  "proof_sha256": "fefd840d97537bfc193b0866f71a7e33cf007d78facefdeb4eeb949e42de19d7"
+ }
+}

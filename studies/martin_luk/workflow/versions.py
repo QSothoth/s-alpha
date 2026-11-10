@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from datetime import date
 import fcntl
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -82,6 +83,35 @@ def score_cell(row):
             f"笔数 {trades}；平均持有 {days} 天<br>最高总敞口 {gross}；行为达标 {within}")
 
 
+def entry_fingerprint(entry):
+    data = json.dumps(entry, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()
+    return hashlib.sha256(data).hexdigest()
+
+
+def add_version_evidence(entries, evidence):
+    """Load each version's own evidence, retaining the WF00 legacy evidence."""
+    for entry in entries:
+        version = entry['version']
+        if not (version.startswith('v') and version[1:].isdigit()):
+            continue
+        paths = sorted((D.FLOW/'rounds').glob(f'*/version_profile_{version}.json'))
+        if len(paths) > 1:
+            raise ValueError('multiple profile evidence files for '+version)
+        if not paths:
+            continue
+        item = D.read(paths[0])
+        if (item['version'] != version or item.get('entry_sha256') != entry_fingerprint(entry)
+                or not item.get('sources')):
+            raise ValueError('invalid profile evidence for '+version)
+        if any(D.sha(D.ROOT/name) != digest for name, digest in item['sources'].items()):
+            raise ValueError('stale profile evidence for '+version)
+        evidence['by_state'][version] = item['by_state']
+        evidence['switches'][version] = item['switch']
+        evidence.setdefault('alignment_by_version', {})[version] = item['alignment']
+        evidence.setdefault('version_notes', {})[version] = item['note']
+    return evidence
+
+
 def render(entries, path=TABLE):
     acceptance = D.read(D.FLOW/'config.json')['capital']['acceptance_profile']
     versions = [r for r in entries if r['version'].startswith('v') and r['version'][1:].isdigit()]
@@ -121,7 +151,8 @@ def render(entries, path=TABLE):
         '', '组件：' + '；'.join(f"{r['version']}：拆账日历 {r['components']['regime']}、选股 {r['components']['selection']}、交易 {r['components']['trading']}、衔接 {r['components']['conversion']}" for r in versions) + '。',
         '', '生成：`/opt/opend-us-options/.venv/bin/python -m studies.martin_luk.workflow.versions render`。', ''])
     if Path(path) == TABLE and DETAIL.exists() and DRAFT.exists():
-        lines.extend(version_profile.details(entries, D.read(DETAIL), D.read(D.FLOW/'config.json'), D.read(DRAFT)))
+        evidence = add_version_evidence(entries, D.read(DETAIL))
+        lines.extend(version_profile.details(entries, evidence, D.read(D.FLOW/'config.json'), D.read(DRAFT)))
     Path(path).write_text('\n'.join(lines))
 
 

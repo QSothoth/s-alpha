@@ -122,20 +122,164 @@
    "accept_source": "rounds/WF00/selection_decision_IE47_vs_IE9.json"
   },
   "trading": {
-   "version": "C062",
+   "version": "WF05_J3",
    "status": "frozen_component",
-   "source": "config.base",
-   "source_date": "2026-11-09",
-   "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
-   "rules_sha256": "67766eec76d1111e53e387dd5b3fc910f5083e677136547a1e26087a2f7d1143",
+   "rules_source": "studies/martin_luk/workflow/rounds/WF05/rules.json",
+   "rules_sha256": "8f5bb8adbfd498e0ffa3b03d4cb455397ad7e25f6910e3ce31ed7cfbfb55ddc4",
+   "engine": "studies.martin_luk.wf05_engine",
+   "engine_sha256": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+   "joint_sha256": "68856e09a169dbe56fc0e6d7c102f222571cce02f438f5e43eda29901e1728b0",
+   "accepted_on": "2026-11-09",
+   "accept": {
+    "status": "accepted",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 3,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 4,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       2.3849707212388327,
+       0.3309682870620625
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11241119131188554,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
    "bench_selection": "IE47"
   },
   "conversion": {
-   "version": "C062",
+   "version": "WF05_J3",
    "status": "frozen_component",
-   "evaluation_system": "C062",
+   "rules_source": "studies/martin_luk/workflow/rounds/WF05/rules.json",
+   "rules_sha256": "8f5bb8adbfd498e0ffa3b03d4cb455397ad7e25f6910e3ce31ed7cfbfb55ddc4",
+   "engine": "studies.martin_luk.wf05_engine",
+   "engine_sha256": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+   "joint_sha256": "68856e09a169dbe56fc0e6d7c102f222571cce02f438f5e43eda29901e1728b0",
+   "accepted_on": "2026-11-09",
+   "accept": {
+    "status": "accepted",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 3,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 4,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       2.3849707212388327,
+       0.3309682870620625
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11241119131188554,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
+   "evaluation_system": "WF05_J3",
    "options": {
-    "max_position": 0.5,
+    "max_position": 0.3,
     "max_gross": 2.8,
     "max_open": 11,
     "max_open_by_kind": {},
@@ -144,40 +288,107 @@
     "max_new_year": 0,
     "max_new_by_kind": {},
     "no_rebuy_day": false,
-    "rotate_min_days": 0,
+    "rotate_min_days": 3,
     "rotate_below": 0.0,
     "make_room_kind": {},
     "make_room_confirmed": false,
-    "risk_scale": "e8_scale"
-   },
-   "source": "config.base",
-   "source_date": "2026-11-09",
-   "rules_source": "studies/martin_luk/reports/m3_work/compatibility/C062/rules.json",
-   "nomination": "IE47, native K=3 and 10-session cooldown",
-   "entry_observation": "E6c: 5 sessions; the engine caps successful new longs at 4 per day"
+    "risk_scale": "e8_scale",
+    "rotate_rmax_r": 3.0
+   }
   },
   "merge": {
-   "version": "C062",
-   "status": "user_selected_base",
+   "version": "WF05_J3",
+   "status": "frozen_component",
+   "rules_source": "studies/martin_luk/workflow/rounds/WF05/rules.json",
+   "rules_sha256": "8f5bb8adbfd498e0ffa3b03d4cb455397ad7e25f6910e3ce31ed7cfbfb55ddc4",
+   "engine": "studies.martin_luk.wf05_engine",
+   "engine_sha256": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+   "joint_sha256": "68856e09a169dbe56fc0e6d7c102f222571cce02f438f5e43eda29901e1728b0",
+   "accepted_on": "2026-11-09",
+   "accept": {
+    "status": "accepted",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 3,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 4,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       2.3849707212388327,
+       0.3309682870620625
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11241119131188554,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
    "selection": "IE47",
-   "trading": "C062",
-   "conversion": "C062",
-   "source": "config.base",
-   "source_date": "2026-11-09",
-   "evaluation_system": "C062",
-   "registered_account": "studies/martin_luk/reports/e21_work/BASE_full/C062_2024",
-   "funnel": "studies/martin_luk/workflow/rounds/WF00/funnels/C062.json",
-   "funnel_sha256": "340b8b4a913987954acea929b3c5eef71ef927a19f1d0bd64cc21ff63ccc3a0a",
-   "note": "用户指定既有整套账户为起点；不是新候选的合并接受判定"
+   "trading": "WF05_J3",
+   "conversion": "WF05_J3",
+   "evaluation_system": "WF05_J3",
+   "funnel": "studies/martin_luk/workflow/frozen/merge/WF05_J3/funnel.json",
+   "funnel_sha256": "9bd928cb30b65d0b20578eb60eb6f96491f831bd7c939bbe61706b7a4a7e2b3a",
+   "version_label": "v2"
   }
  },
  "bar": "master",
- "metrics_round": "WF00",
+ "metrics_round": "WF05",
  "pending_merge": false,
- "next_round": "WF04",
+ "next_round": "WF06",
  "bootstrap_done": true,
  "can_start_round": true,
- "rounds_run": 3,
+ "rounds_run": 4,
  "blocked_reasons": [],
  "rule_drift": {
   "status": "resolved",
@@ -188,66 +399,81 @@
   "regime": {
    "B4_PCT2": {
     "path": "studies/martin_luk/workflow/frozen/regime/B4_PCT2",
-    "manifest_sha256": "1281cdb9635f1db65c5ff792b98c40a8882f35f4ed5190d931e2defc365a601a",
+    "manifest_sha256": "a8865e452ebb82aebf8a799a73b123dd412172333f542d4f0bda6629179f530c",
     "bytes": 23492
    }
   },
   "selection": {
    "IE47": {
     "path": "studies/martin_luk/workflow/frozen/selection/IE47",
-    "manifest_sha256": "4847592c8b9c804c7d73d1015d04b00aa3a9bca5666e6db3a757ae1cfaaa1451",
+    "manifest_sha256": "8c2257e5460565ffd969d62fe909c2ba0f833d2e0131de659b002b038304f8e4",
     "bytes": 219467
    }
   },
   "trading": {
    "master": {
     "path": "studies/martin_luk/workflow/frozen/trading/master",
-    "manifest_sha256": "96d509fade64f8472ba57cd5086bcfc4788a97523af2789a97a84c21645c6344",
+    "manifest_sha256": "328cfcedf92fab82369782bf79411e71ec0e1138f1431cb4bb8586d32881ec7b",
     "bytes": 1340875
    },
    "C062": {
     "path": "studies/martin_luk/workflow/frozen/trading/C062",
-    "manifest_sha256": "3f392a886a8002af2774ae984668fee8f3af5508bb554f45649c9f8842f65682",
+    "manifest_sha256": "67897adbfff44c33743f5a6389cc0f5dad2670319327eb1988850b14646eca5f",
     "bytes": 2890706
+   },
+   "WF05_J3": {
+    "path": "studies/martin_luk/workflow/frozen/trading/WF05_J3",
+    "manifest_sha256": "0abc6d826755419477b83d4059eb11460790daa55c4239053101c99988b2883f",
+    "bytes": 2875570
    }
   },
   "conversion": {
    "master_allocate": {
     "path": "studies/martin_luk/workflow/frozen/conversion/master_allocate",
-    "manifest_sha256": "d2ce90c83b7a79d4295c027d1bba28b0f902f5ed03ce41f6bf234c9ef12f6bd1",
+    "manifest_sha256": "a02b5113710671f7f16b1a27f64a7d1beb15f58cb8469204367ec89275d74b1c",
     "bytes": 5021
    },
    "C062": {
     "path": "studies/martin_luk/workflow/frozen/conversion/C062",
-    "manifest_sha256": "1aa79f07cbc0cde134969b940a5b32e28e0bf8cc8138ab38026e5d90dc30b805",
+    "manifest_sha256": "7f58c5ae2b7a57a1bb59a56a78e3e92d8c042d68c9b34c12d9d544c214490509",
     "bytes": 5807
+   },
+   "WF05_J3": {
+    "path": "studies/martin_luk/workflow/frozen/conversion/WF05_J3",
+    "manifest_sha256": "b82f480ab880504da0abf1d352b516e4b9cc3b527193694d78e665afb90a273e",
+    "bytes": 6894
    }
   },
   "reference": {
    "master": {
     "path": "studies/martin_luk/workflow/frozen/reference/master",
-    "manifest_sha256": "f44b1f319dc7b9b05a37c022040b036e4a08d7dff37cd1cf4dae24ff176c589b",
+    "manifest_sha256": "f39200e242b75a006b9894192d9fe8fc14bcbeb90e30918a5cb6453db246b308",
     "bytes": 516654
    },
    "M3B": {
     "path": "studies/martin_luk/workflow/frozen/reference/M3B",
-    "manifest_sha256": "d01c47e420faa88ae9f87a2bc3dac2db08f10fdb8c66d143c33fd8da5c6a8bcf",
+    "manifest_sha256": "b38a0b1800872728ef0d6560cacb176a1263f5a4d40864432e606d2667e5108d",
     "bytes": 470891
    }
   },
   "merge": {
    "C062": {
     "path": "studies/martin_luk/workflow/frozen/merge/C062",
-    "manifest_sha256": "d20bf73fd7a993702fca0e32092c437402881e70f64c97a00b9d39c8e99656c9",
+    "manifest_sha256": "238a0181a99a69f856ae7d5121f5d87ca92f4f7173b94582e44859a87e3384bb",
     "bytes": 1448893
+   },
+   "WF05_J3": {
+    "path": "studies/martin_luk/workflow/frozen/merge/WF05_J3",
+    "manifest_sha256": "1638905b71cb07259d0c1242a7ce672308265f971056d06d8eb69c4c4b65d3b8",
+    "bytes": 2559732
    }
   }
  },
  "rule_fingerprints": {
   ".claude/workflows/trader-replication-loop.js": "b5d929c2080b965ecb2ab051b5c0db8c051f94cebe19910f47fdea29870ea4c9",
-  "skills/trader-replication/references/WORKFLOW_CN.md": "79e4f1f282656d5e497f0ad0057bc442dad4840d49d2da13bea5c3fe1b8460d8",
-  "studies/martin_luk/workflow/config.json": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
-  "studies/trader_replication/pipeline.py": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+  "skills/trader-replication/references/WORKFLOW_CN.md": "991be089918c84e4cc825850f1d8529fab0794317a55106be5921a64d12c673a",
+  "studies/martin_luk/workflow/config.json": "2778a59595c7aaaac8835efb03fb32249d90a58e7931fcd13c62fd023702fb3a",
+  "studies/trader_replication/pipeline.py": "c42731b48ddce42a239699cdabf41179c94e7c3d495769f7852421f4b5a16a2d",
   "studies/trader_replication/funnel.py": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
   "studies/trader_replication/mainleg.py": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e"
  },
@@ -508,6 +734,25 @@
      "new": "79e4f1f282656d5e497f0ad0057bc442dad4840d49d2da13bea5c3fe1b8460d8"
     }
    }
+  },
+  {
+   "date": "2026-11-09",
+   "approved_by": "leader per user 2026-11-09 (lead-dont-ask)",
+   "change": "检查点 WF06（会话中断，任务书 0.4 节待定事项）：名额不超过 11；合并验收加保真接受（pipeline.accept mode=fidelity，config.accept.merge 两个 0.1 阈值）；批准 WF06 探索轮 E1–E3；WF05 旧判定用新代码复算不变",
+   "files": {
+    "skills/trader-replication/references/WORKFLOW_CN.md": {
+     "old": "79e4f1f282656d5e497f0ad0057bc442dad4840d49d2da13bea5c3fe1b8460d8",
+     "new": "991be089918c84e4cc825850f1d8529fab0794317a55106be5921a64d12c673a"
+    },
+    "studies/martin_luk/workflow/config.json": {
+     "old": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
+     "new": "2778a59595c7aaaac8835efb03fb32249d90a58e7931fcd13c62fd023702fb3a"
+    },
+    "studies/trader_replication/pipeline.py": {
+     "old": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+     "new": "c42731b48ddce42a239699cdabf41179c94e7c3d495769f7852421f4b5a16a2d"
+    }
+   }
   }
  ],
  "recent_rounds": [
@@ -534,11 +779,30 @@
    "main": "测试台峰前持有最好 T1 16 vs C062 15（B0 16）",
    "returns": "T2 测试台 +148.3%/+100.5%",
    "date": "2026-11-09"
+  },
+  {
+   "round": "WF05",
+   "line": "joint",
+   "verdict": "accepted",
+   "main": "合并峰前持有 J3 14（4/10）vs v1 11（4/7）；行为达标 4 vs 1",
+   "returns": "J3 +238.5%/+33.1%（v1 +61.3%/+57.4%）",
+   "date": "2026-11-09",
+   "version": "v2"
   }
  ],
  "checkpoint": {
   "date": "2026-11-09",
   "reason": "WF04 定格：交易线单独已到可达上限，剩余缺口是名额被赢家占满（衔接线），本次 line=trading 无法改；审查 1 否定停滞离场假设，任务书未交 Codex",
   "report": "studies/martin_luk/workflow/CHECKPOINT_CN.md"
- }
+ },
+ "round_notes": [
+  {
+   "date": "2026-11-09",
+   "note": "WF04 只有任务书与审查记录、未运行、不进总账；本次运行（line 不带，rounds=3）首轮编号跳到 WF05 以保留 WF04 目录。"
+  }
+ ],
+ "current_version": "v2",
+ "known_limitations": [
+  "The unchanged C062 bench inputs omit the selection-end price for US.PL; the existing frozen_cache.bench_score reader cannot reconstruct this crossing position."
+ ]
 }

@@ -1,0 +1,290 @@
+{
+ "components": {
+  "trading": {
+   "version": "WF05_J3",
+   "status": "frozen_component",
+   "rules_source": "studies/martin_luk/workflow/rounds/WF05/rules.json",
+   "rules_sha256": "8f5bb8adbfd498e0ffa3b03d4cb455397ad7e25f6910e3ce31ed7cfbfb55ddc4",
+   "engine": "studies.martin_luk.wf05_engine",
+   "engine_sha256": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+   "joint_sha256": "68856e09a169dbe56fc0e6d7c102f222571cce02f438f5e43eda29901e1728b0",
+   "accepted_on": "2026-11-09",
+   "accept": {
+    "status": "accepted",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 3,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 4,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       2.3849707212388327,
+       0.3309682870620625
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11241119131188554,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
+   "bench_selection": "IE47"
+  },
+  "conversion": {
+   "version": "WF05_J3",
+   "status": "frozen_component",
+   "rules_source": "studies/martin_luk/workflow/rounds/WF05/rules.json",
+   "rules_sha256": "8f5bb8adbfd498e0ffa3b03d4cb455397ad7e25f6910e3ce31ed7cfbfb55ddc4",
+   "engine": "studies.martin_luk.wf05_engine",
+   "engine_sha256": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+   "joint_sha256": "68856e09a169dbe56fc0e6d7c102f222571cce02f438f5e43eda29901e1728b0",
+   "accepted_on": "2026-11-09",
+   "accept": {
+    "status": "accepted",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 3,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 4,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       2.3849707212388327,
+       0.3309682870620625
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11241119131188554,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
+   "evaluation_system": "WF05_J3",
+   "options": {
+    "max_position": 0.3,
+    "max_gross": 2.8,
+    "max_open": 11,
+    "max_open_by_kind": {},
+    "max_new_long": 4,
+    "max_new_all": 0,
+    "max_new_year": 0,
+    "max_new_by_kind": {},
+    "no_rebuy_day": false,
+    "rotate_min_days": 3,
+    "rotate_below": 0.0,
+    "make_room_kind": {},
+    "make_room_confirmed": false,
+    "risk_scale": "e8_scale",
+    "rotate_rmax_r": 3.0
+   }
+  },
+  "merge": {
+   "version": "WF05_J3",
+   "status": "frozen_component",
+   "rules_source": "studies/martin_luk/workflow/rounds/WF05/rules.json",
+   "rules_sha256": "8f5bb8adbfd498e0ffa3b03d4cb455397ad7e25f6910e3ce31ed7cfbfb55ddc4",
+   "engine": "studies.martin_luk.wf05_engine",
+   "engine_sha256": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+   "joint_sha256": "68856e09a169dbe56fc0e6d7c102f222571cce02f438f5e43eda29901e1728b0",
+   "accepted_on": "2026-11-09",
+   "accept": {
+    "status": "accepted",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 3,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 4,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       2.3849707212388327,
+       0.3309682870620625
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11241119131188554,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   },
+   "selection": "IE47",
+   "trading": "WF05_J3",
+   "conversion": "WF05_J3",
+   "evaluation_system": "WF05_J3",
+   "funnel": "studies/martin_luk/workflow/frozen/merge/WF05_J3/funnel.json",
+   "funnel_sha256": "9bd928cb30b65d0b20578eb60eb6f96491f831bd7c939bbe61706b7a4a7e2b3a"
+  }
+ },
+ "frozen_caches": {
+  "trading": {
+   "WF05_J3": {
+    "path": "studies/martin_luk/workflow/frozen/trading/WF05_J3",
+    "manifest_sha256": "bb67ed9d0c769e31b2bb8a86c121399c0220c0c5122bfd3a41013e21afbd7400",
+    "bytes": 2875073
+   }
+  },
+  "conversion": {
+   "WF05_J3": {
+    "path": "studies/martin_luk/workflow/frozen/conversion/WF05_J3",
+    "manifest_sha256": "9194f8f1625cd8c4138275f94f27c16fad4f91a037346f7ad32159236450f613",
+    "bytes": 5194
+   }
+  },
+  "merge": {
+   "WF05_J3": {
+    "path": "studies/martin_luk/workflow/frozen/merge/WF05_J3",
+    "manifest_sha256": "f11cfadf4377091b090f96a88fe021dee03bbadd185f2c1721db384dec269a23",
+    "bytes": 2559732
+   }
+  }
+ },
+ "pending_merge": false,
+ "known_limitations": [
+  "The unchanged C062 bench inputs omit the selection-end price for US.PL; the existing frozen_cache.bench_score reader cannot reconstruct this crossing position."
+ ]
+}

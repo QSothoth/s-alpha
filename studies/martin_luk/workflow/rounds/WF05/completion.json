@@ -1,0 +1,6096 @@
+{
+ "task": "WF05 证实后收盘判止损与满仓换仓联动研究",
+ "round": "WF05",
+ "line": "joint",
+ "scope": {
+  "trading": "common: Q2",
+  "conversion": "common: M3 与 P30",
+  "selection": "冻结 IE47",
+  "regime": "B4_PCT2 仅拆账"
+ },
+ "decision": {
+  "status": "accepted",
+  "line": "merge",
+  "checks": [
+   {
+    "rule": "selection_year_gain",
+    "ok": true,
+    "years": [
+     "2024",
+     "2025"
+    ],
+    "candidate": [
+     4,
+     10
+    ],
+    "compare": [
+     4,
+     7
+    ],
+    "delta": 3,
+    "threshold": 3
+   },
+   {
+    "rule": "no_year_decrease",
+    "ok": true,
+    "candidate": [
+     4,
+     10
+    ],
+    "compare": [
+     4,
+     7
+    ]
+   },
+   {
+    "rule": "behaviour_items",
+    "ok": true,
+    "candidate": 4,
+    "compare": 1,
+    "tolerance": 0.2
+   },
+   {
+    "rule": "annual_return_floor",
+    "ok": true,
+    "candidate": [
+     2.3849707212388327,
+     0.3309682870620625
+    ],
+    "threshold": 0.0
+   },
+   {
+    "rule": "peak_position_weight",
+    "ok": true,
+    "candidate": 0.11241119131188554,
+    "compare": 0.10168106447651955
+   },
+   {
+    "rule": "selection_base",
+    "ok": true,
+    "uses_bar_turnover_selection": false
+   }
+  ],
+  "selection_years": [
+   "2024",
+   "2025"
+  ],
+  "holdout_used_for_selection": false
+ },
+ "candidate_decisions": {
+  "J1": {
+   "status": "branch",
+   "line": "merge",
+   "checks": [
+    {
+     "rule": "selection_year_gain",
+     "ok": true,
+     "years": [
+      "2024",
+      "2025"
+     ],
+     "candidate": [
+      5,
+      10
+     ],
+     "compare": [
+      4,
+      7
+     ],
+     "delta": 4,
+     "threshold": 3
+    },
+    {
+     "rule": "no_year_decrease",
+     "ok": true,
+     "candidate": [
+      5,
+      10
+     ],
+     "compare": [
+      4,
+      7
+     ]
+    },
+    {
+     "rule": "behaviour_items",
+     "ok": false,
+     "candidate": 0,
+     "compare": 1,
+     "tolerance": 0.2
+    },
+    {
+     "rule": "annual_return_floor",
+     "ok": true,
+     "candidate": [
+      0.8305660529602485,
+      0.6462904288473748
+     ],
+     "threshold": 0.0
+    },
+    {
+     "rule": "peak_position_weight",
+     "ok": true,
+     "candidate": 0.10445495048490046,
+     "compare": 0.10168106447651955
+    },
+    {
+     "rule": "selection_base",
+     "ok": true,
+     "uses_bar_turnover_selection": false
+    }
+   ],
+   "selection_years": [
+    "2024",
+    "2025"
+   ],
+   "holdout_used_for_selection": false
+  },
+  "J2": {
+   "status": "branch",
+   "line": "merge",
+   "checks": [
+    {
+     "rule": "selection_year_gain",
+     "ok": false,
+     "years": [
+      "2024",
+      "2025"
+     ],
+     "candidate": [
+      3,
+      10
+     ],
+     "compare": [
+      4,
+      7
+     ],
+     "delta": 2,
+     "threshold": 3
+    },
+    {
+     "rule": "no_year_decrease",
+     "ok": false,
+     "candidate": [
+      3,
+      10
+     ],
+     "compare": [
+      4,
+      7
+     ]
+    },
+    {
+     "rule": "behaviour_items",
+     "ok": true,
+     "candidate": 4,
+     "compare": 1,
+     "tolerance": 0.2
+    },
+    {
+     "rule": "annual_return_floor",
+     "ok": true,
+     "candidate": [
+      1.8469135497683724,
+      0.35452291310449224
+     ],
+     "threshold": 0.0
+    },
+    {
+     "rule": "peak_position_weight",
+     "ok": true,
+     "candidate": 0.11068878792932471,
+     "compare": 0.10168106447651955
+    },
+    {
+     "rule": "selection_base",
+     "ok": true,
+     "uses_bar_turnover_selection": false
+    }
+   ],
+   "selection_years": [
+    "2024",
+    "2025"
+   ],
+   "holdout_used_for_selection": false
+  },
+  "J3": {
+   "status": "accepted",
+   "line": "merge",
+   "checks": [
+    {
+     "rule": "selection_year_gain",
+     "ok": true,
+     "years": [
+      "2024",
+      "2025"
+     ],
+     "candidate": [
+      4,
+      10
+     ],
+     "compare": [
+      4,
+      7
+     ],
+     "delta": 3,
+     "threshold": 3
+    },
+    {
+     "rule": "no_year_decrease",
+     "ok": true,
+     "candidate": [
+      4,
+      10
+     ],
+     "compare": [
+      4,
+      7
+     ]
+    },
+    {
+     "rule": "behaviour_items",
+     "ok": true,
+     "candidate": 4,
+     "compare": 1,
+     "tolerance": 0.2
+    },
+    {
+     "rule": "annual_return_floor",
+     "ok": true,
+     "candidate": [
+      2.3849707212388327,
+      0.3309682870620625
+     ],
+     "threshold": 0.0
+    },
+    {
+     "rule": "peak_position_weight",
+     "ok": true,
+     "candidate": 0.11241119131188554,
+     "compare": 0.10168106447651955
+    },
+    {
+     "rule": "selection_base",
+     "ok": true,
+     "uses_bar_turnover_selection": false
+    }
+   ],
+   "selection_years": [
+    "2024",
+    "2025"
+   ],
+   "holdout_used_for_selection": false
+  }
+ },
+ "equivalence_check": {
+  "account": {
+   "system_record_and_track": true,
+   "v1_saved_record_and_track": true,
+   "v1_accept_exact": true,
+   "v1_funnel_exact": true,
+   "w1e_record_and_track": true,
+   "track_keys": [
+    "entry_attempts",
+    "gross",
+    "margin",
+    "new",
+    "open",
+    "proof_orders"
+   ],
+   "seconds": 5.847486870829016,
+   "peak_rss_kib": 219212
+  },
+  "bench": {
+   "Q2": {
+    "record_and_track_exact": true,
+    "track_keys": [
+     "entry_attempts",
+     "gross",
+     "margin",
+     "new",
+     "open",
+     "proof_orders"
+    ]
+   },
+   "Q2_C2": {
+    "record_and_track_exact": true,
+    "track_keys": [
+     "entry_attempts",
+     "gross",
+     "margin",
+     "new",
+     "open",
+     "proof_orders"
+    ]
+   },
+   "seconds": 5.231520612956956,
+   "peak_rss_kib": 256696
+  }
+ },
+ "sim_reproduction": {
+  "fills": 755,
+  "exact_fill_set": true,
+  "peak_held": {
+   "2024": 4,
+   "2025": 7
+  }
+ },
+ "mechanism_release": {
+  "B0|C2": {
+   "2024": {
+    "added": 7,
+    "displaced": 1,
+    "added_R": -16.504257936246685,
+    "displaced_R": -2.7110436759397505,
+    "entry_gain_R": -13.793214260306934,
+    "entry_ge5_net": 0,
+    "forgone_R": -19.324414656465002,
+    "forgone_ge5": 0,
+    "released": true
+   },
+   "2025": {
+    "added": 4,
+    "displaced": 1,
+    "added_R": -10.624908064966252,
+    "displaced_R": -1.3576397945249954,
+    "entry_gain_R": -9.267268270441257,
+    "entry_ge5_net": 0,
+    "forgone_R": -5.664171272775435,
+    "forgone_ge5": 0,
+    "released": false
+   },
+   "total": {
+    "added": 11,
+    "displaced": 2,
+    "added_R": -27.12916600121294,
+    "displaced_R": -4.068683470464746,
+    "entry_gain_R": -23.060482530748196,
+    "entry_ge5_net": 0,
+    "forgone_R": -24.988585929240436,
+    "forgone_ge5": 0,
+    "released": true
+   }
+  },
+  "B0|M3": {
+   "2024": {
+    "added": 27,
+    "displaced": 4,
+    "added_R": 86.16253779950601,
+    "displaced_R": 28.39355218628558,
+    "entry_gain_R": 57.76898561322044,
+    "entry_ge5_net": 1,
+    "forgone_R": 88.90253745781305,
+    "forgone_ge5": 1,
+    "released": false
+   },
+   "2025": {
+    "added": 31,
+    "displaced": 3,
+    "added_R": -6.199176533373979,
+    "displaced_R": 11.166909866712215,
+    "entry_gain_R": -17.366086400086196,
+    "entry_ge5_net": 2,
+    "forgone_R": 119.69653677412815,
+    "forgone_ge5": 2,
+    "released": false
+   },
+   "total": {
+    "added": 58,
+    "displaced": 7,
+    "added_R": 79.96336126613203,
+    "displaced_R": 39.560462052997806,
+    "entry_gain_R": 40.40289921313422,
+    "entry_ge5_net": 3,
+    "forgone_R": 208.59907423194124,
+    "forgone_ge5": 3,
+    "released": false
+   }
+  },
+  "Q2|C2": {
+   "2024": {
+    "added": 42,
+    "displaced": 7,
+    "added_R": -168.13680001212785,
+    "displaced_R": 13.27098995934034,
+    "entry_gain_R": -181.4077899714682,
+    "entry_ge5_net": 1,
+    "forgone_R": -37.51954566514725,
+    "forgone_ge5": 3,
+    "released": false
+   },
+   "2025": {
+    "added": 13,
+    "displaced": 0,
+    "added_R": -31.135073004409428,
+    "displaced_R": 0,
+    "entry_gain_R": -31.135073004409428,
+    "entry_ge5_net": 1,
+    "forgone_R": -69.04228939784656,
+    "forgone_ge5": 0,
+    "released": true
+   },
+   "total": {
+    "added": 55,
+    "displaced": 7,
+    "added_R": -199.27187301653728,
+    "displaced_R": 13.27098995934034,
+    "entry_gain_R": -212.54286297587763,
+    "entry_ge5_net": 2,
+    "forgone_R": -106.56183506299378,
+    "forgone_ge5": 3,
+    "released": false
+   }
+  },
+  "Q2|M3": {
+   "2024": {
+    "added": 75,
+    "displaced": 20,
+    "added_R": 814.2050482421937,
+    "displaced_R": -80.43016327888536,
+    "entry_gain_R": 894.6352115210791,
+    "entry_ge5_net": 16,
+    "forgone_R": 335.60012761143946,
+    "forgone_ge5": 9,
+    "released": true
+   },
+   "2025": {
+    "added": 70,
+    "displaced": 15,
+    "added_R": 165.8361099630481,
+    "displaced_R": 28.638508226449293,
+    "entry_gain_R": 137.1976017365988,
+    "entry_ge5_net": 9,
+    "forgone_R": 299.5074206853342,
+    "forgone_ge5": 5,
+    "released": false
+   },
+   "total": {
+    "added": 145,
+    "displaced": 35,
+    "added_R": 980.0411582052418,
+    "displaced_R": -51.79165505243608,
+    "entry_gain_R": 1031.8328132576778,
+    "entry_ge5_net": 25,
+    "forgone_R": 635.107548296774,
+    "forgone_ge5": 14,
+    "released": true
+   }
+  }
+ },
+ "reachable_upper": {
+  "baseline": {
+   "2024": 4,
+   "2025": 7
+  },
+  "threshold": 14,
+  "candidates": {
+   "J1": {
+    "predicted": {
+     "2024": 5,
+     "2025": 10
+    },
+    "proceed": true
+   },
+   "J2": {
+    "predicted": {
+     "2024": 4,
+     "2025": 10
+    },
+    "proceed": true
+   },
+   "J3": {
+    "predicted": {
+     "2024": 4,
+     "2025": 10
+    },
+    "proceed": true
+   }
+  },
+  "disturbances": {
+   "non_his_attempts_2pct": {
+    "summary": {
+     "Q2": {
+      "count": 40,
+      "diff_mean": 2.8,
+      "diff_min": 2,
+      "diff_distribution": {
+       "2": 10,
+       "3": 28,
+       "4": 2
+      },
+      "share_ge_threshold": 0.75,
+      "share_ge_threshold_and_years": 0.75,
+      "share_within_not_less": 0.0,
+      "n24_min": 293
+     },
+     "J1": {
+      "count": 40,
+      "diff_mean": 3.425,
+      "diff_min": 2,
+      "diff_distribution": {
+       "2": 2,
+       "3": 19,
+       "4": 19
+      },
+      "share_ge_threshold": 0.95,
+      "share_ge_threshold_and_years": 0.95,
+      "share_within_not_less": 0.975,
+      "n24_min": 316
+     },
+     "J2": {
+      "count": 40,
+      "diff_mean": 2.975,
+      "diff_min": 2,
+      "diff_distribution": {
+       "2": 7,
+       "3": 27,
+       "4": 6
+      },
+      "share_ge_threshold": 0.825,
+      "share_ge_threshold_and_years": 0.825,
+      "share_within_not_less": 1.0,
+      "n24_min": 351
+     }
+    },
+    "rows": {
+     "Q2": [
+      {
+       "seed": 0,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 295
+      },
+      {
+       "seed": 1,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 310
+      },
+      {
+       "seed": 2,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 301
+      },
+      {
+       "seed": 3,
+       "probability": 0.02,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 299
+      },
+      {
+       "seed": 4,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 310
+      },
+      {
+       "seed": 5,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 6,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 300
+      },
+      {
+       "seed": 7,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 8,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 9,
+       "probability": 0.02,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 10,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 11,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 12,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 296
+      },
+      {
+       "seed": 13,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 310
+      },
+      {
+       "seed": 14,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 302
+      },
+      {
+       "seed": 15,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 298
+      },
+      {
+       "seed": 16,
+       "probability": 0.02,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 299
+      },
+      {
+       "seed": 17,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 297
+      },
+      {
+       "seed": 18,
+       "probability": 0.02,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 301
+      },
+      {
+       "seed": 19,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 298
+      },
+      {
+       "seed": 20,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 299
+      },
+      {
+       "seed": 21,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 298
+      },
+      {
+       "seed": 22,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 23,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 297
+      },
+      {
+       "seed": 24,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 309
+      },
+      {
+       "seed": 25,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 26,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 27,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 300
+      },
+      {
+       "seed": 28,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 4,
+       "years": {
+        "2024": 4,
+        "2025": 11
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 29,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 300
+      },
+      {
+       "seed": 30,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 31,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 296
+      },
+      {
+       "seed": 32,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 304
+      },
+      {
+       "seed": 33,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 293
+      },
+      {
+       "seed": 34,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 296
+      },
+      {
+       "seed": 35,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 304
+      },
+      {
+       "seed": 36,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 304
+      },
+      {
+       "seed": 37,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 301
+      },
+      {
+       "seed": 38,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 300
+      },
+      {
+       "seed": 39,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 308
+      }
+     ],
+     "J1": [
+      {
+       "seed": 0,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 323
+      },
+      {
+       "seed": 1,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 2,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 339
+      },
+      {
+       "seed": 3,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 331
+      },
+      {
+       "seed": 4,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 335
+      },
+      {
+       "seed": 5,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 328
+      },
+      {
+       "seed": 6,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 334
+      },
+      {
+       "seed": 7,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 8,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 333
+      },
+      {
+       "seed": 9,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 10,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 328
+      },
+      {
+       "seed": 11,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 334
+      },
+      {
+       "seed": 12,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 13,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 14,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 327
+      },
+      {
+       "seed": 15,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 330
+      },
+      {
+       "seed": 16,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 333
+      },
+      {
+       "seed": 17,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 327
+      },
+      {
+       "seed": 18,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 335
+      },
+      {
+       "seed": 19,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 3,
+       "base_within": 1,
+       "n24": 316
+      },
+      {
+       "seed": 20,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 334
+      },
+      {
+       "seed": 21,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 327
+      },
+      {
+       "seed": 22,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 339
+      },
+      {
+       "seed": 23,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 331
+      },
+      {
+       "seed": 24,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 342
+      },
+      {
+       "seed": 25,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 26,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 331
+      },
+      {
+       "seed": 27,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 3,
+       "base_within": 1,
+       "n24": 329
+      },
+      {
+       "seed": 28,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 326
+      },
+      {
+       "seed": 29,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 336
+      },
+      {
+       "seed": 30,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 341
+      },
+      {
+       "seed": 31,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 319
+      },
+      {
+       "seed": 32,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 335
+      },
+      {
+       "seed": 33,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 328
+      },
+      {
+       "seed": 34,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 321
+      },
+      {
+       "seed": 35,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 333
+      },
+      {
+       "seed": 36,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 37,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 38,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 323
+      },
+      {
+       "seed": 39,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 328
+      }
+     ],
+     "J2": [
+      {
+       "seed": 0,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 351
+      },
+      {
+       "seed": 1,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 358
+      },
+      {
+       "seed": 2,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 362
+      },
+      {
+       "seed": 3,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 374
+      },
+      {
+       "seed": 4,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 371
+      },
+      {
+       "seed": 5,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 358
+      },
+      {
+       "seed": 6,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 7,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 8,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 360
+      },
+      {
+       "seed": 9,
+       "probability": 0.02,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 358
+      },
+      {
+       "seed": 10,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 355
+      },
+      {
+       "seed": 11,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 365
+      },
+      {
+       "seed": 12,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 354
+      },
+      {
+       "seed": 13,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 366
+      },
+      {
+       "seed": 14,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 362
+      },
+      {
+       "seed": 15,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 356
+      },
+      {
+       "seed": 16,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 365
+      },
+      {
+       "seed": 17,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 356
+      },
+      {
+       "seed": 18,
+       "probability": 0.02,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 363
+      },
+      {
+       "seed": 19,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 355
+      },
+      {
+       "seed": 20,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 356
+      },
+      {
+       "seed": 21,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 355
+      },
+      {
+       "seed": 22,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 360
+      },
+      {
+       "seed": 23,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 357
+      },
+      {
+       "seed": 24,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 25,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 368
+      },
+      {
+       "seed": 26,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 360
+      },
+      {
+       "seed": 27,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 356
+      },
+      {
+       "seed": 28,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 4,
+       "years": {
+        "2024": 4,
+        "2025": 11
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 362
+      },
+      {
+       "seed": 29,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 358
+      },
+      {
+       "seed": 30,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 368
+      },
+      {
+       "seed": 31,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 362
+      },
+      {
+       "seed": 32,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 356
+      },
+      {
+       "seed": 33,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 354
+      },
+      {
+       "seed": 34,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 352
+      },
+      {
+       "seed": 35,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 355
+      },
+      {
+       "seed": 36,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 368
+      },
+      {
+       "seed": 37,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 38,
+       "probability": 0.02,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 39,
+       "probability": 0.02,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 356
+      }
+     ]
+    }
+   },
+   "filled_entries_1_to_2pct": {
+    "summary": {
+     "Q2": {
+      "count": 40,
+      "diff_mean": 2.725,
+      "diff_min": 1,
+      "diff_distribution": {
+       "1": 2,
+       "2": 9,
+       "3": 27,
+       "4": 2
+      },
+      "share_ge_threshold": 0.725,
+      "share_ge_threshold_and_years": 0.725,
+      "share_within_not_less": 0.0,
+      "n24_min": 296
+     },
+     "J1": {
+      "count": 40,
+      "diff_mean": 3.45,
+      "diff_min": 1,
+      "diff_distribution": {
+       "1": 2,
+       "2": 2,
+       "3": 12,
+       "4": 24
+      },
+      "share_ge_threshold": 0.9,
+      "share_ge_threshold_and_years": 0.9,
+      "share_within_not_less": 0.925,
+      "n24_min": 321
+     },
+     "J2": {
+      "count": 40,
+      "diff_mean": 3.15,
+      "diff_min": 2,
+      "diff_distribution": {
+       "2": 5,
+       "3": 25,
+       "4": 9,
+       "5": 1
+      },
+      "share_ge_threshold": 0.875,
+      "share_ge_threshold_and_years": 0.875,
+      "share_within_not_less": 1.0,
+      "n24_min": 354
+     }
+    },
+    "rows": {
+     "Q2": [
+      {
+       "seed": 100,
+       "probability": 0.01834981630502009,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 302
+      },
+      {
+       "seed": 101,
+       "probability": 0.01943532505610554,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 102,
+       "probability": 0.011599911450043037,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 304
+      },
+      {
+       "seed": 103,
+       "probability": 0.013126832327229476,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 104,
+       "probability": 0.018385648123695357,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 105,
+       "probability": 0.016381953336015446,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 106,
+       "probability": 0.019824078554633355,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 300
+      },
+      {
+       "seed": 107,
+       "probability": 0.01648535919400258,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 302
+      },
+      {
+       "seed": 108,
+       "probability": 0.01855993817328595,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 109,
+       "probability": 0.015437422489177791,
+       "d24": -1,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 110,
+       "probability": 0.019304928115103002,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 304
+      },
+      {
+       "seed": 111,
+       "probability": 0.011536613559523328,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 112,
+       "probability": 0.011164590130076554,
+       "d24": 0,
+       "d25": 4,
+       "years": {
+        "2024": 4,
+        "2025": 11
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 113,
+       "probability": 0.010705781062805585,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 114,
+       "probability": 0.017278882745096855,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 115,
+       "probability": 0.017023380241887803,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 301
+      },
+      {
+       "seed": 116,
+       "probability": 0.011723697658713603,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 117,
+       "probability": 0.0187501176007386,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 296
+      },
+      {
+       "seed": 118,
+       "probability": 0.01930689644625169,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 300
+      },
+      {
+       "seed": 119,
+       "probability": 0.0195624039937461,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 120,
+       "probability": 0.018537415592755846,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 121,
+       "probability": 0.01632815808819528,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 301
+      },
+      {
+       "seed": 122,
+       "probability": 0.018253525769951207,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 123,
+       "probability": 0.016823518632481434,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 296
+      },
+      {
+       "seed": 124,
+       "probability": 0.017852531140389177,
+       "d24": -1,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 125,
+       "probability": 0.01851749483600873,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 307
+      },
+      {
+       "seed": 126,
+       "probability": 0.010061760759686593,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 127,
+       "probability": 0.010624665677333733,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 304
+      },
+      {
+       "seed": 128,
+       "probability": 0.016591793009335675,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 299
+      },
+      {
+       "seed": 129,
+       "probability": 0.013843163718829831,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 307
+      },
+      {
+       "seed": 130,
+       "probability": 0.01453280396229837,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 131,
+       "probability": 0.016464635302465336,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 3,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 306
+      },
+      {
+       "seed": 132,
+       "probability": 0.011426013244445388,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 133,
+       "probability": 0.019751512681886567,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 308
+      },
+      {
+       "seed": 134,
+       "probability": 0.01968472483983038,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 303
+      },
+      {
+       "seed": 135,
+       "probability": 0.015482324064888704,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 305
+      },
+      {
+       "seed": 136,
+       "probability": 0.011274420209199332,
+       "d24": 0,
+       "d25": 4,
+       "years": {
+        "2024": 4,
+        "2025": 11
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 302
+      },
+      {
+       "seed": 137,
+       "probability": 0.018581820515662283,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 304
+      },
+      {
+       "seed": 138,
+       "probability": 0.01573120184392721,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 301
+      },
+      {
+       "seed": 139,
+       "probability": 0.014167625020358628,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 302
+      }
+     ],
+     "J1": [
+      {
+       "seed": 100,
+       "probability": 0.01834981630502009,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 101,
+       "probability": 0.01943532505610554,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 102,
+       "probability": 0.011599911450043037,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 339
+      },
+      {
+       "seed": 103,
+       "probability": 0.013126832327229476,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 3,
+       "base_within": 1,
+       "n24": 339
+      },
+      {
+       "seed": 104,
+       "probability": 0.018385648123695357,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 341
+      },
+      {
+       "seed": 105,
+       "probability": 0.016381953336015446,
+       "d24": 0,
+       "d25": 1,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 341
+      },
+      {
+       "seed": 106,
+       "probability": 0.019824078554633355,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 334
+      },
+      {
+       "seed": 107,
+       "probability": 0.01648535919400258,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 339
+      },
+      {
+       "seed": 108,
+       "probability": 0.01855993817328595,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 324
+      },
+      {
+       "seed": 109,
+       "probability": 0.015437422489177791,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 340
+      },
+      {
+       "seed": 110,
+       "probability": 0.019304928115103002,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 322
+      },
+      {
+       "seed": 111,
+       "probability": 0.011536613559523328,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 328
+      },
+      {
+       "seed": 112,
+       "probability": 0.011164590130076554,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 340
+      },
+      {
+       "seed": 113,
+       "probability": 0.010705781062805585,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 336
+      },
+      {
+       "seed": 114,
+       "probability": 0.017278882745096855,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 115,
+       "probability": 0.017023380241887803,
+       "d24": 2,
+       "d25": 2,
+       "years": {
+        "2024": 6,
+        "2025": 8
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 332
+      },
+      {
+       "seed": 116,
+       "probability": 0.011723697658713603,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 339
+      },
+      {
+       "seed": 117,
+       "probability": 0.0187501176007386,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 321
+      },
+      {
+       "seed": 118,
+       "probability": 0.01930689644625169,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 335
+      },
+      {
+       "seed": 119,
+       "probability": 0.0195624039937461,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 120,
+       "probability": 0.018537415592755846,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 327
+      },
+      {
+       "seed": 121,
+       "probability": 0.01632815808819528,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 331
+      },
+      {
+       "seed": 122,
+       "probability": 0.018253525769951207,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 330
+      },
+      {
+       "seed": 123,
+       "probability": 0.016823518632481434,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 334
+      },
+      {
+       "seed": 124,
+       "probability": 0.017852531140389177,
+       "d24": -1,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 0,
+       "base_within": 1,
+       "n24": 325
+      },
+      {
+       "seed": 125,
+       "probability": 0.01851749483600873,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 333
+      },
+      {
+       "seed": 126,
+       "probability": 0.010061760759686593,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 127,
+       "probability": 0.010624665677333733,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 128,
+       "probability": 0.016591793009335675,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 328
+      },
+      {
+       "seed": 129,
+       "probability": 0.013843163718829831,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 340
+      },
+      {
+       "seed": 130,
+       "probability": 0.01453280396229837,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 331
+      },
+      {
+       "seed": 131,
+       "probability": 0.016464635302465336,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 340
+      },
+      {
+       "seed": 132,
+       "probability": 0.011426013244445388,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 340
+      },
+      {
+       "seed": 133,
+       "probability": 0.019751512681886567,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 341
+      },
+      {
+       "seed": 134,
+       "probability": 0.01968472483983038,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 135,
+       "probability": 0.015482324064888704,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 136,
+       "probability": 0.011274420209199332,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 1,
+       "base_within": 1,
+       "n24": 337
+      },
+      {
+       "seed": 137,
+       "probability": 0.018581820515662283,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 338
+      },
+      {
+       "seed": 138,
+       "probability": 0.01573120184392721,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 331
+      },
+      {
+       "seed": 139,
+       "probability": 0.014167625020358628,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 2,
+       "base_within": 1,
+       "n24": 326
+      }
+     ],
+     "J2": [
+      {
+       "seed": 100,
+       "probability": 0.01834981630502009,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 360
+      },
+      {
+       "seed": 101,
+       "probability": 0.01943532505610554,
+       "d24": 0,
+       "d25": 4,
+       "years": {
+        "2024": 4,
+        "2025": 11
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 358
+      },
+      {
+       "seed": 102,
+       "probability": 0.011599911450043037,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 370
+      },
+      {
+       "seed": 103,
+       "probability": 0.013126832327229476,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 104,
+       "probability": 0.018385648123695357,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 361
+      },
+      {
+       "seed": 105,
+       "probability": 0.016381953336015446,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 361
+      },
+      {
+       "seed": 106,
+       "probability": 0.019824078554633355,
+       "d24": 1,
+       "d25": 4,
+       "years": {
+        "2024": 5,
+        "2025": 11
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 361
+      },
+      {
+       "seed": 107,
+       "probability": 0.01648535919400258,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 360
+      },
+      {
+       "seed": 108,
+       "probability": 0.01855993817328595,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 109,
+       "probability": 0.015437422489177791,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 5,
+        "2025": 9
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 362
+      },
+      {
+       "seed": 110,
+       "probability": 0.019304928115103002,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 357
+      },
+      {
+       "seed": 111,
+       "probability": 0.011536613559523328,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 362
+      },
+      {
+       "seed": 112,
+       "probability": 0.011164590130076554,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 363
+      },
+      {
+       "seed": 113,
+       "probability": 0.010705781062805585,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 369
+      },
+      {
+       "seed": 114,
+       "probability": 0.017278882745096855,
+       "d24": 0,
+       "d25": 4,
+       "years": {
+        "2024": 4,
+        "2025": 11
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 115,
+       "probability": 0.017023380241887803,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 354
+      },
+      {
+       "seed": 116,
+       "probability": 0.011723697658713603,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 364
+      },
+      {
+       "seed": 117,
+       "probability": 0.0187501176007386,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 362
+      },
+      {
+       "seed": 118,
+       "probability": 0.01930689644625169,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 355
+      },
+      {
+       "seed": 119,
+       "probability": 0.0195624039937461,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 358
+      },
+      {
+       "seed": 120,
+       "probability": 0.018537415592755846,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 364
+      },
+      {
+       "seed": 121,
+       "probability": 0.01632815808819528,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 364
+      },
+      {
+       "seed": 122,
+       "probability": 0.018253525769951207,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 361
+      },
+      {
+       "seed": 123,
+       "probability": 0.016823518632481434,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 363
+      },
+      {
+       "seed": 124,
+       "probability": 0.017852531140389177,
+       "d24": 1,
+       "d25": 2,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 374
+      },
+      {
+       "seed": 125,
+       "probability": 0.01851749483600873,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 378
+      },
+      {
+       "seed": 126,
+       "probability": 0.010061760759686593,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 361
+      },
+      {
+       "seed": 127,
+       "probability": 0.010624665677333733,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      },
+      {
+       "seed": 128,
+       "probability": 0.016591793009335675,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 357
+      },
+      {
+       "seed": 129,
+       "probability": 0.013843163718829831,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 6,
+        "2025": 10
+       },
+       "within": 4,
+       "base_within": 1,
+       "n24": 365
+      },
+      {
+       "seed": 130,
+       "probability": 0.01453280396229837,
+       "d24": -1,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 364
+      },
+      {
+       "seed": 131,
+       "probability": 0.016464635302465336,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 3,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 360
+      },
+      {
+       "seed": 132,
+       "probability": 0.011426013244445388,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 360
+      },
+      {
+       "seed": 133,
+       "probability": 0.019751512681886567,
+       "d24": 1,
+       "d25": 3,
+       "years": {
+        "2024": 5,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 365
+      },
+      {
+       "seed": 134,
+       "probability": 0.01968472483983038,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 358
+      },
+      {
+       "seed": 135,
+       "probability": 0.015482324064888704,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 361
+      },
+      {
+       "seed": 136,
+       "probability": 0.011274420209199332,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 357
+      },
+      {
+       "seed": 137,
+       "probability": 0.018581820515662283,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 361
+      },
+      {
+       "seed": 138,
+       "probability": 0.01573120184392721,
+       "d24": 0,
+       "d25": 3,
+       "years": {
+        "2024": 4,
+        "2025": 10
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 364
+      },
+      {
+       "seed": 139,
+       "probability": 0.014167625020358628,
+       "d24": 0,
+       "d25": 2,
+       "years": {
+        "2024": 4,
+        "2025": 9
+       },
+       "within": 5,
+       "base_within": 1,
+       "n24": 359
+      }
+     ]
+    }
+   }
+  },
+  "workflow_blocked_nights": {
+   "B0": {
+    "all": [
+     "US.ACHR:2025-10-01:2025-10-15",
+     "US.AMPX:2025-09-11:2025-10-15",
+     "US.ASTS:2025-10-01:2025-10-16",
+     "US.FUTU:2025-07-07:2025-09-05",
+     "US.OKLO:2025-05-01:2025-07-29",
+     "US.QUBT:2024-12-16:2024-12-18",
+     "US.RGTI:2025-09-09:2025-10-14",
+     "US.SMCI:2024-01-05:2024-03-08",
+     "US.SOUN:2024-11-21:2024-12-26"
+    ],
+    "first_in_queue": [
+     "US.ACHR:2025-10-01:2025-10-15",
+     "US.AMPX:2025-09-11:2025-10-15",
+     "US.ASTS:2025-10-01:2025-10-16",
+     "US.FUTU:2025-07-07:2025-09-05",
+     "US.OKLO:2025-05-01:2025-07-29",
+     "US.QUBT:2024-12-16:2024-12-18",
+     "US.RGTI:2025-09-09:2025-10-14"
+    ]
+   },
+   "Q2": {
+    "all": [
+     "US.ACHR:2025-10-01:2025-10-15",
+     "US.AMPX:2025-09-11:2025-10-15",
+     "US.ASTS:2025-10-01:2025-10-16",
+     "US.COIN:2024-02-07:2024-03-25",
+     "US.FUTU:2025-07-07:2025-09-05",
+     "US.GME:2024-05-13:2024-05-14",
+     "US.LMND:2024-11-19:2024-11-25",
+     "US.OKLO:2025-05-01:2025-07-29",
+     "US.QUBT:2024-12-16:2024-12-18",
+     "US.RGTI:2025-09-09:2025-10-14",
+     "US.SOFI:2024-11-05:2025-01-24",
+     "US.SOUN:2024-11-21:2024-12-26",
+     "US.UPST:2025-05-01:2025-07-29"
+    ],
+    "first_in_queue": [
+     "US.ACHR:2025-10-01:2025-10-15",
+     "US.AMPX:2025-09-11:2025-10-15",
+     "US.FUTU:2025-07-07:2025-09-05",
+     "US.LMND:2024-11-19:2024-11-25",
+     "US.OKLO:2025-05-01:2025-07-29",
+     "US.RGTI:2025-09-09:2025-10-14",
+     "US.UPST:2025-05-01:2025-07-29"
+    ]
+   }
+  },
+  "note": "The blocked-night count is a direct one-slot diagnostic; cascading rotation and Q2 exits can change later occupancy."
+ },
+ "accept_inputs": {
+  "v1": {
+   "annual": {
+    "2024": {
+     "peak_held": 4,
+     "return": 0.6130952466512225
+    },
+    "2025": {
+     "peak_held": 7,
+     "return": 0.5736687761383674
+    }
+   },
+   "selection": {
+    "behaviour_within": 1,
+    "peak_weight_median": 0.10168106447651955
+   },
+   "uses_bar_turnover_selection": false
+  },
+  "candidates": {
+   "J1": {
+    "accept_record": {
+     "annual": {
+      "2024": {
+       "peak_held": 5,
+       "return": 0.8305660529602485
+      },
+      "2025": {
+       "peak_held": 10,
+       "return": 0.6462904288473748
+      }
+     },
+     "selection": {
+      "behaviour_within": 0,
+      "peak_weight_median": 0.10445495048490046
+     },
+     "uses_bar_turnover_selection": false
+    },
+    "decision": {
+     "status": "branch",
+     "line": "merge",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": true,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        5,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ],
+       "delta": 4,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        5,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ]
+      },
+      {
+       "rule": "behaviour_items",
+       "ok": false,
+       "candidate": 0,
+       "compare": 1,
+       "tolerance": 0.2
+      },
+      {
+       "rule": "annual_return_floor",
+       "ok": true,
+       "candidate": [
+        0.8305660529602485,
+        0.6462904288473748
+       ],
+       "threshold": 0.0
+      },
+      {
+       "rule": "peak_position_weight",
+       "ok": true,
+       "candidate": 0.10445495048490046,
+       "compare": 0.10168106447651955
+      },
+      {
+       "rule": "selection_base",
+       "ok": true,
+       "uses_bar_turnover_selection": false
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    }
+   },
+   "J2": {
+    "accept_record": {
+     "annual": {
+      "2024": {
+       "peak_held": 3,
+       "return": 1.8469135497683724
+      },
+      "2025": {
+       "peak_held": 10,
+       "return": 0.35452291310449224
+      }
+     },
+     "selection": {
+      "behaviour_within": 4,
+      "peak_weight_median": 0.11068878792932471
+     },
+     "uses_bar_turnover_selection": false
+    },
+    "decision": {
+     "status": "branch",
+     "line": "merge",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": false,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        3,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ],
+       "delta": 2,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": false,
+       "candidate": [
+        3,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ]
+      },
+      {
+       "rule": "behaviour_items",
+       "ok": true,
+       "candidate": 4,
+       "compare": 1,
+       "tolerance": 0.2
+      },
+      {
+       "rule": "annual_return_floor",
+       "ok": true,
+       "candidate": [
+        1.8469135497683724,
+        0.35452291310449224
+       ],
+       "threshold": 0.0
+      },
+      {
+       "rule": "peak_position_weight",
+       "ok": true,
+       "candidate": 0.11068878792932471,
+       "compare": 0.10168106447651955
+      },
+      {
+       "rule": "selection_base",
+       "ok": true,
+       "uses_bar_turnover_selection": false
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    }
+   },
+   "J3": {
+    "accept_record": {
+     "annual": {
+      "2024": {
+       "peak_held": 4,
+       "return": 2.3849707212388327
+      },
+      "2025": {
+       "peak_held": 10,
+       "return": 0.3309682870620625
+      }
+     },
+     "selection": {
+      "behaviour_within": 4,
+      "peak_weight_median": 0.11241119131188554
+     },
+     "uses_bar_turnover_selection": false
+    },
+    "decision": {
+     "status": "accepted",
+     "line": "merge",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": true,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        4,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ],
+       "delta": 3,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        4,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ]
+      },
+      {
+       "rule": "behaviour_items",
+       "ok": true,
+       "candidate": 4,
+       "compare": 1,
+       "tolerance": 0.2
+      },
+      {
+       "rule": "annual_return_floor",
+       "ok": true,
+       "candidate": [
+        2.3849707212388327,
+        0.3309682870620625
+       ],
+       "threshold": 0.0
+      },
+      {
+       "rule": "peak_position_weight",
+       "ok": true,
+       "candidate": 0.11241119131188554,
+       "compare": 0.10168106447651955
+      },
+      {
+       "rule": "selection_base",
+       "ok": true,
+       "uses_bar_turnover_selection": false
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    }
+   }
+  },
+  "ablations": {
+   "A4": {
+    "accept_record": {
+     "annual": {
+      "2024": {
+       "peak_held": 5,
+       "return": 0.4650535832628899
+      },
+      "2025": {
+       "peak_held": 8,
+       "return": 0.4458827942867929
+      }
+     },
+     "selection": {
+      "behaviour_within": 1,
+      "peak_weight_median": 0.11000972782277306
+     },
+     "uses_bar_turnover_selection": false
+    },
+    "decision": {
+     "status": "branch",
+     "line": "merge",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": false,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        5,
+        8
+       ],
+       "compare": [
+        4,
+        7
+       ],
+       "delta": 2,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        5,
+        8
+       ],
+       "compare": [
+        4,
+        7
+       ]
+      },
+      {
+       "rule": "behaviour_items",
+       "ok": true,
+       "candidate": 1,
+       "compare": 1,
+       "tolerance": 0.2
+      },
+      {
+       "rule": "annual_return_floor",
+       "ok": true,
+       "candidate": [
+        0.4650535832628899,
+        0.4458827942867929
+       ],
+       "threshold": 0.0
+      },
+      {
+       "rule": "peak_position_weight",
+       "ok": true,
+       "candidate": 0.11000972782277306,
+       "compare": 0.10168106447651955
+      },
+      {
+       "rule": "selection_base",
+       "ok": true,
+       "uses_bar_turnover_selection": false
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    }
+   },
+   "A5": {
+    "accept_record": {
+     "annual": {
+      "2024": {
+       "peak_held": 4,
+       "return": 0.6603950538415146
+      },
+      "2025": {
+       "peak_held": 10,
+       "return": 0.5599303642765172
+      }
+     },
+     "selection": {
+      "behaviour_within": 0,
+      "peak_weight_median": 0.11107901604051654
+     },
+     "uses_bar_turnover_selection": false
+    },
+    "decision": {
+     "status": "branch",
+     "line": "merge",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": true,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        4,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ],
+       "delta": 3,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        4,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ]
+      },
+      {
+       "rule": "behaviour_items",
+       "ok": false,
+       "candidate": 0,
+       "compare": 1,
+       "tolerance": 0.2
+      },
+      {
+       "rule": "annual_return_floor",
+       "ok": true,
+       "candidate": [
+        0.6603950538415146,
+        0.5599303642765172
+       ],
+       "threshold": 0.0
+      },
+      {
+       "rule": "peak_position_weight",
+       "ok": true,
+       "candidate": 0.11107901604051654,
+       "compare": 0.10168106447651955
+      },
+      {
+       "rule": "selection_base",
+       "ok": true,
+       "uses_bar_turnover_selection": false
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    }
+   }
+  }
+ },
+ "selection_rule_trace": {
+  "eligible": [
+   "J3"
+  ],
+  "tie_group": [
+   "J3"
+  ],
+  "selected": "J3",
+  "rule": "largest peak-held within configured tie width, then behaviour, fewer components, worst-year return, id"
+ },
+ "final_components": {
+  "version": "v2",
+  "candidate": "J3",
+  "components": [
+   "Q2",
+   "M3",
+   "P30"
+  ]
+ },
+ "ablation": {
+  "selected": "J3",
+  "comparisons": {
+   "Q2": {
+    "candidate": "A4",
+    "checks": {
+     "peak_total": false,
+     "peak_each_year": false,
+     "behaviour": false,
+     "peak_weight": false,
+     "returns": false
+    },
+    "removable": false,
+    "accept_record": {
+     "annual": {
+      "2024": {
+       "peak_held": 5,
+       "return": 0.4650535832628899
+      },
+      "2025": {
+       "peak_held": 8,
+       "return": 0.4458827942867929
+      }
+     },
+     "selection": {
+      "behaviour_within": 1,
+      "peak_weight_median": 0.11000972782277306
+     },
+     "uses_bar_turnover_selection": false
+    },
+    "decision": {
+     "status": "branch",
+     "line": "merge",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": false,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        5,
+        8
+       ],
+       "compare": [
+        4,
+        7
+       ],
+       "delta": 2,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        5,
+        8
+       ],
+       "compare": [
+        4,
+        7
+       ]
+      },
+      {
+       "rule": "behaviour_items",
+       "ok": true,
+       "candidate": 1,
+       "compare": 1,
+       "tolerance": 0.2
+      },
+      {
+       "rule": "annual_return_floor",
+       "ok": true,
+       "candidate": [
+        0.4650535832628899,
+        0.4458827942867929
+       ],
+       "threshold": 0.0
+      },
+      {
+       "rule": "peak_position_weight",
+       "ok": true,
+       "candidate": 0.11000972782277306,
+       "compare": 0.10168106447651955
+      },
+      {
+       "rule": "selection_base",
+       "ok": true,
+       "uses_bar_turnover_selection": false
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    }
+   },
+   "M3": {
+    "candidate": "A5",
+    "checks": {
+     "peak_total": true,
+     "peak_each_year": true,
+     "behaviour": false,
+     "peak_weight": false,
+     "returns": false
+    },
+    "removable": false,
+    "accept_record": {
+     "annual": {
+      "2024": {
+       "peak_held": 4,
+       "return": 0.6603950538415146
+      },
+      "2025": {
+       "peak_held": 10,
+       "return": 0.5599303642765172
+      }
+     },
+     "selection": {
+      "behaviour_within": 0,
+      "peak_weight_median": 0.11107901604051654
+     },
+     "uses_bar_turnover_selection": false
+    },
+    "decision": {
+     "status": "branch",
+     "line": "merge",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": true,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        4,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ],
+       "delta": 3,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": true,
+       "candidate": [
+        4,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ]
+      },
+      {
+       "rule": "behaviour_items",
+       "ok": false,
+       "candidate": 0,
+       "compare": 1,
+       "tolerance": 0.2
+      },
+      {
+       "rule": "annual_return_floor",
+       "ok": true,
+       "candidate": [
+        0.6603950538415146,
+        0.5599303642765172
+       ],
+       "threshold": 0.0
+      },
+      {
+       "rule": "peak_position_weight",
+       "ok": true,
+       "candidate": 0.11107901604051654,
+       "compare": 0.10168106447651955
+      },
+      {
+       "rule": "selection_base",
+       "ok": true,
+       "uses_bar_turnover_selection": false
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    }
+   },
+   "P30": {
+    "candidate": "J2",
+    "checks": {
+     "peak_total": false,
+     "peak_each_year": false,
+     "behaviour": true,
+     "peak_weight": false,
+     "returns": false
+    },
+    "removable": false,
+    "accept_record": {
+     "annual": {
+      "2024": {
+       "peak_held": 3,
+       "return": 1.8469135497683724
+      },
+      "2025": {
+       "peak_held": 10,
+       "return": 0.35452291310449224
+      }
+     },
+     "selection": {
+      "behaviour_within": 4,
+      "peak_weight_median": 0.11068878792932471
+     },
+     "uses_bar_turnover_selection": false
+    },
+    "decision": {
+     "status": "branch",
+     "line": "merge",
+     "checks": [
+      {
+       "rule": "selection_year_gain",
+       "ok": false,
+       "years": [
+        "2024",
+        "2025"
+       ],
+       "candidate": [
+        3,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ],
+       "delta": 2,
+       "threshold": 3
+      },
+      {
+       "rule": "no_year_decrease",
+       "ok": false,
+       "candidate": [
+        3,
+        10
+       ],
+       "compare": [
+        4,
+        7
+       ]
+      },
+      {
+       "rule": "behaviour_items",
+       "ok": true,
+       "candidate": 4,
+       "compare": 1,
+       "tolerance": 0.2
+      },
+      {
+       "rule": "annual_return_floor",
+       "ok": true,
+       "candidate": [
+        1.8469135497683724,
+        0.35452291310449224
+       ],
+       "threshold": 0.0
+      },
+      {
+       "rule": "peak_position_weight",
+       "ok": true,
+       "candidate": 0.11068878792932471,
+       "compare": 0.10168106447651955
+      },
+      {
+       "rule": "selection_base",
+       "ok": true,
+       "uses_bar_turnover_selection": false
+      }
+     ],
+     "selection_years": [
+      "2024",
+      "2025"
+     ],
+     "holdout_used_for_selection": false
+    }
+   }
+  },
+  "removable_candidates": [],
+  "tie_group": [],
+  "final": "J3",
+  "decision": {
+   "status": "accepted",
+   "line": "merge",
+   "checks": [
+    {
+     "rule": "selection_year_gain",
+     "ok": true,
+     "years": [
+      "2024",
+      "2025"
+     ],
+     "candidate": [
+      4,
+      10
+     ],
+     "compare": [
+      4,
+      7
+     ],
+     "delta": 3,
+     "threshold": 3
+    },
+    {
+     "rule": "no_year_decrease",
+     "ok": true,
+     "candidate": [
+      4,
+      10
+     ],
+     "compare": [
+      4,
+      7
+     ]
+    },
+    {
+     "rule": "behaviour_items",
+     "ok": true,
+     "candidate": 4,
+     "compare": 1,
+     "tolerance": 0.2
+    },
+    {
+     "rule": "annual_return_floor",
+     "ok": true,
+     "candidate": [
+      2.3849707212388327,
+      0.3309682870620625
+     ],
+     "threshold": 0.0
+    },
+    {
+     "rule": "peak_position_weight",
+     "ok": true,
+     "candidate": 0.11241119131188554,
+     "compare": 0.10168106447651955
+    },
+    {
+     "rule": "selection_base",
+     "ok": true,
+     "uses_bar_turnover_selection": false
+    }
+   ],
+   "selection_years": [
+    "2024",
+    "2025"
+   ],
+   "holdout_used_for_selection": false
+  },
+  "unmeasured_interaction": false
+ },
+ "holdout": {
+  "label": "留出*",
+  "holdout_return": 0.0792998889126939,
+  "holdout_loss": false,
+  "baseline_peak_held": "1/17",
+  "final": {
+   "peak_held": 2,
+   "early_buy": 6,
+   "segments": 17,
+   "return": 0.0792998889126939,
+   "win": 0.17142857142857143,
+   "payoff": 3.6122524274013177,
+   "trades": 316,
+   "closed": 315,
+   "days": 4.720634920634921,
+   "max_gross": 2.096364663611278,
+   "mean_gross": 0.8156512009454693,
+   "max_drawdown": 0.35036871900181754,
+   "behaviour_within": null,
+   "behaviour_sourced": null,
+   "margin_calls": 0,
+   "margin_sales": 0,
+   "margin_sold_value": 0,
+   "margin_sold_pnl": 0
+  },
+  "note": "历史留出已反复查看，非独立样本外；J3 为预筛后候选。"
+ },
+ "checkpoint": {
+  "triggered": true,
+  "holdout_loss": false,
+  "reasons": [
+   "交易缓存读取器缺 US.PL 选择年末价格",
+   "版本追加使既有 capital_audit 指纹过期"
+  ],
+  "rule_drift": false,
+  "status_can_start_round": false
+ },
+ "risk_flags": {
+  "loss_fraction_entry_close_equity": {
+   "all": {
+    "n": 567,
+    "median": 0.0023715956075742134,
+    "p90": 0.009272774764997918,
+    "p99": 0.018598905057672976,
+    "max": 0.023667026115590285
+   },
+   "annual": {
+    "2024": {
+     "n": 282,
+     "median": 0.0022782220720109743,
+     "p90": 0.009654773983476835,
+     "p99": 0.01955931658976219,
+     "max": 0.023667026115590285
+    },
+    "2025": {
+     "n": 285,
+     "median": 0.0025237815472693406,
+     "p90": 0.009143457087320768,
+     "p99": 0.01744358761252125,
+     "max": 0.02189568165951041
+    }
+   },
+   "basis": "realized loss / entry-day closing equity"
+  },
+  "risk_over_words_2pct": true,
+  "margin_calls": 0,
+  "max_gross": 2.2673976501483057
+ },
+ "sim_vs_account": {
+  "baseline": {
+   "peak": {
+    "2024": 4,
+    "2025": 7
+   },
+   "held": [
+    "US.AMD:2025-10-01:2025-10-29",
+    "US.BBAI:2025-02-04:2025-02-13",
+    "US.COIN:2024-02-07:2024-03-25",
+    "US.COIN:2024-11-06:2024-12-06",
+    "US.HOOD:2025-05-07:2025-07-18",
+    "US.IONQ:2025-05-08:2025-05-28",
+    "US.IONQ:2025-09-09:2025-10-13",
+    "US.LMND:2024-11-19:2024-11-25",
+    "US.QBTS:2025-09-08:2025-10-15",
+    "US.RIVN:2025-11-25:2025-12-22",
+    "US.SOFI:2024-11-05:2025-01-24"
+   ],
+   "stats": {
+    "2024": {
+     "n": 382,
+     "win": 0.12,
+     "payoff": 8.19,
+     "within": 1,
+     "sumR": 274.5,
+     "ret_proxy": 0.686
+    },
+    "2025": {
+     "n": 373,
+     "win": 0.143,
+     "payoff": 12.31,
+     "within": 0,
+     "sumR": 1031.8,
+     "ret_proxy": 2.58
+    }
+   },
+   "within": 1,
+   "weight_median": 0.12590596783232116,
+   "gross_proxy": 2.045503814368661,
+   "rotations": 0
+  },
+  "cases": {
+   "J1": {
+    "years": {
+     "2024": {
+      "peak_held": {
+       "prediction": 5,
+       "actual": 5,
+       "v1": 4,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.185,
+        "actual": 0.14497041420118342,
+        "target": 0.2458628841607565,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "payoff": {
+        "prediction": 4.35,
+        "actual": 6.954603792708303,
+        "target": 5.0,
+        "actual_within": false,
+        "predicted_within": true
+       },
+       "n": {
+        "prediction": 341,
+        "actual": 338,
+        "target": 423,
+        "actual_within": false,
+        "predicted_within": true
+       }
+      },
+      "return_proxy": {
+       "sumR": 305.6,
+       "proxy": 0.764,
+       "actual": 0.8305660529602545
+      }
+     },
+     "2025": {
+      "peak_held": {
+       "prediction": 10,
+       "actual": 10,
+       "v1": 7,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.176,
+        "actual": 0.15987460815047022,
+        "target": 0.22234042553191488,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "payoff": {
+        "prediction": 9.68,
+        "actual": 10.640848925541608,
+        "target": 6.7142857142857135,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "n": {
+        "prediction": 323,
+        "actual": 323,
+        "target": 940,
+        "actual_within": false,
+        "predicted_within": false
+       }
+      },
+      "return_proxy": {
+       "sumR": 1431.7,
+       "proxy": 3.579,
+       "actual": 0.6462904288473748
+      }
+     }
+    },
+    "behaviour_within": {
+     "prediction": 2,
+     "actual": 0,
+     "v1": 1
+    },
+    "weight_relative_to_v1": {
+     "prediction": 1.0,
+     "actual": 1.02728026130196
+    },
+    "gross": {
+     "prediction": 2.684793331353898,
+     "actual": 2.8001066706789595,
+     "margin_calls": 0
+    },
+    "rotations": {
+     "prediction": 34,
+     "actual": 34
+    },
+    "cap_omitted_from_other_predictions": false,
+    "segment_differences": [],
+    "actual_rotation_comparison": {
+     "reference": "A5 (Q2+P30)",
+     "reference_exact_component_ablation": false,
+     "evicted": 34,
+     "matched": 33,
+     "unmatched": 1,
+     "matched_forgone_R": -104.49711403395648,
+     "matched_forgone_ge5": 3,
+     "added": 55,
+     "displaced": 10,
+     "entry_gain_R": -199.8548667623341,
+     "entry_ge5_net": 2,
+     "note": "Matched actual accounts; equity and later slot chains differ. Unmatched evictions have no observed counterfactual."
+    }
+   },
+   "J2": {
+    "years": {
+     "2024": {
+      "peak_held": {
+       "prediction": 4,
+       "actual": 3,
+       "v1": 4,
+       "actual_minus_prediction": -1
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.255,
+        "actual": 0.21951219512195122,
+        "target": 0.2458628841607565,
+        "actual_within": true,
+        "predicted_within": true
+       },
+       "payoff": {
+        "prediction": 4.94,
+        "actual": 6.132447542884926,
+        "target": 5.0,
+        "actual_within": false,
+        "predicted_within": true
+       },
+       "n": {
+        "prediction": 361,
+        "actual": 369,
+        "target": 423,
+        "actual_within": true,
+        "predicted_within": true
+       }
+      },
+      "return_proxy": {
+       "sumR": 855.5,
+       "proxy": 2.139,
+       "actual": 1.8469135497683777
+      }
+     },
+     "2025": {
+      "peak_held": {
+       "prediction": 10,
+       "actual": 10,
+       "v1": 7,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.227,
+        "actual": 0.21052631578947367,
+        "target": 0.22234042553191488,
+        "actual_within": true,
+        "predicted_within": true
+       },
+       "payoff": {
+        "prediction": 5.84,
+        "actual": 6.625400568755771,
+        "target": 6.7142857142857135,
+        "actual_within": true,
+        "predicted_within": true
+       },
+       "n": {
+        "prediction": 365,
+        "actual": 365,
+        "target": 940,
+        "actual_within": false,
+        "predicted_within": false
+       }
+      },
+      "return_proxy": {
+       "sumR": 1131.9,
+       "proxy": 2.83,
+       "actual": 0.35452291310449
+      }
+     }
+    },
+    "behaviour_within": {
+     "prediction": 5,
+     "actual": 4,
+     "v1": 1
+    },
+    "weight_relative_to_v1": {
+     "prediction": 1.0214513417153563,
+     "actual": 1.0885880129125247
+    },
+    "gross": {
+     "prediction": 3.3900980535174527,
+     "actual": 2.8001066706789595,
+     "margin_calls": 0
+    },
+    "rotations": {
+     "prediction": 90,
+     "actual": 93
+    },
+    "cap_omitted_from_other_predictions": false,
+    "segment_differences": [
+     {
+      "key": "US.SMCI:2024-01-05:2024-03-08",
+      "prediction": true,
+      "actual": false,
+      "actual_layer": "L5",
+      "v1_held": false,
+      "category": "unclassified",
+      "reason_counts": {
+       "filled": 3,
+       "max_open": 1
+      },
+      "proof_rejections": []
+     }
+    ],
+    "actual_rotation_comparison": {
+     "reference": "A5 (Q2+P30)",
+     "reference_exact_component_ablation": false,
+     "evicted": 93,
+     "matched": 74,
+     "unmatched": 19,
+     "matched_forgone_R": 786.3121193809866,
+     "matched_forgone_ge5": 10,
+     "added": 151,
+     "displaced": 33,
+     "entry_gain_R": 1041.845061682364,
+     "entry_ge5_net": 27,
+     "note": "Matched actual accounts; equity and later slot chains differ. Unmatched evictions have no observed counterfactual."
+    }
+   },
+   "J3": {
+    "years": {
+     "2024": {
+      "peak_held": {
+       "prediction": 4,
+       "actual": 4,
+       "v1": 4,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.255,
+        "actual": 0.2188365650969529,
+        "target": 0.2458628841607565,
+        "actual_within": true,
+        "predicted_within": true
+       },
+       "payoff": {
+        "prediction": 4.94,
+        "actual": 6.611423598033652,
+        "target": 5.0,
+        "actual_within": false,
+        "predicted_within": true
+       },
+       "n": {
+        "prediction": 361,
+        "actual": 361,
+        "target": 423,
+        "actual_within": true,
+        "predicted_within": true
+       }
+      },
+      "return_proxy": {
+       "sumR": 855.5,
+       "proxy": 2.139,
+       "actual": 2.3849707212388362
+      }
+     },
+     "2025": {
+      "peak_held": {
+       "prediction": 10,
+       "actual": 10,
+       "v1": 7,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.227,
+        "actual": 0.21052631578947367,
+        "target": 0.22234042553191488,
+        "actual_within": true,
+        "predicted_within": true
+       },
+       "payoff": {
+        "prediction": 5.84,
+        "actual": 6.623060280804942,
+        "target": 6.7142857142857135,
+        "actual_within": true,
+        "predicted_within": true
+       },
+       "n": {
+        "prediction": 365,
+        "actual": 365,
+        "target": 940,
+        "actual_within": false,
+        "predicted_within": false
+       }
+      },
+      "return_proxy": {
+       "sumR": 1131.9,
+       "proxy": 2.83,
+       "actual": 0.3309682870620607
+      }
+     }
+    },
+    "behaviour_within": {
+     "prediction": 5,
+     "actual": 4,
+     "v1": 1
+    },
+    "weight_relative_to_v1": {
+     "prediction": 1.0214513417153563,
+     "actual": 1.1055272866251693
+    },
+    "gross": {
+     "prediction": null,
+     "actual": 2.2673976501483057,
+     "margin_calls": 0
+    },
+    "rotations": {
+     "prediction": 90,
+     "actual": 90
+    },
+    "cap_omitted_from_other_predictions": true,
+    "segment_differences": [],
+    "actual_rotation_comparison": {
+     "reference": "A5 (Q2+P30)",
+     "reference_exact_component_ablation": true,
+     "evicted": 90,
+     "matched": 72,
+     "unmatched": 18,
+     "matched_forgone_R": 605.3395373545231,
+     "matched_forgone_ge5": 10,
+     "added": 145,
+     "displaced": 35,
+     "entry_gain_R": 1020.2834208429349,
+     "entry_ge5_net": 26,
+     "note": "Matched actual accounts; equity and later slot chains differ. Unmatched evictions have no observed counterfactual."
+    }
+   },
+   "A4": {
+    "years": {
+     "2024": {
+      "peak_held": {
+       "prediction": 5,
+       "actual": 5,
+       "v1": 4,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.146,
+        "actual": 0.13580246913580246,
+        "target": 0.2458628841607565,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "payoff": {
+        "prediction": 6.53,
+        "actual": 7.36626944292208,
+        "target": 5.0,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "n": {
+        "prediction": 405,
+        "actual": 405,
+        "target": 423,
+        "actual_within": true,
+        "predicted_within": true
+       }
+      },
+      "return_proxy": {
+       "sumR": 200.1,
+       "proxy": 0.5,
+       "actual": 0.46505358326289525
+      }
+     },
+     "2025": {
+      "peak_held": {
+       "prediction": 8,
+       "actual": 8,
+       "v1": 7,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.181,
+        "actual": 0.17336683417085427,
+        "target": 0.22234042553191488,
+        "actual_within": false,
+        "predicted_within": true
+       },
+       "payoff": {
+        "prediction": 8.17,
+        "actual": 8.773558751657967,
+        "target": 6.7142857142857135,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "n": {
+        "prediction": 401,
+        "actual": 401,
+        "target": 940,
+        "actual_within": false,
+        "predicted_within": false
+       }
+      },
+      "return_proxy": {
+       "sumR": 849.5,
+       "proxy": 2.124,
+       "actual": 0.4458827942867942
+      }
+     }
+    },
+    "behaviour_within": {
+     "prediction": 2,
+     "actual": 1,
+     "v1": 1
+    },
+    "weight_relative_to_v1": {
+     "prediction": 0.9234154326648099,
+     "actual": 1.0819096789469271
+    },
+    "gross": {
+     "prediction": null,
+     "actual": 1.8783354589167518,
+     "margin_calls": 0
+    },
+    "rotations": {
+     "prediction": 43,
+     "actual": 43
+    },
+    "cap_omitted_from_other_predictions": true,
+    "segment_differences": [],
+    "actual_rotation_comparison": {
+     "reference": "v1 (C062)",
+     "reference_exact_component_ablation": false,
+     "evicted": 43,
+     "matched": 42,
+     "unmatched": 1,
+     "matched_forgone_R": 157.32769716240477,
+     "matched_forgone_ge5": 2,
+     "added": 58,
+     "displaced": 7,
+     "entry_gain_R": -12.220860779013133,
+     "entry_ge5_net": 2,
+     "note": "Matched actual accounts; equity and later slot chains differ. Unmatched evictions have no observed counterfactual."
+    }
+   },
+   "A5": {
+    "years": {
+     "2024": {
+      "peak_held": {
+       "prediction": 4,
+       "actual": 4,
+       "v1": 4,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.144,
+        "actual": 0.1437908496732026,
+        "target": 0.2458628841607565,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "payoff": {
+        "prediction": 6.51,
+        "actual": 6.895957181897962,
+        "target": 5.0,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "n": {
+        "prediction": 306,
+        "actual": 306,
+        "target": 423,
+        "actual_within": false,
+        "predicted_within": false
+       }
+      },
+      "return_proxy": {
+       "sumR": 438.1,
+       "proxy": 1.095,
+       "actual": 0.6603950538415131
+      }
+     },
+     "2025": {
+      "peak_held": {
+       "prediction": 10,
+       "actual": 10,
+       "v1": 7,
+       "actual_minus_prediction": 0
+      },
+      "behaviour": {
+       "win": {
+        "prediction": 0.156,
+        "actual": 0.1563517915309446,
+        "target": 0.22234042553191488,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "payoff": {
+        "prediction": 10.9,
+        "actual": 10.803308022171354,
+        "target": 6.7142857142857135,
+        "actual_within": false,
+        "predicted_within": false
+       },
+       "n": {
+        "prediction": 310,
+        "actual": 310,
+        "target": 940,
+        "actual_within": false,
+        "predicted_within": false
+       }
+      },
+      "return_proxy": {
+       "sumR": 1404.4,
+       "proxy": 3.511,
+       "actual": 0.5599303642765174
+      }
+     }
+    },
+    "behaviour_within": {
+     "prediction": 0,
+     "actual": 0,
+     "v1": 1
+    },
+    "weight_relative_to_v1": {
+     "prediction": 1.0597436253829517,
+     "actual": 1.0924257787069802
+    },
+    "gross": {
+     "prediction": null,
+     "actual": 2.2872299703553796,
+     "margin_calls": 0
+    },
+    "rotations": {
+     "prediction": 0,
+     "actual": 0
+    },
+    "cap_omitted_from_other_predictions": true,
+    "segment_differences": [],
+    "actual_rotation_comparison": {
+     "reference": "A5 (Q2+P30)",
+     "reference_exact_component_ablation": false,
+     "evicted": 0,
+     "matched": 0,
+     "unmatched": 0,
+     "matched_forgone_R": 0,
+     "matched_forgone_ge5": 0,
+     "added": 0,
+     "displaced": 0,
+     "entry_gain_R": 0,
+     "entry_ge5_net": 0,
+     "note": "Matched actual accounts; equity and later slot chains differ. Unmatched evictions have no observed counterfactual."
+    }
+   }
+  },
+  "seconds": 1.4352163199800998,
+  "peak_rss_kib": 155892
+ },
+ "new_caches": {
+  "trading": {
+   "path": "studies/martin_luk/workflow/frozen/trading/WF05_J3",
+   "manifest_sha256": "bb67ed9d0c769e31b2bb8a86c121399c0220c0c5122bfd3a41013e21afbd7400",
+   "bytes": 2875073
+  },
+  "conversion": {
+   "path": "studies/martin_luk/workflow/frozen/conversion/WF05_J3",
+   "manifest_sha256": "9194f8f1625cd8c4138275f94f27c16fad4f91a037346f7ad32159236450f613",
+   "bytes": 5194
+  },
+  "merge": {
+   "path": "studies/martin_luk/workflow/frozen/merge/WF05_J3",
+   "manifest_sha256": "f11cfadf4377091b090f96a88fe021dee03bbadd185f2c1721db384dec269a23",
+   "bytes": 2559732
+  }
+ },
+ "version_entry_selfcheck": {
+  "old_entries_unchanged": true,
+  "new_entry_exact": true,
+  "old_sha256": "2251a742ae13fbef062c9e951bc4e3affaee7603ff72834441481cf3b908a26f",
+  "new_sha256": "66ac6696905faa167e5bc6d42663e72b305b6a7128453bfd966c0ec3098736ce",
+  "temporary_and_lock_directory": "rounds/WF05/work/tmp"
+ },
+ "state_patch": "studies/martin_luk/workflow/rounds/WF05/state_patch.json",
+ "prereg_sha256": "6e1660e83234502883f1d770965627541b053a89331d3c3676fe9cd291c5f852",
+ "resource_usage": {
+  "equivalence_account": {
+   "system_record_and_track": true,
+   "v1_saved_record_and_track": true,
+   "v1_accept_exact": true,
+   "v1_funnel_exact": true,
+   "w1e_record_and_track": true,
+   "track_keys": [
+    "entry_attempts",
+    "gross",
+    "margin",
+    "new",
+    "open",
+    "proof_orders"
+   ],
+   "seconds": 5.847486870829016,
+   "peak_rss_kib": 219212
+  },
+  "equivalence_bench": {
+   "Q2": {
+    "record_and_track_exact": true,
+    "track_keys": [
+     "entry_attempts",
+     "gross",
+     "margin",
+     "new",
+     "open",
+     "proof_orders"
+    ]
+   },
+   "Q2_C2": {
+    "record_and_track_exact": true,
+    "track_keys": [
+     "entry_attempts",
+     "gross",
+     "margin",
+     "new",
+     "open",
+     "proof_orders"
+    ]
+   },
+   "seconds": 5.231520612956956,
+   "peak_rss_kib": 256696
+  },
+  "diagnosis": {
+   "seconds": 25.512312662089244,
+   "peak_rss_kib": 104244
+  },
+  "candidates_and_ablations": {
+   "J1": {
+    "seconds": 2.737022636923939,
+    "peak_rss_kib": 196876
+   },
+   "J2": {
+    "seconds": 2.8873488549143076,
+    "peak_rss_kib": 197732
+   },
+   "J3": {
+    "seconds": 3.2780670491047204,
+    "peak_rss_kib": 197688
+   },
+   "A4": {
+    "seconds": 3.412129803095013,
+    "peak_rss_kib": 197448
+   },
+   "A5": {
+    "seconds": 2.9116318731103092,
+    "peak_rss_kib": 197192
+   }
+  },
+  "holdouts_and_profiles": {
+   "v1": {
+    "seconds": 4.92218326497823,
+    "peak_rss_kib": 463388
+   },
+   "L2.8": {
+    "seconds": 6.0304529659915715,
+    "peak_rss_kib": 477180
+   },
+   "L1": {
+    "seconds": 5.569675065809861,
+    "peak_rss_kib": 477996
+   },
+   "L2": {
+    "seconds": 5.230208548950031,
+    "peak_rss_kib": 478568
+   }
+  },
+  "bench_final": {
+   "seconds": 4.771073854994029,
+   "peak_rss_kib": 291900
+  },
+  "sim_vs_account": {
+   "seconds": 1.4352163199800998,
+   "peak_rss_kib": 155892
+  },
+  "freeze": {
+   "seconds": 3.0345447149593383,
+   "peak_rss_kib": null,
+   "note": "冻结与读回步骤未单独记录峰值；不属于策略回测。"
+  },
+  "aborted_v1_calibration": {
+   "seconds": 5.202608828200027,
+   "peak_rss_kib": 462624,
+   "note": "输出日志异常，结果保留为作废。"
+  },
+  "tests": {
+   "custody": {
+    "suite": "custody/tests",
+    "returncode": 0,
+    "seconds": 69.90542073384859,
+    "peak_rss_kib": 64200,
+    "log": "logs/custody.log"
+   },
+   "trader_replication": {
+    "suite": "studies/trader_replication/tests",
+    "returncode": 0,
+    "seconds": 190.85441955481656,
+    "peak_rss_kib": 263096,
+    "log": "logs/trader_replication.log"
+   },
+   "martin_luk": {
+    "suite": "studies/martin_luk/tests",
+    "returncode": 0,
+    "seconds": 9.839561542961746,
+    "peak_rss_kib": 103796,
+    "log": "logs/martin_luk.log"
+   }
+  },
+  "checks": {
+   "datasets_check": {
+    "returncode": 0,
+    "seconds": 130.87786747608334,
+    "log": "logs/datasets_check.log"
+   },
+   "datasets_scan": {
+    "returncode": 0,
+    "seconds": 0.23657389101572335,
+    "log": "logs/datasets_scan.log"
+   },
+   "profile_check": {
+    "returncode": 0,
+    "seconds": 0.1889297910965979,
+    "log": "logs/profile_check.log"
+   },
+   "child_peak_rss_kib": 38208
+  },
+  "limits": {
+   "cpu_quota": "60%",
+   "memory_max": "900M",
+   "one_heavy_process": true,
+   "total_compute_budget_seconds": 3600
+  }
+ },
+ "code_changes_after_runs": {
+  "candidate_engine_and_measurement_changed": false,
+  "evidence": "work/code_before_candidates.sha256 四个文件的轮末 SHA 均一致",
+  "other_changes": "新增报告、冻结、验证脚本；修正独立留出脚本的日志打印。",
+  "reruns": [
+   "留出 v1 校验第一次因日志打印异常作废并重跑；旧结果为 work/holdout_v1_aborted.json。",
+   "候选实现与量法未改，无受影响的候选需重跑。"
+  ]
+ },
+ "engine_copy_diff_summary": {
+  "base": "wf03_engine.py",
+  "new_field": "rotate_rmax_r，默认 0",
+  "changes": "互斥校验、preopen 限制以及已有收盘换仓触发点上的 M3 选仓分支；未改 Q2 和 C2。",
+  "unfilled_replacement": "先卖后尝试开仓；新单风险或份额无效时被换出的仓位仍已卖出，与 C2 一致。"
+ },
+ "tests": {
+  "custody": {
+   "suite": "custody/tests",
+   "returncode": 0,
+   "seconds": 69.90542073384859,
+   "peak_rss_kib": 64200,
+   "log": "logs/custody.log"
+  },
+  "trader_replication": {
+   "suite": "studies/trader_replication/tests",
+   "returncode": 0,
+   "seconds": 190.85441955481656,
+   "peak_rss_kib": 263096,
+   "log": "logs/trader_replication.log"
+  },
+  "martin_luk": {
+   "suite": "studies/martin_luk/tests",
+   "returncode": 0,
+   "seconds": 9.839561542961746,
+   "peak_rss_kib": 103796,
+   "log": "logs/martin_luk.log"
+  }
+ },
+ "datasets_check": {
+  "result": {
+   "ok": true,
+   "errors": [],
+   "datasets": [
+    {
+     "name": "trader-data-v1",
+     "ok": true
+    },
+    {
+     "name": "trader-options-v1",
+     "ok": true
+    },
+    {
+     "name": "martin-luk-benchmarks-v1",
+     "ok": true
+    }
+   ],
+   "approved_by_user": "2026-11-09",
+   "can_start_round": true
+  },
+  "returncode": 0,
+  "seconds": 130.87786747608334,
+  "log": "logs/datasets_check.log"
+ },
+ "datasets_scan": {
+  "result": {
+   "ok": true,
+   "violations": []
+  },
+  "returncode": 0,
+  "seconds": 0.23657389101572335,
+  "log": "logs/datasets_scan.log"
+ },
+ "profile_check": {
+  "output": "档案完整",
+  "returncode": 0,
+  "seconds": 0.1889297910965979,
+  "log": "logs/profile_check.log"
+ },
+ "protected_files_unchanged": {
+  "ok": true,
+  "count": 1271,
+  "wf00_to_wf04_included": true,
+  "new_authorized_cache_files": [
+   "studies/martin_luk/workflow/frozen/conversion/WF05_J3/allocation.json",
+   "studies/martin_luk/workflow/frozen/conversion/WF05_J3/manifest.json",
+   "studies/martin_luk/workflow/frozen/merge/WF05_J3/account.json",
+   "studies/martin_luk/workflow/frozen/merge/WF05_J3/funnel.json",
+   "studies/martin_luk/workflow/frozen/merge/WF05_J3/manifest.json",
+   "studies/martin_luk/workflow/frozen/trading/WF05_J3/account.json",
+   "studies/martin_luk/workflow/frozen/trading/WF05_J3/inputs.json",
+   "studies/martin_luk/workflow/frozen/trading/WF05_J3/manifest.json",
+   "studies/martin_luk/workflow/frozen/trading/WF05_J3/prices.json"
+  ]
+ },
+ "rule_fingerprints": {
+  "before": {
+   "pin": "79e4f1f282656d5e+6e2a56ea1e06ff47+81889204d1728986+af4618772ad79596",
+   "expected": "79e4f1f282656d5e+6e2a56ea1e06ff47+81889204d1728986+af4618772ad79596",
+   "state": {
+    ".claude/workflows/trader-replication-loop.js": {
+     "expected": "b5d929c2080b965ecb2ab051b5c0db8c051f94cebe19910f47fdea29870ea4c9",
+     "actual": "b5d929c2080b965ecb2ab051b5c0db8c051f94cebe19910f47fdea29870ea4c9"
+    },
+    "skills/trader-replication/references/WORKFLOW_CN.md": {
+     "expected": "79e4f1f282656d5e497f0ad0057bc442dad4840d49d2da13bea5c3fe1b8460d8",
+     "actual": "79e4f1f282656d5e497f0ad0057bc442dad4840d49d2da13bea5c3fe1b8460d8"
+    },
+    "studies/martin_luk/workflow/config.json": {
+     "expected": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
+     "actual": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59"
+    },
+    "studies/trader_replication/pipeline.py": {
+     "expected": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+     "actual": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8"
+    },
+    "studies/trader_replication/funnel.py": {
+     "expected": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982",
+     "actual": "7335e50ba84d7e334079429307a0ac056f560696024996de60af95ce68905982"
+    },
+    "studies/trader_replication/mainleg.py": {
+     "expected": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e",
+     "actual": "fd6e3388b1189617b67bb4187a47d76a14b94f838741472858dda506b962570e"
+    }
+   }
+  },
+  "after_pin": "79e4f1f282656d5e+6e2a56ea1e06ff47+81889204d1728986+af4618772ad79596"
+ },
+ "workflow_issues": [
+  "1. **工具缺失（通用）**：名额排队模拟器（按引擎顺序走固定入场账本，只套准入规则，离场用单票回放）应成为正式工具，并写进规则第五节“腾名额类方案先量占位”：可达上限用它的连锁结果算，禁用静态占位叠加。证据：本轮第一版静态口径得出 12–16 只同时持仓，误判进检查点；模拟器逐笔复现 v1 的 755 笔。",
+  "2. **尺子缺陷（通用）**：任何占位估计都要做合理性检查：同时持仓数不得超过 `max_open`，超过就判工具错误。",
+  "3. **规则不清（通用）**：交易线测试台每晚喂他的票，他的票占位次数（92–156 次）远高于整账户（17 次），不能用来评名额效应。规则第四节交易线应写明“测试台不评名额”。",
+  "4. **尺子缺陷（通用）**：换仓的反向风险不能当作整段丢失。被换出后还可能再买回，名额也会重排，要以模拟器的连锁结果为准。",
+  "5. **规则不清（通用）**：进检查点的否定结论，也要做一次独立、对称的复核（同样查实现错误和口径错误），再停下。WF05 第一版就是因为口径错误差点误停。",
+  "6. **规则不清（通用）**：已有组件（C2）在下游换了离场（Q2）后，按新组件的放行口径不通过（新进入场 −212.5R 对放弃收益 −106.6R，≥5R 净 2 对 3），但按“已有组件”不重做放行。规则应写明已有组件换搭配时是否要重新放行。",
+  "7. **工具缺失（通用）**：模拟器没有权益、总敞口和追保。用 W1E 校验时差 13/6 笔、少 1 段（RGTI），因为 0.5% 风险会卡总敞口。工具化时应加总敞口代理，并在每笔风险 >0.25% 的方案上先校验。",
+  "8. **规则不清（通用）**：第五节“组件放行”只写了单票回放，换仓、名额这类组件没法单票回放。WF05 用的是对齐同一组入场的带名额回放，并把“换出放弃的 R”和“新进入场的净 R”分开算。规则应写明名额类组件的放行口径、门槛和工具（名额模拟器）。",
+  "9. **规则不清（通用）**：已有组件换了搭配（C2 从 C062 离场换到 Q2 离场）后要不要重新放行；放行规则生效之前设计的组件算不算“从少数几段想出来的”；按 goal“单看是负向、但更像他”放进来的组件能不能免于 R 口径的放行。（与第 6 条同一问题，记账时引用同一 id。）",
+  "10. **规则不清（通用）**：用模拟器在选择年段表上预筛多少种形态，不计入“每轮 ≤5 个候选”。WF05 预筛了 12 种换仓形态和 13 组邻近参数才定下 M3。应要求预登记披露预筛过的形态数和结果，并对预筛选出的候选另设余量（与 WF-048 一致）。",
+  "11. **规则不清（通用）**：消融规则“去掉后不变差的组件不进入新版本”没有说明两个及以上组件各自可去（有交互）时怎么办，也没有说明可去组合是否要再过 accept。本轮按第 5 节处理：只去掉一个，按并列比较取，报告交互。",
+  "12. **工具缺失（通用）**：名额模拟器的仓位和总敞口代理建立在 0.5% 风险的单票回放乘 0.5 上，量不出单只上限（`max_position`）只在买入时起作用的效果；第二版的 `cap_gross.py` 又错误地按每日市值封顶。工具化时应按账户实际的每笔风险重放单票，并在买入或加仓时套用上限。",
+  "13. **任务书老坑（通用）**：轮次脚本按文件路径导入旧轮次模块时，会在受保护的旧轮次目录写 `__pycache__`。第七节的 Codex 启动命令应统一加 `-E PYTHONDONTWRITEBYTECODE=1`。",
+  "14. **任务书老坑（通用）**：任务书把门槛直接写成数字（WF05 第二版 3.3 节的 14），违反“阈值只写在 config”。审查清单应加一条：任务书里所有门槛都写成 config 键加比较对象的值。",
+  "15. **规则冲突（通用）**：工作流第五节要求腾名额可达上限只算 max_open 被挡夜并扣除更早候选；任务书要求以连锁模拟结果作预测，并指出当晚静态算法忽略以后名额重排。本轮两种口径均保留，未把直接范围当作连锁上限；应明确联动轮如何协调。",
+  "16. **工具缺失（通用）**：按任务书复制 C062 交易缓存 inputs.json 后，WF05_J3 测试台有跨选择年末的 US.PL 持仓，而 selection_end_marks 缺 US.PL。既有 frozen_cache.bench_score 在重建该仓位时会读取缺失键。应让新缓存包含新账户的期末标记，并允许读取器识别新引擎；本轮按约束未改受保护模块与输入。",
+  "17. **工具缺失（通用）**：版本生成器使用的 WF00 分状态证据只包含 v0、v1，追加 v2 后 VERSIONS_CN.md 把 v2 分状态写成“未提供”，档案对齐表也只列 v0、v1。应让新版本附带并读取自己的分状态及档案证据。",
+  "18. **工具缺失（通用）**：versions.append 的临时文件和持久锁默认写在 workflow 目录，任务书要求中间文件只写 WF05/work。此次执行原命令时限定性地将两者重定向到 work/tmp，已核对没有改变旧版本记录；重定向的锁不与未重定向的并发版本命令共享，执行前确认无竞争单元。应让工具支持受控的临时目录与共享锁。",
+  "19. **规则不清（通用）**：任务书第 1 节限定旧 WF01 模块只导入 accept_record，第 2.1 节又明确要求留出校验调用 run_wf01.prepare。为完成特定的留出前验证，使用第 2.1 节明确要求的 prepare；没有调用列出的禁止函数。应统一允许调用的清单。",
+  "20. **工具缺失（通用）**：versions.json 追加新版本后，WF00 原 capital_audit 绑定的 versions_sha256 立刻失效，status.readiness 的 capital_rules 和 registered_unchanged 变为 false。WF00 受保护，本轮不能重写审计；应提供只追加或可重建的版本审计机制。",
+  "21. **任务书老坑（通用）**：整账户换仓的反事实并非每笔可观测。J3 的 90 次换出只有 72 笔能与 A5 同票同日成交配对，其余 18 笔没有账户反事实，不能当作放弃收益为零；报告已区分匹配和未匹配。",
+  "22. **成本（本轮）**：留出 v1 校验第一次在输出日志处把 flush 传给 json.dumps，计算结果已写入但进程退出 1；修正独立留出脚本后保留该次结果为作废并重跑 v1 校验。候选、引擎与候选度量代码均未改。"
+ ],
+ "keep": [
+  {
+   "path": "work/A4.json",
+   "bytes": 4340355,
+   "sha256": "764e93b0c072bc21a21e9e37978841000f67bc8b9f57dd6c3f1b99b1ad4bc0af"
+  },
+  {
+   "path": "work/A5.json",
+   "bytes": 4341299,
+   "sha256": "4d5f40d59b155c40a43643d95bdaa3558d0ee9d29122d1cf4df1ec9a02ec0ed7"
+  },
+  {
+   "path": "work/J1.json",
+   "bytes": 4390503,
+   "sha256": "746d7109ac5d7a7bc36773178b00b95c73a2e1264caacd67bed5b008afbbc485"
+  },
+  {
+   "path": "work/J2.json",
+   "bytes": 4516060,
+   "sha256": "7994eb5129064d2965fd9c19794ac0d0b9c9494e69d51b9a959c760a5a8d918d"
+  },
+  {
+   "path": "work/J3.json",
+   "bytes": 4514816,
+   "sha256": "94dba4c349e22706be3adaf94b414ae0d101f3dfb140fdd8861a8f4df4a63225"
+  },
+  {
+   "path": "work/PLAN_v1_checkpoint_before_review.md",
+   "bytes": 19084,
+   "sha256": "f59df1ee6d1e2bbc3e05fb58b2928f42b5ef8b09bea0b450d2e6be163e8443b8"
+  },
+  {
+   "path": "work/PLAN_v2_before_minor.md",
+   "bytes": 38595,
+   "sha256": "580b001ddd11feb5ff74b7be4056f58e442ed7fa9b67760fa3c0ce4b0cb8eadd"
+  },
+  {
+   "path": "work/VERSIONS_before.md",
+   "bytes": 19373,
+   "sha256": "a2b7d2440be054ff72eef4372c276affda8b8213a4c4724317ebafb57b67c20a"
+  },
+  {
+   "path": "work/ablation.json",
+   "bytes": 6377,
+   "sha256": "5e466bfef1b44d6057f2453cb142b862bac34c4835ae4b8484d174f7a6df94ea"
+  },
+  {
+   "path": "work/account_wf05.py",
+   "bytes": 10829,
+   "sha256": "25779b58495f4062d0a3a094718e947312db27ce8b9a77f807e2bef5c1ac4524"
+  },
+  {
+   "path": "work/bench_final.json",
+   "bytes": 12634588,
+   "sha256": "821b302fa9f08e150416f3284e9cdafda4ac8473390cb3cbec26c540974c30d5"
+  },
+  {
+   "path": "work/bench_wf05.py",
+   "bytes": 2638,
+   "sha256": "d16ce239d22ae0217cc96808d7d1ad14c135df08d1b852780c7ac69d6191ffa3"
+  },
+  {
+   "path": "work/cache_selfcheck.json",
+   "bytes": 812,
+   "sha256": "456e21d00abdce02c0d99132271e08f55b18381ff0758aba1cb783a1bdde3639"
+  },
+  {
+   "path": "work/check_account_wf05.py",
+   "bytes": 778,
+   "sha256": "deaec443c156e044531e474fd2246a6908cde888e299eb208ba246532667b3a4"
+  },
+  {
+   "path": "work/checks.json",
+   "bytes": 366,
+   "sha256": "e9fd4d45161ea017fd7ce9bcd21bf4f58eaf80375706067fb611daf0ede94e15"
+  },
+  {
+   "path": "work/checks_wf05.py",
+   "bytes": 1402,
+   "sha256": "29f9bf13467f398368ae9eedf13ca9a789cc4213f8829d125f6b395cbf2ab9d9"
+  },
+  {
+   "path": "work/code_before_candidates.sha256",
+   "bytes": 449,
+   "sha256": "3bc3db3c0c06824a7ebeb5ed408f565c314ad2739388d520202b672642c7def8"
+  },
+  {
+   "path": "work/compare_sim_wf05.py",
+   "bytes": 7288,
+   "sha256": "55f0e95f0311eeb8064811f1efb0c536fb0dbd1d38f0f299f9c7e7679698aab8"
+  },
+  {
+   "path": "work/completion_for_append.json",
+   "bytes": 1043,
+   "sha256": "abf107fcc055f59949f997ca91a6b96001b8952a07838283ba71dd27abb8d14e"
+  },
+  {
+   "path": "work/completion_wf05.py",
+   "bytes": 10599,
+   "sha256": "e83d5adcf8a9fb00454afa31f78b1d0885afa4ab8056b04efa9c2d1a3c8d1075"
+  },
+  {
+   "path": "work/custody_test.json",
+   "bytes": 131,
+   "sha256": "ec2dcf283f8d4dd5d52744ca318c9f538ac54024dece921991197a810bdd08a3"
+  },
+  {
+   "path": "work/d0_sim.json",
+   "bytes": 10762,
+   "sha256": "84d841d3ce1352c30c2aed8d91797fc38be4a4059285a09f0782e4588e1622bc"
+  },
+  {
+   "path": "work/datasets_check.txt",
+   "bytes": 279,
+   "sha256": "456217ba6937bd4a0f0bb467e6914e2e8aa48e9125567799188d35bc29840b9f"
+  },
+  {
+   "path": "work/diag_adr.json",
+   "bytes": 3474,
+   "sha256": "3f3cdae371978f90ad4e0f311773f5ab88fcda465bd57a316cd8d6744070c0e2"
+  },
+  {
+   "path": "work/diag_adr.py",
+   "bytes": 2445,
+   "sha256": "9af5f98e0553677a16e0934a209292d1c84427abef2dc577c1876f9eab3eb634"
+  },
+  {
+   "path": "work/diag_adr2.json",
+   "bytes": 8696,
+   "sha256": "29abcb082be575ee504fbc13254440a91498ae4915780c1d9210c98786eb39db"
+  },
+  {
+   "path": "work/diag_adr2.py",
+   "bytes": 4281,
+   "sha256": "5d90e618751dffb815a1cd06ce1910e213a34e5dd3e4c3401ae562b66361028a"
+  },
+  {
+   "path": "work/diag_occupancy.json",
+   "bytes": 1014022,
+   "sha256": "4e80207f11cdb1503dffdcd967c805a2dfae8146282ceed603f32ea251ac6021"
+  },
+  {
+   "path": "work/diag_occupancy.py",
+   "bytes": 12059,
+   "sha256": "448c22dc01ad9c0897895abd15d5f7100f951d8ac7e29a39a7ec7edf54bd88dd"
+  },
+  {
+   "path": "work/diag_q2_congestion.json",
+   "bytes": 9315,
+   "sha256": "c7eea7660859a55eda6b76b56669ef816b58242bb95ec1c96716f916898abc42"
+  },
+  {
+   "path": "work/diag_q2_congestion.py",
+   "bytes": 4076,
+   "sha256": "8e8c5a9eeccab0693f01338b0f16d43518c254f6fb6b08aaa9ab44d649cad121"
+  },
+  {
+   "path": "work/diagnose_wf05.py",
+   "bytes": 12550,
+   "sha256": "720d5a6c270f11b08a91d6e9582ad4d7ef9e6852ff0587baf575424891ec5267"
+  },
+  {
+   "path": "work/equivalence_account.json",
+   "bytes": 312,
+   "sha256": "2223df01152a4caf69d7cf584ebad80aa96d39edd371990b7afc9f5ce0ca284b"
+  },
+  {
+   "path": "work/equivalence_bench.json",
+   "bytes": 370,
+   "sha256": "983f6273988816e8d048245faf21cedc002ac733bbb24d84856c3c9e4ab90fcf"
+  },
+  {
+   "path": "work/freeze_wf05.py",
+   "bytes": 5908,
+   "sha256": "d4efd9ece8d8b1ffef6e80004e96ee3eab5bae1f652495dece606b516a2a4d26"
+  },
+  {
+   "path": "work/holdout_L1.json",
+   "bytes": 5665079,
+   "sha256": "2834ec4abe13f441c55775efcaaecb5eab5a2b20765618ca960025366512e76d"
+  },
+  {
+   "path": "work/holdout_L2.8.json",
+   "bytes": 5946668,
+   "sha256": "ff9f35162ffbd7af73104f4f1263e18509a289157c12302ae351402c75bf70b0"
+  },
+  {
+   "path": "work/holdout_L2.json",
+   "bytes": 5946538,
+   "sha256": "12ab7702f9638a2fcbf81ed9b65db8f288fc592fa4f2853b5b99c539889cbeef"
+  },
+  {
+   "path": "work/holdout_v1.json",
+   "bytes": 5556109,
+   "sha256": "7a0ae792f7cead08dbec27f28ff46e9ccee00785e5da636be31c307c8bf0d460"
+  },
+  {
+   "path": "work/holdout_v1_aborted.json",
+   "bytes": 5556110,
+   "sha256": "d8e9b1fc28190abe90c0b8b31175069949e11a4844154172f000a7c5c426c436"
+  },
+  {
+   "path": "work/holdout_wf05.py",
+   "bytes": 6768,
+   "sha256": "94e40777171a93d34b7cbf86b9835af63ff446951f46e0f467e6f8994d4c462e"
+  },
+  {
+   "path": "work/martin_luk_test.json",
+   "bytes": 146,
+   "sha256": "263955f3549bf78f7c7fad19849d5ea3b3038903ff60b76e55a46c5ee5b9e040"
+  },
+  {
+   "path": "work/preflight1/cap_buytime.json",
+   "bytes": 313,
+   "sha256": "ccf17210f439ea81256db094ec5f0c2ce6e090791184043f6f049e1d0f9b2da0"
+  },
+  {
+   "path": "work/preflight1/cap_buytime.py",
+   "bytes": 2093,
+   "sha256": "f04d0b45ffebdaf1103acdc07810f6056d3e6be1be7d1438e1ffdfd780506a63"
+  },
+  {
+   "path": "work/preflight1/q2_exit_check.py",
+   "bytes": 1374,
+   "sha256": "bd995add3e36d45b1c9ad7da8b48834193ad1c778f742ac41e81e4a4120fd963"
+  },
+  {
+   "path": "work/preflight_1.json",
+   "bytes": 17040,
+   "sha256": "822ed6a02961223db58faa258b07a999c386dc546064300bcbb594590abdee33"
+  },
+  {
+   "path": "work/prereg.sha256",
+   "bytes": 79,
+   "sha256": "0bb9e145ddd56d8c847b663c8a8c8e6a06bd6420e20855919155e400fef7de6a"
+  },
+  {
+   "path": "work/preregister_wf05.py",
+   "bytes": 6342,
+   "sha256": "8229e578755a6c48c94042e3af36017c91897fb3e5140ad4e180337c21638fc1"
+  },
+  {
+   "path": "work/reachable.json",
+   "bytes": 57350,
+   "sha256": "a4d3a31631f368cd1e64733d099d500aa9724bb1b7ba788b99c515585a5d999a"
+  },
+  {
+   "path": "work/reachable_wf05.json",
+   "bytes": 31533,
+   "sha256": "e7293bfb649daa5e32013f26f705e0c720e62b029cb21f56433d9d2b9178d578"
+  },
+  {
+   "path": "work/release.json",
+   "bytes": 3217,
+   "sha256": "c79332739db79a5623e49361d3f0fd2d2aab77825118c642ad75f33fd2c5043e"
+  },
+  {
+   "path": "work/report_wf05.py",
+   "bytes": 16865,
+   "sha256": "3c48c1691a1cef2ca243a3b1e2eb7d220f485380f740e409738eb5efef15ffe5"
+  },
+  {
+   "path": "work/review1/__pycache__/scen2.cpython-311.pyc",
+   "bytes": 7825,
+   "sha256": "2e1cf1aa8d4563531d9c1dc1fb4948fbc8022e8c2789415f1c7bf9d47d9f1d69"
+  },
+  {
+   "path": "work/review1/__pycache__/scen3.cpython-311.pyc",
+   "bytes": 9444,
+   "sha256": "f307b7b7f54a3cc4babd2b7e6f701e7222ebd78b1f2374c70218e0c487874f3a"
+  },
+  {
+   "path": "work/review1/__pycache__/slotsim.cpython-311.pyc",
+   "bytes": 14489,
+   "sha256": "478c009c3abb04126a963f6b924ec09d483e09105123809633d336080f40aa13"
+  },
+  {
+   "path": "work/review1/checks.py",
+   "bytes": 963,
+   "sha256": "b73bb55b23009a9ea3002874d924e1f31e1d40d0397e1bc8bd2dc38b103b1e37"
+  },
+  {
+   "path": "work/review1/robust.json",
+   "bytes": 11855,
+   "sha256": "236dbb278fe6aef316192c209df519df9845229e5e5ea6d4e8f0ce43d49c4595"
+  },
+  {
+   "path": "work/review1/robust.py",
+   "bytes": 2061,
+   "sha256": "13139d0880f9036c0a980c91fdbfb3dcd9d4cf25f0074d367972c08dccb310e8"
+  },
+  {
+   "path": "work/review1/scen1.py",
+   "bytes": 1094,
+   "sha256": "42d60dca74cace6835e64cdf0fd89514bf4dc436a6d428a8d76346fa3b2a27a5"
+  },
+  {
+   "path": "work/review1/scen2.py",
+   "bytes": 2843,
+   "sha256": "c47b871195edabcfa734620982c299fbc4ab7759b629a2e8dc069f94960adf44"
+  },
+  {
+   "path": "work/review1/scen3.json",
+   "bytes": 14231,
+   "sha256": "e52756df4b116781cfd1258b084d3e588794fad6f4ca073bd596130bcc433625"
+  },
+  {
+   "path": "work/review1/scen3.py",
+   "bytes": 2930,
+   "sha256": "4901d0798a8781d5f1f6eda884b59eb773966b6367dd62795c8cab81fcd88d25"
+  },
+  {
+   "path": "work/review1/scen4.json",
+   "bytes": 12327,
+   "sha256": "1787df9c0640a3083eb5b1bd436d52c8295103e83320f16f7228183fadc8597a"
+  },
+  {
+   "path": "work/review1/scen4.py",
+   "bytes": 3669,
+   "sha256": "4188e974ecd4ed228d38854b783877e72bf6011c59f29be080d7fd79b6968c1e"
+  },
+  {
+   "path": "work/review1/slotsim.py",
+   "bytes": 6541,
+   "sha256": "003c071c87c2962a48601c878debe4a938e89e450f51e17f680a00cd415415c4"
+  },
+  {
+   "path": "work/review1/valid_w1e.py",
+   "bytes": 1182,
+   "sha256": "00ad65547dc7a5cbb037cc505e75ae57a01fd776effd925deed3063ebb9b632f"
+  },
+  {
+   "path": "work/run_wf05.py",
+   "bytes": 6145,
+   "sha256": "511b9cbeb87febb873d64f0abe6bf62e46ee2953f7c1fd2657becd19f26d6538"
+  },
+  {
+   "path": "work/select_wf05.py",
+   "bytes": 3716,
+   "sha256": "74eec2dfcf6394e04c7f0f0c5decc48900e1b632001dd88a689ce809a83a722b"
+  },
+  {
+   "path": "work/selection.json",
+   "bytes": 190,
+   "sha256": "b92a572b820da61f0713cf4ce3cdcaa4ab1343645d73d9735ff3ba3bc0a877c6"
+  },
+  {
+   "path": "work/sim_vs_account.json",
+   "bytes": 13987,
+   "sha256": "f12d3cea7fc843c03776dc185c1ddce1a4ae51cdec74c0fc3a6de7d7b9873fce"
+  },
+  {
+   "path": "work/slotsim_wf05.py",
+   "bytes": 6572,
+   "sha256": "fdb40fcd4f8168cc79bd61d59b5c98a6832a9343ab540f694e5a3aa80f637bba"
+  },
+  {
+   "path": "work/snapshot_before.json",
+   "bytes": 170874,
+   "sha256": "1a2d5dd1b54150f932b4a988a10319ebf99c5d6b4933d4cf677ead08f6fde908"
+  },
+  {
+   "path": "work/snapshot_wf05.py",
+   "bytes": 4383,
+   "sha256": "a18c647d097250322f14ce9da9b919f357c6cce3a623a3f372ad2d315419fe8d"
+  },
+  {
+   "path": "work/stats_wf05.py",
+   "bytes": 2972,
+   "sha256": "975ae77754ebc223bec6aa115c955a696971f0955ecf8e5f10a61f289b0e1255"
+  },
+  {
+   "path": "work/status_wf05.py",
+   "bytes": 5089,
+   "sha256": "fef0d61d252509e0ce025132ec616d72b1c361e0287d54c7b42b5b34b66c8ca7"
+  },
+  {
+   "path": "work/test_wf05.py",
+   "bytes": 1740,
+   "sha256": "6a33b7dc3726b1a0dd264dd4d624f241fd28f2f77831261a5b4d558faf75912d"
+  },
+  {
+   "path": "work/trader_replication_test.json",
+   "bytes": 163,
+   "sha256": "28fac950b3145eda6b5e7d87f673811d377bea954847750401102dfe0c9244a6"
+  },
+  {
+   "path": "work/verification.json",
+   "bytes": 1192,
+   "sha256": "ef30a58186bd1bf66b3b9bef2ddb774f8c1d36966815032a7999f4e6b314f483"
+  },
+  {
+   "path": "work/verify_wf05.py",
+   "bytes": 2163,
+   "sha256": "0528b9affbb6355ed3938aef605df47f1d62365ae871d5fc9b119a7f88ccf20b"
+  },
+  {
+   "path": "work/version_entry_v2.json",
+   "bytes": 5092,
+   "sha256": "d39f711a227e2ebba86dd599d899480a3dda127279ce4f3835fcb26bdfc56845"
+  },
+  {
+   "path": "work/version_preflight_wf05.py",
+   "bytes": 897,
+   "sha256": "81b27f5e04997edeaf654dee8aa39534fa10bdfa9fd7d65b8775d98ec17e5bce"
+  },
+  {
+   "path": "work/version_sitecustomize_wf05.py",
+   "bytes": 815,
+   "sha256": "310d387379172a7709fe9e145d532a48839f9cbad9fa9d064a35a2e38a2a5617"
+  },
+  {
+   "path": "work/versions_before.json",
+   "bytes": 14317,
+   "sha256": "2251a742ae13fbef062c9e951bc4e3affaee7603ff72834441481cf3b908a26f"
+  },
+  {
+   "path": "work/wf05diag/cap_gross.json",
+   "bytes": 1856,
+   "sha256": "b786ec1a5b01dd244166e36aac561071c605ffbeb20efebfa0385ba39d868763"
+  },
+  {
+   "path": "work/wf05diag/cap_gross.py",
+   "bytes": 2769,
+   "sha256": "2172efd5f0d41badea99f5ff71bcbfd57e9b38f97fb44c6e84bc83974791344e"
+  },
+  {
+   "path": "work/wf05diag/occupancy_sim.json",
+   "bytes": 781,
+   "sha256": "032faa9914b35a2649d125512c50f629446396e02e3663fd01f32789a45e5931"
+  },
+  {
+   "path": "work/wf05diag/occupancy_sim.py",
+   "bytes": 2468,
+   "sha256": "71b047090448cf84b38e1835106cf8bbd7595c3fb73ed235274778a4aeac98a0"
+  },
+  {
+   "path": "work/wf05diag/release_preview.json",
+   "bytes": 895,
+   "sha256": "ff21818e8d81cd521e924496947abc7d048e6a98e91b6a1ac3abbbec10387cff"
+  },
+  {
+   "path": "work/wf05diag/release_preview.py",
+   "bytes": 2435,
+   "sha256": "d9308965ac4fa04175183c3becd6a616119fcf96881f98cfb6605dc5034b3368"
+  }
+ ],
+ "keep_bytes": 65102523,
+ "disk_free_before": 6197653504,
+ "disk_free_after": 6152253440
+}

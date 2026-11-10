@@ -49,6 +49,20 @@ def side_fit(row, tolerance):
     return '画像范围内' if ok else '画像范围外'
 
 
+def state_behavior(row, tolerance):
+    sides = row['side']
+    if sides is None:
+        return (f"{row['entries']} 笔；胜率 {pct(row['win'])}；盈亏比 {number(row['payoff'])}；"
+                f"多空、触发未在留出记录中分状态列出；均持 {number(row['days'], 1)} 天"
+                f"（平仓 {row['closed']} 笔）")
+    gap = '—' if row['long_share_gap_pp'] is None else f"{row['long_share_gap_pp']:+.1f} 个百分点"
+    stats = (f"胜率 {pct(row['win'])}；盈亏比 {number(row['payoff'])}；"
+             if row.get('report_win_payoff') else '')
+    return (f"{row['entries']} 笔，多 {sides['long']} / 空 {sides['short']}；多头差 {gap}；"
+            f"{side_fit(row, tolerance)}；触发 {counts(row['kind'])}；{stats}"
+            f"均持 {number(row['days'], 1)} 天（平仓 {row['closed']} 笔）")
+
+
 def details(entries, evidence, config, draft):
     versions = [r for r in entries if r['version'].startswith('v') and r['version'][1:].isdigit()]
     rows = {r['version']: r for r in versions}
@@ -82,11 +96,7 @@ def details(entries, evidence, config, draft):
                 if row is None:
                     lines.append(f'| {yr(year)} | {STATE_CN[state]} | {person} | {v} | 未提供 | — | — | — |')
                     continue
-                sides = row['side']
-                gap = '—' if row['long_share_gap_pp'] is None else f"{row['long_share_gap_pp']:+.1f} 个百分点"
-                behavior = (f"{row['entries']} 笔，多 {sides['long']} / 空 {sides['short']}；多头差 {gap}；"
-                            f"{side_fit(row, tol)}；触发 {counts(row['kind'])}；"
-                            f"均持 {number(row['days'], 1)} 天（平仓 {row['closed']} 笔）")
+                behavior = state_behavior(row, tol)
                 held = f"{row['peak_held']}/{row['segments']}" if row['segments'] else '未观测'
                 lines.append(f"| {yr(year)} | {STATE_CN[state]} | {person} | {v} | {behavior} | "
                              f"{held} | {pct(row['return'], True)} | {pct(row['max_drawdown'])} |")
@@ -206,6 +216,12 @@ def details(entries, evidence, config, draft):
     add('选择年', '2024、2025', '在范围：基线如实分年报告', '在范围：底座如实分年报告')
     add('留出年', '2026 留出*；已反复查看，不作独立样本外', '在范围：仅报告', '在范围：仅报告')
     add('冻结段表', '按已登记 SHA 的段表计算峰前持有', '在范围：原生回放核对', '在范围：原生回放核对')
+    for version, alignment in evidence.get('alignment_by_version', {}).items():
+        lines += ['', f'### {version} 档案逐项对齐', '',
+                  evidence.get('version_notes', {}).get(version, ''), '',
+                  '| 档案项 | 依据与结果 |', '|---|---|']
+        for row in alignment:
+            lines.append('| ' + ' | '.join(str(row[key]).replace('|', r'\|') for key in ('item', 'result')) + ' |')
     lines += ['', '分状态详情、原始账户指纹、开关关闭回放及重判依据分别见 '
              '[分状态数据](rounds/WF00/version_state_profile.json)、'
              '[已确认档案](PROFILE_CN.md)、[画像来源草稿](rounds/WF00/profile_draft.json) 和 '

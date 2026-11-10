@@ -1,0 +1,37 @@
+{
+ "ok": true,
+ "problems": [],
+ "notes": [
+  "时间顺序成立：PREREG 15:33:37（SHA 与 work/prereg.sha256 一致），候选 J1–J3 结果 15:36–15:37，A4/A5 15:38，选择 15:37:44，留出 15:40–15:41（均晚于选择）；候选 json 最晚日期 2025-12-31，仅 holdout_*.json 到 2026-10-16；J3 L2.8 留出只跑一次（v1 校验因 json.dumps flush 报错跑过两次，结果相同，属校验非选择）。",
+  "只改了声明的格子：J3 对 C062 规则差异仅 confirmed_close_stop(Q2)、rotate_min_days/rotate_rmax_r(M3)、max_position 0.5→0.3(P30)，另有 deleverage/maintenance（C062 旧记录未存，值等于 config L2.8）；holdout 规则与 J3 逐项相同；选股 IE47、行情层未动。",
+  "受保护文件：snapshot_before.json 的 1271 个文件哈希复核全部一致；git diff 仅 VERSIONS_CN.md、versions.json、state.json 三个已跟踪文件。state.json 的差异（next_round=WF05、round_notes）mtime 14:35:45，早于 Codex 快照（15:25，哈希一致），是启动阶段所改，Codex 未改；报告“真实 state.json 没有修改”只对 Codex 成立。WF00–WF04 目录无晚于 14:32 的写入。",
+  "自重跑：custody 238 测试 OK，martin_luk 366 测试 OK，datasets check rc=0（can_start_round true），datasets scan --git-diff ok、violations 空；pipeline.accept 重算 J1/J2/A4/A5 branch、J3 accepted，与存档逐项一致。",
+  "J3 合格靠边界：选择年峰前持有合计增量恰好 3（门槛 3），J3 相对 J2 只多 SMCI-2024-01 一段（P30 之效）；相对 v1 实际 +5 −2（SMCI、TEM、FUTU、PL、RGTI 增；LMND、IONQ 失），其中 TEM、FUTU、PL 仍是晚买仍持有。扰动检验 J2 为 82.5%，J3 未做扰动，对该边界的稳健性无证据。",
+  "2025 收益 v1 +57.37% → J3 +33.10%，与本人 +969.8% 对数差 2.084 > hard_lines 0.3；2024 差 0.124 在内。accept 的 annual_return_floor 只要求 ≥0，不比较 v1，故“用户目标：2025 收益不能差太多”实际未被门槛覆盖，报告已如实披露。",
+  "单笔亏损占入场日权益最大 2.37%（>2%，报告已标风险超原话），中位 0.24%、p90 0.93%。",
+  "报告标题残留模板文字“（读 DIR/attempts.jsonl），以及这次差在哪”；“档案对齐”为叙述段而非逐项表，但各项（L2.8 开仓 2.8、维持 30%、weakest_first、max_open 11、max_new_long 4、单只 30%、行情仅拆账、选择年/留出年、段表 SHA）与 config 一致且在可优化范围内。",
+  "STATUS.json can_start_round=false 属实，blocked_reasons 为：state_patch 未应用、US.PL 期末价缺失、capital_audit 的 versions_sha256 失效；readiness 中 capital_rules、registered_unchanged 为 false。报告所说“版本表附录缺 v2 分状态”未列入 STATUS 阻断（VERSIONS_CN.md 里 v2 分状态确为“未提供”）。"
+ ],
+ "recomputed": {
+  "peak_held": "由 J*.json per_leg 复算：J1 5/10、J2 3/10、J3 4/10、A4 5/8、A5 4/10；v1(frozen C062 funnel) 4/7；L0–L6 各方案之和均=28（2024 九段+2025 十九段）；J3 L0..L6=1,4,1,6,9,1,6，与报告一致。抽查 PL(2025-09-29至10-16 trail 5.84R 覆盖峰日10-07)、TEM(01-30至02-25 覆盖峰日02-13)、LMND(L3 max_open 无成交)，与成交台账一致。",
+  "behaviour_items": "J3 2024 胜率21.88%/本人24.59%内、盈亏比6.61/5.00(差32%)外、笔数361/423(差14.7%)内；2025 胜率21.05%、盈亏比6.62/6.71内，笔数365/940外；合计4项，v1为1项。胜率/盈亏比/笔数从成交台账按入场年重算2024逐位一致；J1行为0项（338<338.4）。",
+  "returns": "权益曲线复算：J3 2024 +238.50%、2025 +33.10%；J1 83.06/64.63；J2 184.69/35.45；A4 46.51/44.59；A5 66.04/55.99；留出：v1 -14.31%、L1 -6.38%、L2 +8.33%、L2.8 +7.93%；与报告一致。",
+  "peak_weight": "峰前持有段 peak_weight 中位：v1 0.10168、J1 0.10445、J2 0.11069、J3 0.11241（2024 0.1239/2025 0.1124）、A4 0.1100、A5 0.1111，与报告一致。",
+  "accept": "用 accept_inputs.json 重跑 pipeline.accept('merge')：J1 branch（behaviour_items 0<1）、J2 branch（gain 2<3、2024 3<4）、J3 accepted（6项全过）、A4 branch、A5 branch；completion.decision=accepted，与重算相同。消融：去Q2(A4)、去M3(A5)、去P30(J2)均不满足五项不变差（A5 仅峰前持有不降，行为0<4、仓位权重与2024收益更低），三组件均保留，与报告一致。"
+ },
+ "blockers_for_next_round": [
+  "state_patch.json 尚未应用到 state.json（等待用户同意记账）。",
+  "新交易缓存沿用 C062 inputs，selection_end_marks 缺 US.PL，bench_score 读取器无法重建 WF05_J3 测试台。",
+  "版本表追加 v2 后 WF00 capital_audit 的 versions_sha256 失效（capital_rules、registered_unchanged=false）。",
+  "VERSIONS_CN.md 中 v2 分状态与档案对齐显示“未提供”（版本生成器只读 WF00 的 v0/v1 证据）。"
+ ],
+ "workflow_issues": [
+  "accept('merge') 的 annual_return_floor 只判 ≥0，不与 v1 比较，也不覆盖 hard_lines.max_log_return_gap；J3 2025 收益降 24 点、对数差 2.084 仍 accepted，而用户目标强调 2025 收益不能差太多，需用户决定是否加门槛。",
+  "选择门槛恰为 +3 段时，合格与否取决于单一段（SMCI），pipeline 没有对边界稳健性的要求，扰动检验只对 J1/J2/Q2 做，J3 未做。",
+  "“档案对齐”规则要求出表，任务书与报告用叙述，工具没有生成该表的代码，核对只能手工对 config。",
+  "state.json 在轮次启动阶段已被改（next_round、round_notes），与“轮中不改 state”的说法难以区分，应在 completion 记录启动前后 state 哈希。",
+  "STATUS 的阻断清单与报告/工作流问题账（附录缺 v2 分状态）不一致，缺少统一的阻断来源。",
+  "win/payoff 以入场年统计且 closed 排除未平仓，与按出场年重算有差，核对时需读源码才能确定口径，报告应写明。",
+  "datasets check 约 130 秒且占 1.7GB 左右缓存环境，4GB 机器上与其他重计算不能并行，核对只能串行。"
+ ]
+}

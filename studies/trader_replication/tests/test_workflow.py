@@ -93,6 +93,29 @@ class Decisions(unittest.TestCase):
         trial['uses_bar_turnover_selection'] = True
         self.assertEqual(pipeline.accept('merge', trial, metrics(), config())['status'], 'branch')
 
+    def test_merge_fidelity_accepts_closer_returns_without_extra_segments(self):
+        cfg = config()
+        cfg['accept']['merge'].update(fidelity_min_log_gap_gain=.1, fidelity_max_year_gap_loss=.1)
+        cfg['behaviour_card'] = {'2024': {'return': 2.}, '2025': {'return': 9.}}
+        ref, trial = metrics(), metrics()
+        trial['annual']['2025']['return'] = .5
+        result = pipeline.accept('merge', trial, ref, cfg)
+        self.assertEqual((result['status'], result['mode']), ('accepted', 'fidelity'))
+        self.assertEqual(pipeline.accept('merge', metrics(6), ref, cfg)['mode'], 'standard')
+        fewer = deepcopy(trial)
+        fewer['annual']['2024']['peak_held'] = 3
+        self.assertEqual(pipeline.accept('merge', fewer, ref, cfg)['status'], 'branch')
+        small = deepcopy(trial)
+        small['annual']['2025']['return'] = .15
+        self.assertEqual(pipeline.accept('merge', small, ref, cfg)['status'], 'branch')
+        higher_2024 = metrics()
+        higher_2024['annual']['2024']['return'] = .3  # trial's 2024 gap widens by log(1.3/1.1) > 0.1
+        self.assertEqual(pipeline.accept('merge', trial, higher_2024, cfg)['status'], 'branch')
+        no_card = config()
+        no_card['accept']['merge'].update(fidelity_min_log_gap_gain=.1, fidelity_max_year_gap_loss=.1)
+        self.assertEqual(pipeline.accept('merge', trial, ref, no_card)['status'], 'branch')
+        self.assertEqual(pipeline.accept('merge', trial, ref, config())['status'], 'branch')
+
     def test_holdout_cannot_change_acceptance_and_missing_facts_do_not_pass(self):
         a, b = metrics(6), metrics()
         a['annual']['2026'] = dict(covered=-100, **{'return': -.99})

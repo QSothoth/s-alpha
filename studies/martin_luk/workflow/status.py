@@ -3,13 +3,10 @@ from collections import Counter
 import json
 
 from studies.trader_replication import funnel, regime
-from . import adapter as D, frozen_cache as F
+from . import adapter as D, capital, frozen_cache as F
 
 
-def _replay_evidence(cap):
-    path = D.OUT/'work/leverage_profiles/capital_audit.json'
-    if not path.exists():
-        return False
+def _valid_replay_audit(path, cap):
     try:
         audit = D.read(path)
         if (audit.get('ok') is not True or audit.get('capital') != cap or
@@ -21,37 +18,101 @@ def _replay_evidence(cap):
         critical = {name: digest for name, digest in sources.items() if name.endswith('.py')}
         if not critical or any(D.sha(D.ROOT/name) != digest for name, digest in critical.items()):
             return False
+        config = D.read(D.FLOW/'config.json')
+        years = config['selection_years']
+        versions = {v['version']: v for v in D.read(D.FLOW/'versions.json')
+                    if v['version'].startswith('v') and v['version'][1:].isdigit()}
+        if 'versions' in audit:
+            original = audit['previous_audit']
+            if D.sha(D.ROOT/original['path']) != original['sha256']:
+                return False
+            original_audit = D.read(D.ROOT/original['path'])
+        elif set(versions) == {'v0', 'v1'}:
+            original_audit = audit
+        else:
+            return False
+        if (original_audit.get('ok') is not True or original_audit.get('capital') != cap or
+                original_audit.get('config_sha256') != D.sha(D.FLOW/'config.json')):
+            return False
         for name in ('master', 'C062'):
-            runs = audit['systems'][name]
+            runs = original_audit['systems'][name]
             for key in (*cap['profiles'], 'pro_rata', 'legacy'):
                 row = runs[key]
                 if D.sha(D.ROOT/row['replay']) != row['sha256']:
                     return False
             if not (runs['legacy']['curve_exact'] and runs['legacy']['trades_exact']):
                 return False
+        if original_audit is audit:
+            return True
+        if set(audit['versions']) != set(versions):
+            return False
+        for version, entry in versions.items():
+            saved = audit['versions'][version]
+            if saved['name'] != entry['name'] or set(saved['profiles']) != set(cap['profiles']):
+                return False
+            for profile, row in saved['profiles'].items():
+                replay, reference = D.ROOT/row['replay'], D.ROOT/row['reference']
+                if D.sha(replay) != row['sha256'] or D.sha(reference) != row['reference_sha256']:
+                    return False
+                run, source = D.read(replay), D.read(reference)
+                if (run['version'] != version or run['profile'] != profile or
+                        run['reference'] != row['reference'] or run['reference_sha256'] != row['reference_sha256'] or
+                        run['end'] != years[-1]+'-12-31' or set(run['annual']) != set(years) or
+                        not (run['rules_exact'] and run['annual_exact'] and run['comparison']['ok']) or
+                        any(v['differences'] for v in run['annual'].values()) or
+                        run['rules'] != source['rules'] or entry['scorecard'][profile] != source['annual'] or
+                        any(not result['computed'] or any(source['annual'][year].get(key) != value
+                            for key, value in result['computed'].items())
+                            for year, result in run['annual'].items())):
+                    return False
+                manifest = {'engine': run['engine'], 'engine_sha256': run['engine_sha256']}
+                capital.check_rules(F.bench_rules(manifest, run['rules']), cap, profile)
+        for check in audit.get('cross_checks', []):
+            reference = D.ROOT/check['reference']
+            if D.sha(reference) != check['reference_sha256']:
+                return False
+            source = D.read(reference)
+            row = audit['versions'][check['version']]['profiles'][check['profile']]
+            run = D.read(D.ROOT/row['replay'])
+            if (run['record'] != {k: source['record'][k] for k in run['record']} or
+                    run['track'] != source['track']):
+                return False
         return True
     except (OSError, ValueError, KeyError, TypeError):
         return False
 
 
+def _replay_evidence(cap):
+    paths = sorted((D.FLOW/'rounds').glob('*/capital_audit.json'), reverse=True)
+    paths.append(D.OUT/'work/leverage_profiles/capital_audit.json')
+    return any(_valid_replay_audit(path, cap) for path in paths)
+
+
 def _test_evidence():
-    path = D.OUT/'work/leverage_profiles/tests.json'
-    if not path.exists():
-        return False
-    try:
-        tests = D.read(path)
-        required = ('custody/tests', 'studies/trader_replication/tests',
-                    'studies/martin_luk/tests', 'studies/trader_screens/tests')
-        code = tests['code_sha256']
-        required_code = ('studies/trader_replication/system.py', 'studies/martin_luk/workflow/capital.py',
-                         'studies/martin_luk/workflow/status.py', 'studies/martin_luk/workflow/versions.py',
-                         'studies/martin_luk/workflow/adapter.py', 'studies/martin_luk/workflow/frozen_cache.py',
-                         'studies/trader_replication/tests/test_margin_call.py',
-                         'studies/martin_luk/tests/test_workflow_versions_capital.py')
-        return (all(name in code and code[name] == D.sha(D.ROOT/name) for name in required_code) and
-                all(tests['suites'][name]['passed'] is True for name in required))
-    except (OSError, ValueError, KeyError, TypeError):
-        return False
+    paths = sorted((D.FLOW/'rounds').glob('*/logs/tests.json'), reverse=True)
+    paths.append(D.OUT/'work/leverage_profiles/tests.json')
+    for path in paths:
+        try:
+            tests = D.read(path)
+            required = ('custody/tests', 'studies/trader_replication/tests',
+                        'studies/martin_luk/tests', 'studies/trader_screens/tests')
+            code = tests['code_sha256']
+            required_code = ('studies/trader_replication/system.py', 'studies/martin_luk/workflow/capital.py',
+                             'studies/martin_luk/workflow/status.py', 'studies/martin_luk/workflow/versions.py',
+                             'studies/martin_luk/workflow/adapter.py', 'studies/martin_luk/workflow/frozen_cache.py',
+                             'studies/trader_replication/tests/test_margin_call.py',
+                             'studies/martin_luk/tests/test_workflow_versions_capital.py')
+            if (tests.get('code_unchanged_during_tests') is True and
+                    all(name in code for name in required_code) and
+                    all(digest == D.sha(D.ROOT/name) for name, digest in code.items()) and
+                    all(tests['suites'][name]['passed'] is True and
+                        tests['suites'][name]['returncode'] == 0 and tests['suites'][name]['count'] > 0 and
+                        D.sha(D.ROOT/tests['suites'][name]['log']) == tests['suites'][name]['log_sha256']
+                        for name in required)):
+                return True
+        except (OSError, ValueError, KeyError, TypeError):
+            continue
+    return False
 
 
 def _cache_evidence(state, cap):
@@ -63,6 +124,10 @@ def _cache_evidence(state, cap):
                 manifest = D.read(manifest_path)
                 if (D.sha(manifest_path) != reference['manifest_sha256'] or
                         manifest['code_fingerprints'] != code or manifest['data_fingerprint'] != data):
+                    return False
+                files = F.load(line, version)
+                if (line == 'conversion' and version == state['components']['conversion']['version'] and
+                        files['allocation.json'] != state['components']['conversion']):
                     return False
         for name in ('master', 'C062'):
             check = D.read(D.OUT/f'work/leverage_profiles/bench_{name}.json')
@@ -81,12 +146,28 @@ def _cache_evidence(state, cap):
         return False
 
 
+def _dataset_evidence(cfg):
+    paths = sorted((D.FLOW/'rounds').glob('*/logs/datasets_evidence.json'), reverse=True)
+    path = paths[0] if paths else D.OUT/'work/leverage_profiles/datasets_check.json'
+    try:
+        data = D.read(path)
+        if not (data.get('ok') is True and data.get('approved_by_user') == cfg['datasets'].get('approved_by_user')
+                and data.get('config_sha256') == D.sha(D.FLOW/'config.json')):
+            return False
+        if paths:
+            log = D.ROOT/data['log']
+            result = D.read(log)
+            return (D.sha(log) == data['log_sha256'] and result.get('ok') is True and
+                    result.get('approved_by_user') == cfg['datasets'].get('approved_by_user'))
+        return True
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
 def readiness(cfg, state):
     """Fail closed when a prerequisite or its current evidence is absent."""
     g1 = state.get('current_hard_gates', {}).get('G1', {})
     g1_checks = g1.get('numbers', {}).get('checks', {})
-    data_path = D.OUT/'work/leverage_profiles/datasets_check.json'
-    data = D.read(data_path) if data_path.exists() else {}
     cap = cfg['capital']
     replay = _replay_evidence(cap)
     rule_pins = state.get('rule_fingerprints', {})
@@ -94,13 +175,29 @@ def readiness(cfg, state):
         g1=(g1.get('status') == 'pass' and all(g1_checks.get(k, {}).get('ok') is True
             for k in ('data', 'fills', 'lookahead', 'win_rate'))),
         whitelist_approved=bool(cfg['datasets'].get('approved_by_user')),
-        datasets=(data.get('ok') is True and data.get('approved_by_user') == cfg['datasets'].get('approved_by_user')
-                  and data.get('config_sha256') == D.sha(D.FLOW/'config.json')),
+        datasets=_dataset_evidence(cfg),
         capital_rules=replay,
         registered_unchanged=bool(replay and _test_evidence()),
         cache_consistent=_cache_evidence(state, cap),
         rule_fingerprints=bool(rule_pins) and all(D.sha(D.ROOT/p) == digest for p, digest in rule_pins.items()),
     )
+
+
+def _missing_unresolved(legs, states, measured, years, cutoff):
+    """Retain crossing segments omitted from a selection-cutoff funnel."""
+    calendar = states['calendar']
+    present = {row['key'] for row in measured}
+    missing = []
+    for leg in legs:
+        year = calendar[leg['first']][:4]
+        if year not in years or leg['key'] in present:
+            continue
+        eve = calendar[leg['peak']-1]
+        if eve <= cutoff:
+            raise ValueError('completed segment missing from main funnel: '+leg['key'])
+        missing.append(dict(key=leg['key'], year=year, state=states['label'][leg['first']],
+                            coverage={'peak_eve': eve}))
+    return missing
 
 
 def generate():
@@ -132,6 +229,7 @@ def generate():
     if any(r['key'] not in pool_by_key or r['key'] not in selection_by_key
            for r in base['per_leg'] if r['year'] in years):
         raise ValueError('main funnel, selection and pool segments differ')
+    missing = _missing_unresolved(selection['legs'], states, base['per_leg'], years, cutoff)
 
     def yearly(rows, predicate):
         return {y: sum(bool(predicate(r)) for r in rows if r['year'] == y) for y in years}
@@ -146,16 +244,18 @@ def generate():
     cells = []
     for scope in ('common', *regime.NAMES):
         rows = [r for r in base['per_leg'] if in_scope(r, scope)]
+        missing_in_scope = [r for r in missing if in_scope(r, scope)]
         known = [r for r in rows if r['coverage']['peak_eve'] <= cutoff]
-        unresolved = [r for r in rows if r['coverage']['peak_eve'] > cutoff]
-        selected_rows = [selection_by_key[r['key']] for r in rows]
+        unresolved = [r for r in rows if r['coverage']['peak_eve'] > cutoff] + missing_in_scope
+        selected_rows = [selection_by_key[r['key']] for r in rows + missing_in_scope]
         known_keys = {r['key'] for r in known}
         selected_known = [r for r in selected_rows if r['key'] in known_keys]
+        selection_estimates = selected_known if missing_in_scope else selected_rows
         structural = lambda r: bool(pool_by_key[r['key']]['first_hit'])
         observed = lambda r: bool(selected['reachable_per_leg'][r['key']])
         covered = lambda r: bool(r['covered'])
         losses, known_losses = counts(rows), counts(known)
-        target = len(rows)
+        target = len(rows) + len(missing_in_scope)
         training_parts = [bench['training']['annual'][y] if scope == 'common'
                           else bench['training']['annual'][y]['by_state'][scope] for y in years]
         full_parts = [bench['annual'][y] if scope == 'common'
@@ -163,12 +263,12 @@ def generate():
         metrics = {
             'selection': dict(metric='S_K3_early', current=sum(covered(r) for r in selected_known),
                 current_by_year=yearly(selected_known, covered),
-                retrospective_current=sum(covered(r) for r in selected_rows),
-                retrospective_current_by_year=yearly(selected_rows, covered),
-                reachable_upper=sum(structural(r) for r in selected_rows),
-                reachable_upper_by_year=yearly(selected_rows, structural),
-                upper_observed_in_emitted_list=sum(observed(r) for r in selected_rows),
-                upper_observed_in_emitted_list_by_year=yearly(selected_rows, observed),
+                retrospective_current=None if missing_in_scope else sum(covered(r) for r in selected_rows),
+                retrospective_current_by_year=None if missing_in_scope else yearly(selected_rows, covered),
+                reachable_upper=sum(structural(r) for r in selection_estimates),
+                reachable_upper_by_year=yearly(selection_estimates, structural),
+                upper_observed_in_emitted_list=sum(observed(r) for r in selection_estimates),
+                upper_observed_in_emitted_list_by_year=yearly(selection_estimates, observed),
                 structural_upper_among_completed_legs=sum(structural(r) for r in selected_known),
                 upper_source=str(pool_path.relative_to(D.FLOW)),
                 note='结构性上限取 E1 冻结合格池；名单内观测上限单列。'),
@@ -195,22 +295,27 @@ def generate():
                 reachable_upper=target,
                 note='峰前持有包括晚买；L6 只包括早买且峰前持有。')}
         for line, metric in metrics.items():
+            if missing_in_scope:
+                metric['retrospective_current'] = None
             line_layers = base['layer_lines'].get(line, [])
             row = dict(line=line, state=scope, target=target,
-                target_by_year=yearly(rows, lambda r: True), frozen_version=state['components'][line],
-                observed=bool(target), layer_losses=losses,
+                target_by_year=yearly(rows + missing_in_scope, lambda r: True), frozen_version=state['components'][line],
+                observed=bool(target), layer_losses=None if missing_in_scope else losses,
                 layer_losses_known_by_selection_cutoff=known_losses,
                 unresolved_layers_at_selection_cutoff=len(unresolved),
                 unresolved_at_selection_cutoff=len(unresolved),
-                loss_in_merge=sum(losses[k] for k in line_layers),
+                loss_in_merge=None if missing_in_scope else sum(losses[k] for k in line_layers),
                 loss_known_by_selection_cutoff=sum(known_losses[k] for k in line_layers), **metric)
             upper = sum(structural(r) for r in selected_known) if line == 'selection' else len(known)
             row['recoverable'] = min(max(0, len(known)-row['current']), max(0, upper-row['current']))
             row['recoverable_scope'] = '仅选择年末已完成的段；跨年未决段不参与定格'
             cells.append(row)
-    regime_result = D.read(folder/'regime.json')
+    stability = next((r['value'] for r in state['components']['regime'].get('reasons', [])
+                      if r.get('rule') == 'stability' and r.get('ok') is True), None)
+    if stability is None:
+        raise ValueError('frozen regime has no passing stability evidence')
     for scope in ('common', *regime.NAMES):
-        cells.append(dict(line='regime', state=scope, current=regime_result['stability']['minimum'],
+        cells.append(dict(line='regime', state=scope, current=stability,
             target=cfg['accept']['regime']['min_agreement'], reachable_upper=1.0,
             frozen_version=state['components']['regime'], observed=scope != 'pullback'))
     eligible = [r for r in cells if r['line'] in base['layer_lines'] and r['observed']]
@@ -228,19 +333,20 @@ def generate():
             result[year] = {k: stats[k] for k in ('n', 'closed', 'win', 'payoff', 'days', 'return')}
         return result
 
-    def system_summary(name, measured, record):
+    def system_summary(name, measured, record, omitted_unresolved=0):
         rows = [r for r in measured['per_leg'] if r['year'] in years]
         complete = [r for r in rows if r['coverage']['peak_eve'] <= cutoff]
         return dict(system=name, account=account_stats(record, measured),
             annual={y: {k: measured['annual'][y][k] for k in
                     ('n', 'layers', 'named', 'early', 'peak_held', 'early_peak_held')} for y in years},
             layers_known_by_selection_cutoff=counts(complete),
-            unresolved_at_selection_cutoff=len(rows)-len(complete), convention=measured['convention'])
+            unresolved_at_selection_cutoff=len(rows)-len(complete)+omitted_unresolved,
+            convention=measured['convention'])
 
     main_name = merge_component.get('evaluation_system', merge_component['version'])
-    unresolved = [r for r in base['per_leg'] if r['year'] in years and r['coverage']['peak_eve'] > cutoff]
+    unresolved = [r for r in base['per_leg'] if r['year'] in years and r['coverage']['peak_eve'] > cutoff] + missing
     known = [r for r in base['per_leg'] if r['year'] in years and r['coverage']['peak_eve'] <= cutoff]
-    selected_common = [selection_by_key[r['key']] for r in base['per_leg'] if r['year'] in years]
+    selected_common = [selection_by_key[r['key']] for r in (known if missing else base['per_leg']) if r['year'] in years]
     known_keys = {r['key'] for r in known}
     issues = {}
     issue_path = D.ROOT/'skills/trader-replication/references/workflow_issues.jsonl'
@@ -260,6 +366,7 @@ def generate():
         selection_upper_bound=dict(source=str(pool_path.relative_to(D.FLOW)), source_sha256=D.sha(pool_path),
             pool='studies/martin_luk/reports/e1_work/selection.npz',
             pool_sha256=pool['sources']['studies/martin_luk/reports/e1_work/selection.npz'],
+            scope='仅选择年末已完成段' if missing else '冻结漏斗中的选择年段',
             structural=yearly(selected_common, lambda r: bool(pool_by_key[r['key']]['first_hit'])),
             observed_in_emitted_list=yearly(selected_common, lambda r: bool(selected['reachable_per_leg'][r['key']])),
             completed_legs_by_year={y: dict(upper=sum(bool(pool_by_key[r['key']]['first_hit'])
@@ -267,7 +374,7 @@ def generate():
                 n=sum(r['year'] == y for r in known)) for y in years}),
         unresolved_segments=[dict(key=r['key'], year=r['year'], state=r['state'],
                                   peak_eve=r['coverage']['peak_eve']) for r in unresolved],
-        current_merge=system_summary(main_name, base, merged['account.json']['record']),
+        current_merge=system_summary(main_name, base, merged['account.json']['record'], len(missing)),
         baseline_master=system_summary(bar_name, bar, bar_account),
         hard_gates=state.get('current_hard_gates') or D.read(folder/'fixed_cards.json'),
         fingerprints=D.fingerprints(), rule_fingerprints=state.get('rule_fingerprints', {}),

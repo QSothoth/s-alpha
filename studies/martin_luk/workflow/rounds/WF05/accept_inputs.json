@@ -1,0 +1,458 @@
+{
+ "v1": {
+  "annual": {
+   "2024": {
+    "peak_held": 4,
+    "return": 0.6130952466512225
+   },
+   "2025": {
+    "peak_held": 7,
+    "return": 0.5736687761383674
+   }
+  },
+  "selection": {
+   "behaviour_within": 1,
+   "peak_weight_median": 0.10168106447651955
+  },
+  "uses_bar_turnover_selection": false
+ },
+ "candidates": {
+  "J1": {
+   "accept_record": {
+    "annual": {
+     "2024": {
+      "peak_held": 5,
+      "return": 0.8305660529602485
+     },
+     "2025": {
+      "peak_held": 10,
+      "return": 0.6462904288473748
+     }
+    },
+    "selection": {
+     "behaviour_within": 0,
+     "peak_weight_median": 0.10445495048490046
+    },
+    "uses_bar_turnover_selection": false
+   },
+   "decision": {
+    "status": "branch",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       5,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 4,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       5,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": false,
+      "candidate": 0,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       0.8305660529602485,
+       0.6462904288473748
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.10445495048490046,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   }
+  },
+  "J2": {
+   "accept_record": {
+    "annual": {
+     "2024": {
+      "peak_held": 3,
+      "return": 1.8469135497683724
+     },
+     "2025": {
+      "peak_held": 10,
+      "return": 0.35452291310449224
+     }
+    },
+    "selection": {
+     "behaviour_within": 4,
+     "peak_weight_median": 0.11068878792932471
+    },
+    "uses_bar_turnover_selection": false
+   },
+   "decision": {
+    "status": "branch",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": false,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       3,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 2,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": false,
+      "candidate": [
+       3,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 4,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       1.8469135497683724,
+       0.35452291310449224
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11068878792932471,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   }
+  },
+  "J3": {
+   "accept_record": {
+    "annual": {
+     "2024": {
+      "peak_held": 4,
+      "return": 2.3849707212388327
+     },
+     "2025": {
+      "peak_held": 10,
+      "return": 0.3309682870620625
+     }
+    },
+    "selection": {
+     "behaviour_within": 4,
+     "peak_weight_median": 0.11241119131188554
+    },
+    "uses_bar_turnover_selection": false
+   },
+   "decision": {
+    "status": "accepted",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 3,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 4,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       2.3849707212388327,
+       0.3309682870620625
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11241119131188554,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   }
+  }
+ },
+ "ablations": {
+  "A4": {
+   "accept_record": {
+    "annual": {
+     "2024": {
+      "peak_held": 5,
+      "return": 0.4650535832628899
+     },
+     "2025": {
+      "peak_held": 8,
+      "return": 0.4458827942867929
+     }
+    },
+    "selection": {
+     "behaviour_within": 1,
+     "peak_weight_median": 0.11000972782277306
+    },
+    "uses_bar_turnover_selection": false
+   },
+   "decision": {
+    "status": "branch",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": false,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       5,
+       8
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 2,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       5,
+       8
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": true,
+      "candidate": 1,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       0.4650535832628899,
+       0.4458827942867929
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11000972782277306,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   }
+  },
+  "A5": {
+   "accept_record": {
+    "annual": {
+     "2024": {
+      "peak_held": 4,
+      "return": 0.6603950538415146
+     },
+     "2025": {
+      "peak_held": 10,
+      "return": 0.5599303642765172
+     }
+    },
+    "selection": {
+     "behaviour_within": 0,
+     "peak_weight_median": 0.11107901604051654
+    },
+    "uses_bar_turnover_selection": false
+   },
+   "decision": {
+    "status": "branch",
+    "line": "merge",
+    "checks": [
+     {
+      "rule": "selection_year_gain",
+      "ok": true,
+      "years": [
+       "2024",
+       "2025"
+      ],
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ],
+      "delta": 3,
+      "threshold": 3
+     },
+     {
+      "rule": "no_year_decrease",
+      "ok": true,
+      "candidate": [
+       4,
+       10
+      ],
+      "compare": [
+       4,
+       7
+      ]
+     },
+     {
+      "rule": "behaviour_items",
+      "ok": false,
+      "candidate": 0,
+      "compare": 1,
+      "tolerance": 0.2
+     },
+     {
+      "rule": "annual_return_floor",
+      "ok": true,
+      "candidate": [
+       0.6603950538415146,
+       0.5599303642765172
+      ],
+      "threshold": 0.0
+     },
+     {
+      "rule": "peak_position_weight",
+      "ok": true,
+      "candidate": 0.11107901604051654,
+      "compare": 0.10168106447651955
+     },
+     {
+      "rule": "selection_base",
+      "ok": true,
+      "uses_bar_turnover_selection": false
+     }
+    ],
+    "selection_years": [
+     "2024",
+     "2025"
+    ],
+    "holdout_used_for_selection": false
+   }
+  }
+ }
+}

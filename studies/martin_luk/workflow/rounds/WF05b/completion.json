@@ -1,0 +1,264 @@
+{
+ "ok": false,
+ "completed_with_limitations": true,
+ "can_start_round": true,
+ "reason_for_ok_false": "WF05 未保存 2026 分状态最大回撤、多空和触发类型；任务书限定只照抄留出记录，不能重算补齐。",
+ "readiness": {
+  "g1": true,
+  "whitelist_approved": true,
+  "datasets": true,
+  "capital_rules": true,
+  "registered_unchanged": true,
+  "cache_consistent": true,
+  "rule_fingerprints": true
+ },
+ "tests": {
+  "suites": {
+   "custody/tests": {
+    "passed": true,
+    "returncode": 0,
+    "count": 238,
+    "expected_failures": 0,
+    "skipped": 0,
+    "seconds": 71.29926858306862,
+    "log": "studies/martin_luk/workflow/rounds/WF05b/logs/custody_tests.log",
+    "log_sha256": "9691b18578a663f651cd4c006efeea1ec6abeba7d8af6d5128792a0013e45499"
+   },
+   "studies/trader_replication/tests": {
+    "passed": true,
+    "returncode": 0,
+    "count": 1196,
+    "expected_failures": 1,
+    "skipped": 0,
+    "seconds": 188.50467882095836,
+    "log": "studies/martin_luk/workflow/rounds/WF05b/logs/studies_trader_replication_tests.log",
+    "log_sha256": "289aedbd85f280fd1ca7cf33e56bee80129de60afe6326c267f0627ca12723a5"
+   },
+   "studies/martin_luk/tests": {
+    "passed": true,
+    "returncode": 0,
+    "count": 377,
+    "expected_failures": 0,
+    "skipped": 1,
+    "seconds": 8.592432118020952,
+    "log": "studies/martin_luk/workflow/rounds/WF05b/logs/studies_martin_luk_tests.log",
+    "log_sha256": "88e5d228f90ed86cb2166d04c1075a09405c8f992ff2ee776d135ec05161af6b"
+   },
+   "studies/trader_screens/tests": {
+    "passed": true,
+    "returncode": 0,
+    "count": 102,
+    "expected_failures": 0,
+    "skipped": 1,
+    "seconds": 113.60123178502545,
+    "log": "studies/martin_luk/workflow/rounds/WF05b/logs/studies_trader_screens_tests.log",
+    "log_sha256": "68e7ae117eca9ed52472c6d6170d07c6bca138a3c29b54bb6e76a78e311dc42d"
+   }
+  },
+  "code_sha256": {
+   "studies/trader_replication/system.py": "c337adb3d9c9dfc4157c2ea564bb10164a16bab0ab900bcd5fdc29ce385b7998",
+   "studies/martin_luk/workflow/capital.py": "1262fb8c5afe871fa787bd09a4a63fe56682f20d78bf32e2efa4b022d04adb60",
+   "studies/martin_luk/workflow/status.py": "0bd4fff26cfae3471d7a4937c5c82a5899bfd8d8128b4f0f2ab34ca3ecc837d1",
+   "studies/martin_luk/workflow/versions.py": "0e1568a257c1d13a5dde97795574488e568c291626e5a3b61548b7cf840b0540",
+   "studies/martin_luk/workflow/version_profile.py": "9cc0f355914e5109a0b0b0f0c07547c205949b3cf818bd83d109f58e7812a5f3",
+   "studies/martin_luk/workflow/adapter.py": "23f2c3c18384b7fe3edacc782dc9e337b8d8b6ad4b8f74bc985285017c99fba1",
+   "studies/martin_luk/workflow/frozen_cache.py": "e07c5994bd975c9fc1961dbf5bb031600bacdb1161451f7167e8c9cb4a5ba8de",
+   "studies/martin_luk/wf05_engine.py": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+   "studies/trader_replication/tests/test_margin_call.py": "62c45ea71318333eadd5e9b844b512eed672f629cbdfe4f65bba6b2b7a565946",
+   "studies/martin_luk/tests/test_workflow_versions_capital.py": "523fd983ff651a834737339bd3172c5f3e5457115feff4f08b54ed32bfe63929",
+   "studies/martin_luk/tests/test_wf05b_repair.py": "17c0657377293d112707f048207436d775b35fd23094d6e97f63d812b56c83c5"
+  },
+  "code_unchanged_during_tests": true,
+  "passed": true,
+  "unit_tests": 1913,
+  "expected_failures": 1,
+  "skipped": 2
+ },
+ "custody_final_retest": {
+  "passed": true,
+  "returncode": 0,
+  "count": 238,
+  "seconds": 70.86337433895096,
+  "log": "studies/martin_luk/workflow/rounds/WF05b/logs/custody_final.log",
+  "log_sha256": "029d97d1cf5b122b66df039537cc766fa06ea7aa126fb6c2b9bea9dc4bce23f0"
+ },
+ "datasets_check": {
+  "ok": true,
+  "errors": [],
+  "datasets": [
+   {
+    "name": "trader-data-v1",
+    "ok": true
+   },
+   {
+    "name": "trader-options-v1",
+    "ok": true
+   },
+   {
+    "name": "martin-luk-benchmarks-v1",
+    "ok": true
+   }
+  ],
+  "approved_by_user": "2026-11-09",
+  "can_start_round": true
+ },
+ "datasets_scan": {
+  "ok": true,
+  "violations": []
+ },
+ "untracked_code_scan": {
+  "ok": true,
+  "violations": []
+ },
+ "verification": {
+  "protected_files_unchanged": 602,
+  "unchanged_cache_payloads": 19,
+  "c062_full_bench_exact": true,
+  "wf05_native_bench_replay_exact": true,
+  "nine_replay_serialized_values_exact": true,
+  "v2_profile_loaded": true,
+  "old_version_rows_exact": true,
+  "v2_later_version_append_safe": true,
+  "v2_holdout_fields_copied": true,
+  "old_alignment_table_exact": true,
+  "state_fields_within_authorization": true,
+  "conversion_allocation_common_fields_exact": true,
+  "all_adapter_cache_readers_pass": true,
+  "unresolved_segments_preserved": 3,
+  "v2_merge_annual_exact": true,
+  "readiness": {
+   "g1": true,
+   "whitelist_approved": true,
+   "datasets": true,
+   "capital_rules": true,
+   "registered_unchanged": true,
+   "cache_consistent": true,
+   "rule_fingerprints": true
+  }
+ },
+ "workflow_issues": [
+  {
+   "ref": "WF-097",
+   "status": "fixed_in_patch",
+   "evidence": "按账户重建期末标记；保存与读取试验、原生测试台重放通过"
+  },
+  {
+   "ref": "WF-098",
+   "status": "partially_fixed",
+   "evidence": "追加式资金审计及 v2 选择年分状态/档案对照已补；原留出记录缺 2026 分状态回撤、多空及触发，按任务书未重算"
+  },
+  {
+   "ref": "WF-068",
+   "status": "partially_fixed",
+   "evidence": "测试台读取器按清单校验并使用 system 或 wf05_engine 规则；没有改通用执行适配器"
+  },
+  {
+   "ref": "WF-102",
+   "status": "fixed_for_v2",
+   "evidence": "版本生成器读取各版本证据，v2 提供逐项档案对照"
+  },
+  {
+   "ref": "WF05b-status",
+   "status": "fixed_in_patch",
+   "evidence": "状态生成器不再假定每个 metrics_round 都有 regime.json，并保留冻结漏斗缺省的跨年未决段"
+  },
+  {
+   "ref": "WF05b-conversion",
+   "status": "fixed_in_patch",
+   "evidence": "WF05_J3 衔接载荷与已记账组件字段不同，现已重建并保留原附加说明；五条缓存读取均通过"
+  }
+ ],
+ "keep": [
+  "capital_audit.json",
+  "version_profile_v2.json",
+  "REPORT_CN.md",
+  "logs/",
+  "work/ 中的原始快照、九份原生回放、缓存与测试台核对、可复跑脚本"
+ ],
+ "disk_bytes": {
+  "before": 6133415936,
+  "after": 6068326400
+ },
+ "files_sha256": {
+  "studies/martin_luk/tests/test_wf05b_repair.py": "17c0657377293d112707f048207436d775b35fd23094d6e97f63d812b56c83c5",
+  "studies/martin_luk/workflow/VERSIONS_CN.md": "4904791c932d68b9aa417dd033206b5c663665bcaccc6d8b57d1b526456dbbe9",
+  "studies/martin_luk/workflow/frozen/conversion/C062/manifest.json": "311709d172dce2909564ab1e08d70c354575eb606b476c5d951388112e374bb2",
+  "studies/martin_luk/workflow/frozen/conversion/WF05_J3/allocation.json": "3b087484e396c3b27daa4a10fe0f2441dc3b90f52577ba6f025f7898af7b1ca6",
+  "studies/martin_luk/workflow/frozen/conversion/WF05_J3/manifest.json": "96168e7d9b2aec2a7ca5d99d7267000352a3e2dc66f47e50f46b57d9f2d63972",
+  "studies/martin_luk/workflow/frozen/conversion/master_allocate/manifest.json": "8512377436384700238c4563e57aef5998634d7f21b7fdaa4608ab71a10f6006",
+  "studies/martin_luk/workflow/frozen/merge/C062/manifest.json": "579d37ecb51a1deaf2c49c92656dbe345ab62c4bc98c6aa69435fa7f9064a79c",
+  "studies/martin_luk/workflow/frozen/merge/WF05_J3/manifest.json": "f039c7f5810419fc49cd5ad9ddf3d2b4a895b162bd197efea68908658f1dca91",
+  "studies/martin_luk/workflow/frozen/reference/M3B/manifest.json": "8ffd01589236f3d3a8a6791ba876ea1f2988877f0daa7d2a07409a5843be6ac3",
+  "studies/martin_luk/workflow/frozen/reference/master/manifest.json": "74b46defeb47149ef3599d06d3d8459918f30cb6c86991adb6ac0327a281cc6e",
+  "studies/martin_luk/workflow/frozen/regime/B4_PCT2/manifest.json": "7d6239832721d587c68d5f41b26f3335dd1553fd82ffbfae0ad2b62ffa6f9885",
+  "studies/martin_luk/workflow/frozen/selection/IE47/manifest.json": "6de7d6fcbae65c692542ecd3dc07bcf0f24392065bd5d04282526d96ccc45a69",
+  "studies/martin_luk/workflow/frozen/trading/C062/manifest.json": "70dacd4c0032cb171d04c44b057b00488db3a832fa04db68def3e0152e93ceb6",
+  "studies/martin_luk/workflow/frozen/trading/WF05_J3/inputs.json": "782d628842852eec5913b0ab11bd862b4e0175d62c7491f72f3514627ec98882",
+  "studies/martin_luk/workflow/frozen/trading/WF05_J3/manifest.json": "12edc933a58d5814f048ef0bf26fcb0f751051bd5874ccb5b4eaf6778b6522ad",
+  "studies/martin_luk/workflow/frozen/trading/master/manifest.json": "900dbfba7477faff55a09954ecf6daecf0fdf09623c50c886c07950799acb937",
+  "studies/martin_luk/workflow/frozen_cache.py": "e07c5994bd975c9fc1961dbf5bb031600bacdb1161451f7167e8c9cb4a5ba8de",
+  "studies/martin_luk/workflow/rounds/WF05/STATUS.json": "b4a4cc1d1b1ad648cba66fc66750ee769f09f63f1d62b6e00919fb5695f563a2",
+  "studies/martin_luk/workflow/rounds/WF05b/REPORT_CN.md": "5bcf1140eba7392d4bdd281cc1333d4a1311898b211ca7cce068b626ebec1074",
+  "studies/martin_luk/workflow/rounds/WF05b/capital_audit.json": "f3fa5c2f2690a387235a09770c3dbf078a43edcb840a0889bae441ddb0dc6c6e",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/bench_native_replay.log": "5d3c2efef6dfcb746539173bd79193b462cc515e6f4d6f7485b2a65de1655a36",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/custody_final.json": "0a3773af7fbf31c17520a5b384580699ed5e900cf2f55bf834533f874358a017",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/custody_final.log": "029d97d1cf5b122b66df039537cc766fa06ea7aa126fb6c2b9bea9dc4bce23f0",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/custody_tests.log": "9691b18578a663f651cd4c006efeea1ec6abeba7d8af6d5128792a0013e45499",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/datasets_check.json": "456217ba6937bd4a0f0bb467e6914e2e8aa48e9125567799188d35bc29840b9f",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/datasets_evidence.json": "1721216c95d12a62b97594c3970b5f8e45da28d66fb1291c877d67ee6c7a8c5b",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/datasets_scan.json": "f70f1f9109cc87389373e619b37291859e3f990eed2a3a113c14bc60c944590f",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/datasets_scan_untracked.json": "f70f1f9109cc87389373e619b37291859e3f990eed2a3a113c14bc60c944590f",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/studies_martin_luk_tests.log": "88e5d228f90ed86cb2166d04c1075a09405c8f992ff2ee776d135ec05161af6b",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/studies_trader_replication_tests.log": "289aedbd85f280fd1ca7cf33e56bee80129de60afe6326c267f0627ca12723a5",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/studies_trader_screens_tests.log": "68e7ae117eca9ed52472c6d6170d07c6bca138a3c29b54bb6e76a78e311dc42d",
+  "studies/martin_luk/workflow/rounds/WF05b/logs/tests.json": "3d252fe9c3fe090ca8b80fec7c5f117cb9ecdc52c12d822c3afa25f9b3088db6",
+  "studies/martin_luk/workflow/rounds/WF05b/version_profile_v2.json": "5e637a491e3ea82312c84f96b3ceeb4d476e6f38cebbe344205f5a47227d7c12",
+  "studies/martin_luk/workflow/rounds/WF05b/work/STATUS_WF05_before.json": "3521724371ade58835d51383afa2564bdb44ccc9a7db3aaf277b4e8fe72e8cf6",
+  "studies/martin_luk/workflow/rounds/WF05b/work/VERSIONS_before.md": "71cc58b2d1681ad2d95a6eacb8ebd8fc3da9cf31b2230fbaf3a0ce1875790e73",
+  "studies/martin_luk/workflow/rounds/WF05b/work/WF05_J3_conversion_before.json": "52585ef9c6113d228d62a2117f098bc6cd3b73adaf3cbc5dcb6f2c782322d198",
+  "studies/martin_luk/workflow/rounds/WF05b/work/WF05_J3_inputs_before.json": "c9b773419997b279c932b293b083c5c3ef9ffe4dfe5a567ad0610c4019b17b96",
+  "studies/martin_luk/workflow/rounds/WF05b/work/baseline.py": "cd8d99310ce4beebdb8ac05ab0f3bf328392adf481c01ba93c0c53c652aa14ef",
+  "studies/martin_luk/workflow/rounds/WF05b/work/bench_C062_after.json": "e969e8491ce25d46d276b1db9e77bb063b5b3baebcd225d9dfb4aadbb1df3c32",
+  "studies/martin_luk/workflow/rounds/WF05b/work/bench_C062_before.json": "e969e8491ce25d46d276b1db9e77bb063b5b3baebcd225d9dfb4aadbb1df3c32",
+  "studies/martin_luk/workflow/rounds/WF05b/work/bench_checks.json": "9bd69a94c3df23eb9f56967549016fb11053c07e3ed39f294922ea8f78c8c8d6",
+  "studies/martin_luk/workflow/rounds/WF05b/work/bench_native_replay.json": "32f786ebbb5780d79723cf925c61883acef7830cb8c2578fcb355e9ae1bbae6b",
+  "studies/martin_luk/workflow/rounds/WF05b/work/build_audit.py": "46624f29a73ecfde88aed1f101f44a04514b94f40a921892612235ebc7192168",
+  "studies/martin_luk/workflow/rounds/WF05b/work/build_profile.py": "9745c404c428c781cb019c3c49571ed87e0f6ba9109a2b7a4f4ac307ceeca837",
+  "studies/martin_luk/workflow/rounds/WF05b/work/cache_identity_refresh.json": "fe6e3214490a95ff30c206d279b2e25eba0107f0dcecb0f6877d21fc4f70a947",
+  "studies/martin_luk/workflow/rounds/WF05b/work/cache_migration.json": "cfc317b055b9655269683df78bb1059615fe432c2662f9f30a3f19d5e5c3aab5",
+  "studies/martin_luk/workflow/rounds/WF05b/work/check_benches.py": "5ea1f95ddf6b8b3c9fe8a51de1e7b2d44d645f00273d98422ed7756a1f143715",
+  "studies/martin_luk/workflow/rounds/WF05b/work/check_save_roundtrip.py": "a3c7dc065bcf389b818f779c65f02ef136e11b1fe994a20960a8a9e41d88b3de",
+  "studies/martin_luk/workflow/rounds/WF05b/work/closeout.py": "d936533d99eecba46a2e5be7d146e304cc68367e10b61009d03a4378e22dc093",
+  "studies/martin_luk/workflow/rounds/WF05b/work/conversion_cache_check.json": "1df6f55df8f39687c9d10e4f93de29ede4b7aad241b8c9b85f8847ca5d896fcf",
+  "studies/martin_luk/workflow/rounds/WF05b/work/disk_before_bytes.txt": "546a2ee6e6119fd5b0878e4b51e101c5f2da06ce60c6ee5d70cbc58e8afbc855",
+  "studies/martin_luk/workflow/rounds/WF05b/work/manifests_before.json": "fb92148146b480c6242228d99a1b106191770b310c3d09ca633aa1edb94d1786",
+  "studies/martin_luk/workflow/rounds/WF05b/work/precision_checks.json": "ec70e3189af0459b48147c5e974358bf2973a89d58b2e9f5db73f3e11181aac8",
+  "studies/martin_luk/workflow/rounds/WF05b/work/precision_checks.py": "17c393d236f8b77f0fc7f7a8ee3cb0448b27cbc061bf08afe3287a00ab66899e",
+  "studies/martin_luk/workflow/rounds/WF05b/work/profile_checks.json": "4a7b0b5aed505b01bdb3ec5b3e33ec797912d68cd256e0c9622b858207bebf79",
+  "studies/martin_luk/workflow/rounds/WF05b/work/protected_before.json": "98aec1566471b8c5eaef741601c65d818e630090e8762b08294ad913defe9f49",
+  "studies/martin_luk/workflow/rounds/WF05b/work/refresh_cache_identity.py": "a96b2c21c63193e16da03d6031d4e7f54be93f7e245e4dbea4d8c1407bb02bf7",
+  "studies/martin_luk/workflow/rounds/WF05b/work/repair_caches.py": "6a8377d79f6d36c242fc3c05ac9582e26e794a08b95c5623c367f4d932d7f249",
+  "studies/martin_luk/workflow/rounds/WF05b/work/repair_conversion.py": "84cc420dc8056872c49d5a7599371278c5d36be7a19d62725b32857766546407",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replay_bench.py": "3741cd90bd2aae89128bd6a326df7144a18967727ed0f7332b03c7dcda759a76",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replay_capital.py": "814bfb8f1fdff7768d383e0c8bb637b93fb7fad21dd34b713cf70f9d617a6e8f",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v0_L1.json": "ee14a99c710c5c92f5ec01a2a9d7de6173fd063f43d8eeea63d9fb765799bf0c",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v0_L2.8.json": "cc8f7f0f2037b75304a7f752dab7ee5d514c5b6d36d1f684b574eeb4404658e4",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v0_L2.json": "b79a827a1b6ab198d698b77f026e81d9b8508bdbec123bd6cfceb3c16127512f",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v1_L1.json": "34d804ee6ae746ac82a84e42d9e8489715f0c6ddabda873230d5e7f0452080b7",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v1_L2.8.json": "6ef88b20683880d7ff541a53d56581f06a2fe2613d3e7bf4448fd755136b8720",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v1_L2.json": "89dc4baf99aa414d1a73e6caeb40a42e6b795cfb330410599d19ca2987c892ad",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v2_L1.json": "f137324c2d59cfc2becf982f16abd89d762d7521b321153630fe9ae1928aa79c",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v2_L2.8.json": "0be22aec4f62a08b7f4d4a1b214cb99aa07d4ea09803fb89c5999bfd2ca2b592",
+  "studies/martin_luk/workflow/rounds/WF05b/work/replays/v2_L2.json": "e7e58bb7c06f6770a7edd9183ca72294d615dfdfc0055a6e70f6bfba1b9cb4a1",
+  "studies/martin_luk/workflow/rounds/WF05b/work/run_tests.py": "5b48aed4ce43e5c7a486ec4a3717296e99cd0fc907788e7f7db6d45473dc27c6",
+  "studies/martin_luk/workflow/rounds/WF05b/work/save_roundtrip.json": "06cf29657094aad41b5b5c473705bb537abd0f0dcec11e1e74c0e79fe81404a4",
+  "studies/martin_luk/workflow/rounds/WF05b/work/state_before.json": "c77dc7584b0669b83af5eb111300648e9ab5a8bbefe728e1ec6a10736414d3d0",
+  "studies/martin_luk/workflow/rounds/WF05b/work/verification.json": "0343d4b5fac4094630dc2565f3bf65afcb4ff48279a11ebcae4ba6980f883d21",
+  "studies/martin_luk/workflow/rounds/WF05b/work/version_entry_pin_check.json": "03bc072a62d013ff354c915a3e8b9a26306cb67b4e84d38255724f1abd9116c0",
+  "studies/martin_luk/workflow/state.json": "50df821739b6a4182502f429516949a54a88d76778033b128efeffb2b18e8949",
+  "studies/martin_luk/workflow/status.py": "0bd4fff26cfae3471d7a4937c5c82a5899bfd8d8128b4f0f2ab34ca3ecc837d1",
+  "studies/martin_luk/workflow/version_profile.py": "9cc0f355914e5109a0b0b0f0c07547c205949b3cf818bd83d109f58e7812a5f3",
+  "studies/martin_luk/workflow/versions.py": "0e1568a257c1d13a5dde97795574488e568c291626e5a3b61548b7cf840b0540"
+ },
+ "files_sha256_note": "包括本次实际改动和保留的证据；completion.json 自身无法自包含其 SHA，PLAN_CN.md 未修改；启动器持续写入的 logs/codex.log 未列入固定指纹。"
+}

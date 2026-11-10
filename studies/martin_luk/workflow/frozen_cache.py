@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict
-from dataclasses import asdict
+from dataclasses import asdict, fields
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -50,6 +50,13 @@ def load(line, version):
 
 
 def save(line, version, files, sources, **metadata):
+    if line == 'trading':
+        files = dict(files)
+        inputs = dict(files['inputs.json'])
+        inputs['selection_end_marks'], mark_sources = pinned_selection_end_marks(
+            files['account.json']['record'], inputs)
+        files['inputs.json'] = inputs
+        sources = (*sources, *mark_sources)
     folder = FROZEN/line/version
     folder.mkdir(parents=True, exist_ok=True)
     for name, value in files.items():
@@ -131,6 +138,61 @@ def array_inputs(calendar, legs, prices):
     return A
 
 
+def selection_end_marks(record, calendar, codes, close, end):
+    """Mark this account's crossing positions using prices available by end."""
+    index = max(i for i, day in enumerate(calendar) if day <= end)
+    columns = {str(code): j for j, code in enumerate(codes)}
+    marks = {}
+    for trade in record['trades']:
+        if trade['entry'] <= end < trade['exit']:
+            i, j = index, columns[trade['code']]
+            while i >= 0 and not np.isfinite(close[i, j]):
+                i -= 1
+            if i < 0 or close[i, j] <= 0:
+                raise ValueError('missing selection-end price: '+trade['code'])
+            marks[trade['code']] = float(close[i, j])
+    return marks
+
+
+def pinned_selection_end_marks(record, inputs):
+    """Read only pre-cutoff marks from the configured, pinned price panel."""
+    cfg = D.read(FLOW/'config.json')
+    end = inputs['selection_end']
+    if end > cfg['selection_years'][-1]+'-12-31':
+        raise ValueError('selection-end price is after the selection cutoff')
+    paths = (D.REPORTS/'u1_work/panel/days.npy', D.REPORTS/'u1_work/panel/codes.npy',
+             D.REPORTS/'p3_work/market/close.npy')
+    pins = {item['path']: item['sha256'] for item in cfg['datasets']['artifacts']}
+    for path in paths:
+        name = str(path.relative_to(ROOT))
+        if pins.get(name) != sha(path):
+            raise ValueError('selection-end price source is not pinned: '+name)
+    days, codes, close = (np.load(path, mmap_mode='r') for path in paths)
+    stop = int(np.searchsorted(days, end, side='right'))
+    calendar = list(map(str, days[:stop]))
+    if not calendar or calendar[-1] != end or calendar != inputs['calendar'][:stop]:
+        raise ValueError('selection-end calendar does not match pinned prices')
+    return selection_end_marks(record, calendar, codes, close[:stop], end), paths
+
+
+def bench_rules(manifest, values):
+    """Interpret a saved ledger with its pinned execution engine's rules."""
+    from studies.trader_replication import system
+    name = manifest.get('engine', 'studies.trader_replication.system')
+    if name == 'studies.trader_replication.system':
+        engine = system
+    elif name == 'studies.martin_luk.wf05_engine':
+        from studies.martin_luk import wf05_engine as engine
+    else:
+        raise ValueError('unsupported frozen bench engine: '+name)
+    if 'engine' in manifest and manifest.get('engine_sha256') != sha(Path(engine.__file__)):
+        raise ValueError('frozen bench engine fingerprint mismatch')
+    known = {f.name for f in fields(engine.Rules)}
+    if name != 'studies.trader_replication.system' and set(values) - known:
+        raise ValueError('unknown frozen bench rules: '+str(sorted(set(values) - known)))
+    return engine.Rules(**{k: v for k, v in values.items() if k in known})
+
+
 def build():
     state, cfg, saved_regime = D.read(FLOW/'state.json'), D.read(FLOW/'config.json'), D.read(OUT/'regime.json')
     selection_version = state['components']['selection']['version']
@@ -180,14 +242,7 @@ def build():
     combined, his, control = nominations['picks'], nominations['his'], nominations['control']
     end = cfg['selection_years'][-1]+'-12-31'
     day_index = max(i for i, day in enumerate(calendar) if day <= end)
-    ci = {str(c): j for j, c in enumerate(A['codes'])}
-    end_marks = {}
-    for trade in account['record']['trades']:
-        if trade['entry'] <= end < trade['exit']:
-            index, j = day_index, ci[trade['code']]
-            while index > 0 and not np.isfinite(A['close'][index, j]):
-                index -= 1
-            end_marks[trade['code']] = float(A['close'][index, j])
+    end_marks = selection_end_marks(account['record'], calendar, A['codes'], A['close'], end)
     inputs = dict(calendar=calendar, legs=legs, his=his, control=control, combined=combined,
         selection_version=selection_version,
         behaviour_card=cfg['behaviour_card'], tolerance=cfg['hard_lines']['behaviour_tolerance'],
@@ -260,7 +315,8 @@ def bench_score():
     if states['calendar'] != calendar:
         raise ValueError('cache calendars do not match')
     A = array_inputs(calendar, legs, files['prices.json'])
-    record, rules = account['record'], D.load_rules(account['rules'])
+    manifest = D.read(FROZEN/'trading'/state['components']['trading']['version']/'manifest.json')
+    record, rules = account['record'], bench_rules(manifest, account['rules'])
     cov = funnel.holding_coverage(A, record, rules, legs)
     di = {d: t for t, d in enumerate(calendar)}
     assigned = []

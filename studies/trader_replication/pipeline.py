@@ -377,8 +377,37 @@ def accept(line, candidate, compare, cfg):
         check('peak_position_weight', finite([a, b]) and a >= b, candidate=a, compare=b)
         check('selection_base', candidate.get('uses_bar_turnover_selection') is False,
               uses_bar_turnover_selection=candidate.get('uses_bar_turnover_selection'))
-    return dict(status='accepted' if all(r['ok'] for r in checks) else 'branch', line=line,
-                checks=checks, selection_years=years, holdout_used_for_selection=False)
+    standard = all(r['ok'] for r in checks)
+    result = dict(status='accepted' if standard else 'branch', line=line, mode='standard' if standard else None,
+                  checks=checks, selection_years=years, holdout_used_for_selection=False)
+    if line == 'merge' and not standard and 'fidelity_min_log_gap_gain' in rules:
+        result['fidelity_checks'] = fidelity = _fidelity(candidate, compare, cfg, rules, years, checks)
+        if all(r['ok'] for r in fidelity):
+            result.update(status='accepted', mode='fidelity')
+    return result
+
+
+def _fidelity(candidate, compare, cfg, rules, years, standard):
+    """Same segments or more each year, closer to his annual returns; reuses the standard guards."""
+    keep = ('no_year_decrease', 'behaviour_items', 'annual_return_floor', 'peak_position_weight', 'selection_base')
+    checks = [r for r in standard if r['rule'] in keep]
+    his = [cfg.get('behaviour_card', {}).get(y, {}).get('return') for y in years]
+
+    def gaps(record):
+        mine = [record.get('annual', {}).get(y, {}).get('return') for y in years]
+        if any(v is None or h is None or not np.isfinite(v) or v <= -1 for v, h in zip(mine, his)):
+            return None
+        return [abs(float(np.log((1+v)/(1+h)))) for v, h in zip(mine, his)]
+
+    a, b = gaps(candidate), gaps(compare)
+    ok = a is not None and b is not None
+    worse = max(x-y for x, y in zip(a, b)) if ok else None
+    gain = sum(b)-sum(a) if ok else None
+    checks.append(dict(rule='log_gap_year_loss', ok=ok and worse <= rules['fidelity_max_year_gap_loss']+1e-12,
+                       candidate=a, compare=b, his=his, worst=worse, threshold=rules['fidelity_max_year_gap_loss']))
+    checks.append(dict(rule='log_gap_total_gain', ok=ok and gain >= rules['fidelity_min_log_gap_gain']-1e-12,
+                       gain=gain, threshold=rules['fidelity_min_log_gap_gain']))
+    return checks
 
 
 def checkpoint(history, latest, cfg):

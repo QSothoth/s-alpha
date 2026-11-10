@@ -1,0 +1,258 @@
+{
+ "task": "WF05c evidence refresh; not a round",
+ "ok": true,
+ "sha256_before_after": {
+  "config": {
+   "before": "cdb96b8bbc63e8d78e704d70456db923ad1be2d49d200c70e9de83cf944f9d59",
+   "after": "2778a59595c7aaaac8835efb03fb32249d90a58e7931fcd13c62fd023702fb3a"
+  },
+  "pipeline": {
+   "before": "069d0a3bb7369be21fbc2beef47137a6d3eff76781e4daeec6b48fee47781be8",
+   "after": "c42731b48ddce42a239699cdabf41179c94e7c3d495769f7852421f4b5a16a2d"
+  },
+  "versions": {
+   "before": "66ac6696905faa167e5bc6d42663e72b305b6a7128453bfd966c0ec3098736ce",
+   "after": "66ac6696905faa167e5bc6d42663e72b305b6a7128453bfd966c0ec3098736ce"
+  },
+  "VERSIONS_CN.md": {
+   "before": "4904791c932d68b9aa417dd033206b5c663665bcaccc6d8b57d1b526456dbbe9",
+   "after": "4904791c932d68b9aa417dd033206b5c663665bcaccc6d8b57d1b526456dbbe9"
+  },
+  "capital_audit": {
+   "before": "f3fa5c2f2690a387235a09770c3dbf078a43edcb840a0889bae441ddb0dc6c6e",
+   "after": "ddf868ca2ee515b72f01a9d4939a6c9d7953e28e16ac6c00e00e7cdc47ffdbb8"
+  },
+  "datasets_evidence": {
+   "before": "1721216c95d12a62b97594c3970b5f8e45da28d66fb1291c877d67ee6c7a8c5b",
+   "after": "b5b24bba9d9f74d95dc19fcc7a83b68c752fce94f9bb1c11f72502b02038e8b9"
+  },
+  "test_evidence": {
+   "before": "3d252fe9c3fe090ca8b80fec7c5f117cb9ecdc52c12d822c3afa25f9b3088db6",
+   "after": "d946bd9974e3ad8b0d41bb4c5b029e69711fc4a11d346dd7c2ff76de8ca60925"
+  },
+  "WF05_STATUS": {
+   "before": "a77eb4ce6d670174d5cf1e9d4a20b1d487eeff9208f58a68fc6f04b04f7625eb",
+   "after": "4f89d3bf8dabca2563b9e8c0c16956e185202438696518df430c6c988efe5918"
+  }
+ },
+ "evidence": {
+  "datasets": "rounds/WF05c/logs/datasets_evidence.json",
+  "capital": "rounds/WF05c/capital_audit.json",
+  "tests": "rounds/WF05c/logs/tests.json",
+  "profile": "rounds/WF05c/logs/profile_check_result.json",
+  "capital_proof": "rounds/WF05c/work/capital_unchanged.json",
+  "frozen_proof": "rounds/WF05c/work/frozen_manifest_check.json",
+  "protected_files": "rounds/WF05c/work/protected_check.json",
+  "final_verification": "rounds/WF05c/work/final_verification.json"
+ },
+ "tests": {
+  "suites": {
+   "custody/tests": {
+    "passed": true,
+    "returncode": 0,
+    "count": 238,
+    "expected_failures": 0,
+    "skipped": 0,
+    "seconds": 82.37306514801458,
+    "log": "studies/martin_luk/workflow/rounds/WF05c/logs/custody_tests.log",
+    "log_sha256": "5739ae22aba2779d23836496a5d7d4d1da46217f94d3b80424dd91c1df6416b1"
+   },
+   "studies/trader_replication/tests": {
+    "passed": true,
+    "returncode": 0,
+    "count": 1197,
+    "expected_failures": 1,
+    "skipped": 0,
+    "seconds": 203.65425644186325,
+    "log": "studies/martin_luk/workflow/rounds/WF05c/logs/studies_trader_replication_tests.log",
+    "log_sha256": "d59a62abc3af763f603f1c411224c84678b8706c6a2dda1487448c2e28487721"
+   },
+   "studies/martin_luk/tests": {
+    "passed": true,
+    "returncode": 0,
+    "count": 377,
+    "expected_failures": 0,
+    "skipped": 1,
+    "seconds": 11.753533175913617,
+    "log": "studies/martin_luk/workflow/rounds/WF05c/logs/studies_martin_luk_tests_retry.log",
+    "log_sha256": "bbfaca5d24f1bb72a9d850f5b098cdeb740f24f00f3e75f43f3f0fcbec961123"
+   },
+   "studies/trader_screens/tests": {
+    "passed": true,
+    "returncode": 0,
+    "count": 102,
+    "expected_failures": 0,
+    "skipped": 1,
+    "seconds": 114.00256015895866,
+    "log": "studies/martin_luk/workflow/rounds/WF05c/logs/studies_trader_screens_tests.log",
+    "log_sha256": "d6b12850b349a80a653a874a69b1ca661377df9e4ba930e1773ac3e87103b2a4"
+   }
+  },
+  "code_sha256": {
+   "studies/trader_replication/system.py": "c337adb3d9c9dfc4157c2ea564bb10164a16bab0ab900bcd5fdc29ce385b7998",
+   "studies/trader_replication/pipeline.py": "c42731b48ddce42a239699cdabf41179c94e7c3d495769f7852421f4b5a16a2d",
+   "studies/trader_replication/tests/test_workflow.py": "6767c8f28add676aa34c29c1bd71193328f6ab2f83e625f1dfca7c71870ca823",
+   "studies/martin_luk/workflow/capital.py": "1262fb8c5afe871fa787bd09a4a63fe56682f20d78bf32e2efa4b022d04adb60",
+   "studies/martin_luk/workflow/status.py": "0bd4fff26cfae3471d7a4937c5c82a5899bfd8d8128b4f0f2ab34ca3ecc837d1",
+   "studies/martin_luk/workflow/versions.py": "0e1568a257c1d13a5dde97795574488e568c291626e5a3b61548b7cf840b0540",
+   "studies/martin_luk/workflow/version_profile.py": "9cc0f355914e5109a0b0b0f0c07547c205949b3cf818bd83d109f58e7812a5f3",
+   "studies/martin_luk/workflow/adapter.py": "23f2c3c18384b7fe3edacc782dc9e337b8d8b6ad4b8f74bc985285017c99fba1",
+   "studies/martin_luk/workflow/frozen_cache.py": "e07c5994bd975c9fc1961dbf5bb031600bacdb1161451f7167e8c9cb4a5ba8de",
+   "studies/martin_luk/wf05_engine.py": "824875b78c9cf9549a9e40c3bdd7074e6cadefa031723652d84e6d12c6692981",
+   "studies/trader_replication/tests/test_margin_call.py": "62c45ea71318333eadd5e9b844b512eed672f629cbdfe4f65bba6b2b7a565946",
+   "studies/martin_luk/tests/test_workflow_versions_capital.py": "523fd983ff651a834737339bd3172c5f3e5457115feff4f08b54ed32bfe63929",
+   "studies/martin_luk/tests/test_wf05b_repair.py": "17c0657377293d112707f048207436d775b35fd23094d6e97f63d812b56c83c5"
+  },
+  "code_unchanged_during_tests": true,
+  "passed": true,
+  "initial_attempt": {
+   "path": "studies/martin_luk/workflow/rounds/WF05c/logs/tests_initial.json",
+   "sha256": "a80fb6b90be4b66a0fdccd5f0c6ebb0d53bc9dea6e03613d3f2942364f39232b"
+  },
+  "unit_tests": 1914,
+  "expected_failures": 1,
+  "skipped": 2
+ },
+ "profile_check": {
+  "returncode": 0,
+  "seconds": 0.3106245081871748,
+  "config_sha256_before": "2778a59595c7aaaac8835efb03fb32249d90a58e7931fcd13c62fd023702fb3a",
+  "config_sha256_after": "2778a59595c7aaaac8835efb03fb32249d90a58e7931fcd13c62fd023702fb3a",
+  "log": "studies/martin_luk/workflow/rounds/WF05c/logs/profile_check.log",
+  "log_sha256": "0f4b0bb3f9978be303404bd87579d1e149e1ebc594412fcfd8f69b18ef9cf1d2",
+  "output": "档案完整"
+ },
+ "checks": {
+  "datasets_evidence": true,
+  "capital_audit": true,
+  "test_evidence": true,
+  "pipeline_fingerprinted": true,
+  "profile_check": true,
+  "all_readiness_checks": true,
+  "can_start_round": true,
+  "protected_files_unchanged": true,
+  "capital_and_replays_unchanged": true,
+  "frozen_payloads_unchanged": true,
+  "status_other_fields_unchanged": true,
+  "datasets_scan": true
+ },
+ "readiness_before": {
+  "g1": true,
+  "whitelist_approved": true,
+  "datasets": false,
+  "capital_rules": false,
+  "registered_unchanged": false,
+  "cache_consistent": true,
+  "rule_fingerprints": true
+ },
+ "readiness_checks": {
+  "g1": true,
+  "whitelist_approved": true,
+  "datasets": true,
+  "capital_rules": true,
+  "registered_unchanged": true,
+  "cache_consistent": true,
+  "rule_fingerprints": true
+ },
+ "can_start_round_before": false,
+ "can_start_round": true,
+ "status_other_fields_changed": [],
+ "initial_test_failure": "rounds/WF05c/logs/tests_initial.json",
+ "workflow_issues": [
+  {
+   "step": "核对",
+   "kind": "工具缺失",
+   "description": "旧测试证据未绑定判定代码及对应测试，即使判定代码变了也可能被 _test_evidence 接受。",
+   "evidence": "rounds/WF05c/work/test_evidence_gap.json",
+   "proposal": "在下次获准修改时让测试证据绑定 pipeline.py 及其判定测试，代码改变后要求重跑。",
+   "general": true,
+   "status": "open"
+  },
+  {
+   "step": "核对",
+   "kind": "工具缺失",
+   "description": "readiness 回归测试只模拟旧版数据证据路径，已有其他过期证据时依赖真实工作区而失败。",
+   "evidence": "rounds/WF05c/logs/studies_martin_luk_tests.log",
+   "proposal": "在获准修改时模拟数据证据边界，使测试不依赖真实轮次的证据文件。",
+   "general": true,
+   "status": "open"
+  },
+  {
+   "step": "核对",
+   "kind": "工具缺失",
+   "description": "未登记 IE9 缓存在此前刷新清单时，旧数据指纹和多项代码指纹也被更新；内容及不可变来源记录相同，但仅凭本次核对不能证明旧数据指纹所对应的完整数据集等同。",
+   "evidence": "rounds/WF05c/work/frozen_manifest_check.json",
+   "proposal": "刷新数据指纹不一致的缓存前，要求旧数据集身份等价证明或重建；登记 IE9 前先核对其血缘。",
+   "general": true,
+   "status": "open"
+  }
+ ],
+ "existing_open_workflow_issues": [
+  "WF-005",
+  "WF-006",
+  "WF-007",
+  "WF-018",
+  "WF-020",
+  "WF-021",
+  "WF-024",
+  "WF-025",
+  "WF-026",
+  "WF-027",
+  "WF-028",
+  "WF-029",
+  "WF-030",
+  "WF-032",
+  "WF-033",
+  "WF-035",
+  "WF-036",
+  "WF-037",
+  "WF-038",
+  "WF-039",
+  "WF-040",
+  "WF-041",
+  "WF-044",
+  "WF-045",
+  "WF-046",
+  "WF-047",
+  "WF-049",
+  "WF-052",
+  "WF-053",
+  "WF-055",
+  "WF-064",
+  "WF-065",
+  "WF-066",
+  "WF-069",
+  "WF-071",
+  "WF-072",
+  "WF-073",
+  "WF-075",
+  "WF-076",
+  "WF-077",
+  "WF-079",
+  "WF-080",
+  "WF-082",
+  "WF-085",
+  "WF-088",
+  "WF-089",
+  "WF-092",
+  "WF-093",
+  "WF-094",
+  "WF-095",
+  "WF-096",
+  "WF-099",
+  "WF-100",
+  "WF-101",
+  "WF-103"
+ ],
+ "keep": [
+  "PLAN_CN.md",
+  "REPORT_CN.md",
+  "completion.json",
+  "capital_audit.json",
+  "codex.log",
+  "logs/",
+  "work/"
+ ],
+ "disk_free_before_reported": "6.0G (df -h)",
+ "disk_free_after_bytes": 6414983168
+}
