@@ -4,6 +4,7 @@
 
 | Skill | 用途 | 实现与研究 |
 |---|---|---|
+| [trading-rules](skills/trading-rules/SKILL.md) | 真实交易铁律与最高优先级风控规范（仅约束实盘指导） | 无独立代码 |
 | [opportunity-research](skills/opportunity-research/SKILL.md) | 从涨价、缺货、需求变化等线索研究机会，保留证据与反证 | 资料随 skill 保存 |
 | [daily-technical-review](skills/daily-technical-review/SKILL.md) | 指定股票的日 K 技术面、条件买点与多头退出计划 | `studies/daily_technical/` |
 | [trend-market-scan](skills/trend-market-scan/SKILL.md) | 三个市场的周线趋势候选、规则账户和持仓检查 | `studies/trend_breakout/` |

@@ -8,6 +8,7 @@
 
 | 任务入口 | 实现规范 |
 |---|---|
+| [trading-rules](skills/trading-rules/SKILL.md)：真实交易铁律（实盘指导最高优先级） | 本文件 |
 | [opportunity-research](skills/opportunity-research/SKILL.md)：机会与反证研究 | [studies/AGENTS.md](studies/AGENTS.md) |
 | [daily-technical-review](skills/daily-technical-review/SKILL.md)：单股日 K 多头评估 | [studies/AGENTS.md](studies/AGENTS.md) |
 | [trend-market-scan](skills/trend-market-scan/SKILL.md)：全市场周线规则扫描 | [studies/AGENTS.md](studies/AGENTS.md) |
@@ -16,7 +17,7 @@
 | [market-watch](skills/market-watch/SKILL.md)：盘中只读盯盘 | [watch/AGENTS.md](watch/AGENTS.md) |
 | [near-expiry-session](skills/near-expiry-session/SKILL.md)：近到期期权会话 | [custody/AGENTS.md](custody/AGENTS.md)、[studies/AGENTS.md](studies/AGENTS.md) |
 
-Skill 是任务入口，不改变实现的成熟度、策略资格或交易权限。研究切片不当生产能力用；交易接口仍只属于 custody。
+Skill 是任务入口，不改变实现的成熟度、策略资格或交易权限。研究切片不当生产能力用；交易接口仍只属于 custody。凡涉及真实交易指导（买卖、加减仓、止损、仓位分配），必须先读并最高优先级遵守 [trading-rules](skills/trading-rules/SKILL.md)；仅做研究与交易员复刻时保持原策略保真，转为实盘建议时生效。
 
 ## 安全
 
