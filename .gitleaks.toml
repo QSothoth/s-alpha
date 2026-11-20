@@ -33,4 +33,15 @@ regexes = ['''^(?:example|placeholder|changeme|<[^>]+>)$''']
 id = "generic-api-key"
 [[rules.allowlists]]
 regexTarget = "match"
-regexes = ['''(?i)case_keys_sha256"\s*:\s*"[a-f0-9]{64}"''']
+regexes = [
+  '''(?i)case_keys_sha256"\s*:\s*"[a-f0-9]{64}"''',
+  # Data-file fingerprints: tickers such as KEY / KEYS trip the keyword.
+  '''\.csv"\s*:\s*"[a-f0-9]{64}"''',
+]
+
+[[rules]]
+id = "jfrog-identity-token"
+[[rules.allowlists]]
+regexTarget = "match"
+# Data-file fingerprints: tickers such as XRAY trip the keyword.
+regexes = ['''\.csv"\s*:\s*"[a-f0-9]{64}"''']
