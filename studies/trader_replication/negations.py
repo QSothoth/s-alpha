@@ -1,4 +1,4 @@
-"""The negation register of a trader study (skills/trader-replication METHOD_CN section 0): every candidate a round
+"""The negation register of a trader study (skills/trader-replication METHOD_CN section 7): every candidate a round
 did not carry, with the configuration the rest of the system had at the time, so that a negation can be retested
 once the rest changes.
 
